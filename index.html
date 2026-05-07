@@ -3,784 +3,903 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Srupa Labs — Frame & Poster Aesthetic untuk Dekorasi Dinding</title>
-<meta name="description" content="Frame custom dan poster aesthetic untuk dekorasi dinding. Pilih desain, tentukan ukuran & frame, langsung siap pasang. Tersedia di Shopee, TikTok Shop & WhatsApp."/>
+<title>Admin — Srupa Labs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --white:#ffffff;
-  --off:#FAFAF9;
-  --border:#E8E8E6;
-  --muted:#9B9B97;
-  --dark:#111110;
+  --white:#fff;--off:#FAFAF9;--border:#E8E8E6;--muted:#9B9B97;
+  --dark:#111110;--red:#dc2626;--green:#16a34a;
   --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;
-  --r:6px;
+  --sans:'DM Sans',sans-serif;--r:6px;
 }
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{background:var(--white);color:var(--dark);font-family:var(--sans);font-weight:300;overflow-x:hidden}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight:300;min-height:100vh}
 
-/* ── NAV ── */
-nav{
-  position:sticky;top:0;z-index:500;
-  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 5vw;height:60px;
-}
-.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--dark);text-decoration:none;letter-spacing:.01em}
-.nav-links{display:flex;align-items:center;gap:2rem}
-.nav-links a{font-size:.82rem;font-weight:400;color:var(--muted);text-decoration:none;letter-spacing:.02em;transition:color .2s}
-.nav-links a:hover{color:var(--dark)}
-.nav-cta{
-  font-size:.8rem;font-weight:600;letter-spacing:.03em;
-  padding:.5rem 1.25rem;background:var(--dark);color:var(--white);
-  border-radius:var(--r);text-decoration:none;transition:opacity .2s;
-}
-.nav-cta:hover{opacity:.82}
-
-/* ── HERO ── */
-#hero{
-  min-height:calc(100svh - 60px);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:4rem 5vw 3rem;
-  background-color:var(--white);
-  background-image:url('images/hero-bg.jpg');
-  background-size:cover;background-position:center;
-  position:relative;overflow:hidden;
-}
-#hero::before{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,.70);
-}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:.5rem;
-  font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);border:1px solid var(--border);
-  padding:.35rem .9rem;border-radius:100px;margin-bottom:2rem;
-  position:relative;z-index:1;
-}
-.hero-badge span{width:6px;height:6px;background:#22c55e;border-radius:50%;display:block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-h1{
-  font-family:var(--serif);font-size:clamp(2.8rem,6vw,5.5rem);
-  font-weight:400;line-height:1.1;color:var(--dark);
-  max-width:13ch;margin:0 auto 1.25rem;
-  position:relative;z-index:1;
-}
-h1 em{font-style:italic;color:#555}
-
-.hero-sub{
-  font-size:clamp(.95rem,1.8vw,1.1rem);color:var(--muted);
-  max-width:44ch;margin:0 auto 2.25rem;line-height:1.7;font-weight:300;
-  position:relative;z-index:1;
-}
-
-.hero-ctas{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem;position:relative;z-index:1}
-
-.btn-primary{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.85rem 2rem;background:var(--dark);color:var(--white);
-  font-family:var(--sans);font-size:.9rem;font-weight:600;
-  border-radius:var(--r);text-decoration:none;transition:opacity .2s,transform .15s;border:none;cursor:pointer;
-}
-.btn-primary:hover{opacity:.85;transform:translateY(-1px)}
-.btn-primary svg{flex-shrink:0}
-
-.btn-secondary{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.85rem 1.75rem;background:transparent;color:var(--dark);
-  font-family:var(--sans);font-size:.9rem;font-weight:500;
-  border:1px solid var(--border);border-radius:var(--r);text-decoration:none;transition:border-color .2s,background .2s;cursor:pointer;
-}
-.btn-secondary:hover{border-color:#aaa;background:var(--off)}
-
-.hero-micro{font-size:.75rem;color:var(--muted);letter-spacing:.04em;position:relative;z-index:1}
-.hero-micro span{margin:0 .4rem}
-
-/* ── PROBLEM/SOLUTION ── */
-#problem{
-  background:var(--off);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
-  padding:5rem 5vw;
-}
-.problem-inner{
-  max-width:960px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
-}
-.problem-text .section-label{margin-bottom:1rem}
-.section-label{font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
-#problem h2{font-family:var(--serif);font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;color:var(--dark);margin-bottom:1rem;line-height:1.25}
-#problem p{color:var(--muted);line-height:1.75;margin-bottom:1rem}
-.punchline{font-weight:600;font-size:1rem;color:var(--dark)!important;border-top:1px solid var(--border);padding-top:1.25rem;margin-top:1.25rem}
-.problem-img{
-  aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;
-  background:var(--border);position:relative;
-}
-.problem-img img{width:100%;height:100%;object-fit:cover;display:block}
-.problem-img-placeholder{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:.75rem;
-  color:var(--muted);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
-}
-.problem-img-placeholder svg{opacity:.3}
-
-/* ── CATALOG ── */
-#katalog{padding:5rem 0}
-.catalog-head{text-align:center;margin-bottom:3rem;padding:0 5vw}
-.catalog-head h2{font-family:var(--serif);font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;margin-bottom:.6rem}
-.catalog-head p{color:var(--muted);font-size:.95rem}
-
-/* carousel */
-.carousel-wrap{
-  overflow:hidden;position:relative;
-}
-.carousel-track{
-  display:flex;gap:1.25rem;
-  padding:0 5vw 1.5rem;
-  animation:scrollCarousel 28s linear infinite;
-  width:max-content;
-}
-.carousel-wrap:hover .carousel-track{animation-play-state:paused}
-@keyframes scrollCarousel{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
-}
-
-.poster-card{
-  cursor:pointer;border:1px solid var(--border);border-radius:var(--r);
-  overflow:hidden;transition:transform .22s,box-shadow .22s;background:var(--white);
-  flex-shrink:0;width:240px;
-}
-.poster-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
-
-.poster-thumb{
-  aspect-ratio:3/4;background:var(--off);position:relative;overflow:hidden;
+/* ── LOGIN ── */
+#loginScreen{
   display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:2rem;
 }
-.poster-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.poster-thumb-placeholder{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:1.6rem;color:var(--border);letter-spacing:.06em;
-  flex-direction:column;gap:.5rem;
+.login-box{
+  background:white;border:1px solid var(--border);border-radius:12px;
+  padding:2.5rem;width:100%;max-width:380px;
 }
-.poster-thumb-placeholder small{font-family:var(--sans);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--border)}
+.login-box h1{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:.35rem}
+.login-box p{font-size:.82rem;color:var(--muted);margin-bottom:2rem}
+.login-box label{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.4rem}
+.login-box input[type=password]{
+  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.9rem;outline:none;transition:border-color .2s;margin-bottom:1rem;
+}
+.login-box input:focus{border-color:#aaa}
+.login-err{font-size:.78rem;color:var(--red);margin-bottom:.75rem;display:none}
 
-.poster-thumb-label{
-  position:absolute;top:.6rem;left:.6rem;
-  font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  background:var(--dark);color:var(--white);padding:.25rem .6rem;border-radius:3px;
+/* ── MAIN APP ── */
+#app{display:none}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:56px;position:sticky;top:0;z-index:100;
+}
+.topbar-logo{font-family:var(--serif);font-size:1rem;color:var(--dark)}
+.topbar-logo span{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:.5rem}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-right a{font-size:.78rem;color:var(--muted);text-decoration:none}
+.topbar-right a:hover{color:var(--dark)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:white;border-right:1px solid var(--border);
+  padding:1.5rem;display:flex;flex-direction:column;gap:.35rem;
+}
+.sidebar-section{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;margin-top:.75rem}
+.sidebar-section:first-child{margin-top:0}
+.sidebar-link{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.6rem .75rem;border-radius:var(--r);
+  font-size:.84rem;color:var(--muted);cursor:pointer;
+  transition:background .15s,color .15s;text-decoration:none;border:none;background:none;font-family:var(--sans);width:100%;text-align:left;
+}
+.sidebar-link:hover{background:var(--off);color:var(--dark)}
+.sidebar-link.active{background:var(--dark);color:white}
+.sidebar-link svg{flex-shrink:0;opacity:.6}
+.sidebar-link.active svg{opacity:1}
+
+/* ── CONTENT AREA ── */
+.content{padding:2rem;overflow-y:auto}
+
+/* ── PANELS ── */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── STATS BAR ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem}
+.stat-card .num{font-family:var(--serif);font-size:2rem;font-weight:400;line-height:1}
+.stat-card .lbl{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+
+/* ── SECTION HEADER ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.section-head h2{font-family:var(--serif);font-size:1.4rem;font-weight:400}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.1rem;border-radius:var(--r);font-family:var(--sans);
+  font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:opacity .18s;
+}
+.btn:hover{opacity:.85}
+.btn-dark{background:var(--dark);color:white}
+.btn-outline{background:white;color:var(--dark);border:1px solid var(--border)}
+.btn-outline:hover{border-color:#aaa;opacity:1}
+.btn-red{background:var(--red);color:white}
+.btn-green{background:var(--green);color:white}
+.btn-sm{padding:.38rem .8rem;font-size:.75rem}
+
+/* ── POSTER TABLE ── */
+.poster-table{width:100%;border-collapse:collapse;background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.poster-table th{
+  text-align:left;padding:.75rem 1rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);border-bottom:1px solid var(--border);background:var(--off);
+}
+.poster-table td{
+  padding:.85rem 1rem;font-size:.84rem;
+  border-bottom:1px solid var(--border);vertical-align:middle;
+}
+.poster-table tr:last-child td{border-bottom:none}
+.poster-table tr:hover td{background:var(--off)}
+
+.thumb-cell{
+  width:48px;height:56px;object-fit:cover;border-radius:4px;
+  background:var(--off);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  flex-shrink:0;
+}
+.thumb-cell img{width:100%;height:100%;object-fit:cover}
+.thumb-cell span{font-size:.6rem;color:var(--muted);letter-spacing:.05em;text-align:center;padding:.25rem}
+
+.badge-row{display:flex;gap:.35rem;flex-wrap:wrap}
+.badge{font-size:.65rem;padding:.15rem .5rem;border-radius:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.badge-hot{background:#111;color:#fff}
+.badge-new{background:#16a34a;color:#fff}
+.badge-ltd{background:#dc2626;color:#fff}
+.badge-none{background:var(--off);color:var(--muted);border:1px solid var(--border)}
+
+.action-btns{display:flex;gap:.4rem}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:3rem;color:var(--muted)}
+.empty svg{opacity:.2;margin-bottom:.75rem}
+.empty p{font-size:.88rem}
+
+/* ── MODAL/DRAWER ── */
+.drawer-overlay{
+  display:none;position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+}
+.drawer-overlay.open{display:block}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:1000;
+  width:100%;max-width:520px;background:white;
+  box-shadow:-8px 0 32px rgba(0,0,0,.1);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);
+}
+.drawer.open{transform:none}
+.drawer-head{
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.drawer-head h3{font-family:var(--serif);font-size:1.2rem;font-weight:400}
+.drawer-close{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
+  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;color:var(--muted);
+}
+.drawer-body{flex:1;overflow-y:auto;padding:1.5rem}
+.drawer-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-shrink:0}
+
+/* ── FORM ── */
+.form-group{margin-bottom:1.25rem}
+.form-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.45rem}
+.form-label span{color:var(--red);margin-left:.2rem}
+.form-input,.form-textarea,.form-select{
+  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.88rem;color:var(--dark);outline:none;
+  transition:border-color .2s;background:white;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#aaa}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-hint{font-size:.72rem;color:var(--muted);margin-top:.3rem}
+
+/* image upload */
+.img-upload-area{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  position:relative;
+}
+.img-upload-area:hover{border-color:#aaa;background:var(--off)}
+.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-area p{font-size:.82rem;color:var(--muted)}
+.img-upload-area .icon{font-size:1.5rem;margin-bottom:.5rem}
+.img-preview{
+  width:100%;aspect-ratio:3/4;object-fit:cover;
+  border-radius:var(--r);border:1px solid var(--border);
+  margin-top:.75rem;display:none;
 }
 
-.poster-info{padding:.9rem 1rem}
-.poster-info h3{font-size:.88rem;font-weight:600;margin-bottom:.2rem;color:var(--dark)}
-.poster-info p{font-size:.78rem;color:var(--muted)}
-.poster-price{font-size:.82rem;font-weight:600;color:var(--dark);margin-top:.35rem}
-
-.catalog-more{text-align:center}
-
-/* ── BENEFITS ── */
-#benefits{background:var(--off);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 5vw}
-.benefits-inner{max-width:860px;margin:0 auto}
-.benefits-inner h2{font-family:var(--serif);font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;margin-bottom:2.5rem;text-align:center}
-.benefits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
-.benefit-item{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--r);
-  padding:1.5rem;
+/* color picker row */
+.color-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.color-opt{
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:border-color .15s,transform .15s;
 }
-.benefit-icon{font-size:1.25rem;margin-bottom:.75rem}
-.benefit-item h3{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
-.benefit-item p{font-size:.82rem;color:var(--muted);line-height:1.6}
+.color-opt:hover{transform:scale(1.1)}
+.color-opt.selected{border-color:var(--dark);transform:scale(1.1)}
+.color-opt.light{border-color:var(--border)}
+.color-opt.light.selected{border-color:var(--dark)}
 
-/* ── INFO STRIPS ── */
-#product-info{border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.info-strips{display:grid;grid-template-columns:repeat(3,1fr)}
-.info-strip{
-  text-align:center;padding:1.75rem 1.25rem;
-  border-right:1px solid var(--border);
-}
-.info-strip:last-child{border-right:none}
-.info-strip-icon{font-size:1.2rem;margin-bottom:.5rem}
-.info-strip p{font-size:.82rem;color:var(--muted);line-height:1.55}
-
-/* ── SOCIAL PROOF ── */
-#social{padding:4rem 5vw;border-top:1px solid var(--border);text-align:center}
-#social h2{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:400;margin-bottom:.6rem}
-#social p{color:var(--muted);font-size:.92rem;max-width:40ch;margin:0 auto}
-
-/* ── URGENCY ── */
-#urgency{
-  background:var(--dark);padding:4rem 5vw;text-align:center;
-}
-#urgency h2{font-family:var(--serif);font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;color:var(--white);margin-bottom:.75rem}
-#urgency p{color:rgba(255,255,255,.5);font-size:.95rem;max-width:40ch;margin:0 auto 2rem}
-#urgency .btn-primary{background:var(--white);color:var(--dark)}
-#urgency .btn-primary:hover{background:#f0f0ee}
-
-/* ── FINAL CTA ── */
-#final-cta{padding:5rem 5vw;text-align:center;border-top:1px solid var(--border)}
-#final-cta h2{font-family:var(--serif);font-size:clamp(1.9rem,3.5vw,2.8rem);font-weight:400;margin-bottom:2rem}
-.channel-list{display:flex;flex-direction:column;gap:.75rem;max-width:440px;margin:0 auto 1.5rem}
-.channel-btn{
-  display:flex;align-items:center;gap:.85rem;
-  padding:1rem 1.25rem;border:1px solid var(--border);border-radius:var(--r);
-  text-decoration:none;color:var(--dark);transition:border-color .2s,background .2s;
+/* badge selector */
+.badge-opts{display:flex;gap:.5rem;flex-wrap:wrap}
+.badge-opt{
+  padding:.35rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;background:white;
   font-family:var(--sans);
 }
-.channel-btn:hover{border-color:#aaa;background:var(--off)}
-.ch-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ch-info{flex:1;text-align:left}
-.ch-info strong{display:block;font-size:.88rem;font-weight:600}
-.ch-info small{font-size:.74rem;color:var(--muted)}
-.ch-arr{color:var(--muted);font-size:.85rem}
-.final-micro{font-size:.74rem;color:var(--muted);letter-spacing:.04em}
-.final-micro span{margin:0 .4rem}
+.badge-opt.selected{background:var(--dark);color:white;border-color:var(--dark)}
 
-/* ── CUSTOM SECTION ── */
-#custom{background:var(--off);border-top:1px solid var(--border);padding:4rem 5vw;text-align:center}
-#custom h2{font-family:var(--serif);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:400;margin-bottom:.6rem}
-#custom p{color:var(--muted);font-size:.92rem;max-width:40ch;margin:0 auto 1.5rem}
-
-/* ── FOOTER ── */
-footer{
-  border-top:1px solid var(--border);padding:2rem 5vw;
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:2000;
+  background:var(--dark);color:white;
+  padding:.75rem 1.25rem;border-radius:var(--r);
+  font-size:.82rem;font-weight:500;
+  transform:translateY(8px);opacity:0;
+  transition:all .25s;pointer-events:none;
 }
-footer .f-logo{font-family:var(--serif);font-size:1rem;color:var(--dark)}
-footer p{font-size:.75rem;color:var(--muted)}
+.toast.show{transform:none;opacity:1}
+.toast.error{background:var(--red)}
 
-/* ── STICKY MOBILE CTA ── */
-.sticky-cta{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;
-  padding:1rem 1.25rem;background:white;border-top:1px solid var(--border);
+/* ── CONFIRM MODAL ── */
+.confirm-overlay{
+  display:none;position:fixed;inset:0;z-index:1100;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(3px);
+  align-items:center;justify-content:center;
 }
-.sticky-cta .btn-primary{width:100%;justify-content:center}
+.confirm-overlay.open{display:flex}
+.confirm-box{
+  background:white;border-radius:12px;padding:2rem;
+  width:100%;max-width:360px;border:1px solid var(--border);
+}
+.confirm-box h3{font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:.5rem}
+.confirm-box p{font-size:.84rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
+.confirm-btns{display:flex;gap:.6rem;justify-content:flex-end}
 
-/* ═══════════════════════════════════
-   MODAL / PRODUCT DETAIL
-══════════════════════════════════════ */
-.modal-overlay{
-  display:none;position:fixed;inset:0;z-index:800;
-  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
-  overflow-y:auto;padding:1.5rem;
-  align-items:flex-start;justify-content:center;
+/* ── EXPORT PANEL ── */
+.export-box{
+  background:white;border:1px solid var(--border);border-radius:var(--r);
+  padding:1.5rem;margin-bottom:1rem;
 }
-.modal-overlay.open{display:flex}
-.modal{
-  background:var(--white);border-radius:12px;width:100%;max-width:700px;
-  margin:auto;overflow:hidden;position:relative;
-  animation:modalIn .28s cubic-bezier(.32,.72,0,1);
-}
-@keyframes modalIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-
-.modal-close{
-  position:absolute;top:1rem;right:1rem;z-index:10;
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
-  background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:1rem;color:var(--muted);transition:background .2s;
-}
-.modal-close:hover{background:var(--off)}
-
-.modal-img{
-  aspect-ratio:4/3;background:var(--off);
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;position:relative;
-}
-.modal-img img{width:100%;height:100%;object-fit:cover}
-.modal-img-placeholder{
-  font-family:var(--serif);font-size:2.5rem;color:var(--border);
-  display:flex;flex-direction:column;align-items:center;gap:.5rem;
-}
-.modal-img-placeholder small{font-family:var(--sans);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--border)}
-
-.modal-body{padding:1.75rem}
-.modal-body h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:.4rem}
-.modal-body .modal-desc{font-size:.88rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.65}
-
-.option-label{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;display:block}
-
-.size-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
-.size-btn{
-  padding:.5rem 1rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.82rem;font-weight:500;background:white;
-  cursor:pointer;transition:all .18s;position:relative;
-}
-.size-btn:hover{border-color:#aaa}
-.size-btn.active{border-color:var(--dark);background:var(--dark);color:white}
-.size-btn .price-tag{
-  display:block;font-size:.68rem;font-weight:400;
-  color:var(--muted);margin-top:.1rem;
-}
-.size-btn.active .price-tag{color:rgba(255,255,255,.6)}
-.size-btn.no-price .price-tag{color:#888}
-
-.frame-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.75rem}
-.frame-btn{
-  display:flex;align-items:center;gap:.5rem;
-  padding:.5rem 1rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.82rem;font-weight:500;background:white;
-  cursor:pointer;transition:all .18s;
-}
-.frame-btn:hover{border-color:#aaa}
-.frame-btn.active{border-color:var(--dark);background:var(--dark);color:white}
-.frame-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.frame-btn.active .frame-dot{outline:2px solid rgba(255,255,255,.4);outline-offset:1px}
-
-.price-display{
+.export-box h3{font-size:.9rem;font-weight:600;margin-bottom:.35rem}
+.export-box p{font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.55}
+.code-block{
   background:var(--off);border:1px solid var(--border);border-radius:var(--r);
-  padding:1rem 1.25rem;margin-bottom:1.25rem;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem;font-family:monospace;font-size:.72rem;
+  color:#555;overflow-x:auto;white-space:pre;max-height:180px;overflow-y:auto;
+  margin-bottom:.75rem;
 }
-.price-label{font-size:.75rem;color:var(--muted);font-weight:500}
-.price-amount{font-size:1.4rem;font-weight:600;color:var(--dark)}
-.price-amount.contact{font-size:1rem;color:var(--muted)}
 
-.modal-ctas{display:flex;flex-direction:column;gap:.6rem}
-.modal-cta-btn{
-  display:flex;align-items:center;justify-content:center;gap:.6rem;
-  padding:.85rem;border-radius:var(--r);font-family:var(--sans);
-  font-size:.88rem;font-weight:600;text-decoration:none;cursor:pointer;
-  border:none;transition:opacity .18s;
-}
-.modal-cta-btn:hover{opacity:.85}
-.cta-wa{background:#25D366;color:white}
-.cta-shopee{background:#EE4D2D;color:white}
-.cta-tiktok{background:#010101;color:white}
-
-/* ── RESPONSIVE ── */
 @media(max-width:700px){
-  .nav-links a:not(:last-child){display:none}
-  .nav-links{gap:1rem}
-  .benefits-grid{grid-template-columns:1fr}
-  .problem-inner{grid-template-columns:1fr;gap:2rem}
-  .problem-img{aspect-ratio:16/9}
-  .info-strips{grid-template-columns:1fr}
-  .info-strip{border-right:none;border-bottom:1px solid var(--border)}
-  .info-strip:last-child{border-bottom:none}
-  .poster-grid{grid-template-columns:repeat(2,1fr);gap:.75rem}
-  .modal{border-radius:0;min-height:100svh;margin:0}
-  .modal-overlay{padding:0;align-items:flex-end}
-  .sticky-cta{display:block}
-  body{padding-bottom:80px}
-}
-@media(max-width:380px){
-  .poster-grid{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .drawer{max-width:100%}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">Srupa Labs</a>
-  <div class="nav-links">
-    <a href="katalog.html">Katalog</a>
-    <a href="#custom">Custom</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-badge"><span></span> Siap Kirim · Jakarta</div>
-  <h1>Ubah Tampilan Ruangan dalam <em>1 Menit</em></h1>
-  <p class="hero-sub">Pilih poster. Tentukan frame. Langsung jadi dekorasi siap pasang tanpa ribet.</p>
-  <div class="hero-ctas">
-    <a href="katalog.html" class="btn-primary">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      Pilih Desain Sekarang
-    </a>
-  </div>
-  <p class="hero-micro">Siap pasang<span>•</span>Tanpa perlu desain ulang</p>
-</section>
-
-<!-- PROBLEM → SOLUTION -->
-<section id="problem">
-  <div class="problem-inner">
-    <div class="problem-text">
-      <div class="section-label">Masalah & Solusi</div>
-      <h2>Ruangan Terasa Kosong?</h2>
-      <p>Dinding polos bikin ruangan terasa kurang hidup. Dengan satu frame yang tepat, suasana bisa langsung berubah — tanpa renovasi, tanpa ribet.</p>
-      <p class="punchline">Tidak perlu desain sendiri. Tinggal pilih dan pasang.</p>
-    </div>
-    <div class="problem-img">
-      <!-- Ganti src dengan foto frame di ruangan kamu -->
-      <!-- <img src="images/frame-room.jpg" alt="Frame Srupa Labs di ruangan"/> -->
-      <div class="problem-img-placeholder">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="32" height="32" rx="2"/><rect x="9" y="9" width="22" height="22" rx="1"/><circle cx="20" cy="20" r="4"/></svg>
-        Foto frame di ruangan
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- KATALOG -->
-<section id="katalog">
-  <div class="catalog-head">
-    <div class="section-label">Koleksi Poster</div>
-    <h2>Pilih Desain Favoritmu</h2>
-    <p>Semua desain siap cetak dan siap dipasang. Tinggal pilih sesuai gaya ruangmu.</p>
-  </div>
-
-  <div class="carousel-wrap">
-    <div class="carousel-track" id="carouselTrack">
-      <!-- Generated by JS (doubled for infinite loop) -->
-    </div>
-  </div>
-
-  <div class="catalog-more" style="text-align:center;padding:0 5vw">
-    <a href="katalog.html" class="btn-secondary">Temukan Desain Lainnya →</a>
-  </div>
-</section>
-
-<!-- BENEFITS -->
-<section id="benefits">
-  <div class="benefits-inner">
-    <h2>Kenapa Banyak yang Pilih Ini</h2>
-    <div class="benefits-grid">
-      <div class="benefit-item">
-        <div class="benefit-icon">✦</div>
-        <h3>Desain eksklusif, tidak pasaran</h3>
-        <p>Setiap desain dikurasi khusus — tidak akan kamu temukan di toko dekorasi biasa.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">◻</div>
-        <h3>Sudah termasuk poster & frame</h3>
-        <p>Satu paket lengkap. Poster cetak berkualitas dan frame pilihan sudah jadi satu.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">↑</div>
-        <h3>Tinggal pasang, tanpa ribet</h3>
-        <p>Datang sudah siap gantung. Tidak perlu ke percetakan, tidak perlu cari frame terpisah.</p>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">◎</div>
-        <h3>Cocok untuk berbagai ruangan</h3>
-        <p>Kamar, ruang kerja, ruang tamu, hingga cafe — semua ukuran tersedia.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- INFO STRIPS -->
-<section id="product-info">
-  <div class="info-strips">
-    <div class="info-strip">
-      <div class="info-strip-icon">📦</div>
-      <p>Dikemas aman & rapi, aman dari benturan</p>
-    </div>
-    <div class="info-strip">
-      <div class="info-strip-icon">🚚</div>
-      <p>Pengiriman ke seluruh Indonesia</p>
-    </div>
-    <div class="info-strip">
-      <div class="info-strip-icon">⏱</div>
-      <p>Proses cepat 1–3 hari kerja</p>
-    </div>
-  </div>
-</section>
-
-<!-- SOCIAL PROOF -->
-<section id="social">
-  <div class="section-label">Sudah Dipakai</div>
-  <h2>Dipakai di Berbagai Ruangan</h2>
-  <p>Cocok untuk kamar, ruang tamu, workspace, hingga cafe.</p>
-</section>
-
-<!-- URGENCY -->
-<section id="urgency">
-  <h2>Jangan Biarkan Dinding Tetap Biasa</h2>
-  <p>Satu pilihan desain bisa langsung mengubah suasana ruanganmu.</p>
-  <a href="#katalog" class="btn-primary">Pilih Desain Sekarang →</a>
-</section>
-
-<!-- FINAL CTA -->
-<section id="final-cta">
-  <div class="section-label">Order Sekarang</div>
-  <h2>Pilih Desainmu Sekarang</h2>
-  <div class="channel-list">
-    <a href="#katalog" class="btn-primary" style="justify-content:center;margin-bottom:.25rem">Pilih Desain Sekarang →</a>
-    <a href="https://shopee.co.id/srupalabs" target="_blank" rel="noopener" class="channel-btn">
-      <div class="ch-dot" style="background:#EE4D2D;"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><text x="4" y="18" font-size="14" font-family="sans-serif" font-weight="bold">S</text></svg></div>
-      <div class="ch-info"><strong>Checkout di Shopee</strong><small>srupalabs · official store</small></div>
-      <span class="ch-arr">→</span>
-    </a>
-    <a href="https://tiktok.com/@srupalabs" target="_blank" rel="noopener" class="channel-btn">
-      <div class="ch-dot" style="background:#010101;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.01-8.83a8.18 8.18 0 004.78 1.52V4.6a4.85 4.85 0 01-1.03-.91z"/></svg>
-      </div>
-      <div class="ch-info"><strong>Checkout di TikTok Shop</strong><small>@srupalabs</small></div>
-      <span class="ch-arr">→</span>
-    </a>
-    <a href="https://wa.me/628XXXXXXXXXX?text=Halo+Srupa+Labs%2C+saya+mau+order+poster+%26+frame" target="_blank" rel="noopener" class="channel-btn">
-      <div class="ch-dot" style="background:#25D366;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      </div>
-      <div class="ch-info"><strong>Chat WhatsApp Sekarang</strong><small>Respon cepat · by order</small></div>
-      <span class="ch-arr">→</span>
-    </a>
-  </div>
-  <p class="final-micro">Aman<span>•</span>Cepat<span>•</span>Praktis</p>
-</section>
-
-<!-- CUSTOM -->
-<section id="custom">
-  <div class="section-label">Custom Design</div>
-  <h2>Ingin Pakai Desain Sendiri?</h2>
-  <p>Kirimkan file desainmu dan kami cetak dengan frame pilihanmu. Semua ukuran tersedia.</p>
-  <a href="https://wa.me/628XXXXXXXXXX?text=Halo+Srupa+Labs%2C+saya+mau+order+custom+desain" target="_blank" rel="noopener" class="btn-primary" style="margin:0 auto;display:inline-flex;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214l-3.741.982l.998-3.648l-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884c2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-    Kirim Desain via WhatsApp
-  </a>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <span class="f-logo">Srupa Labs</span>
-  <p>© 2025 Srupa Labs · Jakarta, Indonesia</p>
-</footer>
-
-<!-- STICKY MOBILE CTA -->
-<div class="sticky-cta">
-  <a href="#katalog" class="btn-primary">Pilih Desain Sekarang →</a>
-</div>
-
-<!-- PRODUCT DETAIL MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-img" id="modalImg">
-      <div class="modal-img-placeholder" id="modalImgPlaceholder">
-        <span id="modalImgText">SRUPA</span>
-        <small id="modalImgSub">LABS</small>
-      </div>
-    </div>
-    <div class="modal-body">
-      <h2 id="modalTitle">Minimal Series 01</h2>
-      <p class="modal-desc" id="modalDesc">Desain minimalis yang cocok untuk kamar, ruang kerja, atau ruang tamu. Elegan dan tidak berlebihan.</p>
-
-      <span class="option-label">Pilih Ukuran</span>
-      <div class="size-grid" id="sizeGrid"></div>
-
-      <span class="option-label">Pilih Warna Frame</span>
-      <div class="frame-grid" id="frameGrid"></div>
-
-      <div class="price-display">
-        <span class="price-label">Harga (poster + frame)</span>
-        <span class="price-amount" id="priceDisplay">Pilih ukuran</span>
-      </div>
-
-      <div class="modal-ctas">
-        <a href="#" id="ctaWA" class="modal-cta-btn cta-wa" target="_blank" rel="noopener">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52c.149-.174.198-.298.298-.497c.099-.198.05-.371-.025-.52c-.075-.149-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51c-.173-.008-.371-.01-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413c.248-.694.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214l-3.741.982l.998-3.648l-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884c2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-          Chat WhatsApp
-        </a>
-        <a href="https://shopee.co.id/srupalabs" class="modal-cta-btn cta-shopee" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-          Checkout di Shopee
-        </a>
-        <a href="https://tiktok.com/@srupalabs" class="modal-cta-btn cta-tiktok" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.01-8.83a8.18 8.18 0 004.78 1.52V4.6a4.85 4.85 0 01-1.03-.91z"/></svg>
-          Checkout di TikTok Shop
-        </a>
-      </div>
-    </div>
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Srupa Labs</h1>
+    <p>Masuk ke halaman admin untuk mengelola poster.</p>
+    <label>Password Admin</label>
+    <input type="password" id="pwInput" placeholder="Masukkan password..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-err" id="loginErr">Password salah. Coba lagi.</div>
+    <button class="btn btn-dark" style="width:100%" onclick="doLogin()">Masuk →</button>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Password default: <strong>srupalabs2025</strong><br/>Ganti di baris <code>ADMIN_PASS</code> di file ini.</p>
   </div>
 </div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Srupa Labs <span>Admin</span></div>
+    <div class="topbar-right">
+      <a href="katalog.html" target="_blank">↗ Lihat Katalog</a>
+      <a href="index.html" target="_blank">↗ Lihat Website</a>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">Menu</div>
+      <button class="sidebar-link active" onclick="showPanel('dashboard',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sidebar-link" onclick="showPanel('posters',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
+        Kelola Poster
+      </button>
+      <button class="sidebar-link" onclick="showPanel('export',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v9M4 6l4 4 4-4"/><path d="M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
+        Export Data
+      </button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="section-head">
+          <h2>Dashboard</h2>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="num" id="statTotal">0</div>
+            <div class="lbl">Total Poster</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="statWithImg">0</div>
+            <div class="lbl">Sudah Ada Foto</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="statNoImg">0</div>
+            <div class="lbl">Belum Ada Foto</div>
+          </div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.5rem">
+          <h3 style="font-size:.9rem;font-weight:600;margin-bottom:.75rem">Quick Start</h3>
+          <ol style="font-size:.84rem;color:var(--muted);line-height:2.2;padding-left:1.25rem">
+            <li>Tambah poster baru di menu <strong style="color:var(--dark)">Kelola Poster</strong></li>
+            <li>Upload foto untuk setiap poster</li>
+            <li>Klik <strong style="color:var(--dark)">Export Data</strong> → copy kode ke <code>katalog.html</code></li>
+            <li>Upload ulang file ke Hostinger</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- KELOLA POSTER -->
+      <div class="panel" id="panel-posters">
+        <div class="section-head">
+          <h2>Kelola Poster</h2>
+          <button class="btn btn-dark" onclick="openDrawer()">+ Tambah Poster</button>
+        </div>
+        <div id="posterTableWrap"></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="panel" id="panel-export">
+        <div class="section-head"><h2>Export Data</h2></div>
+
+        <div class="export-box">
+          <h3>Cara pakai</h3>
+          <p>Setelah tambah/edit poster di admin, copy kode di bawah ini dan paste ke file <code>katalog.html</code> dan <code>index.html</code> — ganti bagian array <code>const POSTERS = [...]</code> yang lama.</p>
+        </div>
+
+        <div class="export-box">
+          <h3>Kode POSTERS untuk katalog.html & index.html</h3>
+          <p>Copy seluruh kode di bawah, paste ke bagian <code>// ── POSTER DATABASE ──</code> di kedua file.</p>
+          <div class="code-block" id="exportCode">// Belum ada poster</div>
+          <button class="btn btn-dark" onclick="copyExport()">Copy Kode</button>
+        </div>
+
+        <div class="export-box">
+          <h3>Backup & Restore</h3>
+          <p>Download semua data poster sebagai file JSON untuk backup, atau restore dari backup sebelumnya.</p>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="downloadBackup()">⬇ Download Backup</button>
+            <label class="btn btn-outline" style="cursor:pointer">
+              ⬆ Restore Backup
+              <input type="file" accept=".json" style="display:none" onchange="restoreBackup(this)"/>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- ══ DRAWER: ADD/EDIT POSTER ══ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 id="drawerTitle">Tambah Poster</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+
+    <!-- FOTO -->
+    <div class="form-group">
+      <label class="form-label">Foto Poster</label>
+      <div class="img-upload-area" id="uploadArea">
+        <input type="file" accept="image/*" id="imgInput" onchange="handleImg(this)"/>
+        <div class="icon">🖼</div>
+        <p>Klik untuk upload foto<br/><small>JPG, PNG, WebP — maks 2MB</small></p>
+      </div>
+      <img id="imgPreview" class="img-preview" alt="Preview"/>
+      <div class="form-hint" style="margin-top:.5rem">
+        <strong>Resolusi yang disarankan:</strong> <code>800 × 800 px</code> untuk SKU kotak (1:1), atau <code>800 × 1067 px</code> untuk portrait (3:4).<br/>
+        Format JPG/PNG, background putih atau transparan (PNG). Untuk hasil terbaik upload foto ke folder <code>images/</code> di GitHub lalu isi path-nya di bawah.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Atau masukkan path/URL foto</label>
+      <input type="text" class="form-input" id="fImgPath" placeholder="images/nama-poster.jpg atau https://..."/>
+      <div class="form-hint">Isi ini kalau foto sudah diupload ke GitHub. Kosongkan kalau pakai upload di atas.</div>
+    </div>
+
+    <!-- INFO DASAR -->
+    <div class="form-group">
+      <label class="form-label">Judul Poster <span>*</span></label>
+      <input type="text" class="form-input" id="fTitle" placeholder="cth: Minimal Series 01"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Deskripsi <span>*</span></label>
+      <textarea class="form-textarea" id="fDesc" placeholder="Deskripsi singkat poster ini..."></textarea>
+    </div>
+
+    <!-- LINK PER SKU -->
+    <div class="form-group">
+      <label class="form-label">Link Shopee (SKU ini)</label>
+      <input type="text" class="form-input" id="fShopee" placeholder="https://shopee.co.id/product/..."/>
+      <div class="form-hint">Link produk spesifik di Shopee untuk desain ini</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Link TikTok Shop (SKU ini)</label>
+      <input type="text" class="form-input" id="fTiktok" placeholder="https://www.tiktok.com/..."/>
+      <div class="form-hint">Link produk spesifik di TikTok Shop untuk desain ini</div>
+    </div>
+
+    <!-- WARNA BG -->
+    <div class="form-group">
+      <label class="form-label">Warna Background</label>
+      <div class="color-row" id="colorRow"></div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem">
+        <input type="color" id="fColorCustom" value="#F5F2E9" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
+        <span style="font-size:.78rem;color:var(--muted)">Pilih warna lain</span>
+      </div>
+    </div>
+
+    <!-- TEKS PLACEHOLDER -->
+    <div class="form-group">
+      <label class="form-label">Teks Placeholder <span style="font-weight:400;text-transform:none;letter-spacing:0">(tampil saat belum ada foto)</span></label>
+      <div class="form-row">
+        <div>
+          <input type="text" class="form-input" id="fLabel" placeholder="cth: MIN" maxlength="6"/>
+          <div class="form-hint">Baris atas (maks 6 huruf)</div>
+        </div>
+        <div>
+          <input type="text" class="form-input" id="fSub" placeholder="cth: IMAL 01" maxlength="10"/>
+          <div class="form-hint">Baris bawah</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGE -->
+    <div class="form-group">
+      <label class="form-label">Badge / Label</label>
+      <div class="badge-opts">
+        <button class="badge-opt selected" data-badge="" onclick="selectBadge(this,'')">Tidak ada</button>
+        <button class="badge-opt" data-badge="hot" onclick="selectBadge(this,'hot')" style="background:#111;color:#fff;border-color:#111">Terlaris</button>
+        <button class="badge-opt" data-badge="new" onclick="selectBadge(this,'new')" style="background:#16a34a;color:#fff;border-color:#16a34a">Baru</button>
+        <button class="badge-opt" data-badge="ltd" onclick="selectBadge(this,'ltd')" style="background:#dc2626;color:#fff;border-color:#dc2626">Limited</button>
+      </div>
+    </div>
+
+    <!-- TAGS -->
+    <div class="form-group">
+      <label class="form-label">Tags / Kategori</label>
+      <input type="text" class="form-input" id="fTags" placeholder="minimalis, abstract, botanical"/>
+      <div class="form-hint">Pisahkan dengan koma</div>
+    </div>
+
+    <!-- URUTAN -->
+    <div class="form-group">
+      <label class="form-label">Urutan Tampil</label>
+      <input type="number" class="form-input" id="fOrder" placeholder="1" min="1"/>
+      <div class="form-hint">Angka lebih kecil = tampil lebih awal</div>
+    </div>
+
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-outline" onclick="closeDrawer()">Batal</button>
+    <button class="btn btn-dark" onclick="savePoster()">Simpan Poster</button>
+  </div>
+</div>
+
+<!-- ══ CONFIRM DELETE ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Hapus Poster?</h3>
+    <p>Poster ini akan dihapus permanen dari daftar. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-red" onclick="confirmDelete()">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────
-const PRICES = {
-  '20x30': 49680,
-  '30x40': 59500,
-  '40x60': 106250,
-  '50x70': 150500,
-  '60x80': 186875,
-  '60x90': 203000,
-};
-
-const READY_SIZES  = ['20x30','30x40','40x60'];
-const CUSTOM_SIZES = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80','60x90'];
-
-const FRAMES = [
-  {id:'hitam', label:'Hitam', color:'#111'},
-  {id:'putih', label:'Putih', color:'#fff', border:'#ddd'},
-  {id:'chrome', label:'Chrome', color:'#C0C0C0'},
-  {id:'kayu', label:'Kayu', color:'#8B5E3C'},
-];
-
-const POSTERS = [
-  {id:1,title:'Minimal Series 01',desc:'Garis-garis bersih yang menenangkan. Cocok untuk kamar atau ruang kerja minimalis.',tag:'TERLARIS',palette:['#f0ece4','#c8bfb2'],label:'MIN',sub:'MAL'},
-  {id:2,title:'Abstract Shapes',desc:'Bentuk geometris abstrak yang playful. Energik dan modern untuk ruang manapun.',tag:'BARU',palette:['#e8e0d8','#b8aea4'],label:'ABS',sub:'TRACT'},
-  {id:3,title:'Dark Room Series',desc:'Kontras kuat, suasana dramatis. Cocok jadi statement piece di ruang tamu.',tag:'',palette:['#2a2a2a','#1a1a1a'],label:'DRK',sub:'ROOM',dark:true},
-  {id:4,title:'Botanical Lines',desc:'Ilustrasi botanical minimalis dengan sentuhan natural. Cocok untuk area makan atau dapur.',tag:'',palette:['#eaede6','#d0d8ca'],label:'BOT',sub:'ANIK'},
-  {id:5,title:'Typography Poster',desc:'Kata-kata bermakna dalam layout yang kuat. Personal dan inspiring.',tag:'',palette:['#f5f2ee','#ddd8d0'],label:'TYPE',sub:'SET'},
-  {id:6,title:'Gallery Edition',desc:'Desain eksklusif edisi terbatas dengan komposisi yang matang dan elegan.',tag:'LIMITED',palette:['#ede8e0','#c4bdb4'],label:'GAL',sub:'ERY'},
-];
-
-const WA_NUMBER = '628XXXXXXXXXX'; // ← Ganti dengan nomor WA bisnis
-
-// ── INIT: baca dari admin localStorage kalau ada ──────────────────────────
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const ADMIN_PASS = 'srupalabs2025'; // ← Ganti password di sini
 const STORAGE_KEY = 'srupalabs_posters';
-function loadPosters() {
+
+const PRESET_COLORS = [
+  '#FFFFFF','#F5F2E9',
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let posters = [];
+let editingId = null;
+let deleteId  = null;
+let isDark    = false;
+let selectedBadge = '';
+let selectedColor = '#F0ECE5';
+let imgData   = ''; // base64 dari upload
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === ADMIN_PASS) {
+    sessionStorage.setItem('sl_auth','1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('sl_auth');
+  location.reload();
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) { try { return JSON.parse(raw); } catch(e) {} }
-  return POSTERS;
+  posters = raw ? JSON.parse(raw) : getDefaultPosters();
+  refresh();
 }
 
-// ── RENDER CAROUSEL ──────────────────────────────────────────────────────
-function makeCard(p) {
-  const startPrice = formatPrice(PRICES['20x30']);
-  const bgColor = p.bg || (p.palette && p.palette[0]) || '#F0ECE5';
-  const isDark = p.dark;
-  const imgHtml = p.img
-    ? `<img src="${p.img}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
-    : `<div class="poster-thumb-placeholder">
-        <span style="color:${isDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.12)'};">${p.label||p.title.substring(0,3).toUpperCase()}</span>
-        <small style="color:${isDark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)'};">${p.sub||''}</small>
-       </div>`;
-  const badge = p.badge || p.tag || '';
-  return `
-  <div class="poster-card" onclick="openModal(${p.id})">
-    <div class="poster-thumb" style="background:${bgColor};">
-      ${badge ? `<div class="poster-thumb-label">${badge==='hot'?'Terlaris':badge==='new'?'Baru':'Limited'}</div>` : ''}
-      ${imgHtml}
-    </div>
-    <div class="poster-info">
-      <h3>${p.title}</h3>
-      <p>${p.desc.substring(0,55)}...</p>
-      <div class="poster-price">Mulai ${startPrice}</div>
-    </div>
-  </div>`;
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
+  refresh();
 }
 
-function renderPosters() {
-  const track = document.getElementById('carouselTrack');
-  const list = loadPosters().sort((a,b)=>(a.order||99)-(b.order||99));
-  const cards = list.map(makeCard).join('');
-  track.innerHTML = cards + cards; // duplicate for infinite loop
+function refresh() {
+  updateStats();
+  renderTable();
+  renderExport();
 }
 
-// ── FORMAT ────────────────────────────────────────────────────────────────
-function formatPrice(n) {
-  return 'Rp' + n.toLocaleString('id-ID');
+function getDefaultPosters() {
+  return [
+    {id:1,title:'Minimal Series 01',desc:'Garis-garis bersih yang menenangkan. Cocok untuk kamar atau ruang kerja minimalis.',tags:['minimalis'],badge:'hot',bg:'#F0ECE5',dark:false,label:'MIN',sub:'IMAL 01',img:'',order:1},
+    {id:2,title:'Abstract Forms',desc:'Bentuk geometris abstrak yang playful. Energik dan modern.',tags:['abstract'],badge:'new',bg:'#E5E8EA',dark:false,label:'ABS',sub:'TRACT',img:'',order:2},
+    {id:3,title:'Dark Room',desc:'Kontras kuat, suasana dramatis. Cocok jadi statement piece.',tags:['dark'],badge:'',bg:'#1E1E1E',dark:true,label:'DRK',sub:'ROOM',img:'',order:3},
+    {id:4,title:'Botanical Lines',desc:'Ilustrasi botanical minimalis. Natural untuk area makan.',tags:['botanical'],badge:'',bg:'#E8EDE6',dark:false,label:'BOT',sub:'ANIK',img:'',order:4},
+  ];
 }
 
-// ── MODAL STATE ───────────────────────────────────────────────────────────
-let currentPoster = null;
-let selectedSize  = null;
-let selectedFrame = 'hitam';
-
-function openModal(id) {
-  currentPoster = POSTERS.find(p => p.id === id);
-  selectedSize  = null;
-  selectedFrame = 'hitam';
-
-  document.getElementById('modalTitle').textContent = currentPoster.title;
-  document.getElementById('modalDesc').textContent  = currentPoster.desc;
-  document.getElementById('modalImgText').textContent = currentPoster.label;
-  document.getElementById('modalImgSub').textContent  = currentPoster.sub;
-
-  const ph = document.getElementById('modalImgPlaceholder');
-  ph.style.background = currentPoster.palette[0];
-  ph.style.color = currentPoster.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.12)';
-
-  renderSizes(READY_SIZES);
-  renderFrames();
-  updatePrice();
-
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function updateStats() {
+  const withImg = posters.filter(p => p.img).length;
+  document.getElementById('statTotal').textContent  = posters.length;
+  document.getElementById('statWithImg').textContent = withImg;
+  document.getElementById('statNoImg').textContent   = posters.length - withImg;
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
+// ══════════════════════════════════════════
+// TABLE
+// ══════════════════════════════════════════
+function renderTable() {
+  const wrap = document.getElementById('posterTableWrap');
+  const sorted = [...posters].sort((a,b) => (a.order||99) - (b.order||99));
 
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ── RENDER SIZES ──────────────────────────────────────────────────────────
-function renderSizes(sizes) {
-  const grid = document.getElementById('sizeGrid');
-  grid.innerHTML = sizes.map(s => {
-    const price = PRICES[s];
-    const priceLabel = price ? formatPrice(price) : 'Hubungi kami';
-    const noPrice = !price;
-    return `
-    <button class="size-btn ${noPrice?'no-price':''}" onclick="selectSize('${s}', ${price||0}, ${noPrice})">
-      ${s} cm
-      <span class="price-tag">${priceLabel}</span>
-    </button>`;
-  }).join('');
-}
-
-function selectSize(size, price, noPrice) {
-  selectedSize = {size, price, noPrice};
-  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  updatePrice();
-  updateWALink();
-}
-
-// ── RENDER FRAMES ─────────────────────────────────────────────────────────
-function renderFrames() {
-  const grid = document.getElementById('frameGrid');
-  grid.innerHTML = FRAMES.map(f => `
-    <button class="frame-btn ${f.id===selectedFrame?'active':''}" onclick="selectFrame('${f.id}')">
-      <span class="frame-dot" style="background:${f.color};${f.border?'border:1px solid '+f.border+';':''}${f.id===selectedFrame?'outline:2px solid rgba(255,255,255,.5);outline-offset:1px;':''}"></span>
-      ${f.label}
-    </button>
-  `).join('');
-}
-
-function selectFrame(id) {
-  selectedFrame = id;
-  renderFrames();
-  updateWALink();
-}
-
-// ── PRICE ─────────────────────────────────────────────────────────────────
-function updatePrice() {
-  const el = document.getElementById('priceDisplay');
-  if (!selectedSize) {
-    el.textContent = 'Pilih ukuran';
-    el.className = 'price-amount';
+  if (!sorted.length) {
+    wrap.innerHTML = `<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="30" height="30" rx="3"/><path d="M15 15h10M15 20h10M15 25h6"/></svg>
+      <p>Belum ada poster. Tambah poster pertamamu!</p>
+    </div>`;
     return;
   }
-  if (selectedSize.noPrice) {
-    el.textContent = 'Hubungi kami';
-    el.className = 'price-amount contact';
-  } else {
-    el.textContent = formatPrice(selectedSize.price);
-    el.className = 'price-amount';
+
+  wrap.innerHTML = `<table class="poster-table">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Judul & Deskripsi</th>
+        <th>Tags</th>
+        <th>Badge</th>
+        <th>Urutan</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${sorted.map(p => `
+      <tr>
+        <td>
+          <div class="thumb-cell" style="background:${p.bg}">
+            ${p.img
+              ? `<img src="${p.img}" alt="${p.title}"/>`
+              : `<span>${p.label}</span>`}
+          </div>
+        </td>
+        <td>
+          <div style="font-weight:500;margin-bottom:.2rem">${p.title}</div>
+          <div style="font-size:.75rem;color:var(--muted);max-width:200px">${p.desc.substring(0,60)}...</div>
+        </td>
+        <td>
+          <div class="badge-row">
+            ${(p.tags||[]).map(t=>`<span class="badge badge-none">${t}</span>`).join('')}
+          </div>
+        </td>
+        <td>
+          ${p.badge
+            ? `<span class="badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>`
+            : `<span style="color:var(--muted);font-size:.75rem">—</span>`}
+        </td>
+        <td style="font-size:.84rem">${p.order||'—'}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-outline btn-sm" onclick="openEdit(${p.id})">Edit</button>
+            <button class="btn btn-sm" style="background:#fff1f2;color:var(--red);border:1px solid #fecdd3" onclick="askDelete(${p.id})">Hapus</button>
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ══════════════════════════════════════════
+// DRAWER
+// ══════════════════════════════════════════
+function openDrawer(id = null) {
+  editingId = id;
+  imgData = '';
+  document.getElementById('drawerTitle').textContent = id ? 'Edit Poster' : 'Tambah Poster';
+
+  // reset form
+  ['fTitle','fDesc','fLabel','fSub','fTags','fImgPath','fShopee','fTiktok'].forEach(f => document.getElementById(f).value = '');
+  document.getElementById('fOrder').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('uploadArea').style.display = 'block';
+
+  selectedBadge = '';
+  selectedColor = '#FFFFFF';
+
+  if (id) {
+    const p = posters.find(x => x.id === id);
+    if (p) {
+      document.getElementById('fTitle').value   = p.title;
+      document.getElementById('fDesc').value    = p.desc;
+      document.getElementById('fLabel').value   = p.label||'';
+      document.getElementById('fSub').value     = p.sub||'';
+      document.getElementById('fTags').value    = (p.tags||[]).join(', ');
+      document.getElementById('fOrder').value   = p.order||'';
+      document.getElementById('fImgPath').value = p.img||'';
+      document.getElementById('fShopee').value  = p.shopeeUrl||'';
+      document.getElementById('fTiktok').value  = p.tiktokUrl||'';
+      selectedBadge = p.badge||'';
+      selectedColor = p.bg||'#FFFFFF';
+      if (p.img) {
+        document.getElementById('imgPreview').src = p.img;
+        document.getElementById('imgPreview').style.display = 'block';
+      }
+    }
   }
+
+  renderColorRow();
+  renderBadgeOpts();
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
 }
 
-// ── WA LINK ───────────────────────────────────────────────────────────────
-function updateWALink() {
-  if (!currentPoster || !selectedSize) return;
-  const frame = FRAMES.find(f => f.id === selectedFrame);
-  const priceStr = selectedSize.noPrice ? '(hubungi kami)' : formatPrice(selectedSize.price);
-  const msg = encodeURIComponent(
-    `Halo Srupa Labs! Saya mau order:\n\n` +
-    `🖼 Desain: ${currentPoster.title}\n` +
-    `📐 Ukuran: ${selectedSize.size} cm\n` +
-    `🪟 Frame: ${frame.label}\n` +
-    `💰 Harga: ${priceStr}\n\n` +
-    `Mohon konfirmasi ketersediaan. Terima kasih!`
-  );
-  document.getElementById('ctaWA').href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+function openEdit(id) { openDrawer(id); }
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-renderPosters();
+// ══════════════════════════════════════════
+// COLOR ROW
+// ══════════════════════════════════════════
+function renderColorRow() {
+  const row = document.getElementById('colorRow');
+  row.innerHTML = PRESET_COLORS.map(c => `
+    <div class="color-opt ${isLight(c)?'light':''} ${selectedColor===c?'selected':''}"
+      style="background:${c}"
+      onclick="pickColor('${c}')"></div>
+  `).join('');
+  document.getElementById('fColorCustom').value = selectedColor;
+}
+
+function pickColor(c) {
+  selectedColor = c;
+  document.getElementById('fColorCustom').value = c;
+  renderColorRow();
+}
+
+document.getElementById('fColorCustom').addEventListener('input', e => {
+  selectedColor = e.target.value;
+  renderColorRow();
+});
+
+function isLight(hex) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return (r*299+g*587+b*114)/1000 > 128;
+}
+
+// ══════════════════════════════════════════
+// BADGE
+// ══════════════════════════════════════════
+function selectBadge(el, val) {
+  selectedBadge = val;
+  renderBadgeOpts();
+}
+function renderBadgeOpts() {
+  document.querySelectorAll('.badge-opt[data-badge]').forEach(b => {
+    b.classList.toggle('selected', b.dataset.badge === selectedBadge);
+    if(b.dataset.badge==='' && selectedBadge==='') b.classList.add('selected');
+  });
+}
+
+// ══════════════════════════════════════════
+// IMAGE UPLOAD
+// ══════════════════════════════════════════
+function handleImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Foto terlalu besar. Maks 2MB.','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    imgData = e.target.result;
+    document.getElementById('imgPreview').src = imgData;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('fImgPath').value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════
+// SAVE
+// ══════════════════════════════════════════
+function savePoster() {
+  const title = document.getElementById('fTitle').value.trim();
+  const desc  = document.getElementById('fDesc').value.trim();
+  if (!title) { showToast('Judul wajib diisi.','error'); return; }
+  if (!desc)  { showToast('Deskripsi wajib diisi.','error'); return; }
+
+  const imgPath = document.getElementById('fImgPath').value.trim();
+  const finalImg = imgData || imgPath || '';
+
+  const poster = {
+    id: editingId || Date.now(),
+    title,
+    desc,
+    tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    badge: selectedBadge,
+    bg: selectedColor,
+    dark: false,
+    label: document.getElementById('fLabel').value.trim() || title.substring(0,3).toUpperCase(),
+    sub:   document.getElementById('fSub').value.trim() || '',
+    img: finalImg,
+    shopeeUrl: document.getElementById('fShopee').value.trim(),
+    tiktokUrl: document.getElementById('fTiktok').value.trim(),
+    order: parseInt(document.getElementById('fOrder').value) || posters.length + 1,
+    palette: [selectedColor, selectedColor],
+    tag: selectedBadge,
+  };
+
+  if (editingId) {
+    const idx = posters.findIndex(p => p.id === editingId);
+    if (idx > -1) posters[idx] = poster;
+  } else {
+    posters.push(poster);
+  }
+
+  saveData();
+  closeDrawer();
+  showToast(editingId ? 'Poster berhasil diupdate!' : 'Poster berhasil ditambahkan!');
+  imgData = '';
+}
+
+// ══════════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════════
+function askDelete(id) {
+  deleteId = id;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  deleteId = null;
+  document.getElementById('confirmOverlay').classList.remove('open');
+}
+function confirmDelete() {
+  posters = posters.filter(p => p.id !== deleteId);
+  saveData();
+  closeConfirm();
+  showToast('Poster dihapus.');
+}
+
+// ══════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════
+function renderExport() {
+  const sorted = [...posters].sort((a,b) => (a.order||99)-(b.order||99));
+  const code = `const POSTERS = ${JSON.stringify(sorted, null, 2)};`;
+  document.getElementById('exportCode').textContent = code;
+}
+
+function copyExport() {
+  const code = document.getElementById('exportCode').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
+}
+
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(posters, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `srupalabs-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function restoreBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error();
+      posters = data;
+      saveData();
+      showToast('Backup berhasil direstore!');
+    } catch { showToast('File tidak valid.','error'); }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════
+// PANEL NAVIGATION
+// ══════════════════════════════════════════
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type?' '+type:'');
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if (sessionStorage.getItem('sl_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadData();
+}
+document.getElementById('pwInput').focus();
 </script>
 </body>
 </html>
