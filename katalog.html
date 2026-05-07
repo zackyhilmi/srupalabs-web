@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Katalog Poster — Srupa Labs</title>
+<meta name="description" content="Katalog poster aesthetic dan frame siap pasang dari Srupa Labs. Pilih desain favoritmu, tentukan ukuran & frame, langsung checkout."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#ffffff;
+  --off:#FAFAF9;
+  --border:#E8E8E6;
+  --muted:#9B9B97;
+  --dark:#111110;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --r:6px;
+  --nav-h:60px;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--white);color:var(--dark);font-family:var(--sans);font-weight:300;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:500;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;height:var(--nav-h);
+}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--dark);text-decoration:none;letter-spacing:.01em}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{font-size:.82rem;font-weight:400;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--dark);font-weight:500}
+.nav-cta{
+  font-size:.8rem;font-weight:600;letter-spacing:.02em;
+  padding:.48rem 1.2rem;background:var(--dark);color:var(--white);
+  border-radius:var(--r);text-decoration:none;transition:opacity .2s;
+}
+.nav-cta:hover{opacity:.82}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  padding:3.5rem 5vw 2.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:2rem;flex-wrap:wrap;
+}
+.page-header-left h1{
+  font-family:var(--serif);
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:400;line-height:1.1;
+  color:var(--dark);margin-bottom:.5rem;
+}
+.page-header-left p{font-size:.9rem;color:var(--muted);max-width:44ch;line-height:1.65}
+.item-count{
+  font-size:.78rem;color:var(--muted);font-weight:500;white-space:nowrap;
+  background:var(--off);border:1px solid var(--border);
+  padding:.4rem .85rem;border-radius:100px;
+}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  padding:1rem 5vw;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:flex-end;
+  gap:1rem;flex-wrap:wrap;position:sticky;top:var(--nav-h);z-index:400;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(12px);
+}
+
+.toolbar-right{display:flex;align-items:center;gap:.75rem}
+
+.search-wrap{
+  position:relative;display:flex;align-items:center;
+}
+.search-wrap svg{position:absolute;left:.7rem;color:var(--muted);pointer-events:none}
+.search-input{
+  font-family:var(--sans);font-size:.82rem;
+  padding:.45rem .85rem .45rem 2.1rem;
+  border:1px solid var(--border);border-radius:var(--r);
+  background:var(--off);color:var(--dark);outline:none;
+  width:180px;transition:border-color .2s,width .3s;
+}
+.search-input:focus{border-color:#aaa;background:white;width:220px}
+.search-input::placeholder{color:var(--muted)}
+
+.sort-select{
+  font-family:var(--sans);font-size:.78rem;color:var(--muted);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:.45rem .75rem;background:var(--off);outline:none;cursor:pointer;
+}
+
+/* ── GRID ── */
+.catalog-wrap{padding:2rem 5vw 5rem}
+
+.poster-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:1.25rem;
+}
+
+.poster-card{
+  cursor:pointer;border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;background:white;
+  transition:transform .22s cubic-bezier(.32,.72,0,1),box-shadow .22s;
+  animation:fadeUp .35s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.poster-card:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(0,0,0,.09)}
+
+.poster-thumb{
+  aspect-ratio:3/4;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.poster-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.poster-card:hover .poster-thumb img{transform:scale(1.04)}
+
+/* placeholder saat belum ada foto */
+.thumb-placeholder{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.35rem;
+  font-family:var(--serif);
+}
+.thumb-placeholder .tp-main{font-size:2.2rem;line-height:1;letter-spacing:.06em}
+.thumb-placeholder .tp-sub{font-family:var(--sans);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase}
+
+.poster-badge{
+  position:absolute;top:.65rem;left:.65rem;
+  font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:.22rem .6rem;border-radius:3px;
+}
+.badge-hot{background:var(--dark);color:white}
+.badge-new{background:#16a34a;color:white}
+.badge-ltd{background:#dc2626;color:white}
+
+/* quick CTA overlay on hover */
+.thumb-overlay{
+  position:absolute;inset:0;
+  background:rgba(17,17,16,.4);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .22s;
+}
+.poster-card:hover .thumb-overlay{opacity:1}
+.thumb-overlay span{
+  background:white;color:var(--dark);
+  font-size:.78rem;font-weight:600;letter-spacing:.06em;
+  padding:.55rem 1.25rem;border-radius:var(--r);
+}
+
+.poster-info{padding:.9rem 1rem 1rem}
+.poster-info h3{font-size:.88rem;font-weight:600;margin-bottom:.18rem;color:var(--dark)}
+.poster-info .tag-row{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.45rem}
+.style-tag{
+  font-size:.62rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:2px;background:var(--off);color:var(--muted);border:1px solid var(--border);
+}
+.poster-info .price-from{font-size:.82rem;font-weight:600;color:var(--dark)}
+.poster-info .price-from small{font-size:.72rem;font-weight:400;color:var(--muted);margin-left:.25rem}
+
+/* empty state */
+.empty-state{
+  text-align:center;padding:5rem 2rem;grid-column:1/-1;
+}
+.empty-state p{color:var(--muted);font-size:.95rem;margin-bottom:1.25rem}
+.empty-state button{
+  font-family:var(--sans);font-size:.85rem;font-weight:500;
+  padding:.6rem 1.4rem;border:1px solid var(--border);border-radius:var(--r);
+  background:white;cursor:pointer;transition:background .2s;
+}
+.empty-state button:hover{background:var(--off)}
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(5px);
+  overflow-y:auto;padding:2rem 1.25rem;
+  align-items:flex-start;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+
+.modal{
+  background:white;border-radius:12px;width:100%;max-width:720px;
+  margin:auto;overflow:hidden;
+  display:grid;grid-template-columns:1fr 1fr;
+  animation:modalIn .28s cubic-bezier(.32,.72,0,1);
+  position:relative;
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.modal-close{
+  position:absolute;top:1rem;right:1rem;z-index:10;
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
+  background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;color:var(--muted);transition:background .2s;
+}
+.modal-close:hover{background:var(--off);color:var(--dark)}
+
+/* left: image */
+.modal-left{
+  position:relative;overflow:hidden;
+  min-height:420px;display:flex;align-items:center;justify-content:center;
+}
+.modal-left img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-img-ph{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.4rem;
+  font-family:var(--serif);
+}
+.modal-img-ph .ph-main{font-size:3rem;line-height:1;letter-spacing:.04em}
+.modal-img-ph .ph-sub{font-family:var(--sans);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase}
+
+/* right: form */
+.modal-right{
+  padding:1.75rem 1.6rem;overflow-y:auto;max-height:90vh;
+  display:flex;flex-direction:column;gap:1.1rem;
+}
+
+.modal-right h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;line-height:1.2}
+.modal-desc{font-size:.83rem;color:var(--muted);line-height:1.65}
+
+.modal-divider{height:1px;background:var(--border);flex-shrink:0}
+
+.opt-label{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+  display:block;margin-bottom:.55rem;
+}
+
+/* size grid */
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+.size-btn{
+  padding:.5rem .4rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.76rem;font-weight:500;
+  background:white;cursor:pointer;text-align:center;
+  transition:all .16s;line-height:1.3;
+}
+.size-btn:hover{border-color:#999}
+.size-btn.active{border-color:var(--dark);background:var(--dark);color:white}
+.size-btn .sb-size{display:block;font-size:.8rem}
+.size-btn .sb-price{display:block;font-size:.66rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.size-btn.active .sb-price{color:rgba(255,255,255,.55)}
+.size-btn.no-price .sb-price{color:#bbb}
+
+/* frame grid */
+.frame-opts{display:flex;gap:.45rem;flex-wrap:wrap}
+.frame-btn{
+  display:flex;align-items:center;gap:.45rem;
+  padding:.45rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.78rem;font-weight:500;
+  background:white;cursor:pointer;transition:all .16s;
+}
+.frame-btn:hover{border-color:#aaa}
+.frame-btn.active{border-color:var(--dark);background:var(--dark);color:white}
+.frame-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
+
+/* price box */
+.price-box{
+  background:var(--off);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem 1.15rem;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-shrink:0;
+}
+.price-box-label{font-size:.72rem;color:var(--muted);font-weight:500}
+.price-box-amount{font-size:1.35rem;font-weight:700;color:var(--dark)}
+.price-box-amount.contact{font-size:.88rem;color:var(--muted);font-weight:400}
+.price-box-amount.pending{font-size:.85rem;color:var(--muted);font-weight:400}
+
+/* CTAs */
+.modal-ctas{display:flex;flex-direction:column;gap:.5rem;flex-shrink:0}
+.mcta{
+  display:flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:.85rem;border-radius:var(--r);font-family:var(--sans);
+  font-size:.85rem;font-weight:600;text-decoration:none;cursor:pointer;
+  border:none;transition:opacity .18s,transform .15s;letter-spacing:.01em;
+}
+.mcta:hover{opacity:.88;transform:translateY(-1px)}
+.mcta-wa{background:#25D366;color:white}
+.mcta-shopee{background:#EE4D2D;color:white}
+.mcta-tiktok{background:#010101;color:white}
+.mcta-disabled{background:var(--off);color:var(--muted);cursor:not-allowed;border:1px solid var(--border)}
+.mcta-disabled:hover{opacity:1;transform:none}
+
+.modal-note{font-size:.72rem;color:var(--muted);text-align:center;line-height:1.5}
+
+/* sticky mobile CTA */
+.sticky-cta{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;
+  padding:.85rem 1.25rem;background:white;border-top:1px solid var(--border);
+}
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  width:100%;padding:.85rem;background:var(--dark);color:white;
+  font-family:var(--sans);font-size:.9rem;font-weight:600;
+  border-radius:var(--r);text-decoration:none;border:none;cursor:pointer;
+  transition:opacity .2s;
+}
+.btn-primary:hover{opacity:.85}
+
+/* ── RESPONSIVE ── */
+@media(max-width:760px){
+  .modal{grid-template-columns:1fr;border-radius:0;min-height:100svh;margin:0}
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal-left{min-height:260px;aspect-ratio:3/2}
+  .modal-right{max-height:none}
+  .sticky-cta{display:block}
+  body{padding-bottom:72px}
+  .page-header{flex-direction:column;align-items:flex-start}
+  .size-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+  .nav-links a:not(.nav-cta){display:none}
+  .search-input{width:140px}
+  .search-input:focus{width:160px}
+  .poster-grid{grid-template-columns:repeat(2,1fr);gap:.65rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Srupa Labs</a>
+  <div class="nav-links">
+    <a href="katalog.html" class="active">Katalog</a>
+    <a href="index.html#custom">Custom</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h1>Katalog <em>Desain</em></h1>
+    <p>Semua desain siap cetak dan siap dipasang. Tinggal pilih sesuai gaya ruangmu.</p>
+  </div>
+  <div class="item-count" id="itemCount">— desain</div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-right">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="Cari desain..."/>
+    </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="default">Urutan default</option>
+      <option value="name">Nama A–Z</option>
+    </select>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="catalog-wrap">
+  <div class="poster-grid" id="posterGrid"></div>
+</div>
+
+<!-- STICKY MOBILE -->
+<div class="sticky-cta">
+  <button class="btn-primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Lihat Semua Desain</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Tutup">✕</button>
+
+    <!-- LEFT: IMAGE -->
+    <div class="modal-left" id="modalLeft">
+      <div class="modal-img-ph" id="modalPh">
+        <span class="ph-main" id="phMain"></span>
+        <span class="ph-sub" id="phSub"></span>
+      </div>
+    </div>
+
+    <!-- RIGHT: OPTIONS -->
+    <div class="modal-right">
+      <div>
+        <h2 id="mTitle"></h2>
+        <p class="modal-desc" id="mDesc"></p>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div>
+        <span class="opt-label">Pilih Ukuran</span>
+        <div class="size-grid" id="sizeGrid"></div>
+      </div>
+
+      <div>
+        <span class="opt-label">Warna Frame</span>
+        <div class="frame-opts" id="frameOpts"></div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="price-box">
+        <div>
+          <div class="price-box-label">Harga (poster + frame)</div>
+          <div class="price-box-amount pending" id="priceDisplay">← Pilih ukuran dulu</div>
+        </div>
+      </div>
+
+      <div class="modal-ctas" id="modalCtas">
+        <a href="#" id="ctaWA" class="mcta mcta-wa" target="_blank" rel="noopener">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Chat WhatsApp
+        </a>
+        <a href="https://shopee.co.id/srupalabs" class="mcta mcta-shopee" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+          Checkout di Shopee
+        </a>
+        <a href="https://tiktok.com/@srupalabs" class="mcta mcta-tiktok" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.01-8.83a8.18 8.18 0 004.78 1.52V4.6a4.85 4.85 0 01-1.03-.91z"/></svg>
+          Checkout di TikTok Shop
+        </a>
+      </div>
+
+      <p class="modal-note">Harga sudah termasuk poster cetak + frame pilihan.<br/>Pengiriman ke seluruh Indonesia · Proses 1–3 hari kerja</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// INIT — baca dari admin localStorage kalau ada
+// ──────────────────────────────────────────────
+const STORAGE_KEY = 'srupalabs_posters';
+function loadPosters() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch(e) {}
+  }
+  return POSTERS; // fallback ke data default di bawah
+}
+
+// ──────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────
+const WA = '628XXXXXXXXXX'; // ← ganti nomor WA
+
+const PRICES = {
+  '20x30': 49680,
+  '30x40': 59500,
+  '40x60': 106250,
+};
+// Ukuran untuk ready design (3 ukuran saja)
+const READY_SIZES = ['20x30','30x40','40x60'];
+
+const FRAMES = [
+  {id:'hitam', label:'Hitam', bg:'#111'},
+  {id:'putih', label:'Putih', bg:'#fff', border:'1px solid #ddd'},
+  {id:'chrome', label:'Chrome', bg:'#C0C0C0'},
+  {id:'kayu', label:'Kayu', bg:'#8B5E3C'},
+];
+
+// ── POSTER DATABASE ──
+// Tambah poster baru di sini. Untuk 'img', isi path foto aslimu.
+// Contoh: img:'images/poster-minimal-01.jpg'
+// Kosongkan img:'' jika belum ada foto.
+const POSTERS = [
+  {
+    id:1, title:'Minimal Series 01',
+    desc:'Garis-garis bersih yang menenangkan. Komposisi geometris sederhana yang cocok untuk kamar atau ruang kerja minimalis.',
+    tags:['minimalis'],badge:'hot',
+    bg:'#F0ECE5', fgDark:false, label:'MIN', sub:'IMAL 01',
+    img:'',
+  },
+  {
+    id:2, title:'Minimal Series 02',
+    desc:'Variasi kedua dari seri Minimal — lebih asimetris, lebih dinamis. Tetap clean dan elegan.',
+    tags:['minimalis'],badge:'',
+    bg:'#EAE6DF', fgDark:false, label:'MIN', sub:'IMAL 02',
+    img:'',
+  },
+  {
+    id:3, title:'Abstract Forms',
+    desc:'Bentuk geometris abstrak yang playful. Energik dan modern — cocok jadi focal point ruangan manapun.',
+    tags:['abstract'],badge:'new',
+    bg:'#E5E8EA', fgDark:false, label:'ABS', sub:'TRACT',
+    img:'',
+  },
+  {
+    id:4, title:'Abstract Duo',
+    desc:'Dua komposisi abstract yang saling melengkapi. Ideal untuk dipasang berdampingan sebagai diptych.',
+    tags:['abstract'],badge:'',
+    bg:'#DDE2E8', fgDark:false, label:'DUO', sub:'ABSTRACT',
+    img:'',
+  },
+  {
+    id:5, title:'Dark Room',
+    desc:'Kontras tinggi, suasana dramatis. Cocok jadi statement piece di ruang tamu atau area lounge.',
+    tags:['dark'],badge:'',
+    bg:'#1E1E1E', fgDark:true, label:'DRK', sub:'ROOM',
+    img:'',
+  },
+  {
+    id:6, title:'Noir Series',
+    desc:'Palette monokrom dengan tekstur halus. Elegan dan timeless untuk ruang bergaya industrial.',
+    tags:['dark','minimalis'],badge:'',
+    bg:'#252525', fgDark:true, label:'NOIR', sub:'SERIES',
+    img:'',
+  },
+  {
+    id:7, title:'Botanical Lines',
+    desc:'Ilustrasi botanical minimalis bergaya line art. Natural dan menenangkan untuk dapur atau ruang makan.',
+    tags:['botanical'],badge:'',
+    bg:'#E8EDE6', fgDark:false, label:'BOT', sub:'ANIK',
+    img:'',
+  },
+  {
+    id:8, title:'Leaf Study',
+    desc:'Studi detail daun tropis dalam gaya ilustrasi halus. Nuansa segar dan organik.',
+    tags:['botanical'],badge:'new',
+    bg:'#E2E8E1', fgDark:false, label:'LEAF', sub:'STUDY',
+    img:'',
+  },
+  {
+    id:9, title:'Typeset Vol. 1',
+    desc:'Tipografi bold dengan layout editorial yang kuat. Personal, inspiring, dan langsung menjadi karakter ruangan.',
+    tags:['typografi'],badge:'',
+    bg:'#F2EEE8', fgDark:false, label:'TYPE', sub:'SET 01',
+    img:'',
+  },
+  {
+    id:10, title:'Typeset Vol. 2',
+    desc:'Kata-kata pendek yang penuh makna. Font serif klasik bertemu layout kontemporer.',
+    tags:['typografi'],badge:'',
+    bg:'#ECEAE4', fgDark:false, label:'TYPE', sub:'SET 02',
+    img:'',
+  },
+  {
+    id:11, title:'Vintage Catalog',
+    desc:'Nuansa zine dan catalog vintage tahun 70-an. Hangat, nostalgik, dan berkarakter kuat.',
+    tags:['vintage'],badge:'ltd',
+    bg:'#EDE5D8', fgDark:false, label:'VTG', sub:'CATALOG',
+    img:'',
+  },
+  {
+    id:12, title:'Retro Grid',
+    desc:'Grid sistem retro dengan warna faded. Cocok untuk ruang yang butuh sentuhan kepribadian.',
+    tags:['vintage','abstract'],badge:'',
+    bg:'#E8E0D2', fgDark:false, label:'RTR', sub:'GRID',
+    img:'',
+  },
+];
+
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+let activeFilter  = 'all';
+let searchQuery   = '';
+let sortMode      = 'default';
+let currentPoster = null;
+let selSize       = null;
+let selFrame      = 'hitam';
+
+// ──────────────────────────────────────────────
+// FILTER + SORT + SEARCH
+// ──────────────────────────────────────────────
+function getFiltered() {
+  let list = loadPosters(); // baca dari admin atau default
+  list = [...list].sort((a,b)=>(a.order||99)-(b.order||99));
+
+  if (searchQuery)
+    list = list.filter(p =>
+      p.title.toLowerCase().includes(searchQuery) ||
+      p.tags.some(t => t.includes(searchQuery))
+    );
+
+  if (sortMode === 'name')
+    list.sort((a,b) => a.title.localeCompare(b.title));
+
+  return list;
+}
+
+// ──────────────────────────────────────────────
+// RENDER GRID
+// ──────────────────────────────────────────────
+function renderGrid() {
+  const list = getFiltered();
+  const grid = document.getElementById('posterGrid');
+  document.getElementById('itemCount').textContent = list.length + ' desain';
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <p>Tidak ada desain yang cocok dengan pencarianmu.</p>
+        <button onclick="resetAll()">Reset filter</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((p, i) => {
+    const priceStr = 'Mulai ' + fmt(PRICES['20x30']);
+    const badgeHtml = p.badge
+      ? `<div class="poster-badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</div>`
+      : '';
+    const thumbContent = p.img
+      ? `<img src="${p.img}" alt="${p.title}" loading="lazy"/>`
+      : `<div class="thumb-placeholder" style="color:${p.fgDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.1)'}">
+           <span class="tp-main">${p.label}</span>
+           <span class="tp-sub">${p.sub}</span>
+         </div>`;
+    const tagHtml = p.tags.map(t => `<span class="style-tag">${t}</span>`).join('');
+
+    return `
+    <div class="poster-card" onclick="openModal(${p.id})" style="animation-delay:${Math.min(i*.05,0.4)}s">
+      <div class="poster-thumb" style="background:${p.bg}">
+        ${badgeHtml}
+        ${thumbContent}
+        <div class="thumb-overlay"><span>Pilih Desain</span></div>
+      </div>
+      <div class="poster-info">
+        <h3>${p.title}</h3>
+        <div class="tag-row">${tagHtml}</div>
+        <div class="price-from">${priceStr} <small>· poster + frame</small></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function resetAll() {
+  searchQuery = '';
+  sortMode = 'default';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('sortSelect').value = 'default';
+  renderGrid();
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderGrid();
+});
+
+document.getElementById('sortSelect').addEventListener('change', e => {
+  sortMode = e.target.value;
+  renderGrid();
+});
+
+// ──────────────────────────────────────────────
+// MODAL
+// ──────────────────────────────────────────────
+function openModal(id) {
+  currentPoster = POSTERS.find(p => p.id === id);
+  selSize = null;
+  selFrame = 'hitam';
+
+  // title + desc
+  document.getElementById('mTitle').textContent = currentPoster.title;
+  document.getElementById('mDesc').textContent  = currentPoster.desc;
+
+  // image
+  const left = document.getElementById('modalLeft');
+  const ph   = document.getElementById('modalPh');
+  if (currentPoster.img) {
+    // remove placeholder, show img
+    ph.style.display = 'none';
+    let img = left.querySelector('img');
+    if (!img) { img = document.createElement('img'); left.appendChild(img); }
+    img.src = currentPoster.img;
+    img.alt = currentPoster.title;
+    img.style.display = 'block';
+  } else {
+    ph.style.display = 'flex';
+    ph.style.background = currentPoster.bg;
+    const c = currentPoster.fgDark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.13)';
+    document.getElementById('phMain').textContent = currentPoster.label;
+    document.getElementById('phMain').style.color = c;
+    document.getElementById('phSub').textContent  = currentPoster.sub;
+    document.getElementById('phSub').style.color  = c;
+    const img = left.querySelector('img');
+    if (img) img.style.display = 'none';
+  }
+
+  renderModalSizes();
+  renderModalFrames();
+  updatePrice();
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target.id === 'modalOverlay') closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ──────────────────────────────────────────────
+// SIZE OPTIONS
+// ──────────────────────────────────────────────
+function renderModalSizes() {
+  const grid = document.getElementById('sizeGrid');
+  grid.innerHTML = READY_SIZES.map(s => {
+    const p = PRICES[s];
+    const priceLabel = p ? fmt(p) : 'Hubungi kami';
+    return `<button class="size-btn ${!p?'no-price':''}" onclick="selectSize('${s}',${p||0},${!p})">
+      <span class="sb-size">${s} cm</span>
+      <span class="sb-price">${priceLabel}</span>
+    </button>`;
+  }).join('');
+}
+
+function selectSize(size, price, noPrice) {
+  selSize = {size, price, noPrice};
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  updatePrice();
+  refreshWALink();
+}
+
+// ──────────────────────────────────────────────
+// FRAME OPTIONS
+// ──────────────────────────────────────────────
+function renderModalFrames() {
+  const wrap = document.getElementById('frameOpts');
+  wrap.innerHTML = FRAMES.map(f => `
+    <button class="frame-btn ${f.id===selFrame?'active':''}" onclick="selectFrame('${f.id}')">
+      <span class="frame-dot" style="background:${f.bg};${f.border?'border:'+f.border+';':''}"></span>
+      ${f.label}
+    </button>`).join('');
+}
+
+function selectFrame(id) {
+  selFrame = id;
+  renderModalFrames();
+  refreshWALink();
+}
+
+// ──────────────────────────────────────────────
+// PRICE
+// ──────────────────────────────────────────────
+function fmt(n) {
+  return 'Rp' + n.toLocaleString('id-ID');
+}
+
+function updatePrice() {
+  const el = document.getElementById('priceDisplay');
+  if (!selSize) {
+    el.textContent = '← Pilih ukuran dulu';
+    el.className = 'price-box-amount pending';
+    return;
+  }
+  if (selSize.noPrice) {
+    el.textContent = 'Hubungi kami';
+    el.className = 'price-box-amount contact';
+  } else {
+    el.textContent = fmt(selSize.price);
+    el.className = 'price-box-amount';
+  }
+}
+
+// ──────────────────────────────────────────────
+// WA LINK
+// ──────────────────────────────────────────────
+function refreshWALink() {
+  const btn = document.getElementById('ctaWA');
+  if (!currentPoster || !selSize) {
+    btn.href = '#';
+    return;
+  }
+  const frame = FRAMES.find(f => f.id === selFrame);
+  const priceStr = selSize.noPrice ? '(hubungi kami)' : fmt(selSize.price);
+  const msg = encodeURIComponent(
+    `Halo Srupa Labs! Saya mau order:\n\n` +
+    `🖼 Desain: ${currentPoster.title}\n` +
+    `📐 Ukuran: ${selSize.size} cm\n` +
+    `🪟 Frame: ${frame.label}\n` +
+    `💰 Harga: ${priceStr}\n\n` +
+    `Mohon konfirmasi ya. Terima kasih!`
+  );
+  btn.href = `https://wa.me/${WA}?text=${msg}`;
+}
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+renderGrid();
+</script>
+</body>
+</html>

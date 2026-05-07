@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Srupa Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fff;--off:#FAFAF9;--border:#E8E8E6;--muted:#9B9B97;
+  --dark:#111110;--red:#dc2626;--green:#16a34a;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;--r:6px;
+}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight:300;min-height:100vh}
+
+/* ── LOGIN ── */
+#loginScreen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:2rem;
+}
+.login-box{
+  background:white;border:1px solid var(--border);border-radius:12px;
+  padding:2.5rem;width:100%;max-width:380px;
+}
+.login-box h1{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:.35rem}
+.login-box p{font-size:.82rem;color:var(--muted);margin-bottom:2rem}
+.login-box label{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.4rem}
+.login-box input[type=password]{
+  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.9rem;outline:none;transition:border-color .2s;margin-bottom:1rem;
+}
+.login-box input:focus{border-color:#aaa}
+.login-err{font-size:.78rem;color:var(--red);margin-bottom:.75rem;display:none}
+
+/* ── MAIN APP ── */
+#app{display:none}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:56px;position:sticky;top:0;z-index:100;
+}
+.topbar-logo{font-family:var(--serif);font-size:1rem;color:var(--dark)}
+.topbar-logo span{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:.5rem}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-right a{font-size:.78rem;color:var(--muted);text-decoration:none}
+.topbar-right a:hover{color:var(--dark)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:white;border-right:1px solid var(--border);
+  padding:1.5rem;display:flex;flex-direction:column;gap:.35rem;
+}
+.sidebar-section{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;margin-top:.75rem}
+.sidebar-section:first-child{margin-top:0}
+.sidebar-link{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.6rem .75rem;border-radius:var(--r);
+  font-size:.84rem;color:var(--muted);cursor:pointer;
+  transition:background .15s,color .15s;text-decoration:none;border:none;background:none;font-family:var(--sans);width:100%;text-align:left;
+}
+.sidebar-link:hover{background:var(--off);color:var(--dark)}
+.sidebar-link.active{background:var(--dark);color:white}
+.sidebar-link svg{flex-shrink:0;opacity:.6}
+.sidebar-link.active svg{opacity:1}
+
+/* ── CONTENT AREA ── */
+.content{padding:2rem;overflow-y:auto}
+
+/* ── PANELS ── */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── STATS BAR ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem}
+.stat-card .num{font-family:var(--serif);font-size:2rem;font-weight:400;line-height:1}
+.stat-card .lbl{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+
+/* ── SECTION HEADER ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.section-head h2{font-family:var(--serif);font-size:1.4rem;font-weight:400}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.1rem;border-radius:var(--r);font-family:var(--sans);
+  font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:opacity .18s;
+}
+.btn:hover{opacity:.85}
+.btn-dark{background:var(--dark);color:white}
+.btn-outline{background:white;color:var(--dark);border:1px solid var(--border)}
+.btn-outline:hover{border-color:#aaa;opacity:1}
+.btn-red{background:var(--red);color:white}
+.btn-green{background:var(--green);color:white}
+.btn-sm{padding:.38rem .8rem;font-size:.75rem}
+
+/* ── POSTER TABLE ── */
+.poster-table{width:100%;border-collapse:collapse;background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.poster-table th{
+  text-align:left;padding:.75rem 1rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);border-bottom:1px solid var(--border);background:var(--off);
+}
+.poster-table td{
+  padding:.85rem 1rem;font-size:.84rem;
+  border-bottom:1px solid var(--border);vertical-align:middle;
+}
+.poster-table tr:last-child td{border-bottom:none}
+.poster-table tr:hover td{background:var(--off)}
+
+.thumb-cell{
+  width:48px;height:56px;object-fit:cover;border-radius:4px;
+  background:var(--off);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  flex-shrink:0;
+}
+.thumb-cell img{width:100%;height:100%;object-fit:cover}
+.thumb-cell span{font-size:.6rem;color:var(--muted);letter-spacing:.05em;text-align:center;padding:.25rem}
+
+.badge-row{display:flex;gap:.35rem;flex-wrap:wrap}
+.badge{font-size:.65rem;padding:.15rem .5rem;border-radius:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.badge-hot{background:#111;color:#fff}
+.badge-new{background:#16a34a;color:#fff}
+.badge-ltd{background:#dc2626;color:#fff}
+.badge-none{background:var(--off);color:var(--muted);border:1px solid var(--border)}
+
+.action-btns{display:flex;gap:.4rem}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:3rem;color:var(--muted)}
+.empty svg{opacity:.2;margin-bottom:.75rem}
+.empty p{font-size:.88rem}
+
+/* ── MODAL/DRAWER ── */
+.drawer-overlay{
+  display:none;position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+}
+.drawer-overlay.open{display:block}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:1000;
+  width:100%;max-width:520px;background:white;
+  box-shadow:-8px 0 32px rgba(0,0,0,.1);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);
+}
+.drawer.open{transform:none}
+.drawer-head{
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.drawer-head h3{font-family:var(--serif);font-size:1.2rem;font-weight:400}
+.drawer-close{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
+  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;color:var(--muted);
+}
+.drawer-body{flex:1;overflow-y:auto;padding:1.5rem}
+.drawer-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-shrink:0}
+
+/* ── FORM ── */
+.form-group{margin-bottom:1.25rem}
+.form-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.45rem}
+.form-label span{color:var(--red);margin-left:.2rem}
+.form-input,.form-textarea,.form-select{
+  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.88rem;color:var(--dark);outline:none;
+  transition:border-color .2s;background:white;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#aaa}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-hint{font-size:.72rem;color:var(--muted);margin-top:.3rem}
+
+/* image upload */
+.img-upload-area{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  position:relative;
+}
+.img-upload-area:hover{border-color:#aaa;background:var(--off)}
+.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-area p{font-size:.82rem;color:var(--muted)}
+.img-upload-area .icon{font-size:1.5rem;margin-bottom:.5rem}
+.img-preview{
+  width:100%;aspect-ratio:3/4;object-fit:cover;
+  border-radius:var(--r);border:1px solid var(--border);
+  margin-top:.75rem;display:none;
+}
+
+/* color picker row */
+.color-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.color-opt{
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:border-color .15s,transform .15s;
+}
+.color-opt:hover{transform:scale(1.1)}
+.color-opt.selected{border-color:var(--dark);transform:scale(1.1)}
+.color-opt.light{border-color:var(--border)}
+.color-opt.light.selected{border-color:var(--dark)}
+
+/* badge selector */
+.badge-opts{display:flex;gap:.5rem;flex-wrap:wrap}
+.badge-opt{
+  padding:.35rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;background:white;
+  font-family:var(--sans);
+}
+.badge-opt.selected{background:var(--dark);color:white;border-color:var(--dark)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:2000;
+  background:var(--dark);color:white;
+  padding:.75rem 1.25rem;border-radius:var(--r);
+  font-size:.82rem;font-weight:500;
+  transform:translateY(8px);opacity:0;
+  transition:all .25s;pointer-events:none;
+}
+.toast.show{transform:none;opacity:1}
+.toast.error{background:var(--red)}
+
+/* ── CONFIRM MODAL ── */
+.confirm-overlay{
+  display:none;position:fixed;inset:0;z-index:1100;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(3px);
+  align-items:center;justify-content:center;
+}
+.confirm-overlay.open{display:flex}
+.confirm-box{
+  background:white;border-radius:12px;padding:2rem;
+  width:100%;max-width:360px;border:1px solid var(--border);
+}
+.confirm-box h3{font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:.5rem}
+.confirm-box p{font-size:.84rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
+.confirm-btns{display:flex;gap:.6rem;justify-content:flex-end}
+
+/* ── EXPORT PANEL ── */
+.export-box{
+  background:white;border:1px solid var(--border);border-radius:var(--r);
+  padding:1.5rem;margin-bottom:1rem;
+}
+.export-box h3{font-size:.9rem;font-weight:600;margin-bottom:.35rem}
+.export-box p{font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.55}
+.code-block{
+  background:var(--off);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem;font-family:monospace;font-size:.72rem;
+  color:#555;overflow-x:auto;white-space:pre;max-height:180px;overflow-y:auto;
+  margin-bottom:.75rem;
+}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .drawer{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Srupa Labs</h1>
+    <p>Masuk ke halaman admin untuk mengelola poster.</p>
+    <label>Password Admin</label>
+    <input type="password" id="pwInput" placeholder="Masukkan password..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-err" id="loginErr">Password salah. Coba lagi.</div>
+    <button class="btn btn-dark" style="width:100%" onclick="doLogin()">Masuk →</button>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Password default: <strong>srupalabs2025</strong><br/>Ganti di baris <code>ADMIN_PASS</code> di file ini.</p>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Srupa Labs <span>Admin</span></div>
+    <div class="topbar-right">
+      <a href="katalog.html" target="_blank">↗ Lihat Katalog</a>
+      <a href="index.html" target="_blank">↗ Lihat Website</a>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">Menu</div>
+      <button class="sidebar-link active" onclick="showPanel('dashboard',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sidebar-link" onclick="showPanel('posters',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
+        Kelola Poster
+      </button>
+      <button class="sidebar-link" onclick="showPanel('export',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v9M4 6l4 4 4-4"/><path d="M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
+        Export Data
+      </button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="section-head">
+          <h2>Dashboard</h2>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="num" id="statTotal">0</div>
+            <div class="lbl">Total Poster</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="statWithImg">0</div>
+            <div class="lbl">Sudah Ada Foto</div>
+          </div>
+          <div class="stat-card">
+            <div class="num" id="statNoImg">0</div>
+            <div class="lbl">Belum Ada Foto</div>
+          </div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.5rem">
+          <h3 style="font-size:.9rem;font-weight:600;margin-bottom:.75rem">Quick Start</h3>
+          <ol style="font-size:.84rem;color:var(--muted);line-height:2.2;padding-left:1.25rem">
+            <li>Tambah poster baru di menu <strong style="color:var(--dark)">Kelola Poster</strong></li>
+            <li>Upload foto untuk setiap poster</li>
+            <li>Klik <strong style="color:var(--dark)">Export Data</strong> → copy kode ke <code>katalog.html</code></li>
+            <li>Upload ulang file ke Hostinger</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- KELOLA POSTER -->
+      <div class="panel" id="panel-posters">
+        <div class="section-head">
+          <h2>Kelola Poster</h2>
+          <button class="btn btn-dark" onclick="openDrawer()">+ Tambah Poster</button>
+        </div>
+        <div id="posterTableWrap"></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="panel" id="panel-export">
+        <div class="section-head"><h2>Export Data</h2></div>
+
+        <div class="export-box">
+          <h3>Cara pakai</h3>
+          <p>Setelah tambah/edit poster di admin, copy kode di bawah ini dan paste ke file <code>katalog.html</code> dan <code>index.html</code> — ganti bagian array <code>const POSTERS = [...]</code> yang lama.</p>
+        </div>
+
+        <div class="export-box">
+          <h3>Kode POSTERS untuk katalog.html & index.html</h3>
+          <p>Copy seluruh kode di bawah, paste ke bagian <code>// ── POSTER DATABASE ──</code> di kedua file.</p>
+          <div class="code-block" id="exportCode">// Belum ada poster</div>
+          <button class="btn btn-dark" onclick="copyExport()">Copy Kode</button>
+        </div>
+
+        <div class="export-box">
+          <h3>Backup & Restore</h3>
+          <p>Download semua data poster sebagai file JSON untuk backup, atau restore dari backup sebelumnya.</p>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="downloadBackup()">⬇ Download Backup</button>
+            <label class="btn btn-outline" style="cursor:pointer">
+              ⬆ Restore Backup
+              <input type="file" accept=".json" style="display:none" onchange="restoreBackup(this)"/>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- ══ DRAWER: ADD/EDIT POSTER ══ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 id="drawerTitle">Tambah Poster</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+
+    <!-- FOTO -->
+    <div class="form-group">
+      <label class="form-label">Foto Poster</label>
+      <div class="img-upload-area" id="uploadArea">
+        <input type="file" accept="image/*" id="imgInput" onchange="handleImg(this)"/>
+        <div class="icon">🖼</div>
+        <p>Klik untuk upload foto<br/><small>JPG, PNG, WebP — maks 2MB</small></p>
+      </div>
+      <img id="imgPreview" class="img-preview" alt="Preview"/>
+      <div class="form-hint" style="margin-top:.5rem">Foto akan disimpan sebagai URL. Untuk hasil terbaik, upload foto ke folder <code>images/</code> di Hostinger dan isi path-nya di bawah.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Atau masukkan path/URL foto</label>
+      <input type="text" class="form-input" id="fImgPath" placeholder="images/nama-poster.jpg atau https://..."/>
+      <div class="form-hint">Isi ini kalau foto sudah diupload ke Hostinger. Kosongkan kalau pakai upload di atas.</div>
+    </div>
+
+    <!-- INFO DASAR -->
+    <div class="form-group">
+      <label class="form-label">Judul Poster <span>*</span></label>
+      <input type="text" class="form-input" id="fTitle" placeholder="cth: Minimal Series 01"/>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Deskripsi <span>*</span></label>
+      <textarea class="form-textarea" id="fDesc" placeholder="Deskripsi singkat poster ini..."></textarea>
+    </div>
+
+    <!-- WARNA BG -->
+    <div class="form-group">
+      <label class="form-label">Warna Background Placeholder</label>
+      <div class="color-row" id="colorRow"></div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem">
+        <input type="color" id="fColorCustom" value="#F0ECE5" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
+        <span style="font-size:.78rem;color:var(--muted)">Atau pilih warna sendiri</span>
+      </div>
+    </div>
+
+    <!-- DARK MODE -->
+    <div class="form-group">
+      <label class="form-label">Tema Placeholder</label>
+      <div style="display:flex;gap:.5rem">
+        <button class="badge-opt selected" id="themeLightBtn" onclick="setTheme(false)">☀ Terang</button>
+        <button class="badge-opt" id="themeDarkBtn" onclick="setTheme(true)">🌑 Gelap</button>
+      </div>
+    </div>
+
+    <!-- TEKS PLACEHOLDER -->
+    <div class="form-group">
+      <label class="form-label">Teks Placeholder (tampil saat belum ada foto)</label>
+      <div class="form-row">
+        <div>
+          <input type="text" class="form-input" id="fLabel" placeholder="cth: MIN" maxlength="6"/>
+          <div class="form-hint">Baris atas (maks 6 huruf)</div>
+        </div>
+        <div>
+          <input type="text" class="form-input" id="fSub" placeholder="cth: IMAL 01" maxlength="10"/>
+          <div class="form-hint">Baris bawah</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGE -->
+    <div class="form-group">
+      <label class="form-label">Badge / Label</label>
+      <div class="badge-opts">
+        <button class="badge-opt selected" data-badge="" onclick="selectBadge(this,'')">Tidak ada</button>
+        <button class="badge-opt" data-badge="hot" onclick="selectBadge(this,'hot')" style="background:#111;color:#fff;border-color:#111">Terlaris</button>
+        <button class="badge-opt" data-badge="new" onclick="selectBadge(this,'new')" style="background:#16a34a;color:#fff;border-color:#16a34a">Baru</button>
+        <button class="badge-opt" data-badge="ltd" onclick="selectBadge(this,'ltd')" style="background:#dc2626;color:#fff;border-color:#dc2626">Limited</button>
+      </div>
+    </div>
+
+    <!-- TAGS -->
+    <div class="form-group">
+      <label class="form-label">Tags / Kategori</label>
+      <input type="text" class="form-input" id="fTags" placeholder="minimalis, abstract, botanical"/>
+      <div class="form-hint">Pisahkan dengan koma</div>
+    </div>
+
+    <!-- URUTAN -->
+    <div class="form-group">
+      <label class="form-label">Urutan Tampil</label>
+      <input type="number" class="form-input" id="fOrder" placeholder="1" min="1"/>
+      <div class="form-hint">Angka lebih kecil = tampil lebih awal</div>
+    </div>
+
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-outline" onclick="closeDrawer()">Batal</button>
+    <button class="btn btn-dark" onclick="savePoster()">Simpan Poster</button>
+  </div>
+</div>
+
+<!-- ══ CONFIRM DELETE ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Hapus Poster?</h3>
+    <p>Poster ini akan dihapus permanen dari daftar. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-red" onclick="confirmDelete()">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const ADMIN_PASS = 'srupalabs2025'; // ← Ganti password di sini
+const STORAGE_KEY = 'srupalabs_posters';
+
+const PRESET_COLORS = [
+  '#F0ECE5','#EAE6DF','#E5E8EA','#DDE2E8',
+  '#E8EDE6','#E2E8E1','#F2EEE8','#ECEAE4',
+  '#EDE5D8','#E8E0D2','#1E1E1E','#252525',
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let posters = [];
+let editingId = null;
+let deleteId  = null;
+let isDark    = false;
+let selectedBadge = '';
+let selectedColor = '#F0ECE5';
+let imgData   = ''; // base64 dari upload
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === ADMIN_PASS) {
+    sessionStorage.setItem('sl_auth','1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('sl_auth');
+  location.reload();
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  posters = raw ? JSON.parse(raw) : getDefaultPosters();
+  refresh();
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
+  refresh();
+}
+
+function refresh() {
+  updateStats();
+  renderTable();
+  renderExport();
+}
+
+function getDefaultPosters() {
+  return [
+    {id:1,title:'Minimal Series 01',desc:'Garis-garis bersih yang menenangkan. Cocok untuk kamar atau ruang kerja minimalis.',tags:['minimalis'],badge:'hot',bg:'#F0ECE5',dark:false,label:'MIN',sub:'IMAL 01',img:'',order:1},
+    {id:2,title:'Abstract Forms',desc:'Bentuk geometris abstrak yang playful. Energik dan modern.',tags:['abstract'],badge:'new',bg:'#E5E8EA',dark:false,label:'ABS',sub:'TRACT',img:'',order:2},
+    {id:3,title:'Dark Room',desc:'Kontras kuat, suasana dramatis. Cocok jadi statement piece.',tags:['dark'],badge:'',bg:'#1E1E1E',dark:true,label:'DRK',sub:'ROOM',img:'',order:3},
+    {id:4,title:'Botanical Lines',desc:'Ilustrasi botanical minimalis. Natural untuk area makan.',tags:['botanical'],badge:'',bg:'#E8EDE6',dark:false,label:'BOT',sub:'ANIK',img:'',order:4},
+  ];
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function updateStats() {
+  const withImg = posters.filter(p => p.img).length;
+  document.getElementById('statTotal').textContent  = posters.length;
+  document.getElementById('statWithImg').textContent = withImg;
+  document.getElementById('statNoImg').textContent   = posters.length - withImg;
+}
+
+// ══════════════════════════════════════════
+// TABLE
+// ══════════════════════════════════════════
+function renderTable() {
+  const wrap = document.getElementById('posterTableWrap');
+  const sorted = [...posters].sort((a,b) => (a.order||99) - (b.order||99));
+
+  if (!sorted.length) {
+    wrap.innerHTML = `<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="30" height="30" rx="3"/><path d="M15 15h10M15 20h10M15 25h6"/></svg>
+      <p>Belum ada poster. Tambah poster pertamamu!</p>
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<table class="poster-table">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Judul & Deskripsi</th>
+        <th>Tags</th>
+        <th>Badge</th>
+        <th>Urutan</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${sorted.map(p => `
+      <tr>
+        <td>
+          <div class="thumb-cell" style="background:${p.bg}">
+            ${p.img
+              ? `<img src="${p.img}" alt="${p.title}"/>`
+              : `<span>${p.label}</span>`}
+          </div>
+        </td>
+        <td>
+          <div style="font-weight:500;margin-bottom:.2rem">${p.title}</div>
+          <div style="font-size:.75rem;color:var(--muted);max-width:200px">${p.desc.substring(0,60)}...</div>
+        </td>
+        <td>
+          <div class="badge-row">
+            ${(p.tags||[]).map(t=>`<span class="badge badge-none">${t}</span>`).join('')}
+          </div>
+        </td>
+        <td>
+          ${p.badge
+            ? `<span class="badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>`
+            : `<span style="color:var(--muted);font-size:.75rem">—</span>`}
+        </td>
+        <td style="font-size:.84rem">${p.order||'—'}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-outline btn-sm" onclick="openEdit(${p.id})">Edit</button>
+            <button class="btn btn-sm" style="background:#fff1f2;color:var(--red);border:1px solid #fecdd3" onclick="askDelete(${p.id})">Hapus</button>
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ══════════════════════════════════════════
+// DRAWER
+// ══════════════════════════════════════════
+function openDrawer(id = null) {
+  editingId = id;
+  imgData = '';
+  document.getElementById('drawerTitle').textContent = id ? 'Edit Poster' : 'Tambah Poster';
+
+  // reset form
+  ['fTitle','fDesc','fLabel','fSub','fTags','fImgPath'].forEach(f => document.getElementById(f).value = '');
+  document.getElementById('fOrder').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('uploadArea').style.display = 'block';
+
+  isDark = false;
+  selectedBadge = '';
+  selectedColor = '#F0ECE5';
+
+  if (id) {
+    const p = posters.find(x => x.id === id);
+    if (p) {
+      document.getElementById('fTitle').value  = p.title;
+      document.getElementById('fDesc').value   = p.desc;
+      document.getElementById('fLabel').value  = p.label||'';
+      document.getElementById('fSub').value    = p.sub||'';
+      document.getElementById('fTags').value   = (p.tags||[]).join(', ');
+      document.getElementById('fOrder').value  = p.order||'';
+      document.getElementById('fImgPath').value = p.img||'';
+      isDark = !!p.dark;
+      selectedBadge = p.badge||'';
+      selectedColor = p.bg||'#F0ECE5';
+      if (p.img) {
+        document.getElementById('imgPreview').src = p.img;
+        document.getElementById('imgPreview').style.display = 'block';
+      }
+    }
+  }
+
+  renderColorRow();
+  renderThemeBtns();
+  renderBadgeOpts();
+
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function openEdit(id) { openDrawer(id); }
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// COLOR ROW
+// ══════════════════════════════════════════
+function renderColorRow() {
+  const row = document.getElementById('colorRow');
+  row.innerHTML = PRESET_COLORS.map(c => `
+    <div class="color-opt ${isLight(c)?'light':''} ${selectedColor===c?'selected':''}"
+      style="background:${c}"
+      onclick="pickColor('${c}')"></div>
+  `).join('');
+  document.getElementById('fColorCustom').value = selectedColor;
+}
+
+function pickColor(c) {
+  selectedColor = c;
+  document.getElementById('fColorCustom').value = c;
+  renderColorRow();
+}
+
+document.getElementById('fColorCustom').addEventListener('input', e => {
+  selectedColor = e.target.value;
+  renderColorRow();
+});
+
+function isLight(hex) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return (r*299+g*587+b*114)/1000 > 128;
+}
+
+// ══════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════
+function setTheme(dark) {
+  isDark = dark;
+  renderThemeBtns();
+}
+function renderThemeBtns() {
+  document.getElementById('themeLightBtn').className = 'badge-opt' + (!isDark?' selected':'');
+  document.getElementById('themeDarkBtn').className  = 'badge-opt' + (isDark?' selected':'');
+}
+
+// ══════════════════════════════════════════
+// BADGE
+// ══════════════════════════════════════════
+function selectBadge(el, val) {
+  selectedBadge = val;
+  renderBadgeOpts();
+}
+function renderBadgeOpts() {
+  document.querySelectorAll('.badge-opt[data-badge]').forEach(b => {
+    b.classList.toggle('selected', b.dataset.badge === selectedBadge);
+    if(b.dataset.badge==='' && selectedBadge==='') b.classList.add('selected');
+  });
+}
+
+// ══════════════════════════════════════════
+// IMAGE UPLOAD
+// ══════════════════════════════════════════
+function handleImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Foto terlalu besar. Maks 2MB.','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    imgData = e.target.result;
+    document.getElementById('imgPreview').src = imgData;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('fImgPath').value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════
+// SAVE
+// ══════════════════════════════════════════
+function savePoster() {
+  const title = document.getElementById('fTitle').value.trim();
+  const desc  = document.getElementById('fDesc').value.trim();
+  if (!title) { showToast('Judul wajib diisi.','error'); return; }
+  if (!desc)  { showToast('Deskripsi wajib diisi.','error'); return; }
+
+  const imgPath = document.getElementById('fImgPath').value.trim();
+  const finalImg = imgData || imgPath || '';
+
+  const poster = {
+    id: editingId || Date.now(),
+    title,
+    desc,
+    tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    badge: selectedBadge,
+    bg: selectedColor,
+    dark: isDark,
+    label: document.getElementById('fLabel').value.trim() || title.substring(0,3).toUpperCase(),
+    sub:   document.getElementById('fSub').value.trim()   || '',
+    img: finalImg,
+    order: parseInt(document.getElementById('fOrder').value) || posters.length + 1,
+    // untuk kompatibilitas dengan index.html (POSTERS lama pakai 'palette')
+    palette: [selectedColor, selectedColor],
+    tag: selectedBadge,
+  };
+
+  if (editingId) {
+    const idx = posters.findIndex(p => p.id === editingId);
+    if (idx > -1) posters[idx] = poster;
+  } else {
+    posters.push(poster);
+  }
+
+  saveData();
+  closeDrawer();
+  showToast(editingId ? 'Poster berhasil diupdate!' : 'Poster berhasil ditambahkan!');
+  imgData = '';
+}
+
+// ══════════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════════
+function askDelete(id) {
+  deleteId = id;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  deleteId = null;
+  document.getElementById('confirmOverlay').classList.remove('open');
+}
+function confirmDelete() {
+  posters = posters.filter(p => p.id !== deleteId);
+  saveData();
+  closeConfirm();
+  showToast('Poster dihapus.');
+}
+
+// ══════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════
+function renderExport() {
+  const sorted = [...posters].sort((a,b) => (a.order||99)-(b.order||99));
+  const code = `const POSTERS = ${JSON.stringify(sorted, null, 2)};`;
+  document.getElementById('exportCode').textContent = code;
+}
+
+function copyExport() {
+  const code = document.getElementById('exportCode').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
+}
+
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(posters, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `srupalabs-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function restoreBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error();
+      posters = data;
+      saveData();
+      showToast('Backup berhasil direstore!');
+    } catch { showToast('File tidak valid.','error'); }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════
+// PANEL NAVIGATION
+// ══════════════════════════════════════════
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type?' '+type:'');
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if (sessionStorage.getItem('sl_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadData();
+}
+document.getElementById('pwInput').focus();
+</script>
+</body>
+</html>
