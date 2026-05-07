@@ -407,13 +407,16 @@ body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight
         <p>Klik untuk upload foto<br/><small>JPG, PNG, WebP — maks 2MB</small></p>
       </div>
       <img id="imgPreview" class="img-preview" alt="Preview"/>
-      <div class="form-hint" style="margin-top:.5rem">Foto akan disimpan sebagai URL. Untuk hasil terbaik, upload foto ke folder <code>images/</code> di Hostinger dan isi path-nya di bawah.</div>
+      <div class="form-hint" style="margin-top:.5rem">
+        <strong>Resolusi yang disarankan:</strong> <code>800 × 800 px</code> untuk SKU kotak (1:1), atau <code>800 × 1067 px</code> untuk portrait (3:4).<br/>
+        Format JPG/PNG, background putih atau transparan (PNG). Untuk hasil terbaik upload foto ke folder <code>images/</code> di GitHub lalu isi path-nya di bawah.
+      </div>
     </div>
 
     <div class="form-group">
       <label class="form-label">Atau masukkan path/URL foto</label>
       <input type="text" class="form-input" id="fImgPath" placeholder="images/nama-poster.jpg atau https://..."/>
-      <div class="form-hint">Isi ini kalau foto sudah diupload ke Hostinger. Kosongkan kalau pakai upload di atas.</div>
+      <div class="form-hint">Isi ini kalau foto sudah diupload ke GitHub. Kosongkan kalau pakai upload di atas.</div>
     </div>
 
     <!-- INFO DASAR -->
@@ -427,28 +430,32 @@ body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight
       <textarea class="form-textarea" id="fDesc" placeholder="Deskripsi singkat poster ini..."></textarea>
     </div>
 
-    <!-- WARNA BG -->
+    <!-- LINK PER SKU -->
     <div class="form-group">
-      <label class="form-label">Warna Background Placeholder</label>
-      <div class="color-row" id="colorRow"></div>
-      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem">
-        <input type="color" id="fColorCustom" value="#F0ECE5" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
-        <span style="font-size:.78rem;color:var(--muted)">Atau pilih warna sendiri</span>
-      </div>
+      <label class="form-label">Link Shopee (SKU ini)</label>
+      <input type="text" class="form-input" id="fShopee" placeholder="https://shopee.co.id/product/..."/>
+      <div class="form-hint">Link produk spesifik di Shopee untuk desain ini</div>
     </div>
 
-    <!-- DARK MODE -->
     <div class="form-group">
-      <label class="form-label">Tema Placeholder</label>
-      <div style="display:flex;gap:.5rem">
-        <button class="badge-opt selected" id="themeLightBtn" onclick="setTheme(false)">☀ Terang</button>
-        <button class="badge-opt" id="themeDarkBtn" onclick="setTheme(true)">🌑 Gelap</button>
+      <label class="form-label">Link TikTok Shop (SKU ini)</label>
+      <input type="text" class="form-input" id="fTiktok" placeholder="https://www.tiktok.com/..."/>
+      <div class="form-hint">Link produk spesifik di TikTok Shop untuk desain ini</div>
+    </div>
+
+    <!-- WARNA BG -->
+    <div class="form-group">
+      <label class="form-label">Warna Background</label>
+      <div class="color-row" id="colorRow"></div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem">
+        <input type="color" id="fColorCustom" value="#F5F2E9" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
+        <span style="font-size:.78rem;color:var(--muted)">Pilih warna lain</span>
       </div>
     </div>
 
     <!-- TEKS PLACEHOLDER -->
     <div class="form-group">
-      <label class="form-label">Teks Placeholder (tampil saat belum ada foto)</label>
+      <label class="form-label">Teks Placeholder <span style="font-weight:400;text-transform:none;letter-spacing:0">(tampil saat belum ada foto)</span></label>
       <div class="form-row">
         <div>
           <input type="text" class="form-input" id="fLabel" placeholder="cth: MIN" maxlength="6"/>
@@ -512,13 +519,11 @@ body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const ADMIN_PASS = 'SalfaSahara7'; // ← Ganti password di sini
+const ADMIN_PASS = 'srupalabs2025'; // ← Ganti password di sini
 const STORAGE_KEY = 'srupalabs_posters';
 
 const PRESET_COLORS = [
-  '#F0ECE5','#EAE6DF','#E5E8EA','#DDE2E8',
-  '#E8EDE6','#E2E8E1','#F2EEE8','#ECEAE4',
-  '#EDE5D8','#E8E0D2','#1E1E1E','#252525',
+  '#FFFFFF','#F5F2E9',
 ];
 
 // ══════════════════════════════════════════
@@ -663,28 +668,28 @@ function openDrawer(id = null) {
   document.getElementById('drawerTitle').textContent = id ? 'Edit Poster' : 'Tambah Poster';
 
   // reset form
-  ['fTitle','fDesc','fLabel','fSub','fTags','fImgPath'].forEach(f => document.getElementById(f).value = '');
+  ['fTitle','fDesc','fLabel','fSub','fTags','fImgPath','fShopee','fTiktok'].forEach(f => document.getElementById(f).value = '');
   document.getElementById('fOrder').value = '';
   document.getElementById('imgPreview').style.display = 'none';
   document.getElementById('uploadArea').style.display = 'block';
 
-  isDark = false;
   selectedBadge = '';
-  selectedColor = '#F0ECE5';
+  selectedColor = '#FFFFFF';
 
   if (id) {
     const p = posters.find(x => x.id === id);
     if (p) {
-      document.getElementById('fTitle').value  = p.title;
-      document.getElementById('fDesc').value   = p.desc;
-      document.getElementById('fLabel').value  = p.label||'';
-      document.getElementById('fSub').value    = p.sub||'';
-      document.getElementById('fTags').value   = (p.tags||[]).join(', ');
-      document.getElementById('fOrder').value  = p.order||'';
+      document.getElementById('fTitle').value   = p.title;
+      document.getElementById('fDesc').value    = p.desc;
+      document.getElementById('fLabel').value   = p.label||'';
+      document.getElementById('fSub').value     = p.sub||'';
+      document.getElementById('fTags').value    = (p.tags||[]).join(', ');
+      document.getElementById('fOrder').value   = p.order||'';
       document.getElementById('fImgPath').value = p.img||'';
-      isDark = !!p.dark;
+      document.getElementById('fShopee').value  = p.shopeeUrl||'';
+      document.getElementById('fTiktok').value  = p.tiktokUrl||'';
       selectedBadge = p.badge||'';
-      selectedColor = p.bg||'#F0ECE5';
+      selectedColor = p.bg||'#FFFFFF';
       if (p.img) {
         document.getElementById('imgPreview').src = p.img;
         document.getElementById('imgPreview').style.display = 'block';
@@ -693,7 +698,6 @@ function openDrawer(id = null) {
   }
 
   renderColorRow();
-  renderThemeBtns();
   renderBadgeOpts();
 
   document.getElementById('drawerOverlay').classList.add('open');
@@ -734,18 +738,6 @@ document.getElementById('fColorCustom').addEventListener('input', e => {
 function isLight(hex) {
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
   return (r*299+g*587+b*114)/1000 > 128;
-}
-
-// ══════════════════════════════════════════
-// THEME
-// ══════════════════════════════════════════
-function setTheme(dark) {
-  isDark = dark;
-  renderThemeBtns();
-}
-function renderThemeBtns() {
-  document.getElementById('themeLightBtn').className = 'badge-opt' + (!isDark?' selected':'');
-  document.getElementById('themeDarkBtn').className  = 'badge-opt' + (isDark?' selected':'');
 }
 
 // ══════════════════════════════════════════
@@ -798,12 +790,13 @@ function savePoster() {
     tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
     badge: selectedBadge,
     bg: selectedColor,
-    dark: isDark,
+    dark: false,
     label: document.getElementById('fLabel').value.trim() || title.substring(0,3).toUpperCase(),
-    sub:   document.getElementById('fSub').value.trim()   || '',
+    sub:   document.getElementById('fSub').value.trim() || '',
     img: finalImg,
+    shopeeUrl: document.getElementById('fShopee').value.trim(),
+    tiktokUrl: document.getElementById('fTiktok').value.trim(),
     order: parseInt(document.getElementById('fOrder').value) || posters.length + 1,
-    // untuk kompatibilitas dengan index.html (POSTERS lama pakai 'palette')
     palette: [selectedColor, selectedColor],
     tag: selectedBadge,
   };
