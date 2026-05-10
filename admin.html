@@ -1,905 +1,2266 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin — Srupa Labs</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Srupa Labs — Business Suite</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' font-weight='700' fill='white' font-family='sans-serif'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<script type="module">
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const cfg = {
+    apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
+    authDomain:"srupa-inventory.firebaseapp.com",
+    projectId:"srupa-inventory",
+    storageBucket:"srupa-inventory.firebasestorage.app",
+    messagingSenderId:"274644925840",
+    appId:"1:274644925840:web:e5f13a56077ee030db0715",
+    measurementId:"G-6DCXJ4KXXT"
+  };
+  try {
+    const app = initializeApp(cfg);
+    getAnalytics(app);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    enableIndexedDbPersistence(db).catch(()=>{});
+    window._fb = { db, auth, collection, doc, setDoc, deleteDoc, onSnapshot };
+    onAuthStateChanged(auth, user => {
+      window._user = user || null;
+      const login = document.getElementById('loginScreen');
+      const app2  = document.getElementById('appShell');
+      if (user) {
+        login.style.display = 'none';
+        app2.style.display  = 'flex';
+        document.getElementById('uEmail').textContent  = user.email;
+        document.getElementById('uAvatar').textContent = user.email[0].toUpperCase();
+        if (!window._listening) { window._listening = true; window._startListeners(); }
+      } else {
+        login.style.display = 'flex';
+        app2.style.display  = 'none';
+        window._listening   = false;
+      }
+    });
+    window._login  = (e,p) => signInWithEmailAndPassword(auth,e,p);
+    window._logout = ()    => signOut(auth);
+    window.firebaseReady = true;
+  } catch(err) {
+    console.error(err);
+    window.firebaseInitError = err.message;
+    window.firebaseReady = true;
+  }
+</script>
+
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ─── RESET ─── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --white:#fff;--off:#FAFAF9;--border:#E8E8E6;--muted:#9B9B97;
-  --dark:#111110;--red:#dc2626;--green:#16a34a;
-  --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;--r:6px;
+  --bg:#F0F2F5;--surface:#fff;--border:#E4E8EE;
+  --t1:#111827;--t2:#6B7280;--t3:#9CA3AF;
+  --accent:#1A73E8;--accent-lt:#EBF3FD;
+  --green:#16A34A;--green-lt:#DCFCE7;
+  --amber:#D97706;--amber-lt:#FEF3C7;
+  --red:#DC2626;--red-lt:#FEE2E2;
+  --gray-lt:#F3F4F6;
+  --nav:240px;--hdr:60px;--r:12px;
+  --font:'DM Sans',sans-serif;
 }
-html{-webkit-font-smoothing:antialiased}
-body{background:var(--off);color:var(--dark);font-family:var(--sans);font-weight:300;min-height:100vh}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
 
-/* ── LOGIN ── */
-#loginScreen{
-  display:flex;align-items:center;justify-content:center;
-  min-height:100vh;padding:2rem;
-}
-.login-box{
-  background:white;border:1px solid var(--border);border-radius:12px;
-  padding:2.5rem;width:100%;max-width:380px;
-}
-.login-box h1{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:.35rem}
-.login-box p{font-size:.82rem;color:var(--muted);margin-bottom:2rem}
-.login-box label{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.4rem}
-.login-box input[type=password]{
-  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.9rem;outline:none;transition:border-color .2s;margin-bottom:1rem;
-}
-.login-box input:focus{border-color:#aaa}
-.login-err{font-size:.78rem;color:var(--red);margin-bottom:.75rem;display:none}
+/* ─── LOGIN ─── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#e8edf5,#d0daea)}
+.lcard{background:var(--surface);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.llogo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.lmark{width:44px;height:44px;display:grid;place-items:center;flex-shrink:0}
+.lname{font-size:17px;font-weight:700}.lsub{font-size:12px;color:var(--t2)}
+.lcard h2{font-size:21px;font-weight:700;margin-bottom:4px}
+.lcard>p{font-size:13px;color:var(--t2);margin-bottom:24px}
+.lf{margin-bottom:13px}
+.lf label{display:block;font-size:12px;font-weight:600;margin-bottom:5px}
+.lf input{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
+.lf input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.12)}
+.lbtn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:6px;transition:background .2s}
+.lbtn:hover:not(:disabled){background:#1558b8}
+.lbtn:disabled{opacity:.65;cursor:not-allowed}
+.lerr{margin-top:10px;padding:10px 13px;background:var(--red-lt);color:var(--red);border-radius:8px;font-size:13px;display:none}
 
-/* ── MAIN APP ── */
-#app{display:none}
+/* ─── APP SHELL ─── */
+#appShell{display:none;min-height:100vh}
 
-/* ── TOPBAR ── */
-.topbar{
-  background:white;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 2rem;height:56px;position:sticky;top:0;z-index:100;
-}
-.topbar-logo{font-family:var(--serif);font-size:1rem;color:var(--dark)}
-.topbar-logo span{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:.5rem}
-.topbar-right{display:flex;align-items:center;gap:1rem}
-.topbar-right a{font-size:.78rem;color:var(--muted);text-decoration:none}
-.topbar-right a:hover{color:var(--dark)}
-
-/* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
-
-/* ── SIDEBAR ── */
+/* ─── SIDEBAR ─── */
 .sidebar{
-  background:white;border-right:1px solid var(--border);
-  padding:1.5rem;display:flex;flex-direction:column;gap:.35rem;
+  width:var(--nav);background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;
+  z-index:200;overflow-y:auto;transition:transform .25s ease;
 }
-.sidebar-section{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;margin-top:.75rem}
-.sidebar-section:first-child{margin-top:0}
-.sidebar-link{
-  display:flex;align-items:center;gap:.65rem;
-  padding:.6rem .75rem;border-radius:var(--r);
-  font-size:.84rem;color:var(--muted);cursor:pointer;
-  transition:background .15s,color .15s;text-decoration:none;border:none;background:none;font-family:var(--sans);width:100%;text-align:left;
-}
-.sidebar-link:hover{background:var(--off);color:var(--dark)}
-.sidebar-link.active{background:var(--dark);color:white}
-.sidebar-link svg{flex-shrink:0;opacity:.6}
-.sidebar-link.active svg{opacity:1}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:190}
+.slogo{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.smark{width:34px;height:34px;display:grid;place-items:center;flex-shrink:0}
+.sname{font-size:15px;font-weight:700}.ssub{font-size:11px;color:var(--t2)}
+.nsec{padding:12px 10px 5px}
+.nseclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:0 8px;margin-bottom:4px}
+.nitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
+.nitem:hover{background:var(--gray-lt);color:var(--t1)}
+.nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:600}
+.nico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;font-size:11px;font-weight:700;background:var(--red-lt);color:var(--red);padding:2px 7px;border-radius:20px}
+.sfooter{margin-top:auto;padding:12px 10px;border-top:1px solid var(--border)}
+.urow{display:flex;align-items:center;gap:8px}
+.uavatar{width:32px;height:32px;background:var(--accent);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.uinfo{flex:1;min-width:0}
+.uemail{font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urole{font-size:11px;color:var(--t2)}
+.logoutbtn{background:none;border:none;cursor:pointer;color:var(--t3);font-size:17px;padding:4px;border-radius:6px;transition:all .15s;flex-shrink:0}
+.logoutbtn:hover{color:var(--red);background:var(--red-lt)}
 
-/* ── CONTENT AREA ── */
-.content{padding:2rem;overflow-y:auto}
+/* ─── TOPBAR ─── */
+.main{margin-left:var(--nav);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.topbar{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--t2);font-size:20px;flex-shrink:0}
+.hamburger:hover{background:var(--gray-lt)}
+.ttitle{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsub{font-size:11px;color:var(--t2);white-space:nowrap}
+.fbstat{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.fbstat.connecting{background:var(--amber-lt);color:var(--amber)}
+.fbstat.connected{background:var(--green-lt);color:var(--green)}
+.fbstat.error{background:var(--red-lt);color:var(--red)}
+.fdot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.fdot.pulse{animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
-/* ── PANELS ── */
-.panel{display:none}
-.panel.active{display:block}
+/* ─── PAGES ─── */
+.page{padding:18px 20px;display:none}
+.page.active{display:block}
 
-/* ── STATS BAR ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
-.stat-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem}
-.stat-card .num{font-family:var(--serif);font-size:2rem;font-weight:400;line-height:1}
-.stat-card .lbl{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+/* ─── STATS ROW ─── */
+.srow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px}
+.sico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.sico.blue{background:var(--accent-lt)}.sico.green{background:var(--green-lt)}.sico.amber{background:var(--amber-lt)}.sico.red{background:var(--red-lt)}.sico.purple{background:#EDE9FE}
+.sval{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+.slbl{font-size:11.5px;color:var(--t2);font-weight:500}
 
-/* ── SECTION HEADER ── */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
-.section-head h2{font-family:var(--serif);font-size:1.4rem;font-weight:400}
+/* ─── CARD ─── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.chd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ctitle{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.ctitle::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.cbody{padding:16px}
 
-/* ── BUTTONS ── */
-.btn{
-  display:inline-flex;align-items:center;gap:.4rem;
-  padding:.55rem 1.1rem;border-radius:var(--r);font-family:var(--sans);
-  font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:opacity .18s;
-}
-.btn:hover{opacity:.85}
-.btn-dark{background:var(--dark);color:white}
-.btn-outline{background:white;color:var(--dark);border:1px solid var(--border)}
-.btn-outline:hover{border-color:#aaa;opacity:1}
-.btn-red{background:var(--red);color:white}
-.btn-green{background:var(--green);color:white}
-.btn-sm{padding:.38rem .8rem;font-size:.75rem}
+/* ─── TWO COL GRID ─── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-wrap{position:relative;height:200px}
 
-/* ── POSTER TABLE ── */
-.poster-table{width:100%;border-collapse:collapse;background:white;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.poster-table th{
-  text-align:left;padding:.75rem 1rem;
-  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);border-bottom:1px solid var(--border);background:var(--off);
-}
-.poster-table td{
-  padding:.85rem 1rem;font-size:.84rem;
-  border-bottom:1px solid var(--border);vertical-align:middle;
-}
-.poster-table tr:last-child td{border-bottom:none}
-.poster-table tr:hover td{background:var(--off)}
+/* ─── INVENTORY GRID ─── */
+.igrid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+.igrid .card:first-child{position:sticky;top:72px}
 
-.thumb-cell{
-  width:48px;height:56px;object-fit:cover;border-radius:4px;
-  background:var(--off);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-  flex-shrink:0;
-}
-.thumb-cell img{width:100%;height:100%;object-fit:cover}
-.thumb-cell span{font-size:.6rem;color:var(--muted);letter-spacing:.05em;text-align:center;padding:.25rem}
+/* ─── INNER TABS ─── */
+.itabs{display:flex;gap:3px;background:var(--gray-lt);padding:4px;border-radius:10px;width:fit-content;margin-bottom:16px}
+.itab{padding:7px 16px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--t2);background:none;transition:all .15s;white-space:nowrap}
+.itab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.1)}
 
-.badge-row{display:flex;gap:.35rem;flex-wrap:wrap}
-.badge{font-size:.65rem;padding:.15rem .5rem;border-radius:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.badge-hot{background:#111;color:#fff}
-.badge-new{background:#16a34a;color:#fff}
-.badge-ltd{background:#dc2626;color:#fff}
-.badge-none{background:var(--off);color:var(--muted);border:1px solid var(--border)}
+/* ─── FORM ─── */
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--t1)}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13.5px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);
+  transition:border-color .2s,box-shadow .2s;
+}
+.fg textarea{resize:vertical;min-height:56px}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.fg input.err{border-color:var(--red)}
+.ferr{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-.action-btns{display:flex;gap:.4rem}
+/* ─── ITEM BUILDER ─── */
+.item-builder{background:var(--gray-lt);border-radius:10px;padding:12px;margin-bottom:12px}
+.item-builder-title{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.item-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.item-row{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px}
+.item-row-info{flex:1;min-width:0}
+.item-row-name{font-size:13px;font-weight:600;color:var(--t1)}
+.item-row-sub{font-size:11.5px;color:var(--t2);margin-top:2px}
+.item-row-del{background:var(--red-lt);color:var(--red);border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;flex-shrink:0}
+.add-item-btn{width:100%;padding:8px;background:none;border:1.5px dashed var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font);transition:all .15s}
+.add-item-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
 
-/* ── EMPTY STATE ── */
-.empty{text-align:center;padding:3rem;color:var(--muted)}
-.empty svg{opacity:.2;margin-bottom:.75rem}
-.empty p{font-size:.88rem}
+/* ─── BUTTONS ─── */
+.pbtn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;margin-top:3px}
+.pbtn:hover:not(:disabled){background:#1558b8}
+.pbtn:disabled{opacity:.65;cursor:not-allowed}
+.pbtn.green{background:var(--green)}.pbtn.green:hover:not(:disabled){background:#15803d}
+.pbtn.outline{background:none;border:1.5px solid var(--border);color:var(--t1)}.pbtn.outline:hover:not(:disabled){background:var(--gray-lt)}
 
-/* ── MODAL/DRAWER ── */
-.drawer-overlay{
-  display:none;position:fixed;inset:0;z-index:900;
-  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+/* ─── FILTER BAR ─── */
+.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fbar select,.fbar input[type=month],.fbar input[type=text]{
+  padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;font-family:var(--font);outline:none;background:var(--surface);
+  transition:border-color .2s;
 }
-.drawer-overlay.open{display:block}
-.drawer{
-  position:fixed;top:0;right:0;bottom:0;z-index:1000;
-  width:100%;max-width:520px;background:white;
-  box-shadow:-8px 0 32px rgba(0,0,0,.1);
-  display:flex;flex-direction:column;
-  transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);
-}
-.drawer.open{transform:none}
-.drawer-head{
-  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
-.drawer-head h3{font-family:var(--serif);font-size:1.2rem;font-weight:400}
-.drawer-close{
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
-  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;color:var(--muted);
-}
-.drawer-body{flex:1;overflow-y:auto;padding:1.5rem}
-.drawer-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-shrink:0}
+.fbar select:focus,.fbar input:focus{border-color:var(--accent)}
 
-/* ── FORM ── */
-.form-group{margin-bottom:1.25rem}
-.form-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.45rem}
-.form-label span{color:var(--red);margin-left:.2rem}
-.form-input,.form-textarea,.form-select{
-  width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.88rem;color:var(--dark);outline:none;
-  transition:border-color .2s;background:white;
-}
-.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#aaa}
-.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-hint{font-size:.72rem;color:var(--muted);margin-top:.3rem}
+/* ─── SEARCH ─── */
+.srchwrap{position:relative;margin-bottom:12px}
+.srchwrap input{width:100%;padding:8px 32px 8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
+.srchwrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.srchico{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
 
-/* image upload */
-.img-upload-area{
-  border:2px dashed var(--border);border-radius:var(--r);
-  padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
-  position:relative;
-}
-.img-upload-area:hover{border-color:#aaa;background:var(--off)}
-.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.img-upload-area p{font-size:.82rem;color:var(--muted)}
-.img-upload-area .icon{font-size:1.5rem;margin-bottom:.5rem}
-.img-preview{
-  width:100%;aspect-ratio:3/4;object-fit:cover;
-  border-radius:var(--r);border:1px solid var(--border);
-  margin-top:.75rem;display:none;
-}
+/* ─── TABLE ─── */
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:520px}
+thead tr{background:var(--gray-lt)}
+th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#fafbfc}
+.erow td{text-align:center;padding:36px 20px;color:var(--t3);font-size:13px;min-width:auto}
 
-/* color picker row */
-.color-row{display:flex;gap:.5rem;flex-wrap:wrap}
-.color-opt{
-  width:32px;height:32px;border-radius:50%;cursor:pointer;
-  border:2px solid transparent;transition:border-color .15s,transform .15s;
-}
-.color-opt:hover{transform:scale(1.1)}
-.color-opt.selected{border-color:var(--dark);transform:scale(1.1)}
-.color-opt.light{border-color:var(--border)}
-.color-opt.light.selected{border-color:var(--dark)}
+/* ─── BADGES ─── */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.badge.high{background:var(--green-lt);color:var(--green)}
+.badge.medium{background:var(--amber-lt);color:var(--amber)}
+.badge.low{background:var(--red-lt);color:var(--red)}
+.badge.out{background:var(--gray-lt);color:var(--t3)}
+.badge.shopee{background:#ff6000;color:#fff}
+.badge.tiktok{background:#111;color:#fff}
+.badge.instagram{background:linear-gradient(135deg,#833ab4,#fd1d1d);color:#fff}
+.badge.income{background:var(--green-lt);color:var(--green)}
+.badge.expense{background:var(--red-lt);color:var(--red)}
+.badge.proses{background:var(--amber-lt);color:var(--amber)}
+.badge.selesai{background:var(--green-lt);color:var(--green)}
+.badge.batal{background:var(--gray-lt);color:var(--t3)}
 
-/* badge selector */
-.badge-opts{display:flex;gap:.5rem;flex-wrap:wrap}
-.badge-opt{
-  padding:.35rem .85rem;border:1px solid var(--border);border-radius:var(--r);
-  font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;background:white;
-  font-family:var(--sans);
-}
-.badge-opt.selected{background:var(--dark);color:white;border-color:var(--dark)}
+/* ─── ACTIONS ─── */
+.acell{display:flex;gap:4px;flex-wrap:wrap}
+.bsm{padding:5px 9px;border:none;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
+.bedit{background:var(--accent-lt);color:var(--accent)}.bedit:hover{background:#cce0fc}
+.bdel{background:var(--red-lt);color:var(--red)}.bdel:hover{background:#fecaca}
+.bgreen{background:var(--green-lt);color:var(--green)}.bgreen:hover{background:#bbf7d0}
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:2rem;right:2rem;z-index:2000;
-  background:var(--dark);color:white;
-  padding:.75rem 1.25rem;border-radius:var(--r);
-  font-size:.82rem;font-weight:500;
-  transform:translateY(8px);opacity:0;
-  transition:all .25s;pointer-events:none;
-}
-.toast.show{transform:none;opacity:1}
-.toast.error{background:var(--red)}
+/* ─── COLOR DOT ─── */
+.cdot{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0}
+.cdot.hitam{background:#111}.cdot.putih{background:#f5f5f5}.cdot.kayu{background:linear-gradient(135deg,#8b6f47,#c19a6b)}.cdot.chrome{background:linear-gradient(135deg,#bbb,#eee,#aaa)}
 
-/* ── CONFIRM MODAL ── */
-.confirm-overlay{
-  display:none;position:fixed;inset:0;z-index:1100;
-  background:rgba(0,0,0,.4);backdrop-filter:blur(3px);
-  align-items:center;justify-content:center;
-}
-.confirm-overlay.open{display:flex}
-.confirm-box{
-  background:white;border-radius:12px;padding:2rem;
-  width:100%;max-width:360px;border:1px solid var(--border);
-}
-.confirm-box h3{font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:.5rem}
-.confirm-box p{font-size:.84rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
-.confirm-btns{display:flex;gap:.6rem;justify-content:flex-end}
+/* ─── SUMMARY CARDS ─── */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.sum-label{font-size:12px;color:var(--t2);font-weight:500;margin-bottom:5px}
+.sum-val{font-size:20px;font-weight:700}
+.sum-val.green{color:var(--green)}.sum-val.red{color:var(--red)}.sum-val.accent{color:var(--accent)}
+.sum-sub{font-size:11px;color:var(--t3);margin-top:2px}
 
-/* ── EXPORT PANEL ── */
-.export-box{
-  background:white;border:1px solid var(--border);border-radius:var(--r);
-  padding:1.5rem;margin-bottom:1rem;
+/* ─── INLINE EDIT ─── */
+.inline-edit-wrap{display:flex;align-items:center;gap:4px}
+.inline-edit-input{padding:5px 8px;border:1.5px solid var(--accent);border-radius:6px;font-size:12px;font-family:var(--font);width:110px;outline:none}
+.inline-edit-save{padding:5px 8px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ─── MODAL ─── */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
+.moverlay.active{display:flex}
+.mbox{background:var(--surface);border-radius:16px;width:100%;max-width:480px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:slideUp .2s ease;max-height:90vh;overflow-y:auto}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mhd h3{font-size:16px;font-weight:700}
+.mclose{background:var(--gray-lt);border:none;width:30px;height:30px;border-radius:50%;font-size:17px;cursor:pointer;color:var(--t2);display:grid;place-items:center;flex-shrink:0}
+.mclose:hover{background:var(--border)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:20px;right:20px;padding:11px 15px;border-radius:10px;font-size:13.5px;font-weight:600;color:#fff;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s ease;pointer-events:none;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}.toast.error{background:var(--red)}
+
+/* ─── SECTION DIVIDER ─── */
+.sdiv{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* ══════════════════════
+   RESPONSIVE — TABLET
+══════════════════════ */
+@media(max-width:1200px){
+  .srow{grid-template-columns:repeat(3,1fr)}
+  .igrid{grid-template-columns:280px 1fr}
 }
-.export-box h3{font-size:.9rem;font-weight:600;margin-bottom:.35rem}
-.export-box p{font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.55}
-.code-block{
-  background:var(--off);border:1px solid var(--border);border-radius:var(--r);
-  padding:1rem;font-family:monospace;font-size:.72rem;
-  color:#555;overflow-x:auto;white-space:pre;max-height:180px;overflow-y:auto;
-  margin-bottom:.75rem;
+@media(max-width:1024px){
+  .srow{grid-template-columns:repeat(2,1fr) !important}
+  .igrid{grid-template-columns:1fr}
+  .igrid .card:first-child{position:relative;top:auto}
+  .two-col{grid-template-columns:1fr}
+  .sum-grid{grid-template-columns:1fr 1fr}
 }
 
-@media(max-width:700px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .stats-row{grid-template-columns:1fr 1fr}
-  .form-row{grid-template-columns:1fr}
-  .drawer{max-width:100%}
+/* ══════════════════════
+   RESPONSIVE — MOBILE
+══════════════════════ */
+@media(max-width:768px){
+  :root{--nav:240px;--hdr:56px}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .page{padding:14px 14px}
+  .topbar{padding:0 14px}
+  .srow{grid-template-columns:1fr 1fr !important}
+  .sval{font-size:18px}
+  .two-col{grid-template-columns:1fr}
+  .sum-grid{grid-template-columns:1fr}
+  .fg-row{grid-template-columns:1fr}
+  .fbar{gap:6px}
+  .fbar select,.fbar input[type=month]{font-size:12px;padding:6px 8px}
+  .lcard{padding:28px 22px}
+  .mbox{padding:18px;margin:0}
+  table{min-width:460px}
+  .igrid{grid-template-columns:1fr}
+  .igrid .card:first-child{position:relative;top:auto}
+  .chart-wrap{height:180px}
 }
+@media(max-width:400px){
+  .srow{grid-template-columns:1fr 1fr !important}
+  .sval{font-size:16px}
+  .sico{width:34px;height:34px;font-size:15px}
+}
+
+/* Size Tags for Grouped Posters */
+.size-tag{
+  display:inline-block;
+  padding:4px 10px;
+  margin:2px 4px 2px 0;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.size-tag.high{background:#d4edda;color:#155724}
+.size-tag.medium{background:#fff3cd;color:#856404}
+.size-tag.low{background:#f8d7da;color:#721c24}
+.size-tag.out{background:#e8e9ea;color:#999}
+
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- ═══ LOGIN ═══ -->
 <div id="loginScreen">
-  <div class="login-box">
-    <h1>Srupa Labs</h1>
-    <p>Masuk ke halaman admin untuk mengelola poster.</p>
-    <label>Password Admin</label>
-    <input type="password" id="pwInput" placeholder="Masukkan password..." onkeydown="if(event.key==='Enter')doLogin()"/>
-    <div class="login-err" id="loginErr">Password salah. Coba lagi.</div>
-    <button class="btn btn-dark" style="width:100%" onclick="doLogin()">Masuk →</button>
-    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Password default: <strong>srupalabs2025</strong><br/>Ganti di baris <code>ADMIN_PASS</code> di file ini.</p>
+  <div class="lcard">
+    <div class="llogo">
+      <div class="lmark">
+        <svg width="44" height="44" viewBox="0 0 847 638" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M649.88 8.81287C662.01 12.0029 673.96 16.0829 685.65 21.0229C731.83 40.5229 771.21 72.2329 799.53 112.733C830.07 156.433 846.22 208.433 846.22 263.103V606.323H650.23V263.103C650.23 260.473 650.1 257.963 649.87 255.533C646.55 221.023 620.88 206.433 609.42 201.593C597.15 196.403 565.52 187.363 536.87 215.253L337.17 409.633H579.41V606.323H0.0100021V0.212869H196.7V272.883L400.19 74.8129C439.36 36.6929 487.88 11.9929 540.5 3.39287C576.93 -2.54713 614.13 -0.657133 649.88 8.82287V8.81287Z" fill="#1F12D4"/>
+        </svg>
+      </div>
+      <div><div class="lname">Srupa Labs</div><div class="lsub">Business Suite</div></div>
+    </div>
+    <h2>Masuk ke Akun</h2>
+    <p>Login dengan akun Firebase yang terdaftar.</p>
+    <div class="lf"><label>Email</label><input type="email" id="lEmail" placeholder="email@example.com" autocomplete="email"></div>
+    <div class="lf"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="lbtn" id="lBtn">Masuk</button>
+    <div class="lerr" id="lErr"></div>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
-<div id="app">
+<!-- ═══ APP SHELL ═══ -->
+<div id="appShell">
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-logo">Srupa Labs <span>Admin</span></div>
-    <div class="topbar-right">
-      <a href="katalog.html" target="_blank">↗ Lihat Katalog</a>
-      <a href="index.html" target="_blank">↗ Lihat Website</a>
-      <button class="btn btn-outline btn-sm" onclick="doLogout()">Keluar</button>
+  <div class="sidebar-overlay" id="sOverlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="slogo">
+      <div class="smark">
+        <svg width="32" height="32" viewBox="0 0 847 638" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M649.88 8.81287C662.01 12.0029 673.96 16.0829 685.65 21.0229C731.83 40.5229 771.21 72.2329 799.53 112.733C830.07 156.433 846.22 208.433 846.22 263.103V606.323H650.23V263.103C650.23 260.473 650.1 257.963 649.87 255.533C646.55 221.023 620.88 206.433 609.42 201.593C597.15 196.403 565.52 187.363 536.87 215.253L337.17 409.633H579.41V606.323H0.0100021V0.212869H196.7V272.883L400.19 74.8129C439.36 36.6929 487.88 11.9929 540.5 3.39287C576.93 -2.54713 614.13 -0.657133 649.88 8.82287V8.81287Z" fill="#1F12D4"/>
+        </svg>
+      </div>
+      <div><div class="sname">Srupa Labs</div><div class="ssub">Business Suite</div></div>
     </div>
-  </div>
+    <div class="nsec">
+      <div class="nseclbl">Menu Utama</div>
+      <button class="nitem active" onclick="goPage('dashboard',this)"><span class="nico">📊</span>Dashboard</button>
+      <button class="nitem" onclick="goPage('transaksi',this)"><span class="nico">🛒</span>Transaksi<span class="nbadge" id="navProses" style="display:none">!</span></button>
+      <button class="nitem" onclick="goPage('keuangan',this)"><span class="nico">💰</span>Keuangan</button>
+      <button class="nitem" onclick="goPage('laporan',this)"><span class="nico">📈</span>Laporan</button>
+    </div>
+    <div class="nsec">
+      <div class="nseclbl">Inventaris</div>
+      <button class="nitem" onclick="goPage('inventory',this)"><span class="nico">📦</span>Semua Stok</button>
+      <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Poster</button>
+      <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
+    </div>
+    <div class="sfooter">
+      <div class="urow">
+        <div class="uavatar" id="uAvatar">A</div>
+        <div class="uinfo"><div class="uemail" id="uEmail">—</div><div class="urole">Admin</div></div>
+        <button class="logoutbtn" onclick="doLogout()" title="Keluar">⏏</button>
+      </div>
+    </div>
+  </aside>
 
-  <div class="layout">
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <div><div class="ttitle" id="topTitle">Dashboard</div><div class="tsub">Srupa Labs</div></div>
+      </div>
+      <div class="fbstat connecting" id="fbStat"><span class="fdot pulse"></span><span id="fbTxt">Menghubungkan</span></div>
+    </header>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="sidebar-section">Menu</div>
-      <button class="sidebar-link active" onclick="showPanel('dashboard',this)">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-        Dashboard
-      </button>
-      <button class="sidebar-link" onclick="showPanel('posters',this)">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
-        Kelola Poster
-      </button>
-      <button class="sidebar-link" onclick="showPanel('export',this)">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v9M4 6l4 4 4-4"/><path d="M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
-        Export Data
-      </button>
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page active" id="page-dashboard">
+      <!-- 5 stat cards: poster, frame, omzet, order, stok menipis -->
+      <div class="srow">
+        <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval" id="sPoster">0</div><div class="slbl">Item Poster</div></div></div>
+        <div class="scard"><div class="sico purple">🪟</div><div><div class="sval" id="sFrame">0</div><div class="slbl">Item Frame</div></div></div>
+        <div class="scard"><div class="sico green">💰</div><div><div class="sval" id="sOmzet">Rp 0</div><div class="slbl">Omzet Bulan Ini</div></div></div>
+        <div class="scard"><div class="sico amber">🛒</div><div><div class="sval" id="sOrders">0</div><div class="slbl">Order Bulan Ini</div></div></div>
+        <div class="scard"><div class="sico red">⚠️</div><div><div class="sval" id="sLow">0</div><div class="slbl">Stok Habis</div></div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="chd"><div class="ctitle">📈 Omzet 6 Bulan</div></div>
+          <div class="cbody"><div class="chart-wrap"><canvas id="chartOmzet"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="chd"><div class="ctitle">🛒 Order per Channel</div></div>
+          <div class="cbody"><div class="chart-wrap"><canvas id="chartChannel"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="chd"><div class="ctitle">🕐 Order Terbaru</div></div>
+          <div class="twrap"><table>
+            <thead><tr><th>Pembeli</th><th>Channel</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody id="tbRecentOrders"><tr class="erow"><td colspan="4">Belum ada order</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <div class="chd"><div class="ctitle">⚠️ Stok Habis</div></div>
+          <div class="twrap"><table>
+            <thead><tr><th>Item</th><th>Stok</th><th>Status</th></tr></thead>
+            <tbody id="tbLow"><tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
+    <!-- ═══ TRANSAKSI ═══ -->
+    <div class="page" id="page-transaksi">
+      <div class="igrid">
 
-      <!-- DASHBOARD -->
-      <div class="panel active" id="panel-dashboard">
-        <div class="section-head">
-          <h2>Dashboard</h2>
+        <!-- FORM ORDER -->
+        <div class="card">
+          <div class="chd"><div class="ctitle">➕ Order Baru</div></div>
+          <div class="cbody">
+            <form id="fOrder" novalidate>
+
+              <div class="fg">
+                <label>Channel</label>
+                <select id="oChannel">
+                  <option value="">Pilih Channel</option>
+                  <option value="shopee">🛍️ Shopee</option>
+                  <option value="tiktok">🎵 TikTok Shop</option>
+                  <option value="instagram">📸 Instagram / WA</option>
+                </select>
+                <div class="ferr" id="oChannelE"></div>
+              </div>
+
+              <div class="fg">
+                <label>Nama Pembeli</label>
+                <input type="text" id="oBuyer" placeholder="Nama pembeli" maxlength="100">
+                <div class="ferr" id="oBuyerE"></div>
+              </div>
+
+              <div class="fg">
+                <label>No. Pesanan (opsional)</label>
+                <input type="text" id="oOrderNo" placeholder="INV-001 / No. Resi" maxlength="100">
+              </div>
+
+              <!-- ITEM BUILDER -->
+              <div class="item-builder">
+                <div class="item-builder-title">📦 Item dalam Order</div>
+                <div class="item-list" id="itemList"></div>
+                <button type="button" class="add-item-btn" onclick="openItemModal()">＋ Tambah Item</button>
+                <div class="ferr" id="oItemsE" style="margin-top:6px"></div>
+              </div>
+
+              <div class="fg">
+                <label>Total Harga Order (Rp)</label>
+                <input type="number" id="oTotal" placeholder="0" min="0">
+                <div class="ferr" id="oTotalE"></div>
+              </div>
+
+              <div class="fg">
+                <label>Catatan (opsional)</label>
+                <textarea id="oNote" placeholder="Catatan tambahan..." maxlength="300"></textarea>
+              </div>
+
+              <button type="submit" class="pbtn green">💾 Simpan Order</button>
+            </form>
+          </div>
         </div>
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="num" id="statTotal">0</div>
-            <div class="lbl">Total Poster</div>
+
+        <!-- DAFTAR ORDER -->
+        <div class="card">
+          <div class="chd"><div class="ctitle">📋 Daftar Order</div></div>
+          <div class="cbody" style="padding:12px 14px 0">
+            <div class="fbar">
+              <select id="filterChannel" onchange="renderOrders()">
+                <option value="">Semua Channel</option>
+                <option value="shopee">Shopee</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram/WA</option>
+              </select>
+              <select id="filterStatus" onchange="renderOrders()">
+                <option value="">Semua Status</option>
+                <option value="proses">Proses</option>
+                <option value="selesai">Selesai</option>
+                <option value="batal">Dibatalkan</option>
+              </select>
+              <input type="month" id="filterMonth" onchange="renderOrders()">
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="num" id="statWithImg">0</div>
-            <div class="lbl">Sudah Ada Foto</div>
-          </div>
-          <div class="stat-card">
-            <div class="num" id="statNoImg">0</div>
-            <div class="lbl">Belum Ada Foto</div>
+          <div class="twrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tgl</th>
+                  <th>Pembeli</th>
+                  <th>Item</th>
+                  <th>Channel</th>
+                  <th>Harga Awal</th>
+                  <th>Harga Final</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbOrders"><tr class="erow"><td colspan="8">Belum ada order</td></tr></tbody>
+            </table>
           </div>
         </div>
-        <div style="background:white;border:1px solid var(--border);border-radius:var(--r);padding:1.5rem">
-          <h3 style="font-size:.9rem;font-weight:600;margin-bottom:.75rem">Quick Start</h3>
-          <ol style="font-size:.84rem;color:var(--muted);line-height:2.2;padding-left:1.25rem">
-            <li>Tambah poster baru di menu <strong style="color:var(--dark)">Kelola Poster</strong></li>
-            <li>Upload foto untuk setiap poster</li>
-            <li>Klik <strong style="color:var(--dark)">Export Data</strong> → copy kode ke <code>katalog.html</code></li>
-            <li>Upload ulang file ke Hostinger</li>
+      </div>
+    </div>
+
+    <!-- ═══ KEUANGAN ═══ -->
+    <div class="page" id="page-keuangan">
+      <div class="igrid">
+        <div class="card">
+          <div class="chd"><div class="ctitle">➕ Catat Keuangan</div></div>
+          <div class="cbody">
+            <form id="fKeu" novalidate>
+              <div class="fg"><label>Jenis</label>
+                <select id="kType"><option value="income">💚 Pemasukan</option><option value="expense">❤️ Pengeluaran</option></select>
+              </div>
+              <div class="fg"><label>Kategori</label>
+                <select id="kCat" onchange="toggleRestockFields()">
+                  <option value="penjualan">Penjualan</option>
+                  <option value="restock">Restock Frame</option>
+                  <option value="ongkir">Ongkir & Operasional</option>
+                  <option value="marketing">Marketing & Iklan</option>
+                  <option value="gaji">Gaji / Upah</option>
+                  <option value="lainnya">Lainnya</option>
+                </select>
+              </div>
+              
+              <!-- RESTOCK FRAME FIELDS (Hidden by default) -->
+              <div id="restockFields" style="display:none">
+                <div class="sdiv">Detail Restock Frame</div>
+                <div class="fg"><label>Warna Frame</label>
+                  <select id="kFrameColor">
+                    <option value="">Pilih Warna</option>
+                    <option value="Hitam">Hitam</option>
+                    <option value="Putih">Putih</option>
+                    <option value="Kayu">Kayu</option>
+                    <option value="Chrome">Chrome</option>
+                  </select>
+                  <div class="ferr" id="kFrameColorE"></div>
+                </div>
+                <div class="fg"><label>Ukuran Frame</label>
+                  <select id="kFrameSize">
+                    <option value="">Pilih Ukuran</option>
+                    <option value="20x20">20 × 20 cm</option>
+                    <option value="20x30">20 × 30 cm</option>
+                    <option value="30x30">30 × 30 cm</option>
+                    <option value="30x40">30 × 40 cm</option>
+                    <option value="40x60">40 × 60 cm</option>
+                    <option value="50x70">50 × 70 cm</option>
+                    <option value="60x80">60 × 80 cm</option>
+                  </select>
+                  <div class="ferr" id="kFrameSizeE"></div>
+                </div>
+                <div class="fg"><label>Jumlah Restock (pcs)</label>
+                  <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999">
+                  <div class="ferr" id="kRestockQtyE"></div>
+                </div>
+              </div>
+              <!-- END RESTOCK FIELDS -->
+              
+              <div class="fg"><label>Jumlah (Rp)</label>
+                <input type="number" id="kAmount" placeholder="0" min="0">
+                <div class="ferr" id="kAmountE"></div>
+              </div>
+              <div class="fg"><label>Tanggal</label><input type="date" id="kDate"></div>
+              <div class="fg"><label>Keterangan</label>
+                <input type="text" id="kDesc" placeholder="Contoh: Restock frame hitam 20 pcs" maxlength="200">
+                <div class="ferr" id="kDescE"></div>
+              </div>
+              <button type="submit" class="pbtn">💾 Simpan</button>
+            </form>
+          </div>
+        </div>
+        <div>
+          <div class="sum-grid">
+            <div class="sum-card"><div class="sum-label">💚 Pemasukan Bulan Ini</div><div class="sum-val green" id="kTotalIn">Rp 0</div></div>
+            <div class="sum-card"><div class="sum-label">❤️ Pengeluaran Bulan Ini</div><div class="sum-val red" id="kTotalOut">Rp 0</div></div>
+            <div class="sum-card"><div class="sum-label">💰 Profit Bersih</div><div class="sum-val accent" id="kProfit">Rp 0</div></div>
+          </div>
+          <div class="card">
+            <div class="chd"><div class="ctitle">📒 Riwayat Keuangan</div></div>
+            <div class="cbody" style="padding:12px 14px 0">
+              <div class="fbar">
+                <select id="kFilterType" onchange="renderKeuangan()"><option value="">Semua</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select>
+                <select id="kFilterCat" onchange="renderKeuangan()">
+                  <option value="">Semua Kategori</option>
+                  <option value="penjualan">Penjualan</option><option value="restock">Restock</option>
+                  <option value="ongkir">Ongkir</option><option value="marketing">Marketing</option>
+                  <option value="gaji">Gaji</option><option value="lainnya">Lainnya</option>
+                </select>
+                <input type="month" id="kFilterMonth" onchange="renderKeuangan()">
+              </div>
+            </div>
+            <div class="twrap"><table>
+              <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th><th>Aksi</th></tr></thead>
+              <tbody id="tbKeu"><tr class="erow"><td colspan="6">Belum ada catatan</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LAPORAN ═══ -->
+    <div class="page" id="page-laporan">
+      <div class="fbar" style="margin-bottom:16px">
+        <label style="font-weight:600;font-size:13px">Periode:</label>
+        <select id="lPeriode" onchange="renderLaporan()">
+          <option value="month">Bulan Ini</option>
+          <option value="last3">3 Bulan Terakhir</option>
+          <option value="last6">6 Bulan Terakhir</option>
+          <option value="year">Tahun Ini</option>
+        </select>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-card"><div class="sum-label">💰 Total Omzet</div><div class="sum-val accent" id="lOmzet">Rp 0</div><div class="sum-sub" id="lOmzetSub">0 order</div></div>
+        <div class="sum-card"><div class="sum-label">💸 Total Pengeluaran</div><div class="sum-val red" id="lPengeluaran">Rp 0</div><div class="sum-sub" id="lPengeluaranSub">0 transaksi</div></div>
+        <div class="sum-card"><div class="sum-label">📈 Profit Bersih</div><div class="sum-val green" id="lProfit">Rp 0</div><div class="sum-sub" id="lProfitSub">—</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="chd"><div class="ctitle">📊 Omzet per Bulan</div></div>
+          <div class="cbody"><div class="chart-wrap"><canvas id="chartLapOmzet"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="chd"><div class="ctitle">🥧 Pengeluaran per Kategori</div></div>
+          <div class="cbody"><div class="chart-wrap"><canvas id="chartLapKat"></canvas></div></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="chd"><div class="ctitle">🛍️ Produk Terlaris</div></div>
+          <div class="twrap"><table>
+            <thead><tr><th>Produk</th><th>Qty</th><th>Total</th></tr></thead>
+            <tbody id="tbTopProduct"><tr class="erow"><td colspan="3">Belum ada data</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <div class="chd"><div class="ctitle">📡 Performa Channel</div></div>
+          <div class="twrap"><table>
+            <thead><tr><th>Channel</th><th>Order</th><th>Omzet</th></tr></thead>
+            <tbody id="tbChannel"><tr class="erow"><td colspan="3">Belum ada data</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ INVENTORY ═══ -->
+    <div class="page" id="page-inventory">
+      <div class="itabs">
+        <button class="itab active" id="itabP" onclick="goTab('posters')">🖼️ Poster</button>
+        <button class="itab" id="itabF" onclick="goTab('frames')">🪟 Frame</button>
+      </div>
+
+      <!-- POSTER -->
+      <div id="tsec-posters">
+        <div class="igrid">
+          <div class="card">
+            <div class="chd"><div class="ctitle">Tambah Poster</div></div>
+            <div class="cbody">
+              <form id="fPoster" novalidate>
+                <div class="fg"><label>Nama Poster</label><input type="text" id="pName" placeholder="Contoh: Sunset Beach" maxlength="100" autocomplete="off"><div class="ferr" id="pNameE"></div></div>
+                <div class="fg"><label>Ukuran</label>
+                  <select id="pSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
+                  <div class="ferr" id="pSizeE"></div></div>
+                <div class="fg"><label>Jumlah Stok</label><input type="number" id="pStock" placeholder="0" min="0" max="99999"><div class="ferr" id="pStockE"></div></div>
+                <button type="submit" class="pbtn">➕ Tambah Poster</button>
+              </form>
+              
+              <div class="sdiv">Atau Import Bulk</div>
+              <div style="padding:12px 0">
+                <input type="file" id="bulkUpload" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleBulkUpload(event)">
+                <button class="pbtn" style="background:var(--blue)" onclick="$('bulkUpload').click()">📁 Upload CSV/Excel</button>
+                <div style="font-size:12px;color:var(--t3);margin-top:8px">Format: Nama, Ukuran, Stok<br>Contoh: Bauhaus, 20x30, 10</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chd"><div class="ctitle">Daftar Poster</div></div>
+            <div class="cbody" style="padding:12px 14px 0">
+              <div class="srchwrap"><input type="text" id="pSearch" placeholder="Cari nama poster..." maxlength="100" oninput="renderPosterTable()"><span class="srchico">🔍</span></div>
+            </div>
+            <div id="batchDeleteBar" style="display:none;padding:12px 16px;background:#fff3cd;border-bottom:1px solid #ffc107;font-size:14px;font-weight:600">
+              <span id="batchCount">0 dipilih</span>
+              <button onclick="batchDeletePosters()" style="float:right;padding:6px 16px;background:#e74c3c;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600">🗑️ Hapus Terpilih</button>
+            </div>
+            <div class="twrap"><table>
+              <thead><tr>
+                <th style="width:40px"><input type="checkbox" id="selectAllPosters" onchange="toggleSelectAllPosters()"></th>
+                <th>Nama Poster</th>
+                <th>Ukuran & Stok</th>
+                <th>Total Stok</th>
+                <th>Aksi</th>
+              </tr></thead>
+              <tbody id="tbPoster"><tr class="erow"><td colspan="5">Memuat data...</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME -->
+      <div id="tsec-frames" style="display:none">
+        <div class="igrid">
+          <div class="card">
+            <div class="chd"><div class="ctitle">Tambah Frame</div></div>
+            <div class="cbody">
+              <form id="fFrame" novalidate>
+                <div class="fg"><label>Warna Frame</label>
+                  <select id="fColor"><option value="">Pilih Warna</option><option value="Hitam">Hitam</option><option value="Putih">Putih</option><option value="Kayu">Kayu</option><option value="Chrome">Chrome</option></select>
+                  <div class="ferr" id="fColorE"></div></div>
+                <div class="fg"><label>Ukuran Frame</label>
+                  <select id="fSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
+                  <div class="ferr" id="fSizeE"></div></div>
+                <div class="fg"><label>Jumlah Stok</label><input type="number" id="fStock" placeholder="0" min="0" max="99999"><div class="ferr" id="fStockE"></div></div>
+                <button type="submit" class="pbtn">➕ Tambah Frame</button>
+              </form>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chd"><div class="ctitle">Daftar Frame</div></div>
+            <div class="cbody" style="padding:12px 14px 0">
+              <div class="srchwrap"><input type="text" id="fSearch" placeholder="Cari frame..." maxlength="100"><span class="srchico">🔍</span></div>
+            </div>
+            <div class="twrap"><table>
+              <thead><tr><th>Warna</th><th>Ukuran</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="tbFrame"><tr class="erow"><td colspan="5">Memuat data...</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CMS POSTER WEB ═══ -->
+    <div class="page" id="page-cms">
+      <div id="cmsStatWrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px"></div>
+      <div class="card">
+        <div class="chd">
+          <div class="ctitle">🎨 Daftar Poster Website</div>
+          <button class="pbtn" style="width:auto;padding:8px 18px;margin:0" onclick="cmsOpenAdd()">+ Tambah Poster</button>
+        </div>
+        <div class="twrap"><table>
+          <thead><tr>
+            <th style="width:56px">Foto</th>
+            <th>Judul & Deskripsi</th>
+            <th>Tags</th>
+            <th>Badge</th>
+            <th>Links</th>
+            <th>Urutan</th>
+            <th>Aksi</th>
+          </tr></thead>
+          <tbody id="tbCMS"><tr class="erow"><td colspan="7">Memuat data...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ═══ EXPORT ═══ -->
+    <div class="page" id="page-cms_export">
+      <div class="card" style="margin-bottom:16px">
+        <div class="chd"><div class="ctitle">📋 Cara Pakai</div></div>
+        <div class="cbody" style="font-size:13px;color:var(--t2);line-height:1.8">
+          <ol style="padding-left:1.25rem">
+            <li>Tambah/edit poster di menu <strong style="color:var(--t1)">Kelola Poster Web</strong></li>
+            <li>Klik <strong style="color:var(--t1)">Generate Kode</strong> di bawah</li>
+            <li>Copy kode → paste ke <code>katalog.html</code> dan <code>index.html</code> — ganti bagian <code>const POSTERS = [...]</code></li>
+            <li>Upload kedua file ke GitHub → website otomatis update</li>
           </ol>
+          <p style="margin-top:12px;padding:10px 14px;background:var(--amber-lt);color:var(--amber);border-radius:8px;font-size:12px"><strong>Info:</strong> Untuk foto poster, upload ke folder <code>images/</code> di GitHub dan isi path-nya di form poster (misal: <code>images/minimal-01.jpg</code>)</p>
         </div>
       </div>
-
-      <!-- KELOLA POSTER -->
-      <div class="panel" id="panel-posters">
-        <div class="section-head">
-          <h2>Kelola Poster</h2>
-          <button class="btn btn-dark" onclick="openDrawer()">+ Tambah Poster</button>
-        </div>
-        <div id="posterTableWrap"></div>
-      </div>
-
-      <!-- EXPORT -->
-      <div class="panel" id="panel-export">
-        <div class="section-head"><h2>Export Data</h2></div>
-
-        <div class="export-box">
-          <h3>Cara pakai</h3>
-          <p>Setelah tambah/edit poster di admin, copy kode di bawah ini dan paste ke file <code>katalog.html</code> dan <code>index.html</code> — ganti bagian array <code>const POSTERS = [...]</code> yang lama.</p>
-        </div>
-
-        <div class="export-box">
-          <h3>Kode POSTERS untuk katalog.html & index.html</h3>
-          <p>Copy seluruh kode di bawah, paste ke bagian <code>// ── POSTER DATABASE ──</code> di kedua file.</p>
-          <div class="code-block" id="exportCode">// Belum ada poster</div>
-          <button class="btn btn-dark" onclick="copyExport()">Copy Kode</button>
-        </div>
-
-        <div class="export-box">
-          <h3>Backup & Restore</h3>
-          <p>Download semua data poster sebagai file JSON untuk backup, atau restore dari backup sebelumnya.</p>
-          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
-            <button class="btn btn-outline" onclick="downloadBackup()">⬇ Download Backup</button>
-            <label class="btn btn-outline" style="cursor:pointer">
-              ⬆ Restore Backup
-              <input type="file" accept=".json" style="display:none" onchange="restoreBackup(this)"/>
-            </label>
+      <div class="card" style="margin-bottom:16px">
+        <div class="chd">
+          <div class="ctitle">⚙️ Generate Kode POSTERS</div>
+          <div style="display:flex;gap:8px">
+            <button class="pbtn" style="width:auto;padding:7px 14px;margin:0" onclick="renderExportCode()">🔄 Generate</button>
+            <button class="pbtn" style="width:auto;padding:7px 14px;margin:0;background:var(--green)" onclick="copyExportCode()">📋 Copy Kode</button>
           </div>
         </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /layout -->
-</div><!-- /app -->
-
-<!-- ══ DRAWER: ADD/EDIT POSTER ══ -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-head">
-    <h3 id="drawerTitle">Tambah Poster</h3>
-    <button class="drawer-close" onclick="closeDrawer()">✕</button>
-  </div>
-  <div class="drawer-body">
-
-    <!-- FOTO -->
-    <div class="form-group">
-      <label class="form-label">Foto Poster</label>
-      <div class="img-upload-area" id="uploadArea">
-        <input type="file" accept="image/*" id="imgInput" onchange="handleImg(this)"/>
-        <div class="icon">🖼</div>
-        <p>Klik untuk upload foto<br/><small>JPG, PNG, WebP — maks 2MB</small></p>
-      </div>
-      <img id="imgPreview" class="img-preview" alt="Preview"/>
-      <div class="form-hint" style="margin-top:.5rem">
-        <strong>Resolusi yang disarankan:</strong> <code>800 × 800 px</code> untuk SKU kotak (1:1), atau <code>800 × 1067 px</code> untuk portrait (3:4).<br/>
-        Format JPG/PNG, background putih atau transparan (PNG). Untuk hasil terbaik upload foto ke folder <code>images/</code> di GitHub lalu isi path-nya di bawah.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Atau masukkan path/URL foto</label>
-      <input type="text" class="form-input" id="fImgPath" placeholder="images/nama-poster.jpg atau https://..."/>
-      <div class="form-hint">Isi ini kalau foto sudah diupload ke GitHub. Kosongkan kalau pakai upload di atas.</div>
-    </div>
-
-    <!-- INFO DASAR -->
-    <div class="form-group">
-      <label class="form-label">Judul Poster <span>*</span></label>
-      <input type="text" class="form-input" id="fTitle" placeholder="cth: Minimal Series 01"/>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Deskripsi <span>*</span></label>
-      <textarea class="form-textarea" id="fDesc" placeholder="Deskripsi singkat poster ini..."></textarea>
-    </div>
-
-    <!-- LINK PER SKU -->
-    <div class="form-group">
-      <label class="form-label">Link Shopee (SKU ini)</label>
-      <input type="text" class="form-input" id="fShopee" placeholder="https://shopee.co.id/product/..."/>
-      <div class="form-hint">Link produk spesifik di Shopee untuk desain ini</div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Link TikTok Shop (SKU ini)</label>
-      <input type="text" class="form-input" id="fTiktok" placeholder="https://www.tiktok.com/..."/>
-      <div class="form-hint">Link produk spesifik di TikTok Shop untuk desain ini</div>
-    </div>
-
-    <!-- WARNA BG -->
-    <div class="form-group">
-      <label class="form-label">Warna Background</label>
-      <div class="color-row" id="colorRow"></div>
-      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem">
-        <input type="color" id="fColorCustom" value="#F5F2E9" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
-        <span style="font-size:.78rem;color:var(--muted)">Pilih warna lain</span>
-      </div>
-    </div>
-
-    <!-- TEKS PLACEHOLDER -->
-    <div class="form-group">
-      <label class="form-label">Teks Placeholder <span style="font-weight:400;text-transform:none;letter-spacing:0">(tampil saat belum ada foto)</span></label>
-      <div class="form-row">
-        <div>
-          <input type="text" class="form-input" id="fLabel" placeholder="cth: MIN" maxlength="6"/>
-          <div class="form-hint">Baris atas (maks 6 huruf)</div>
+        <div class="cbody">
+          <pre id="exportCodeBlock" style="background:var(--gray-lt);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:11.5px;overflow-x:auto;max-height:300px;white-space:pre-wrap;word-break:break-all">Klik Generate dulu...</pre>
         </div>
-        <div>
-          <input type="text" class="form-input" id="fSub" placeholder="cth: IMAL 01" maxlength="10"/>
-          <div class="form-hint">Baris bawah</div>
+      </div>
+      <div class="card">
+        <div class="chd"><div class="ctitle">💾 Backup & Restore Data Poster</div></div>
+        <div class="cbody" style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="pbtn" style="width:auto;padding:9px 18px;margin:0;background:#6366f1" onclick="downloadBackupCMS()">⬇ Download Backup JSON</button>
         </div>
       </div>
     </div>
 
-    <!-- BADGE -->
-    <div class="form-group">
-      <label class="form-label">Badge / Label</label>
-      <div class="badge-opts">
-        <button class="badge-opt selected" data-badge="" onclick="selectBadge(this,'')">Tidak ada</button>
-        <button class="badge-opt" data-badge="hot" onclick="selectBadge(this,'hot')" style="background:#111;color:#fff;border-color:#111">Terlaris</button>
-        <button class="badge-opt" data-badge="new" onclick="selectBadge(this,'new')" style="background:#16a34a;color:#fff;border-color:#16a34a">Baru</button>
-        <button class="badge-opt" data-badge="ltd" onclick="selectBadge(this,'ltd')" style="background:#dc2626;color:#fff;border-color:#dc2626">Limited</button>
-      </div>
-    </div>
+  </div><!-- /main -->
 
-    <!-- TAGS -->
-    <div class="form-group">
-      <label class="form-label">Tags / Kategori</label>
-      <input type="text" class="form-input" id="fTags" placeholder="minimalis, abstract, botanical"/>
-      <div class="form-hint">Pisahkan dengan koma</div>
-    </div>
-
-    <!-- URUTAN -->
-    <div class="form-group">
-      <label class="form-label">Urutan Tampil</label>
-      <input type="number" class="form-input" id="fOrder" placeholder="1" min="1"/>
-      <div class="form-hint">Angka lebih kecil = tampil lebih awal</div>
-    </div>
-
-  </div>
-  <div class="drawer-foot">
-    <button class="btn btn-outline" onclick="closeDrawer()">Batal</button>
-    <button class="btn btn-dark" onclick="savePoster()">Simpan Poster</button>
-  </div>
-</div>
-
-<!-- ══ CONFIRM DELETE ══ -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-    <h3>Hapus Poster?</h3>
-    <p>Poster ini akan dihapus permanen dari daftar. Tindakan ini tidak bisa dibatalkan.</p>
-    <div class="confirm-btns">
-      <button class="btn btn-outline" onclick="closeConfirm()">Batal</button>
-      <button class="btn btn-red" onclick="confirmDelete()">Hapus</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ TOAST ══ -->
-<div class="toast" id="toast"></div>
+</div><!-- /appShell -->
 
 <script>
-// ══════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════
-const ADMIN_PASS = 'srupalabs2025'; // ← Ganti password di sini
-const STORAGE_KEY = 'srupalabs_posters';
+// ── CMS STATE ────────────────────────────────────────────────────────────
+let cmsPosters = [];
+let cmsEditId  = null;
+let cmsImgData = '';
 
-const PRESET_COLORS = [
-  '#FFFFFF','#F5F2E9',
-];
-
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let posters = [];
-let editingId = null;
-let deleteId  = null;
-let isDark    = false;
-let selectedBadge = '';
-let selectedColor = '#F0ECE5';
-let imgData   = ''; // base64 dari upload
-
-// ══════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════
-function doLogin() {
-  const pw = document.getElementById('pwInput').value;
-  if (pw === ADMIN_PASS) {
-    sessionStorage.setItem('sl_auth','1');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    loadData();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('pwInput').value = '';
-  }
-}
-
-function doLogout() {
-  sessionStorage.removeItem('sl_auth');
-  location.reload();
-}
-
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-function loadData() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  posters = raw ? JSON.parse(raw) : getDefaultPosters();
-  refresh();
-}
-
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posters));
-  refresh();
-}
-
-function refresh() {
-  updateStats();
-  renderTable();
-  renderExport();
-}
-
-function getDefaultPosters() {
-  return [
-    {id:1,title:'Minimal Series 01',desc:'Garis-garis bersih yang menenangkan. Cocok untuk kamar atau ruang kerja minimalis.',tags:['minimalis'],badge:'hot',bg:'#F0ECE5',dark:false,label:'MIN',sub:'IMAL 01',img:'',order:1},
-    {id:2,title:'Abstract Forms',desc:'Bentuk geometris abstrak yang playful. Energik dan modern.',tags:['abstract'],badge:'new',bg:'#E5E8EA',dark:false,label:'ABS',sub:'TRACT',img:'',order:2},
-    {id:3,title:'Dark Room',desc:'Kontras kuat, suasana dramatis. Cocok jadi statement piece.',tags:['dark'],badge:'',bg:'#1E1E1E',dark:true,label:'DRK',sub:'ROOM',img:'',order:3},
-    {id:4,title:'Botanical Lines',desc:'Ilustrasi botanical minimalis. Natural untuk area makan.',tags:['botanical'],badge:'',bg:'#E8EDE6',dark:false,label:'BOT',sub:'ANIK',img:'',order:4},
-  ];
-}
-
-// ══════════════════════════════════════════
-// STATS
-// ══════════════════════════════════════════
-function updateStats() {
-  const withImg = posters.filter(p => p.img).length;
-  document.getElementById('statTotal').textContent  = posters.length;
-  document.getElementById('statWithImg').textContent = withImg;
-  document.getElementById('statNoImg').textContent   = posters.length - withImg;
-}
-
-// ══════════════════════════════════════════
-// TABLE
-// ══════════════════════════════════════════
-function renderTable() {
-  const wrap = document.getElementById('posterTableWrap');
-  const sorted = [...posters].sort((a,b) => (a.order||99) - (b.order||99));
-
-  if (!sorted.length) {
-    wrap.innerHTML = `<div class="empty">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="30" height="30" rx="3"/><path d="M15 15h10M15 20h10M15 25h6"/></svg>
-      <p>Belum ada poster. Tambah poster pertamamu!</p>
-    </div>`;
-    return;
+  // Listen cms_posters dari Firestore
+  function startCMSListener() {
+    const {db, collection, onSnapshot} = getDB();
+    onSnapshot(collection(db,'cms_posters'), snap => {
+      cmsPosters = snap.docs.map(d => d.data()).sort((a,b) => (a.order||99) - (b.order||99));
+      renderCMSTable();
+      renderCMSStats();
+    }, () => {});
   }
 
-  wrap.innerHTML = `<table class="poster-table">
-    <thead>
+  function renderCMSStats() {
+    const withImg = cmsPosters.filter(p => p.img).length;
+    const el = $('cmsStatWrap');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval">${cmsPosters.length}</div><div class="slbl">Total Desain</div></div></div>
+      <div class="scard"><div class="sico green">✅</div><div><div class="sval">${withImg}</div><div class="slbl">Ada Foto</div></div></div>
+      <div class="scard"><div class="sico amber">⚠️</div><div><div class="sval">${cmsPosters.length - withImg}</div><div class="slbl">Belum Ada Foto</div></div></div>
+    `;
+  }
+
+  function renderCMSTable() {
+    const tb = $('tbCMS');
+    if (!tb) return;
+    if (!cmsPosters.length) {
+      tb.innerHTML = '<tr class="erow"><td colspan="7">Belum ada poster. Tambah poster pertama!</td></tr>';
+      return;
+    }
+    tb.innerHTML = cmsPosters.map(p => `
       <tr>
-        <th>Foto</th>
-        <th>Judul & Deskripsi</th>
-        <th>Tags</th>
-        <th>Badge</th>
-        <th>Urutan</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${sorted.map(p => `
-      <tr>
         <td>
-          <div class="thumb-cell" style="background:${p.bg}">
-            ${p.img
-              ? `<img src="${p.img}" alt="${p.title}"/>`
-              : `<span>${p.label}</span>`}
+          <div style="width:44px;height:52px;border-radius:4px;overflow:hidden;background:${p.bg||'#f0f0f0'};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${p.img ? `<img src="${esc(p.img)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:10px;color:rgba(0,0,0,.2);font-weight:700">${esc((p.label||'?').substring(0,3))}</span>`}
           </div>
         </td>
+        <td><strong>${esc(p.title)}</strong><div style="font-size:11px;color:var(--t2);margin-top:2px">${esc((p.desc||'').substring(0,50))}...</div></td>
+        <td><span style="font-size:11px;background:var(--gray-lt);padding:2px 7px;border-radius:4px">${esc((p.tags||[]).join(', '))}</span></td>
+        <td>${p.badge ? `<span class="badge ${p.badge==='hot'?'selesai':p.badge==='new'?'proses':'batal'}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>` : '<span style="color:var(--t3)">—</span>'}</td>
+        <td style="font-size:12px">${p.shopeeUrl ? `<a href="${esc(p.shopeeUrl)}" target="_blank" style="color:var(--accent)">Shopee ↗</a>` : '<span style="color:var(--t3)">—</span>'}<br>${p.tiktokUrl ? `<a href="${esc(p.tiktokUrl)}" target="_blank" style="color:var(--accent)">TikTok ↗</a>` : ''}</td>
+        <td style="font-size:12px;color:var(--t2)">${p.order||'—'}</td>
         <td>
-          <div style="font-weight:500;margin-bottom:.2rem">${p.title}</div>
-          <div style="font-size:.75rem;color:var(--muted);max-width:200px">${p.desc.substring(0,60)}...</div>
-        </td>
-        <td>
-          <div class="badge-row">
-            ${(p.tags||[]).map(t=>`<span class="badge badge-none">${t}</span>`).join('')}
+          <div style="display:flex;gap:6px">
+            <button onclick="cmsOpenEdit('${p.id}')" style="padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600">Edit</button>
+            <button onclick="cmsDelete('${p.id}')" style="padding:5px 12px;border:none;border-radius:6px;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:12px;font-weight:600">Hapus</button>
           </div>
         </td>
-        <td>
-          ${p.badge
-            ? `<span class="badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>`
-            : `<span style="color:var(--muted);font-size:.75rem">—</span>`}
-        </td>
-        <td style="font-size:.84rem">${p.order||'—'}</td>
-        <td>
-          <div class="action-btns">
-            <button class="btn btn-outline btn-sm" onclick="openEdit(${p.id})">Edit</button>
-            <button class="btn btn-sm" style="background:#fff1f2;color:var(--red);border:1px solid #fecdd3" onclick="askDelete(${p.id})">Hapus</button>
-          </div>
-        </td>
-      </tr>`).join('')}
-    </tbody>
-  </table>`;
-}
+      </tr>`).join('');
+  }
 
-// ══════════════════════════════════════════
-// DRAWER
-// ══════════════════════════════════════════
-function openDrawer(id = null) {
-  editingId = id;
-  imgData = '';
-  document.getElementById('drawerTitle').textContent = id ? 'Edit Poster' : 'Tambah Poster';
+  function renderCmsBgPresets() {
+    const wrap = document.getElementById('cmsBgPresets');
+    if (!wrap) return;
+    const colors = ['#FFFFFF','#F5F2E9','#EDE8DF','#E4E0D8','#E8EDE6','#E5E8EA','#1E1E1E','#252525'];
+    wrap.innerHTML = colors.map(c => {
+      const border = c === '#FFFFFF' ? '#ddd' : 'transparent';
+      return `<div onclick="document.getElementById('cmsBgColor').value='${c}'" title="${c}"
+        style="width:28px;height:28px;border-radius:50%;background:${c};border:2px solid ${border};cursor:pointer;flex-shrink:0;transition:transform .15s"
+        onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"></div>`;
+    }).join('');
+  }
 
-  // reset form
-  ['fTitle','fDesc','fLabel','fSub','fTags','fImgPath','fShopee','fTiktok'].forEach(f => document.getElementById(f).value = '');
-  document.getElementById('fOrder').value = '';
-  document.getElementById('imgPreview').style.display = 'none';
-  document.getElementById('uploadArea').style.display = 'block';
+  function cmsOpenAdd() {
+    cmsEditId = null; cmsImgData = '';
+    document.getElementById('cmsDrawerTitle').textContent = 'Tambah Poster';
+    ['cmsTitle','cmsDesc','cmsLabel','cmsSub','cmsTags','cmsImgPath','cmsShopee','cmsTiktok'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const orderEl = document.getElementById('cmsOrder');
+    if (orderEl) orderEl.value = cmsPosters.length + 1;
+    const badgeEl = document.getElementById('cmsBadgeVal');
+    if (badgeEl) badgeEl.value = '';
+    const bgEl = document.getElementById('cmsBgColor');
+    if (bgEl) bgEl.value = '#FFFFFF';
+    const preview = document.getElementById('cmsImgPreview');
+    if (preview) preview.style.display = 'none';
+    renderCmsBgPresets();
+    renderCmsBadgeOpts();
+    document.getElementById('cmsDrawer').classList.add('active');
+    document.getElementById('cmsDrawerOverlay').classList.add('active');
+  }
 
-  selectedBadge = '';
-  selectedColor = '#FFFFFF';
+  function cmsOpenEdit(id) {
+    const p = cmsPosters.find(x => x.id === id);
+    if (!p) return;
+    cmsEditId = id; cmsImgData = '';
+    document.getElementById('cmsDrawerTitle').textContent = 'Edit Poster';
+    document.getElementById('cmsTitle').value   = p.title || '';
+    document.getElementById('cmsDesc').value    = p.desc  || '';
+    document.getElementById('cmsLabel').value   = p.label || '';
+    document.getElementById('cmsSub').value     = p.sub   || '';
+    document.getElementById('cmsTags').value    = (p.tags||[]).join(', ');
+    document.getElementById('cmsOrder').value   = p.order || '';
+    document.getElementById('cmsImgPath').value = p.img   || '';
+    document.getElementById('cmsShopee').value  = p.shopeeUrl || '';
+    document.getElementById('cmsTiktok').value  = p.tiktokUrl || '';
+    document.getElementById('cmsBadgeVal').value = p.badge || '';
+    document.getElementById('cmsBgColor').value  = p.bg || '#FFFFFF';
+    const preview = document.getElementById('cmsImgPreview');
+    if (p.img) { preview.src = p.img; preview.style.display = 'block'; }
+    else { preview.style.display = 'none'; }
+    renderCmsBgPresets();
+    renderCmsBadgeOpts();
+    document.getElementById('cmsDrawer').classList.add('active');
+    document.getElementById('cmsDrawerOverlay').classList.add('active');
+  }
 
-  if (id) {
-    const p = posters.find(x => x.id === id);
-    if (p) {
-      document.getElementById('fTitle').value   = p.title;
-      document.getElementById('fDesc').value    = p.desc;
-      document.getElementById('fLabel').value   = p.label||'';
-      document.getElementById('fSub').value     = p.sub||'';
-      document.getElementById('fTags').value    = (p.tags||[]).join(', ');
-      document.getElementById('fOrder').value   = p.order||'';
-      document.getElementById('fImgPath').value = p.img||'';
-      document.getElementById('fShopee').value  = p.shopeeUrl||'';
-      document.getElementById('fTiktok').value  = p.tiktokUrl||'';
-      selectedBadge = p.badge||'';
-      selectedColor = p.bg||'#FFFFFF';
-      if (p.img) {
-        document.getElementById('imgPreview').src = p.img;
-        document.getElementById('imgPreview').style.display = 'block';
-      }
+  function cmsCloseDrawer() {
+    document.getElementById('cmsDrawer').classList.remove('active');
+    document.getElementById('cmsDrawerOverlay').classList.remove('active');
+  }
+
+  function renderCmsBadgeOpts() {
+    const val = document.getElementById('cmsBadgeVal') ? document.getElementById('cmsBadgeVal').value : '';
+    document.getElementById('cmsDrawer').querySelectorAll('[data-badge]').forEach(b => {
+      b.style.fontWeight = b.dataset.badge === val ? '700' : '500';
+      b.style.outline = b.dataset.badge === val ? '2px solid var(--accent)' : 'none';
+    });
+  }
+
+  function cmsBadgePick(val) {
+    document.getElementById('cmsBadgeVal').value = val;
+    renderCmsBadgeOpts();
+  }
+
+  function cmsHandleImg(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { toast('Foto terlalu besar. Maks 2MB.', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      cmsImgData = e.target.result;
+      document.getElementById('cmsImgPreview').src = cmsImgData;
+      document.getElementById('cmsImgPreview').style.display = 'block';
+      document.getElementById('cmsImgPath').value = '';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function cmsSave() {
+    const title = (document.getElementById('cmsTitle').value || '').trim();
+    const desc  = (document.getElementById('cmsDesc').value  || '').trim();
+    if (!title) { toast('Judul wajib diisi.', 'error'); return; }
+    if (!desc)  { toast('Deskripsi wajib diisi.', 'error'); return; }
+
+    const imgPath = (document.getElementById('cmsImgPath').value || '').trim();
+    const finalImg = cmsImgData || imgPath || '';
+    const bg = document.getElementById('cmsBgColor').value || '#FFFFFF';
+    const badge = document.getElementById('cmsBadgeVal').value || '';
+    const tags = (document.getElementById('cmsTags').value || '').split(',').map(t => t.trim()).filter(Boolean);
+    const label = (document.getElementById('cmsLabel').value || '').trim() || title.substring(0,3).toUpperCase();
+    const sub   = (document.getElementById('cmsSub').value   || '').trim();
+    const shopeeUrl = (document.getElementById('cmsShopee').value || '').trim();
+    const tiktokUrl = (document.getElementById('cmsTiktok').value || '').trim();
+    const order = parseInt(document.getElementById('cmsOrder').value) || cmsPosters.length + 1;
+
+    const poster = {
+      id: cmsEditId || 'cms_' + Date.now(),
+      title, desc, tags, badge, bg,
+      dark: false, label, sub,
+      img: finalImg, shopeeUrl, tiktokUrl, order,
+      palette: [bg, bg],
+      tag: badge,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const saveBtn = document.getElementById('cmsSaveBtn');
+    if (saveBtn) { saveBtn.textContent = '⏳...'; saveBtn.disabled = true; }
+    try {
+      await fsSet('cms_posters', poster);
+      toast(cmsEditId ? 'Poster diupdate!' : 'Poster ditambahkan!');
+      cmsCloseDrawer();
+      cmsImgData = '';
+    } catch(e) {
+      toast('Gagal menyimpan: ' + e.message, 'error');
+    } finally {
+      if (saveBtn) { saveBtn.textContent = 'Simpan'; saveBtn.disabled = false; }
     }
   }
 
-  renderColorRow();
-  renderBadgeOpts();
+  async function cmsDelete(id) {
+    const p = cmsPosters.find(x => x.id === id);
+    if (!p || !confirm(`Hapus poster "${p.title}"?`)) return;
+    try { await fsDel('cms_posters', id); toast('Poster dihapus.'); }
+    catch(e) { toast('Gagal hapus: ' + e.message, 'error'); }
+  }
 
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('drawer').classList.add('open');
+  function renderExportCode() {
+    const el = $('exportCodeBlock');
+    if (!el) return;
+    const sorted = [...cmsPosters].sort((a,b) => (a.order||99) - (b.order||99));
+    el.textContent = `const POSTERS = ${JSON.stringify(sorted, null, 2)};`;
+  }
+
+  function copyExportCode() {
+    const code = $('exportCodeBlock').textContent;
+    navigator.clipboard.writeText(code).then(() => toast('Kode berhasil dicopy!'));
+  }
+
+  function downloadBackupCMS() {
+    const blob = new Blob([JSON.stringify(cmsPosters, null, 2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `srupalabs-cms-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+<!-- CMS DRAWER — di luar appShell agar fixed positioning bekerja -->
+<div id="cmsDrawerOverlay" onclick="cmsCloseDrawer()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:998"></div>
+<div id="cmsDrawer" style="position:fixed;top:0;right:0;bottom:0;z-index:999;width:100%;max-width:500px;background:white;box-shadow:-8px 0 32px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)">
+  <div style="padding:1.1rem 1.25rem;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <h3 id="cmsDrawerTitle" style="font-size:15px;font-weight:700;font-family:inherit">Tambah Poster</h3>
+    <button onclick="cmsCloseDrawer()" style="width:30px;height:30px;border-radius:50%;border:1px solid #e5e7eb;background:none;cursor:pointer;font-size:14px;line-height:1">✕</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1rem">
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Foto Poster</label>
+      <div style="border:2px dashed #e5e7eb;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;position:relative" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#e5e7eb'">
+        <input type="file" accept="image/*" onchange="cmsHandleImg(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"/>
+        <div style="font-size:1.5rem;margin-bottom:.3rem">🖼️</div>
+        <p style="font-size:12px;color:#9ca3af">Klik upload foto · JPG/PNG · maks 2MB<br><small>800×800px (kotak) atau 800×1067px (portrait)</small></p>
+      </div>
+      <img id="cmsImgPreview" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;border:1px solid #e5e7eb;margin-top:8px;display:none" alt="Preview"/>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Atau path/URL foto</label>
+      <input type="text" id="cmsImgPath" placeholder="images/nama-poster.jpg" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+      <p style="font-size:11px;color:#9ca3af;margin-top:3px">Isi jika foto sudah diupload ke GitHub</p>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Judul Poster *</label>
+      <input type="text" id="cmsTitle" placeholder="cth: Minimal Series 01" maxlength="100" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Deskripsi *</label>
+      <textarea id="cmsDesc" placeholder="Deskripsi singkat poster ini..." maxlength="300" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:72px"></textarea>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Link Shopee (per SKU)</label>
+      <input type="text" id="cmsShopee" placeholder="https://shopee.co.id/product/..." style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Link TikTok Shop (per SKU)</label>
+      <input type="text" id="cmsTiktok" placeholder="https://www.tiktok.com/..." style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Warna Background</label>
+      <div id="cmsBgPresets" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="color" id="cmsBgColor" value="#FFFFFF" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:50%;cursor:pointer;padding:0"/>
+        <span style="font-size:12px;color:#9ca3af">Pilih warna custom</span>
+      </div>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Badge</label>
+      <input type="hidden" id="cmsBadgeVal" value=""/>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" data-badge="" onclick="cmsBadgePick('')" style="padding:5px 12px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
+        <button type="button" data-badge="hot" onclick="cmsBadgePick('hot')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
+        <button type="button" data-badge="new" onclick="cmsBadgePick('new')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
+        <button type="button" data-badge="ltd" onclick="cmsBadgePick('ltd')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Label Atas <small style="color:#d1d5db">(maks 6)</small></label>
+        <input type="text" id="cmsLabel" placeholder="MIN" maxlength="6" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Label Bawah</label>
+        <input type="text" id="cmsSub" placeholder="IMAL 01" maxlength="10" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+      </div>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Tags (pisah koma)</label>
+      <input type="text" id="cmsTags" placeholder="minimalis, abstract, botanical" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+    </div>
+
+    <div>
+      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Urutan Tampil</label>
+      <input type="number" id="cmsOrder" placeholder="1" min="1" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
+    </div>
+
+  </div>
+  <div style="padding:1rem 1.25rem;border-top:1px solid #e5e7eb;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0">
+    <button onclick="cmsCloseDrawer()" style="padding:9px 18px;border:1px solid #e5e7eb;border-radius:8px;background:white;cursor:pointer;font-weight:600;font-family:inherit;font-size:13px">Batal</button>
+    <button id="cmsSaveBtn" onclick="cmsSave()" style="padding:9px 22px;border:none;border-radius:8px;background:#6366f1;color:white;cursor:pointer;font-weight:700;font-family:inherit;font-size:13px">Simpan</button>
+  </div>
+</div>
+
+<style>
+#cmsDrawer.active{transform:none}
+#cmsDrawerOverlay.active{display:block!important}
+</style>
+
+<!-- MODAL: Add Item ke Order -->
+<div class="moverlay" id="itemModal">
+  <div class="mbox">
+    <div class="mhd"><h3>➕ Tambah Item</h3><button class="mclose" onclick="closeItemModal()">×</button></div>
+    <div class="sdiv">Poster</div>
+    <div class="fg">
+      <label>Pilih Poster dari Stok</label>
+      <select id="iPosterSelect" onchange="onPosterChange()">
+        <option value="">-- Pilih Poster --</option>
+        <option value="custom">🎨 Custom (Tidak di Stok)</option>
+      </select>
+      <div class="ferr" id="iPosterSelectE"></div>
+    </div>
+    <div class="fg" id="customPosterNameGroup" style="display:none">
+      <label>Nama Custom Poster</label>
+      <input type="text" id="iPosterCustomName" placeholder="Masukkan nama poster custom..." maxlength="100">
+      <div class="ferr" id="iPosterCustomNameE"></div>
+    </div>
+    <div class="fg">
+      <label>Ukuran Poster</label>
+      <select id="iPosterSize" onchange="syncFrameSize()">
+        <option value="">Pilih Ukuran</option>
+        <option value="20x20">20 × 20 cm</option>
+        <option value="20x30">20 × 30 cm</option>
+        <option value="30x30">30 × 30 cm</option>
+        <option value="30x40">30 × 40 cm</option>
+        <option value="40x60">40 × 60 cm</option>
+        <option value="50x70">50 × 70 cm</option>
+        <option value="60x80">60 × 80 cm</option>
+      </select>
+      <div class="ferr" id="iPosterSizeE"></div>
+    </div>
+    <div class="sdiv">Frame</div>
+    <div class="fg">
+      <label>Warna Frame</label>
+      <select id="iFrameColor">
+        <option value="">Pilih Warna</option>
+        <option value="Hitam">Hitam</option>
+        <option value="Putih">Putih</option>
+        <option value="Kayu">Kayu</option>
+        <option value="Chrome">Chrome</option>
+      </select>
+      <div class="ferr" id="iFrameColorE"></div>
+    </div>
+    <div class="fg">
+      <label>Ukuran Frame <small style="color:var(--t3)">(Otomatis sama dengan ukuran poster)</small></label>
+      <input type="text" id="iFrameSize" readonly style="background:var(--gray-lt)">
+      <div class="ferr" id="iFrameSizeE"></div>
+    </div>
+    <div class="fg">
+      <label>Catatan Item (opsional)</label>
+      <input type="text" id="iNote" placeholder="Misal: cetak glossy, sudut rounded..." maxlength="200">
+    </div>
+    <button class="pbtn" onclick="addItemToOrder()">✅ Tambah ke Order</button>
+  </div>
+</div>
+
+<!-- MODAL: Edit Inventory -->
+<div class="moverlay" id="editModal">
+  <div class="mbox" style="max-width:520px;width:95vw;max-height:92vh;overflow-y:auto">
+    <div class="mhd"><h3 id="mTitle">Edit Item</h3><button class="mclose" onclick="closeEdit()">×</button></div>
+    <form id="fEdit" novalidate>
+      <div class="fg"><label id="mLabel">Item</label><input type="text" id="mItem" readonly style="background:var(--gray-lt)"></div>
+      <div class="fg"><label>Stok Baru</label><input type="number" id="mStock" min="0" max="99999"><div class="ferr" id="mStockE"></div></div>
+
+      <!-- Field CMS — hanya muncul saat edit poster -->
+      <div id="cmsPosterFields" style="display:none;border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:12px">📱 Info Website / Katalog</div>
+
+        <div class="fg">
+          <label>Path/URL Foto</label>
+          <input type="text" id="mImg" placeholder="images/nama-poster.jpg atau https://..."/>
+          <div style="font-size:11px;color:var(--t3);margin-top:3px">Upload foto ke folder <code>images/</code> di GitHub, lalu isi path-nya di sini</div>
+        </div>
+
+        <div class="fg">
+          <label>Deskripsi (untuk website)</label>
+          <textarea id="mDesc" placeholder="Deskripsi singkat yang muncul di katalog website..." style="resize:vertical;min-height:64px" maxlength="300"></textarea>
+        </div>
+
+        <div class="fg">
+          <label>Link Shopee (SKU ini)</label>
+          <input type="text" id="mShopee" placeholder="https://shopee.co.id/product/..."/>
+        </div>
+
+        <div class="fg">
+          <label>Link TikTok Shop (SKU ini)</label>
+          <input type="text" id="mTiktok" placeholder="https://www.tiktok.com/..."/>
+        </div>
+
+        <div class="fg">
+          <label>Warna Background Katalog</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px" id="mBgPresets"></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="color" id="mBgColor" value="#FFFFFF" style="width:30px;height:30px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
+            <span style="font-size:11px;color:var(--t3)">Pilih warna custom</span>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Badge</label>
+          <input type="hidden" id="mBadgeVal" value=""/>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" data-mbadge="" onclick="mBadgePick('')" style="padding:4px 10px;border:1px solid var(--border);border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
+            <button type="button" data-mbadge="hot" onclick="mBadgePick('hot')" style="padding:4px 10px;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
+            <button type="button" data-mbadge="new" onclick="mBadgePick('new')" style="padding:4px 10px;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
+            <button type="button" data-mbadge="ltd" onclick="mBadgePick('ltd')" style="padding:4px 10px;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Urutan di Katalog Website</label>
+          <input type="number" id="mOrder" placeholder="1" min="1"/>
+          <div style="font-size:11px;color:var(--t3);margin-top:3px">Angka lebih kecil = tampil lebih awal di website</div>
+        </div>
+      </div>
+
+      <button type="submit" class="pbtn" style="margin-top:16px">💾 Simpan</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const OK_SIZES=new Set(['20x20','20x30','30x30','30x40','40x60','50x70','60x80']);
+const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
+const CHANNELS=new Set(['shopee','tiktok','instagram']);
+const MAX_STK=99999;
+const rl={ts:[],ok(){const n=Date.now();this.ts=this.ts.filter(t=>n-t<60000);if(this.ts.length>=30)return false;this.ts.push(n);return true;}};
+
+let inv={posters:[],frames:[]};
+let orders=[];
+let keuangan=[];
+let pendingItems=[];  // item builder untuk form order
+let editType=null,editId=null;
+let chartOmzet=null,chartChannel=null,chartLapOmzet=null,chartLapKat=null;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const san=s=>String(s).replace(/[<>"'`]/g,'').trim().slice(0,200);
+const rp=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
+const fmtDate=iso=>{ if(!iso)return'—'; const d=new Date(iso); return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'}); };
+const thisMonth=()=>new Date().toISOString().slice(0,7);
+
+function stockBadge(n){if(n===0)return{c:'out',l:'Habis'};if(n<=5)return{c:'low',l:'Menipis'};if(n<=20)return{c:'medium',l:'Cukup'};return{c:'high',l:'Banyak'};}
+function chBadge(ch){const m={shopee:'shopee 🛍️',tiktok:'tiktok 🎵',instagram:'instagram 📸'};return`<span class="badge ${esc(ch)}">${m[ch]||esc(ch)}</span>`;}
+function stBadge(st){const m={proses:'⏳ Proses',selesai:'✅ Selesai',batal:'❌ Batal'};const c={proses:'proses',selesai:'selesai',batal:'batal'};return`<span class="badge ${c[st]||''}">${m[st]||esc(st)}</span>`;}
+
+let toastT=null;
+function toast(msg,type='success'){const el=$('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3200);}
+function ferr(id,msg){const el=$(id);if(!el)return;el.textContent=msg;el.style.display=msg?'block':'none';const inp=el.previousElementSibling;if(inp&&inp.tagName!=='DIV')inp.classList.toggle('err',!!msg);}
+function clerr(...ids){ids.forEach(id=>ferr(id,''));}
+
+/* ── SIDEBAR MOBILE ── */
+function openSidebar(){$('sidebar').classList.add('open');$('sOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeSidebar(){$('sidebar').classList.remove('open');$('sOverlay').classList.remove('open');document.body.style.overflow='';}
+
+/* ── FIREBASE STATUS ── */
+function fbStat(state,txt){const el=$('fbStat'),dot=el.querySelector('.fdot');el.className='fbstat '+state;dot.className='fdot'+(state==='connecting'?' pulse':'');$('fbTxt').textContent=txt;}
+function getDB(){if(!window._fb?.db)throw new Error('Firebase belum siap.');return window._fb;}
+async function fsSet(col,item){if(!rl.ok())throw new Error('Terlalu banyak operasi.');const{db,doc,setDoc}=getDB();await setDoc(doc(db,col,item.id),item);}
+async function fsDel(col,id){if(!rl.ok())throw new Error('Terlalu banyak operasi.');const{db,doc,deleteDoc}=getDB();await deleteDoc(doc(db,col,id));}
+
+/* ── LISTENERS ── */
+window._startListeners=function(){
+  if(window.firebaseInitError){fbStat('error','Koneksi gagal');return;}
+  fbStat('connecting','Menghubungkan');
+  const{db,collection,onSnapshot}=getDB();
+  let fl={p:false,f:false,o:false,k:false};
+  const chk=()=>{if(Object.values(fl).every(Boolean))fbStat('connected','Terhubung');};
+  onSnapshot(collection(db,'inventory_posters'),s=>{inv.posters=s.docs.map(d=>d.data());renderPosters($('pSearch').value);updateDashboard();fl.p=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'inventory_frames'),s=>{inv.frames=s.docs.map(d=>d.data());renderFrames($('fSearch').value);updateDashboard();fl.f=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();fl.o=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'keuangan'),s=>{keuangan=s.docs.map(d=>d.data());renderKeuangan();updateKeuanganSummary();renderLaporan();fl.k=true;chk();},()=>fbStat('error','Terputus'));
+  // CMS listener
+  startCMSListener();
+};
+
+/* ── AUTH ── */
+$('lBtn').onclick=async()=>{
+  const btn=$('lBtn'),email=$('lEmail').value.trim(),pass=$('lPass').value,errEl=$('lErr');
+  errEl.style.display='none';
+  if(!email||!pass){errEl.textContent='Email dan password wajib diisi.';errEl.style.display='block';return;}
+  btn.textContent='⏳ Masuk...';btn.disabled=true;
+  try{await window._login(email,pass);}
+  catch(e){
+    let m='Login gagal. Periksa email & password.';
+    if(e.code==='auth/user-not-found')m='Email tidak terdaftar.';
+    if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')m='Email atau password salah.';
+    if(e.code==='auth/too-many-requests')m='Terlalu banyak percobaan. Coba lagi nanti.';
+    errEl.textContent=m;errEl.style.display='block';
+  }finally{btn.textContent='Masuk';btn.disabled=false;}
+};
+['lEmail','lPass'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$('lBtn').click();}));
+function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
+
+/* ── NAVIGATION ── */
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Kelola Poster Website',cms_export:'Export ke Website'};
+function goPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
+  $('page-'+name).classList.add('active');
+  if(el)el.classList.add('active');
+  $('topTitle').textContent=pageTitles[name]||name;
+  if(name==='laporan')renderLaporan();
+  closeSidebar();
+}
+function goTab(name){
+  ['posters','frames'].forEach(n=>{$('tsec-'+n).style.display=n===name?'block':'none';});
+  $('itabP').classList.toggle('active',name==='posters');
+  $('itabF').classList.toggle('active',name==='frames');
 }
 
-function openEdit(id) { openDrawer(id); }
-
-function closeDrawer() {
-  document.getElementById('drawerOverlay').classList.remove('open');
-  document.getElementById('drawer').classList.remove('open');
+/* ── DASHBOARD ── */
+function updateDashboard(){
+  const m=thisMonth();
+  const mo=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal');
+  // Gunakan harga final jika ada, fallback ke total awal
+  const omzet=mo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  $('sPoster').textContent=inv.posters.length;
+  $('sFrame').textContent=inv.frames.length;
+  $('sOmzet').textContent=rp(omzet);
+  $('sOrders').textContent=mo.length;
+  const all=[...inv.posters,...inv.frames];
+  $('sLow').textContent=all.filter(i=>i.stock===0).length;
+  $('navBadge').style.display=inv.frames.filter(f=>f.stock===0).length?'inline-block':'none';
+  $('navProses').style.display=orders.filter(o=>o.status==='proses').length?'inline-block':'none';
+  renderLow();buildChartOmzet();buildChartChannel();
 }
 
-// ══════════════════════════════════════════
-// COLOR ROW
-// ══════════════════════════════════════════
-function renderColorRow() {
-  const row = document.getElementById('colorRow');
-  row.innerHTML = PRESET_COLORS.map(c => `
-    <div class="color-opt ${isLight(c)?'light':''} ${selectedColor===c?'selected':''}"
-      style="background:${c}"
-      onclick="pickColor('${c}')"></div>
-  `).join('');
-  document.getElementById('fColorCustom').value = selectedColor;
+function renderLow(){
+  const tb=$('tbLow');
+  const items=[...inv.posters.filter(p=>p.stock===0).map(p=>({lbl:p.name,sz:p.size,stk:p.stock})),...inv.frames.filter(f=>f.stock===0).map(f=>({lbl:f.color,sz:f.size,stk:f.stock}))];
+  if(!items.length){tb.innerHTML='<tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr>';return;}
+  tb.innerHTML=items.map(i=>{const b=stockBadge(i.stk);return`<tr><td><strong>${esc(i.lbl)}</strong> <small style="color:var(--t2)">${esc(i.sz)}</small></td><td><strong>${i.stk}</strong></td><td><span class="badge ${b.c}">${b.l}</span></td></tr>`;}).join('');
 }
 
-function pickColor(c) {
-  selectedColor = c;
-  document.getElementById('fColorCustom').value = c;
-  renderColorRow();
+function renderDashboardOrders(){
+  const tb=$('tbRecentOrders');
+  const recent=[...orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,5);
+  if(!recent.length){tb.innerHTML='<tr class="erow"><td colspan="4">Belum ada order</td></tr>';return;}
+  tb.innerHTML=recent.map(o=>`<tr><td><strong>${esc(o.buyer)}</strong></td><td>${chBadge(o.channel)}</td><td><strong>${rp(o.finalTotal!=null?o.finalTotal:o.total)}</strong></td><td>${stBadge(o.status)}</td></tr>`).join('');
 }
 
-document.getElementById('fColorCustom').addEventListener('input', e => {
-  selectedColor = e.target.value;
-  renderColorRow();
+function getLast6Months(){const months=[];const now=new Date();for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);}return months;}
+
+function buildChartOmzet(){
+  const months=getLast6Months();
+  const data=months.map(m=>orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal').reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0));
+  const labels=months.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('id-ID',{month:'short'});});
+  const ctx=$('chartOmzet').getContext('2d');
+  if(chartOmzet)chartOmzet.destroy();
+  chartOmzet=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Omzet',data,backgroundColor:'rgba(26,115,232,.7)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v>=1000000?'Rp'+(v/1000000).toFixed(1)+'jt':v>=1000?'Rp'+(v/1000).toFixed(0)+'rb':'Rp'+v}}}}});
+}
+function buildChartChannel(){
+  const chs=['shopee','tiktok','instagram'];
+  const data=chs.map(ch=>orders.filter(o=>o.channel===ch&&o.status!=='batal').length);
+  const ctx=$('chartChannel').getContext('2d');
+  if(chartChannel)chartChannel.destroy();
+  chartChannel=new Chart(ctx,{type:'doughnut',data:{labels:['Shopee','TikTok','Instagram/WA'],datasets:[{data,backgroundColor:['#ff6000','#111827','#e1306c'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+/* ── ITEM BUILDER ── */
+function renderItemList(){
+  const el=$('itemList');
+  if(!pendingItems.length){el.innerHTML='<div style="text-align:center;color:var(--t3);font-size:13px;padding:8px">Belum ada item</div>';return;}
+  el.innerHTML=pendingItems.map((it,i)=>`
+    <div class="item-row">
+      <div class="item-row-info">
+        <div class="item-row-name">🖼️ ${esc(it.posterName)} <span style="font-size:11px;color:var(--t2)">(${esc(it.posterSize)})</span></div>
+        <div class="item-row-sub"><span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>Frame ${esc(it.frameColor)} ${esc(it.frameSize)}${it.note?` · ${esc(it.note)}`:''}</div>
+      </div>
+      <button class="item-row-del" onclick="removeItem(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeItem(i){pendingItems.splice(i,1);renderItemList();}
+
+function openItemModal(){
+  clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
+  $('iPosterSelect').value='';$('iPosterCustomName').value='';$('iPosterSize').value='';$('iFrameColor').value='';$('iFrameSize').value='';$('iNote').value='';
+  $('customPosterNameGroup').style.display='none';
+  
+  // Populate poster dropdown from inventory
+  const sel=$('iPosterSelect');
+  const existing=sel.innerHTML;
+  sel.innerHTML='<option value="">-- Pilih Poster --</option><option value="custom">🎨 Custom (Tidak di Stok)</option>';
+  inv.posters.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=`${p.name} ${p.size} — Stk:${p.stock}`;
+    if(p.stock<=0)opt.disabled=true;
+    sel.appendChild(opt);
+  });
+  
+  $('itemModal').classList.add('active');
+  setTimeout(()=>$('iPosterSelect').focus(),100);
+}
+
+function onPosterChange(){
+  const val=$('iPosterSelect').value;
+  const customGroup=$('customPosterNameGroup');
+  const sizeSelect=$('iPosterSize');
+  
+  if(val==='custom'){
+    customGroup.style.display='block';
+    sizeSelect.value='';
+    $('iFrameSize').value='';
+  }else if(val){
+    customGroup.style.display='none';
+    // Auto-fill size dari poster yang dipilih
+    const poster=inv.posters.find(p=>p.id===val);
+    if(poster){
+      sizeSelect.value=poster.size;
+      syncFrameSize();
+    }
+  }else{
+    customGroup.style.display='none';
+    sizeSelect.value='';
+    $('iFrameSize').value='';
+  }
+}
+
+function syncFrameSize(){
+  const posterSize=$('iPosterSize').value;
+  $('iFrameSize').value=posterSize?posterSize+' cm':'';
+}
+
+function closeItemModal(){$('itemModal').classList.remove('active');}
+
+function addItemToOrder(){
+  clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
+  const posterSelect=$('iPosterSelect').value;
+  const posterCustomName=san($('iPosterCustomName').value);
+  const posterSize=$('iPosterSize').value;
+  const frameColor=$('iFrameColor').value;
+  const frameSize=posterSize; // Auto sama dengan ukuran poster
+  const note=san($('iNote').value);
+  
+  let ok=true;
+  let posterName='';
+  let posterId=null;
+  let isCustomPoster=false;
+  
+  // Validasi poster
+  if(!posterSelect){ferr('iPosterSelectE','Pilih poster.');ok=false;}
+  else if(posterSelect==='custom'){
+    isCustomPoster=true;
+    if(posterCustomName.length<2){ferr('iPosterCustomNameE','Nama poster custom minimal 2 karakter.');ok=false;}
+    posterName=posterCustomName;
+  }else{
+    const poster=inv.posters.find(p=>p.id===posterSelect);
+    if(!poster){ferr('iPosterSelectE','Poster tidak ditemukan.');ok=false;}
+    else if(poster.stock<1){ferr('iPosterSelectE','Stok poster habis!');ok=false;}
+    else{
+      posterName=poster.name;
+      posterId=poster.id;
+    }
+  }
+  
+  if(!OK_SIZES.has(posterSize)){ferr('iPosterSizeE','Pilih ukuran poster.');ok=false;}
+  if(!OK_FCOLORS.has(frameColor)){ferr('iFrameColorE','Pilih warna frame.');ok=false;}
+  if(!ok)return;
+
+  // Cek stok frame
+  const frame=inv.frames.find(f=>f.color===frameColor&&f.size===frameSize);
+  if(!frame){
+    ferr('iFrameSizeE',`Frame ${frameColor} ${frameSize} tidak ada di stok. Silakan tambah dulu di menu Inventaris.`);
+    return;
+  }
+  if(frame.stock<1){
+    ferr('iFrameColorE',`Stok Frame ${frameColor} ${frameSize} habis!`);
+    return;
+  }
+
+  pendingItems.push({
+    posterName,
+    posterId,
+    isCustomPoster,
+    posterSize,
+    frameColor,
+    frameSize,
+    note
+  });
+  
+  renderItemList();
+  closeItemModal();
+  toast('✅ Item ditambahkan ke order');
+}
+
+/* ── SAVE ORDER ── */
+$('fOrder').addEventListener('submit',async function(e){
+  e.preventDefault();
+  clerr('oChannelE','oBuyerE','oItemsE','oTotalE');
+  const btn=this.querySelector('.pbtn');
+  const channel=$('oChannel').value,buyer=san($('oBuyer').value);
+  const orderNo=san($('oOrderNo').value),note=san($('oNote').value);
+  const total=parseInt($('oTotal').value,10)||0;
+  let ok=true;
+  if(!CHANNELS.has(channel)){ferr('oChannelE','Pilih channel.');ok=false;}
+  if(buyer.length<2){ferr('oBuyerE','Nama pembeli minimal 2 karakter.');ok=false;}
+  if(!pendingItems.length){ferr('oItemsE','Tambahkan minimal 1 item.');ok=false;}
+  if(total<=0){ferr('oTotalE','Total harga harus lebih dari 0.');ok=false;}
+  if(!ok)return;
+
+  // Validasi & cek stok semua frame
+  for(const it of pendingItems){
+    const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+    if(!frame){ferr('oItemsE',`Frame ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);return;}
+    if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} habis!`);return;}
+  }
+
+  const orig=btn.textContent;btn.textContent='⏳ Menyimpan...';btn.disabled=true;
+  const id=`order_${Date.now()}`;
+  const item={
+    id,channel,buyer,orderNo,note,total,
+    finalTotal:null,   // diisi saat edit harga final
+    items:[...pendingItems],
+    status:'proses',
+    createdAt:new Date().toISOString()
+  };
+
+  try{
+    await fsSet('orders',item);
+    // Kurangi stok frame DAN poster untuk setiap item
+    for(const it of pendingItems){
+      // Kurangi stok frame
+      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+      if(frame){
+        frame.stock=Math.max(0,frame.stock-1);
+        await fsSet('inventory_frames',frame);
+      }
+      
+      // Kurangi stok poster (hanya jika bukan custom)
+      if(!it.isCustomPoster && it.posterId){
+        const poster=inv.posters.find(p=>p.id===it.posterId);
+        if(poster){
+          poster.stock=Math.max(0,poster.stock-1);
+          await fsSet('inventory_posters',poster);
+        }
+      }
+    }
+    pendingItems=[];renderItemList();
+    this.reset();btn.textContent=orig;
+    toast('✅ Order disimpan! Stok frame & poster otomatis dikurangi.');
+  }catch(err){btn.textContent=orig;toast('Gagal: '+err.message,'error');}
+  finally{btn.disabled=false;}
 });
 
-function isLight(hex) {
-  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  return (r*299+g*587+b*114)/1000 > 128;
+/* ── RENDER ORDERS ── */
+function renderOrders(){
+  const tb=$('tbOrders');
+  const ch=$('filterChannel').value,st=$('filterStatus').value,mo=$('filterMonth').value;
+  let list=[...orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(ch)list=list.filter(o=>o.channel===ch);
+  if(st)list=list.filter(o=>o.status===st);
+  if(mo)list=list.filter(o=>o.createdAt?.startsWith(mo));
+  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="8">Tidak ada order</td></tr>';return;}
+
+  tb.innerHTML=list.map(o=>{
+    const itemSummary=(o.items||[]).map(it=>`${esc(it.posterName)} ${esc(it.posterSize)} + Frame ${esc(it.frameColor)} ${esc(it.frameSize)}`).join('<br>');
+    const hasFinal=o.finalTotal!=null;
+    // Inline edit harga final — hanya tampil jika status proses
+    const finalCell=o.status==='proses'
+      ? `<div class="inline-edit-wrap">
+           <input class="inline-edit-input" type="number" id="fin_${esc(o.id)}" placeholder="Harga final" value="${hasFinal?o.finalTotal:''}">
+           <button class="inline-edit-save" onclick="saveFinalPrice('${esc(o.id)}')">✔</button>
+         </div>`
+      : `<strong>${hasFinal?rp(o.finalTotal):'—'}</strong>`;
+
+    return`<tr>
+      <td style="white-space:nowrap">${fmtDate(o.createdAt)}</td>
+      <td><strong>${esc(o.buyer)}</strong>${o.orderNo?`<br><small style="color:var(--t2)">${esc(o.orderNo)}</small>`:''}</td>
+      <td style="font-size:12px;line-height:1.6">${itemSummary||'—'}</td>
+      <td>${chBadge(o.channel)}</td>
+      <td>${rp(o.total)}</td>
+      <td>${finalCell}</td>
+      <td>${stBadge(o.status)}</td>
+      <td class="acell">
+        ${o.status==='proses'?`<button class="bsm bdel" onclick="batalOrder('${esc(o.id)}')">❌ Batal</button>`:''}
+        <button class="bsm bdel" onclick="delOrder('${esc(o.id)}')">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-// ══════════════════════════════════════════
-// BADGE
-// ══════════════════════════════════════════
-function selectBadge(el, val) {
-  selectedBadge = val;
-  renderBadgeOpts();
+async function saveFinalPrice(id){
+  const input=$('fin_'+id);
+  if(!input)return;
+  const finalTotal=parseInt(input.value,10);
+  if(isNaN(finalTotal)||finalTotal<0){toast('Harga final tidak valid.','error');return;}
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  try{
+    o.finalTotal=finalTotal;
+    o.status='selesai';  // auto selesai saat harga final diisi
+    o.updatedAt=new Date().toISOString();
+    await fsSet('orders',o);
+    toast('✅ Harga final disimpan — Order otomatis Selesai!');
+  }catch(err){toast('Gagal: '+err.message,'error');}
 }
-function renderBadgeOpts() {
-  document.querySelectorAll('.badge-opt[data-badge]').forEach(b => {
-    b.classList.toggle('selected', b.dataset.badge === selectedBadge);
-    if(b.dataset.badge==='' && selectedBadge==='') b.classList.add('selected');
+
+async function batalOrder(id){
+  if(!confirm('Batalkan order ini? Stok frame & poster akan dikembalikan.'))return;
+  const o=orders.find(x=>x.id===id);if(!o)return;
+  try{
+    o.status='batal';o.updatedAt=new Date().toISOString();
+    await fsSet('orders',o);
+    // Kembalikan stok frame DAN poster
+    for(const it of (o.items||[])){
+      // Kembalikan frame
+      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+      if(frame){frame.stock+=1;await fsSet('inventory_frames',frame);}
+      
+      // Kembalikan poster (hanya jika bukan custom)
+      if(!it.isCustomPoster && it.posterId){
+        const poster=inv.posters.find(p=>p.id===it.posterId);
+        if(poster){poster.stock+=1;await fsSet('inventory_posters',poster);}
+      }
+    }
+    toast('Order dibatalkan. Stok frame & poster dikembalikan.');
+  }catch(err){toast('Gagal: '+err.message,'error');}
+}
+
+async function delOrder(id){
+  if(!confirm('Hapus order ini permanen?'))return;
+  try{await fsDel('orders',id);toast('🗑️ Order dihapus.');}
+  catch(err){toast('Gagal: '+err.message,'error');}
+}
+
+/* ── KEUANGAN ── */
+function toggleRestockFields(){
+  const cat=$('kCat').value;
+  const restockDiv=$('restockFields');
+  if(cat==='restock'){
+    restockDiv.style.display='block';
+  }else{
+    restockDiv.style.display='none';
+    $('kFrameColor').value='';
+    $('kFrameSize').value='';
+    $('kRestockQty').value='';
+  }
+}
+
+$('kDate').value=new Date().toISOString().split('T')[0];
+$('fKeu').addEventListener('submit',async function(e){
+  e.preventDefault();clerr('kAmountE','kDescE','kFrameColorE','kFrameSizeE','kRestockQtyE');
+  const btn=this.querySelector('.pbtn');
+  const type=$('kType').value,cat=$('kCat').value;
+  const amount=parseInt($('kAmount').value,10)||0,date=$('kDate').value,desc=san($('kDesc').value);
+  
+  // Restock frame fields
+  const frameColor=$('kFrameColor').value;
+  const frameSize=$('kFrameSize').value;
+  const restockQty=parseInt($('kRestockQty').value,10)||0;
+  
+  let ok=true;
+  if(!amount||amount<=0){ferr('kAmountE','Jumlah harus lebih dari 0.');ok=false;}
+  if(desc.length<2){ferr('kDescE','Keterangan minimal 2 karakter.');ok=false;}
+  
+  // Validasi restock frame
+  if(cat==='restock'){
+    if(!frameColor){ferr('kFrameColorE','Pilih warna frame.');ok=false;}
+    if(!frameSize){ferr('kFrameSizeE','Pilih ukuran frame.');ok=false;}
+    if(!restockQty||restockQty<1){ferr('kRestockQtyE','Jumlah restock minimal 1.');ok=false;}
+  }
+  
+  if(!ok)return;
+  
+  const orig=btn.textContent;btn.textContent='⏳...';btn.disabled=true;
+  const item={id:`keu_${Date.now()}`,type,cat,amount,date,desc,createdAt:new Date().toISOString()};
+  
+  // Tambah info restock jika kategori restock
+  if(cat==='restock'){
+    item.restockFrameColor=frameColor;
+    item.restockFrameSize=frameSize;
+    item.restockQty=restockQty;
+  }
+  
+  try{
+    await fsSet('keuangan',item);
+    
+    // AUTO RESTOCK FRAME
+    if(cat==='restock'){
+      let frame=inv.frames.find(f=>f.color===frameColor&&f.size===frameSize);
+      if(frame){
+        // Frame sudah ada, tambah stok
+        frame.stock+=restockQty;
+        await fsSet('inventory_frames',frame);
+        toast(`✅ Catatan disimpan! Stok Frame ${frameColor} ${frameSize} +${restockQty} (Total: ${frame.stock})`);
+      }else{
+        // Frame belum ada, buat baru
+        const newFrame={
+          id:`frame_${frameColor}_${frameSize}_${Date.now()}`.replace(/\s+/g,'_'),
+          color:frameColor,
+          size:frameSize,
+          stock:restockQty,
+          createdAt:new Date().toISOString()
+        };
+        await fsSet('inventory_frames',newFrame);
+        toast(`✅ Catatan disimpan! Frame ${frameColor} ${frameSize} dibuat dengan stok ${restockQty}`);
+      }
+    }else{
+      toast('✅ Catatan disimpan!');
+    }
+    
+    this.reset();
+    $('kDate').value=new Date().toISOString().split('T')[0];
+    $('restockFields').style.display='none';
+    btn.textContent=orig;
+  }catch(err){
+    btn.textContent=orig;
+    toast('Gagal: '+err.message,'error');
+  }finally{
+    btn.disabled=false;
+  }
+});
+
+function updateKeuanganSummary(){
+  const m=thisMonth();
+  const md=keuangan.filter(k=>k.date?.startsWith(m));
+  const totalIn=md.filter(k=>k.type==='income').reduce((s,k)=>s+k.amount,0);
+  const totalOut=md.filter(k=>k.type==='expense').reduce((s,k)=>s+k.amount,0);
+  $('kTotalIn').textContent=rp(totalIn);
+  $('kTotalOut').textContent=rp(totalOut);
+  const pr=totalIn-totalOut;
+  $('kProfit').textContent=rp(pr);
+  $('kProfit').style.color=pr>=0?'var(--green)':'var(--red)';
+}
+
+function renderKeuangan(){
+  const tb=$('tbKeu');
+  const ft=$('kFilterType').value,fc=$('kFilterCat').value,fm=$('kFilterMonth').value;
+  let list=[...keuangan].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(ft)list=list.filter(k=>k.type===ft);
+  if(fc)list=list.filter(k=>k.cat===fc);
+  if(fm)list=list.filter(k=>k.date?.startsWith(fm));
+  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada catatan</td></tr>';return;}
+  const catLbl={penjualan:'Penjualan',restock:'Restock',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
+  tb.innerHTML=list.map(k=>`<tr>
+    <td>${esc(k.date||'—')}</td>
+    <td><span class="badge ${k.type==='income'?'income':'expense'}">${k.type==='income'?'💚 Masuk':'❤️ Keluar'}</span></td>
+    <td>${esc(catLbl[k.cat]||k.cat)}</td>
+    <td>${esc(k.desc)}</td>
+    <td><strong style="color:${k.type==='income'?'var(--green)':'var(--red)'}">${rp(k.amount)}</strong></td>
+    <td class="acell"><button class="bsm bdel" onclick="delKeu('${esc(k.id)}')">🗑️</button></td>
+  </tr>`).join('');
+}
+async function delKeu(id){
+  if(!confirm('Hapus catatan ini?'))return;
+  try{await fsDel('keuangan',id);toast('🗑️ Catatan dihapus.');}
+  catch(err){toast('Gagal: '+err.message,'error');}
+}
+
+/* ── LAPORAN ── */
+function getDateRange(){
+  const p=$('lPeriode').value;const now=new Date();
+  let start;
+  if(p==='month')start=new Date(now.getFullYear(),now.getMonth(),1);
+  else if(p==='last3')start=new Date(now.getFullYear(),now.getMonth()-2,1);
+  else if(p==='last6')start=new Date(now.getFullYear(),now.getMonth()-5,1);
+  else start=new Date(now.getFullYear(),0,1);
+  return start.toISOString().slice(0,10);
+}
+function renderLaporan(){
+  const sd=getDateRange();
+  const fo=orders.filter(o=>o.createdAt>=sd&&o.status!=='batal');
+  const fk=keuangan.filter(k=>k.date>=sd);
+  const omzet=fo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  const pengeluaran=fk.filter(k=>k.type==='expense').reduce((s,k)=>s+k.amount,0);
+  const profit=omzet-pengeluaran;
+  $('lOmzet').textContent=rp(omzet);$('lOmzetSub').textContent=fo.length+' order';
+  $('lPengeluaran').textContent=rp(pengeluaran);$('lPengeluaranSub').textContent=fk.filter(k=>k.type==='expense').length+' transaksi';
+  $('lProfit').textContent=rp(profit);$('lProfit').style.color=profit>=0?'var(--green)':'var(--red)';
+  $('lProfitSub').textContent=profit>=0?'Untung 🎉':'Rugi ⚠️';
+
+  // Produk terlaris — dari items array
+  const prodMap={};
+  fo.forEach(o=>(o.items||[]).forEach(it=>{
+    const k=`${it.posterName} (${it.posterSize})`;
+    if(!prodMap[k])prodMap[k]={qty:0,total:0};
+    prodMap[k].qty+=1;
+    prodMap[k].total+=Math.round((o.finalTotal!=null?o.finalTotal:o.total||0)/(o.items?.length||1));
+  }));
+  const top=Object.entries(prodMap).sort((a,b)=>b[1].qty-a[1].qty).slice(0,5);
+  $('tbTopProduct').innerHTML=top.length?top.map(([n,d])=>`<tr><td>${esc(n)}</td><td><strong>${d.qty}</strong></td><td>${rp(d.total)}</td></tr>`).join(''):'<tr class="erow"><td colspan="3">Belum ada data</td></tr>';
+
+  // Channel
+  const chData=['shopee','tiktok','instagram'].map(ch=>{
+    const co=fo.filter(o=>o.channel===ch);
+    return{ch,cnt:co.length,omzet:co.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0)};
+  });
+  $('tbChannel').innerHTML=chData.some(c=>c.cnt>0)?chData.filter(c=>c.cnt>0).sort((a,b)=>b.omzet-a.omzet).map(c=>`<tr><td>${chBadge(c.ch)}</td><td>${c.cnt}</td><td>${rp(c.omzet)}</td></tr>`).join(''):'<tr class="erow"><td colspan="3">Belum ada data</td></tr>';
+
+  buildLapCharts(fo,fk);
+}
+function buildLapCharts(fo,fk){
+  const months=getLast6Months();
+  const labels=months.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('id-ID',{month:'short'});});
+  const omzetData=months.map(m=>fo.filter(o=>o.createdAt?.startsWith(m)).reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0));
+  const ctx1=$('chartLapOmzet').getContext('2d');
+  if(chartLapOmzet)chartLapOmzet.destroy();
+  chartLapOmzet=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Omzet',data:omzetData,borderColor:'#1A73E8',backgroundColor:'rgba(26,115,232,.1)',fill:true,tension:.3,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v>=1000000?'Rp'+(v/1000000).toFixed(1)+'jt':v>=1000?'Rp'+(v/1000).toFixed(0)+'rb':'Rp'+v}}}}});
+  const catLbl={penjualan:'Penjualan',restock:'Restock',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
+  const exp=fk.filter(k=>k.type==='expense');
+  const catMap={};exp.forEach(k=>{catMap[k.cat]=(catMap[k.cat]||0)+k.amount;});
+  const catKeys=Object.keys(catMap);
+  const ctx2=$('chartLapKat').getContext('2d');
+  if(chartLapKat)chartLapKat.destroy();
+  if(!catKeys.length)return;
+  chartLapKat=new Chart(ctx2,{type:'pie',data:{labels:catKeys.map(k=>catLbl[k]||k),datasets:[{data:catKeys.map(k=>catMap[k]),backgroundColor:['#1A73E8','#DC2626','#D97706','#7C3AED','#16A34A','#9CA3AF'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+/* ── INVENTORY RENDER ── */
+let selectedPosters = new Set();
+
+function renderPosterTable(){
+  const q = $('pSearch').value.toLowerCase();
+  renderPosters(q);
+  updateBatchBar();
+}
+
+function renderPosters(q=''){
+  const tb=$('tbPoster'),ql=q.toLowerCase();
+  
+  // Group posters by name
+  const grouped = {};
+  inv.posters.forEach(p => {
+    if(p.name.toLowerCase().includes(ql)){
+      if(!grouped[p.name]) grouped[p.name] = [];
+      grouped[p.name].push(p);
+    }
+  });
+  
+  const groupNames = Object.keys(grouped);
+  if(!groupNames.length){
+    tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data poster</td></tr>';
+    return;
+  }
+  
+  // Render grouped
+  tb.innerHTML = groupNames.map(name => {
+    const posters = grouped[name];
+    const totalStock = posters.reduce((sum, p) => sum + p.stock, 0);
+    const posterIds = posters.map(p => p.id).join(',');
+    const isChecked = posters.every(p => selectedPosters.has(p.id));
+    
+    // Build size display
+    const sizeDisplay = posters.map(p => {
+      const badge = stockBadge(p.stock);
+      return `<span class="size-tag ${badge.c}">${p.size} (${p.stock})</span>`;
+    }).join(' ');
+    
+    return `<tr>
+      <td><input type="checkbox" class="poster-check" data-ids="${posterIds}" ${isChecked?'checked':''} onchange="togglePosterSelect(this)"></td>
+      <td><strong>${esc(name)}</strong></td>
+      <td style="font-size:13px">${sizeDisplay}</td>
+      <td><strong>${totalStock}</strong></td>
+      <td class="acell">
+        <button class="bsm bedit" onclick="editPosterGroup('${esc(name)}')">✏️</button>
+        <button class="bsm bdel" onclick="deletePosterGroup('${esc(name)}')">🗑️ Hapus Semua</button>
+      </td>
+    </tr>`;
+  }).join('');
+  
+  // Update select all checkbox
+  $('selectAllPosters').checked = inv.posters.length > 0 && inv.posters.every(p => selectedPosters.has(p.id));
+}
+
+function togglePosterSelect(checkbox){
+  const ids = checkbox.dataset.ids.split(',');
+  if(checkbox.checked){
+    ids.forEach(id => selectedPosters.add(id));
+  }else{
+    ids.forEach(id => selectedPosters.delete(id));
+  }
+  updateBatchBar();
+}
+
+function toggleSelectAllPosters(){
+  const checked = $('selectAllPosters').checked;
+  if(checked){
+    inv.posters.forEach(p => selectedPosters.add(p.id));
+  }else{
+    selectedPosters.clear();
+  }
+  renderPosterTable();
+}
+
+function updateBatchBar(){
+  const count = selectedPosters.size;
+  const bar = $('batchDeleteBar');
+  if(count > 0){
+    bar.style.display = 'block';
+    $('batchCount').textContent = `${count} dipilih`;
+  }else{
+    bar.style.display = 'none';
+  }
+}
+
+async function batchDeletePosters(){
+  const count = selectedPosters.size;
+  if(count === 0) return;
+  
+  if(!confirm(`Hapus ${count} poster yang dipilih?`)) return;
+  
+  try{
+    for(const id of selectedPosters){
+      await fsDel('inventory_posters', id);
+    }
+    selectedPosters.clear();
+    toast(`✅ ${count} poster berhasil dihapus!`);
+  }catch(err){
+    toast('Gagal: ' + err.message, 'error');
+  }
+}
+
+async function deletePosterGroup(name){
+  const posters = inv.posters.filter(p => p.name === name);
+  if(!confirm(`Hapus semua ${posters.length} ukuran dari "${name}"?`)) return;
+  
+  try{
+    for(const p of posters){
+      await fsDel('inventory_posters', p.id);
+    }
+    toast(`✅ Poster "${name}" dihapus!`);
+  }catch(err){
+    toast('Gagal: ' + err.message, 'error');
+  }
+}
+
+function editPosterGroup(name){
+  const posters = inv.posters.filter(p => p.name === name);
+  if(posters.length === 1){
+    openEdit('posters', posters[0].id);
+    return;
+  }
+  // Expand row jadi pilihan ukuran
+  const tb = $('tbPoster');
+  const existingExpand = tb.querySelector(`tr.expand-row[data-name="${CSS.escape(name)}"]`);
+  if(existingExpand){ existingExpand.remove(); return; }
+
+  // Cari row yang sesuai
+  const rows = tb.querySelectorAll('tr');
+  let targetRow = null;
+  rows.forEach(row => {
+    const strong = row.querySelector('td strong');
+    if(strong && strong.textContent === name) targetRow = row;
+  });
+  if(!targetRow) return;
+
+  const expandRow = document.createElement('tr');
+  expandRow.className = 'expand-row';
+  expandRow.dataset.name = name;
+  expandRow.style.cssText = 'background:#f8faff';
+  expandRow.innerHTML = `
+    <td colspan="5" style="padding:10px 16px">
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Pilih ukuran yang mau diedit:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${posters.map(p => {
+          const b = stockBadge(p.stock);
+          return `<button onclick="openEdit('posters','${esc(p.id)}');this.closest('tr.expand-row').remove()"
+            style="padding:7px 14px;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-size:13px;font-family:var(--font);display:flex;align-items:center;gap:6px">
+            <strong>${esc(p.size)} cm</strong>
+            <span class="badge ${b.c}" style="font-size:10px">${p.stock} stok</span>
+          </button>`;
+        }).join('')}
+      </div>
+    </td>`;
+  targetRow.insertAdjacentElement('afterend', expandRow);
+}
+
+function renderFrames(q=''){
+  const tb=$('tbFrame'),ql=q.toLowerCase();
+  const list=inv.frames.filter(f=>f.color.toLowerCase().includes(ql)||f.size.includes(ql));
+  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data frame</td></tr>';return;}
+  tb.innerHTML=list.map(f=>{const b=stockBadge(f.stock);return`<tr><td><span class="cdot ${esc(f.color.toLowerCase())}"></span><strong>${esc(f.color)}</strong></td><td>${esc(f.size)} cm</td><td><strong>${f.stock}</strong></td><td><span class="badge ${b.c}">${b.l}</span></td><td class="acell"><button class="bsm bedit" onclick="openEdit('frames','${esc(f.id)}')">✏️</button><button class="bsm bdel" onclick="delItem('frames','${esc(f.id)}')">🗑️</button></td></tr>`;}).join('');
+}
+
+$('fPoster').addEventListener('submit',async function(e){
+  e.preventDefault();clerr('pNameE','pSizeE','pStockE');
+  const btn=this.querySelector('.pbtn');
+  const name=san($('pName').value),size=$('pSize').value,stock=parseInt($('pStock').value,10);
+  let ok=true;
+  if(name.length<2){ferr('pNameE','Nama minimal 2 karakter.');ok=false;}
+  if(!OK_SIZES.has(size)){ferr('pSizeE','Pilih ukuran.');ok=false;}
+  if(isNaN(stock)||stock<0||stock>MAX_STK){ferr('pStockE','Stok harus 0–99999.');ok=false;}
+  if(!ok)return;
+  if(inv.posters.find(p=>p.name===name&&p.size===size)){ferr('pNameE','Sudah ada.');return;}
+  const orig=btn.textContent;btn.textContent='⏳...';btn.disabled=true;
+  const item={id:`poster_${name}_${size}_${Date.now()}`.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_-]/g,''),name,size,stock,createdAt:new Date().toISOString()};
+  try{await fsSet('inventory_posters',item);this.reset();btn.textContent=orig;toast('✅ Poster ditambahkan!');}
+  catch(err){btn.textContent=orig;toast('Gagal: '+err.message,'error');}
+  finally{btn.disabled=false;}
+});
+
+$('fFrame').addEventListener('submit',async function(e){
+  e.preventDefault();clerr('fColorE','fSizeE','fStockE');
+  const btn=this.querySelector('.pbtn');
+  const color=$('fColor').value,size=$('fSize').value,stock=parseInt($('fStock').value,10);
+  let ok=true;
+  if(!OK_FCOLORS.has(color)){ferr('fColorE','Pilih warna.');ok=false;}
+  if(!OK_SIZES.has(size)){ferr('fSizeE','Pilih ukuran.');ok=false;}
+  if(isNaN(stock)||stock<0||stock>MAX_STK){ferr('fStockE','Stok harus 0–99999.');ok=false;}
+  if(!ok)return;
+  if(inv.frames.find(f=>f.color===color&&f.size===size)){ferr('fColorE','Sudah ada.');return;}
+  const orig=btn.textContent;btn.textContent='⏳...';btn.disabled=true;
+  const item={id:`frame_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_-]/g,''),color,size,stock,createdAt:new Date().toISOString()};
+  try{await fsSet('inventory_frames',item);this.reset();btn.textContent=orig;toast('✅ Frame ditambahkan!');}
+  catch(err){btn.textContent=orig;toast('Gagal: '+err.message,'error');}
+  finally{btn.disabled=false;}
+});
+
+function mBadgePick(val){
+  $('mBadgeVal').value=val;
+  document.querySelectorAll('[data-mbadge]').forEach(b=>{
+    b.style.outline=b.dataset.mbadge===val?'2px solid #6366f1':'none';
+    b.style.outlineOffset='2px';
   });
 }
 
-// ══════════════════════════════════════════
-// IMAGE UPLOAD
-// ══════════════════════════════════════════
-function handleImg(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { showToast('Foto terlalu besar. Maks 2MB.','error'); return; }
-  const reader = new FileReader();
-  reader.onload = e => {
-    imgData = e.target.result;
-    document.getElementById('imgPreview').src = imgData;
-    document.getElementById('imgPreview').style.display = 'block';
-    document.getElementById('fImgPath').value = '';
-  };
-  reader.readAsDataURL(file);
+function renderMBgPresets(){
+  const wrap=$('mBgPresets');if(!wrap)return;
+  const colors=['#FFFFFF','#F5F2E9','#EDE8DF','#E4E0D8','#E8EDE6','#E5E8EA','#1E1E1E','#252525'];
+  wrap.innerHTML=colors.map(c=>`<div onclick="$('mBgColor').value='${c}'" title="${c}"
+    style="width:26px;height:26px;border-radius:50%;background:${c};border:2px solid ${c==='#FFFFFF'?'#ddd':'transparent'};cursor:pointer;flex-shrink:0"
+    onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"></div>`).join('');
 }
 
-// ══════════════════════════════════════════
-// SAVE
-// ══════════════════════════════════════════
-function savePoster() {
-  const title = document.getElementById('fTitle').value.trim();
-  const desc  = document.getElementById('fDesc').value.trim();
-  if (!title) { showToast('Judul wajib diisi.','error'); return; }
-  if (!desc)  { showToast('Deskripsi wajib diisi.','error'); return; }
+function openEdit(col,id){
+  clerr('mStockE');editType=col;editId=id;
+  const item=col==='posters'?inv.posters.find(p=>p.id===id):inv.frames.find(f=>f.id===id);
+  if(!item){toast('Item tidak ditemukan.','error');return;}
+  $('mTitle').textContent='Edit '+(col==='posters'?'Poster':'Frame');
+  $('mLabel').textContent=col==='posters'?'Poster':'Frame';
+  $('mItem').value=col==='posters'?`${item.name} (${item.size} cm)`:`${item.color} — ${item.size} cm`;
+  $('mStock').value=item.stock;
 
-  const imgPath = document.getElementById('fImgPath').value.trim();
-  const finalImg = imgData || imgPath || '';
-
-  const poster = {
-    id: editingId || Date.now(),
-    title,
-    desc,
-    tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    badge: selectedBadge,
-    bg: selectedColor,
-    dark: false,
-    label: document.getElementById('fLabel').value.trim() || title.substring(0,3).toUpperCase(),
-    sub:   document.getElementById('fSub').value.trim() || '',
-    img: finalImg,
-    shopeeUrl: document.getElementById('fShopee').value.trim(),
-    tiktokUrl: document.getElementById('fTiktok').value.trim(),
-    order: parseInt(document.getElementById('fOrder').value) || posters.length + 1,
-    palette: [selectedColor, selectedColor],
-    tag: selectedBadge,
-  };
-
-  if (editingId) {
-    const idx = posters.findIndex(p => p.id === editingId);
-    if (idx > -1) posters[idx] = poster;
+  // CMS fields — hanya untuk poster
+  const cmsFields=$('cmsPosterFields');
+  if(col==='posters'){
+    cmsFields.style.display='block';
+    $('mImg').value=item.img||'';
+    $('mDesc').value=item.desc||'';
+    $('mShopee').value=item.shopeeUrl||'';
+    $('mTiktok').value=item.tiktokUrl||'';
+    $('mBgColor').value=item.bg||'#FFFFFF';
+    $('mBadgeVal').value=item.badge||'';
+    $('mOrder').value=item.order||'';
+    renderMBgPresets();
+    mBadgePick(item.badge||'');
   } else {
-    posters.push(poster);
+    cmsFields.style.display='none';
   }
 
-  saveData();
-  closeDrawer();
-  showToast(editingId ? 'Poster berhasil diupdate!' : 'Poster berhasil ditambahkan!');
-  imgData = '';
+  $('editModal').classList.add('active');$('mStock').focus();
+}
+function closeEdit(){$('editModal').classList.remove('active');editType=null;editId=null;}
+$('fEdit').addEventListener('submit',async function(e){
+  e.preventDefault();clerr('mStockE');
+  const newStk=parseInt($('mStock').value,10);
+  if(isNaN(newStk)||newStk<0||newStk>MAX_STK){ferr('mStockE','Stok harus 0–99999.');return;}
+  const btn=this.querySelector('.pbtn');btn.textContent='⏳...';btn.disabled=true;
+  try{
+    const item=editType==='posters'?inv.posters.find(p=>p.id===editId):inv.frames.find(f=>f.id===editId);
+    if(!item)throw new Error('Item tidak ditemukan.');
+    item.stock=newStk;
+
+    // Simpan field CMS jika poster
+    if(editType==='posters'){
+      item.img=($('mImg').value||'').trim();
+      item.desc=($('mDesc').value||'').trim();
+      item.shopeeUrl=($('mShopee').value||'').trim();
+      item.tiktokUrl=($('mTiktok').value||'').trim();
+      item.bg=$('mBgColor').value||'#FFFFFF';
+      item.badge=$('mBadgeVal').value||'';
+      item.order=parseInt($('mOrder').value)||99;
+      item.palette=[item.bg,item.bg];
+      item.tag=item.badge;
+      // Label untuk placeholder (pakai nama poster)
+      if(!item.label) item.label=item.name.substring(0,3).toUpperCase();
+    }
+
+    await fsSet('inventory_'+editType,item);
+    closeEdit();toast('✅ Berhasil disimpan!');
+  }catch(err){toast('Gagal: '+err.message,'error');}
+  finally{btn.disabled=false;btn.textContent='💾 Simpan';}
+});
+async function delItem(col,id){
+  if(!confirm('Hapus item ini?'))return;
+  try{await fsDel('inventory_'+col,id);toast('🗑️ Item dihapus.');}
+  catch(err){toast('Gagal: '+err.message,'error');}
 }
 
-// ══════════════════════════════════════════
-// DELETE
-// ══════════════════════════════════════════
-function askDelete(id) {
-  deleteId = id;
-  document.getElementById('confirmOverlay').classList.add('open');
-}
-function closeConfirm() {
-  deleteId = null;
-  document.getElementById('confirmOverlay').classList.remove('open');
-}
-function confirmDelete() {
-  posters = posters.filter(p => p.id !== deleteId);
-  saveData();
-  closeConfirm();
-  showToast('Poster dihapus.');
-}
+$('pSearch').addEventListener('input',e=>renderPosterTable());
+$('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
 
-// ══════════════════════════════════════════
-// EXPORT
-// ══════════════════════════════════════════
-function renderExport() {
-  const sorted = [...posters].sort((a,b) => (a.order||99)-(b.order||99));
-  const code = `const POSTERS = ${JSON.stringify(sorted, null, 2)};`;
-  document.getElementById('exportCode').textContent = code;
-}
+// Modal close on overlay click or ESC
+['editModal','itemModal'].forEach(id=>{
+  $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else closeItemModal();}});
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();}});
 
-function copyExport() {
-  const code = document.getElementById('exportCode').textContent;
-  navigator.clipboard.writeText(code).then(() => showToast('Kode berhasil dicopy!'));
-}
+// Init item list empty state
+renderItemList();
 
-function downloadBackup() {
-  const blob = new Blob([JSON.stringify(posters, null, 2)], {type:'application/json'});
-  const url  = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `srupalabs-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click(); URL.revokeObjectURL(url);
-}
+// Default filter bulan ini
+const nowMonth=thisMonth();
+$('filterMonth').value=nowMonth;
+$('kFilterMonth').value=nowMonth;
 
-function restoreBackup(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!Array.isArray(data)) throw new Error();
-      posters = data;
-      saveData();
-      showToast('Backup berhasil direstore!');
-    } catch { showToast('File tidak valid.','error'); }
+/* ── BULK UPLOAD POSTER ── */
+async function handleBulkUpload(e){
+  const file=e.target.files[0];
+  if(!file){return;}
+  
+  const fileName=file.name.toLowerCase();
+  const isCSV=fileName.endsWith('.csv');
+  const isExcel=fileName.endsWith('.xlsx')||fileName.endsWith('.xls');
+  
+  if(!isCSV&&!isExcel){
+    toast('Format file harus CSV atau Excel (.xlsx, .xls)','error');
+    return;
+  }
+  
+  const reader=new FileReader();
+  reader.onload=async function(evt){
+    try{
+      let rows=[];
+      
+      if(isCSV){
+        // Parse CSV
+        const text=evt.target.result;
+        const lines=text.split('\n').filter(l=>l.trim());
+        rows=lines.map(line=>{
+          // Simple CSV parser (handles comma-separated values)
+          const cols=line.split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+          return cols;
+        });
+      }else{
+        // Parse Excel (simple approach - read as text if possible, or show error)
+        toast('Excel akan diparse sebagai CSV. Pastikan format: Nama, Ukuran, Stok di setiap baris.','info');
+        const text=evt.target.result;
+        const lines=text.split('\n').filter(l=>l.trim());
+        rows=lines.map(line=>line.split('\t').map(c=>c.trim()));
+      }
+      
+      // Skip header if ada
+      if(rows.length>0 && (rows[0][0].toLowerCase().includes('nama')||rows[0][0].toLowerCase().includes('poster'))){
+        rows.shift();
+      }
+      
+      // LIMIT 100 ROWS MAX
+      if(rows.length > 100){
+        toast(`⚠️ Maksimal 100 baris. File Anda punya ${rows.length} baris. Hanya 100 pertama yang akan diproses.`, 'error');
+        rows = rows.slice(0, 100);
+      }
+      
+      let success=0,failed=0;
+      for(const row of rows){
+        if(row.length<3)continue;
+        
+        const name=san(row[0]);
+        const size=row[1].replace(/\s/g,''); // Remove spaces
+        const stock=parseInt(row[2],10);
+        
+        // Validasi
+        if(name.length<2){failed++;continue;}
+        if(!OK_SIZES.has(size)){failed++;continue;}
+        if(isNaN(stock)||stock<0){failed++;continue;}
+        
+        // Cek duplikat
+        if(inv.posters.find(p=>p.name===name&&p.size===size)){
+          failed++;continue;
+        }
+        
+        // Tambah poster
+        const item={
+          id:`poster_${name}_${size}_${Date.now()}_${success}`.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_-]/g,''),
+          name,
+          size,
+          stock,
+          createdAt:new Date().toISOString()
+        };
+        
+        await fsSet('inventory_posters',item);
+        success++;
+      }
+      
+      e.target.value=''; // Reset input
+      toast(`✅ Import selesai! Berhasil: ${success}, Gagal: ${failed}`);
+    }catch(err){
+      toast('Gagal parse file: '+err.message,'error');
+    }
   };
-  reader.readAsText(file);
+  
+  if(isCSV){
+    reader.readAsText(file);
+  }else{
+    reader.readAsText(file); // Simplified - for production, use library like xlsx.js
+  }
 }
 
-// ══════════════════════════════════════════
-// PANEL NAVIGATION
-// ══════════════════════════════════════════
-function showPanel(name, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  if (btn) btn.classList.add('active');
-}
-
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type?' '+type:'');
-  setTimeout(() => t.classList.add('show'), 10);
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-if (sessionStorage.getItem('sl_auth') === '1') {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadData();
-}
-document.getElementById('pwInput').focus();
 </script>
 </body>
 </html>
