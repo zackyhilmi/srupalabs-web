@@ -321,20 +321,43 @@ nav{
 
 /* ── RESPONSIVE ── */
 @media(max-width:760px){
-  .modal{grid-template-columns:1fr;border-radius:0;min-height:100svh;margin:0}
+  /* modal jadi bottom sheet */
   .modal-overlay{padding:0;align-items:flex-end}
-  .modal-left{min-height:260px;aspect-ratio:3/2}
-  .modal-right{max-height:none}
+  .modal{
+    grid-template-columns:1fr;
+    border-radius:16px 16px 0 0;
+    min-height:auto;
+    max-height:92svh;
+    margin:0;
+    overflow:hidden;
+  }
+  .modal-left{
+    height:240px;
+    min-height:unset;
+    aspect-ratio:unset;
+    width:100%;
+    flex-shrink:0;
+  }
+  .modal-left img{width:100%;height:100%;object-fit:cover;display:block}
+  .modal-img-ph{height:240px}
+  .modal-right{
+    overflow-y:auto;
+    max-height:calc(92svh - 240px);
+    padding:1.25rem 1.25rem 2rem;
+  }
+  .modal-right h2{font-size:1.2rem}
+  .modal-desc{display:none}
+  .modal-close{top:.75rem;right:.75rem}
+  .size-grid{grid-template-columns:repeat(3,1fr)}
   .sticky-cta{display:block}
   body{padding-bottom:72px}
   .page-header{flex-direction:column;align-items:flex-start}
-  .size-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:520px){
-  .nav-links a:not(.nav-cta){display:none}
   .search-input{width:140px}
   .search-input:focus{width:160px}
   .poster-grid{grid-template-columns:repeat(2,1fr);gap:.65rem}
+  .size-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -469,15 +492,26 @@ nav{
 
 <script>
 // ──────────────────────────────────────────────
-// INIT — baca dari admin localStorage kalau ada
+// FIREBASE: baca cms_posters dari Firestore
 // ──────────────────────────────────────────────
-const STORAGE_KEY = 'srupalabs_posters';
-function loadPosters() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try { return JSON.parse(raw); } catch(e) {}
-  }
-  return POSTERS; // fallback ke data default di bawah
+const FB_CFG = {
+  apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
+  authDomain:"srupa-inventory.firebaseapp.com",
+  projectId:"srupa-inventory",
+};
+
+async function loadFromFirestore() {
+  try {
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const app = getApps().length ? getApps()[0] : initializeApp(FB_CFG);
+    const db = getFirestore(app);
+    const snap = await getDocs(collection(db, 'inventory_posters'));
+    if (!snap.empty) {
+      return snap.docs.map(d => d.data()).sort((a,b) => (a.order||99)-(b.order||99));
+    }
+  } catch(e) { console.warn('Firestore tidak tersedia, pakai data lokal.', e); }
+  return null;
 }
 
 // ──────────────────────────────────────────────
@@ -604,8 +638,8 @@ let selFrame      = 'hitam';
 // ──────────────────────────────────────────────
 // FILTER + SORT + SEARCH
 // ──────────────────────────────────────────────
-function getFiltered() {
-  let list = loadPosters(); // baca dari admin atau default
+function getFiltered(posterList) {
+  let list = posterList || POSTERS;
   list = [...list].sort((a,b)=>(a.order||99)-(b.order||99));
 
   if (searchQuery)
@@ -623,8 +657,8 @@ function getFiltered() {
 // ──────────────────────────────────────────────
 // RENDER GRID
 // ──────────────────────────────────────────────
-function renderGrid() {
-  const list = getFiltered();
+function renderGrid(posterList) {
+  const list = getFiltered(posterList);
   const grid = document.getElementById('posterGrid');
   document.getElementById('itemCount').textContent = list.length + ' desain';
 
@@ -676,12 +710,12 @@ function resetAll() {
 
 document.getElementById('searchInput').addEventListener('input', e => {
   searchQuery = e.target.value.toLowerCase().trim();
-  renderGrid();
+  renderGrid(_activePosterList || POSTERS);
 });
 
 document.getElementById('sortSelect').addEventListener('change', e => {
   sortMode = e.target.value;
-  renderGrid();
+  renderGrid(_activePosterList || POSTERS);
 });
 
 // ──────────────────────────────────────────────
@@ -832,9 +866,19 @@ function refreshCheckoutLinks() {
 }
 
 // ──────────────────────────────────────────────
-// INIT
+// INIT — load dari Firestore, fallback ke data lokal
 // ──────────────────────────────────────────────
-renderGrid();
+let _activePosterList = null;
+
+(async () => {
+  renderGrid(POSTERS); // tampilkan dulu data lokal
+  const fbData = await loadFromFirestore();
+  if (fbData && fbData.length) {
+    _activePosterList = fbData;
+    renderGrid(fbData);
+    document.getElementById('itemCount').textContent = fbData.length + ' desain';
+  }
+})();
 
 // ── NAV DROPDOWN ──────────────────────────────
 function toggleDropdown() {
