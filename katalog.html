@@ -506,7 +506,7 @@ async function loadFromFirestore() {
     const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
     const app = getApps().length ? getApps()[0] : initializeApp(FB_CFG);
     const db = getFirestore(app);
-    const snap = await getDocs(collection(db, 'inventory_posters'));
+    const snap = await getDocs(collection(db, 'cms_posters'));
     if (!snap.empty) {
       return snap.docs.map(d => d.data()).sort((a,b) => (a.order||99)-(b.order||99));
     }
