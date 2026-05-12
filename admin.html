@@ -400,6 +400,10 @@ tbody tr:hover{background:#fafbfc}
       <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Poster</button>
       <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
     </div>
+    <div class="nsec">
+      <div class="nseclbl">Website</div>
+      <button class="nitem" onclick="goPage('cms',this)"><span class="nico">🎨</span>CMS Poster</button>
+    </div>
     <div class="sfooter">
       <div class="urow">
         <div class="uavatar" id="uAvatar">A</div>
@@ -741,10 +745,9 @@ tbody tr:hover{background:#fafbfc}
                 <th>Nama Poster</th>
                 <th>Ukuran & Stok</th>
                 <th>Total Stok</th>
-                <th>CMS</th>
                 <th>Aksi</th>
               </tr></thead>
-              <tbody id="tbPoster"><tr class="erow"><td colspan="6">Memuat data...</td></tr></tbody>
+              <tbody id="tbPoster"><tr class="erow"><td colspan="5">Memuat data...</td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -782,463 +785,198 @@ tbody tr:hover{background:#fafbfc}
       </div>
     </div>
 
-    <!-- ═══ CMS POSTER WEB ═══ -->
+    <!-- ═══ CMS POSTER ═══ -->
     <div class="page" id="page-cms">
-      <div id="cmsStatWrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px" id="cmsStatWrap"></div>
+      <div class="card" style="margin-bottom:12px;background:#eff6ff;border-color:#bfdbfe">
+        <div class="cbody" style="padding:10px 14px;font-size:12px;color:#1e40af;line-height:1.7">
+          💡 Data di sini langsung tampil di katalog website setelah disimpan. Upload foto ke folder <code>images/</code> di GitHub, lalu isi path-nya di form.
+        </div>
+      </div>
       <div class="card">
         <div class="chd">
-          <div class="ctitle">🎨 Daftar Poster Website</div>
-          <button class="pbtn" style="width:auto;padding:8px 18px;margin:0" onclick="cmsOpenAdd()">+ Tambah Poster</button>
+          <div class="ctitle">🎨 Poster Katalog Website</div>
+          <button class="pbtn" style="width:auto;padding:8px 18px;margin:0" onclick="cmsAdd()">+ Tambah Poster</button>
         </div>
         <div class="twrap"><table>
-          <thead><tr>
-            <th style="width:56px">Foto</th>
-            <th>Judul & Deskripsi</th>
-            <th>Tags</th>
-            <th>Badge</th>
-            <th>Links</th>
-            <th>Urutan</th>
-            <th>Aksi</th>
-          </tr></thead>
-          <tbody id="tbCMS"><tr class="erow"><td colspan="7">Memuat data...</td></tr></tbody>
+          <thead><tr><th style="width:52px">Foto</th><th>Judul</th><th>Tags</th><th>Badge</th><th>Links</th><th>Urutan</th><th>Aksi</th></tr></thead>
+          <tbody id="tbCMS"><tr class="erow"><td colspan="7">Memuat...</td></tr></tbody>
         </table></div>
       </div>
     </div>
 
-    <!-- ═══ EXPORT ═══ -->
-    <div class="page" id="page-cms_export">
-      <div class="card" style="margin-bottom:16px">
-        <div class="chd"><div class="ctitle">📋 Cara Pakai</div></div>
-        <div class="cbody" style="font-size:13px;color:var(--t2);line-height:1.8">
-          <ol style="padding-left:1.25rem">
-            <li>Tambah/edit poster di menu <strong style="color:var(--t1)">Kelola Poster Web</strong></li>
-            <li>Klik <strong style="color:var(--t1)">Generate Kode</strong> di bawah</li>
-            <li>Copy kode → paste ke <code>katalog.html</code> dan <code>index.html</code> — ganti bagian <code>const POSTERS = [...]</code></li>
-            <li>Upload kedua file ke GitHub → website otomatis update</li>
-          </ol>
-          <p style="margin-top:12px;padding:10px 14px;background:var(--amber-lt);color:var(--amber);border-radius:8px;font-size:12px"><strong>Info:</strong> Untuk foto poster, upload ke folder <code>images/</code> di GitHub dan isi path-nya di form poster (misal: <code>images/minimal-01.jpg</code>)</p>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:16px">
-        <div class="chd">
-          <div class="ctitle">⚙️ Generate Kode POSTERS</div>
-          <div style="display:flex;gap:8px">
-            <button class="pbtn" style="width:auto;padding:7px 14px;margin:0" onclick="renderExportCode()">🔄 Generate</button>
-            <button class="pbtn" style="width:auto;padding:7px 14px;margin:0;background:var(--green)" onclick="copyExportCode()">📋 Copy Kode</button>
-          </div>
-        </div>
-        <div class="cbody">
-          <pre id="exportCodeBlock" style="background:var(--gray-lt);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:11.5px;overflow-x:auto;max-height:300px;white-space:pre-wrap;word-break:break-all">Klik Generate dulu...</pre>
-        </div>
-      </div>
-      <div class="card">
-        <div class="chd"><div class="ctitle">💾 Backup & Restore Data Poster</div></div>
-        <div class="cbody" style="display:flex;gap:12px;flex-wrap:wrap">
-          <button class="pbtn" style="width:auto;padding:9px 18px;margin:0;background:#6366f1" onclick="downloadBackupCMS()">⬇ Download Backup JSON</button>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /main -->
-
 </div><!-- /appShell -->
 
-<!-- ═══ MODAL: Edit CMS Poster ═══ -->
-<div class="moverlay" id="cmsModal" onclick="if(event.target===this)closeCMSModal()">
-  <div class="mbox" style="max-width:500px;width:95vw;max-height:90vh;overflow-y:auto">
-    <div class="mhd">
-      <h3>🎨 Edit Data Katalog Website</h3>
-      <button class="mclose" onclick="closeCMSModal()">×</button>
-    </div>
-    <form id="fCMS" novalidate>
-      <input type="hidden" id="cmsName"/>
-
-      <div style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px 14px;font-size:12px;color:#4338ca;margin-bottom:14px">
-        ℹ️ Data ini ditampilkan di <strong>katalog website</strong> saja. Tidak mempengaruhi stok inventory.
-      </div>
-
-      <div class="fg">
-        <label>Nama Poster di Katalog</label>
-        <input type="text" id="cmsTitle" placeholder="Judul yang muncul di website"/>
-      </div>
-
-      <div class="fg">
-        <label>Path/URL Foto</label>
-        <input type="text" id="cmsImg" placeholder="images/nama-poster.jpg"/>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Upload foto ke folder <code>images/</code> di GitHub lalu isi path-nya</div>
-      </div>
-
-      <div class="fg">
-        <label>Deskripsi</label>
-        <textarea id="cmsDesc" placeholder="Deskripsi singkat yang muncul di katalog..." style="resize:vertical;min-height:68px" maxlength="300"></textarea>
-      </div>
-
-      <div class="fg">
-        <label>Tags/Kategori (pisah koma)</label>
-        <input type="text" id="cmsTags" placeholder="minimalis, abstract, botanical"/>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="fg">
-          <label>Link Shopee</label>
-          <input type="text" id="cmsShopee" placeholder="https://shopee.co.id/..."/>
-        </div>
-        <div class="fg">
-          <label>Link TikTok Shop</label>
-          <input type="text" id="cmsTiktok" placeholder="https://tiktok.com/..."/>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>Pesan WA Custom (opsional)</label>
-        <input type="text" id="cmsWA" placeholder="Halo, saya tertarik dengan poster ini..."/>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Kosongkan = pakai pesan default otomatis</div>
-      </div>
-
-      <div class="fg">
-        <label>Warna Background di Katalog</label>
-        <div id="cmsBgPresets" style="display:flex;gap:8px;margin-bottom:8px"></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <input type="color" id="cmsBgColor" value="#FFFFFF" style="width:30px;height:30px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
-          <span style="font-size:11px;color:var(--t3)">Putih · Krem Srupa · atau pilih custom</span>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>Badge Katalog</label>
-        <input type="hidden" id="cmsBadgeVal" value=""/>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button type="button" data-mbadge="" onclick="mBadgePick('')" style="padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
-          <button type="button" data-mbadge="hot" onclick="mBadgePick('hot')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
-          <button type="button" data-mbadge="new" onclick="mBadgePick('new')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
-          <button type="button" data-mbadge="ltd" onclick="mBadgePick('ltd')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>Urutan di Katalog</label>
-        <input type="number" id="cmsOrder" placeholder="1" min="1"/>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Angka lebih kecil = muncul lebih awal</div>
-      </div>
-
-      <button type="submit" class="pbtn" style="margin-top:4px;background:#6366f1">💾 Simpan ke Katalog</button>
-    </form>
-  </div>
-</div>
-
+<!-- ═══════════════════════════════════════════
+     CMS POSTER — script + page + modal
+     Menggunakan getDB(), fsSet(), fsDel() yang sudah ada
+════════════════════════════════════════════════ -->
 <script>
-// ── CMS STATE ────────────────────────────────────────────────────────────
-let cmsPosters = [];
-let cmsEditId  = null;
-let cmsImgData = '';
+let cmsPosters=[];
+let cmsEditId=null;
+let cmsImgData='';
 
-  // Listen cms_posters dari Firestore
-  function startCMSListener() {
-    const {db, collection, onSnapshot} = getDB();
-    onSnapshot(collection(db,'cms_posters'), snap => {
-      cmsPosters = snap.docs.map(d => d.data()).sort((a,b) => (a.order||99) - (b.order||99));
-      renderCMSTable();
-      renderCMSStats();
-    }, () => {});
-  }
+function renderCMSStats(){
+  const el=document.getElementById('cmsStatWrap');if(!el)return;
+  const n=cmsPosters.length,w=cmsPosters.filter(p=>p.img).length;
+  el.innerHTML=`
+    <div class="scard"><div class="sico blue">🎨</div><div><div class="sval">${n}</div><div class="slbl">Total Poster</div></div></div>
+    <div class="scard"><div class="sico green">🖼️</div><div><div class="sval">${w}</div><div class="slbl">Ada Foto</div></div></div>
+    <div class="scard"><div class="sico amber">⚠️</div><div><div class="sval">${n-w}</div><div class="slbl">Belum Ada Foto</div></div></div>`;
+}
 
-  function renderCMSStats() {
-    const withImg = cmsPosters.filter(p => p.img).length;
-    const el = $('cmsStatWrap');
-    if (!el) return;
-    el.innerHTML = `
-      <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval">${cmsPosters.length}</div><div class="slbl">Total Desain</div></div></div>
-      <div class="scard"><div class="sico green">✅</div><div><div class="sval">${withImg}</div><div class="slbl">Ada Foto</div></div></div>
-      <div class="scard"><div class="sico amber">⚠️</div><div><div class="sval">${cmsPosters.length - withImg}</div><div class="slbl">Belum Ada Foto</div></div></div>
-    `;
-  }
+function renderCMSTable(){
+  const tb=document.getElementById('tbCMS');if(!tb)return;
+  if(!cmsPosters.length){tb.innerHTML='<tr class="erow"><td colspan="7">Belum ada poster. Klik "+ Tambah Poster".</td></tr>';return;}
+  tb.innerHTML=cmsPosters.map(p=>`
+    <tr>
+      <td><div style="width:44px;height:52px;border-radius:4px;overflow:hidden;background:${esc(p.bg||'#f5f2e9')};border:1px solid var(--border);display:flex;align-items:center;justify-content:center">
+        ${p.img?`<img src="${esc(p.img)}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:9px;color:rgba(0,0,0,.25);font-weight:700">${esc((p.label||p.title||'?').substring(0,3).toUpperCase())}</span>`}
+      </div></td>
+      <td><strong>${esc(p.title||'')}</strong><div style="font-size:11px;color:var(--t2);margin-top:2px">${esc((p.desc||'').substring(0,50))}${(p.desc||'').length>50?'...':''}</div></td>
+      <td><span style="font-size:11px;background:var(--gray-lt);padding:2px 7px;border-radius:4px">${esc((p.tags||[]).join(', '))}</span></td>
+      <td>${p.badge?`<span class="badge ${p.badge==='hot'?'selesai':p.badge==='new'?'proses':'batal'}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>`:`<span style="color:var(--t3)">—</span>`}</td>
+      <td style="font-size:11px;line-height:1.8">${p.shopeeUrl?`<a href="${esc(p.shopeeUrl)}" target="_blank" style="color:var(--accent)">Shopee ↗</a><br>`:''}${p.tiktokUrl?`<a href="${esc(p.tiktokUrl)}" target="_blank" style="color:var(--accent)">TikTok ↗</a>`:''}</td>
+      <td style="font-size:12px;color:var(--t2)">${p.order||'—'}</td>
+      <td><div style="display:flex;gap:5px">
+        <button onclick="cmsEdit('${esc(p.id)}')" style="padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">✏️ Edit</button>
+        <button onclick="cmsDel('${esc(p.id)}')" style="padding:4px 10px;border:none;border-radius:6px;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
 
-  function renderCMSTable() {
-    const tb = $('tbCMS');
-    if (!tb) return;
-    if (!cmsPosters.length) {
-      tb.innerHTML = '<tr class="erow"><td colspan="7">Belum ada poster. Tambah poster pertama!</td></tr>';
-      return;
-    }
-    tb.innerHTML = cmsPosters.map(p => `
-      <tr>
-        <td>
-          <div style="width:44px;height:52px;border-radius:4px;overflow:hidden;background:${p.bg||'#f0f0f0'};border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            ${p.img ? `<img src="${esc(p.img)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:10px;color:rgba(0,0,0,.2);font-weight:700">${esc((p.label||'?').substring(0,3))}</span>`}
-          </div>
-        </td>
-        <td><strong>${esc(p.title)}</strong><div style="font-size:11px;color:var(--t2);margin-top:2px">${esc((p.desc||'').substring(0,50))}...</div></td>
-        <td><span style="font-size:11px;background:var(--gray-lt);padding:2px 7px;border-radius:4px">${esc((p.tags||[]).join(', '))}</span></td>
-        <td>${p.badge ? `<span class="badge ${p.badge==='hot'?'selesai':p.badge==='new'?'proses':'batal'}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>` : '<span style="color:var(--t3)">—</span>'}</td>
-        <td style="font-size:12px">${p.shopeeUrl ? `<a href="${esc(p.shopeeUrl)}" target="_blank" style="color:var(--accent)">Shopee ↗</a>` : '<span style="color:var(--t3)">—</span>'}<br>${p.tiktokUrl ? `<a href="${esc(p.tiktokUrl)}" target="_blank" style="color:var(--accent)">TikTok ↗</a>` : ''}</td>
-        <td style="font-size:12px;color:var(--t2)">${p.order||'—'}</td>
-        <td>
-          <div style="display:flex;gap:6px">
-            <button onclick="cmsOpenEdit('${p.id}')" style="padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-size:12px;font-weight:600">Edit</button>
-            <button onclick="cmsDelete('${p.id}')" style="padding:5px 12px;border:none;border-radius:6px;background:var(--red-lt);color:var(--red);cursor:pointer;font-size:12px;font-weight:600">Hapus</button>
-          </div>
-        </td>
-      </tr>`).join('');
-  }
+function cmsOpenModal(p){
+  p=p||{};cmsEditId=p.id||null;cmsImgData='';
+  document.getElementById('cmsMTitle').textContent=cmsEditId?'✏️ Edit Poster CMS':'➕ Tambah Poster CMS';
+  ['cmsFTitle','cmsFDesc','cmsFImg','cmsFShopee','cmsFTiktok','cmsFTags','cmsFLabel'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  if(p.title)document.getElementById('cmsFTitle').value=p.title;
+  if(p.desc)document.getElementById('cmsFDesc').value=p.desc;
+  if(p.img)document.getElementById('cmsFImg').value=p.img;
+  if(p.shopeeUrl)document.getElementById('cmsFShopee').value=p.shopeeUrl;
+  if(p.tiktokUrl)document.getElementById('cmsFTiktok').value=p.tiktokUrl;
+  if(p.tags)document.getElementById('cmsFTags').value=(p.tags||[]).join(', ');
+  if(p.label)document.getElementById('cmsFLabel').value=p.label;
+  document.getElementById('cmsFBgColor').value=p.bg||'#FFFFFF';
+  document.getElementById('cmsFBadge').value=p.badge||'';
+  document.getElementById('cmsFOrder').value=p.order||'';
+  document.getElementById('cmsFPreview').style.display='none';
+  cmsRenderBadge();
+  document.getElementById('cmsModal').classList.add('active');
+}
+function cmsAdd(){cmsOpenModal(null);}
+function cmsEdit(id){const p=cmsPosters.find(x=>x.id===id);if(p)cmsOpenModal(p);}
+function cmsClose(){document.getElementById('cmsModal').classList.remove('active');cmsImgData='';}
 
-  function renderCmsBgPresets() {
-    const wrap = document.getElementById('cmsBgPresets');
-    if (!wrap) return;
-    const colors = ['#FFFFFF','#F5F2E9','#EDE8DF','#E4E0D8','#E8EDE6','#E5E8EA','#1E1E1E','#252525'];
-    wrap.innerHTML = colors.map(c => {
-      const border = c === '#FFFFFF' ? '#ddd' : 'transparent';
-      return `<div onclick="document.getElementById('cmsBgColor').value='${c}'" title="${c}"
-        style="width:28px;height:28px;border-radius:50%;background:${c};border:2px solid ${border};cursor:pointer;flex-shrink:0;transition:transform .15s"
-        onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"></div>`;
-    }).join('');
-  }
+function cmsRenderBadge(){
+  const val=document.getElementById('cmsFBadge').value;
+  document.querySelectorAll('[data-cbadge]').forEach(b=>{
+    b.style.outline=b.dataset.cbadge===val?'2px solid #6366f1':'none';
+    b.style.outlineOffset='2px';
+  });
+}
+function cmsBadgePick(val){document.getElementById('cmsFBadge').value=val;cmsRenderBadge();}
 
-  function cmsOpenAdd() {
-    cmsEditId = null; cmsImgData = '';
-    document.getElementById('cmsDrawerTitle').textContent = 'Tambah Poster';
-    ['cmsTitle','cmsDesc','cmsLabel','cmsSub','cmsTags','cmsImgPath','cmsShopee','cmsTiktok'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    const orderEl = document.getElementById('cmsOrder');
-    if (orderEl) orderEl.value = cmsPosters.length + 1;
-    const badgeEl = document.getElementById('cmsBadgeVal');
-    if (badgeEl) badgeEl.value = '';
-    const bgEl = document.getElementById('cmsBgColor');
-    if (bgEl) bgEl.value = '#FFFFFF';
-    const preview = document.getElementById('cmsImgPreview');
-    if (preview) preview.style.display = 'none';
-    renderCmsBgPresets();
-    renderCmsBadgeOpts();
-    document.getElementById('cmsDrawer').classList.add('active');
-    document.getElementById('cmsDrawerOverlay').classList.add('active');
-  }
+function cmsHandleImg(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){toast('Foto maks 2MB','error');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    cmsImgData=e.target.result;
+    const prev=document.getElementById('cmsFPreview');
+    prev.src=cmsImgData;prev.style.display='block';
+    document.getElementById('cmsFImg').value='';
+  };
+  r.readAsDataURL(file);
+}
 
-  function cmsOpenEdit(id) {
-    const p = cmsPosters.find(x => x.id === id);
-    if (!p) return;
-    cmsEditId = id; cmsImgData = '';
-    document.getElementById('cmsDrawerTitle').textContent = 'Edit Poster';
-    document.getElementById('cmsTitle').value   = p.title || '';
-    document.getElementById('cmsDesc').value    = p.desc  || '';
-    document.getElementById('cmsLabel').value   = p.label || '';
-    document.getElementById('cmsSub').value     = p.sub   || '';
-    document.getElementById('cmsTags').value    = (p.tags||[]).join(', ');
-    document.getElementById('cmsOrder').value   = p.order || '';
-    document.getElementById('cmsImgPath').value = p.img   || '';
-    document.getElementById('cmsShopee').value  = p.shopeeUrl || '';
-    document.getElementById('cmsTiktok').value  = p.tiktokUrl || '';
-    document.getElementById('cmsBadgeVal').value = p.badge || '';
-    document.getElementById('cmsBgColor').value  = p.bg || '#FFFFFF';
-    const preview = document.getElementById('cmsImgPreview');
-    if (p.img) { preview.src = p.img; preview.style.display = 'block'; }
-    else { preview.style.display = 'none'; }
-    renderCmsBgPresets();
-    renderCmsBadgeOpts();
-    document.getElementById('cmsDrawer').classList.add('active');
-    document.getElementById('cmsDrawerOverlay').classList.add('active');
-  }
+async function cmsSave(){
+  const title=(document.getElementById('cmsFTitle').value||'').trim();
+  if(!title){toast('Judul wajib diisi','error');return;}
+  const desc     =(document.getElementById('cmsFDesc').value||'').trim();
+  const imgPath  =(document.getElementById('cmsFImg').value||'').trim();
+  const img      =cmsImgData||imgPath||'';
+  const shopeeUrl=(document.getElementById('cmsFShopee').value||'').trim();
+  const tiktokUrl=(document.getElementById('cmsFTiktok').value||'').trim();
+  const tags     =(document.getElementById('cmsFTags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
+  const bg       =document.getElementById('cmsFBgColor').value||'#FFFFFF';
+  const badge    =document.getElementById('cmsFBadge').value||'';
+  const order    =parseInt(document.getElementById('cmsFOrder').value)||99;
+  const label    =(document.getElementById('cmsFLabel').value||'').trim()||title.substring(0,3).toUpperCase();
+  const id       =cmsEditId||('cms_'+Date.now());
+  const data={id,name:title,title,desc,img,shopeeUrl,tiktokUrl,tags,bg,badge,order,label,dark:false,palette:[bg,bg],tag:badge,sub:'',updatedAt:new Date().toISOString()};
+  const btn=document.getElementById('cmsSaveBtn');
+  btn.textContent='⏳...';btn.disabled=true;
+  try{
+    await fsSet('cms_posters',data);
+    cmsClose();
+    toast(cmsEditId?'✅ Poster diupdate!':'✅ Poster ditambahkan ke katalog!');
+    cmsImgData='';
+  }catch(e){toast('Gagal: '+e.message,'error');}
+  finally{btn.textContent='💾 Simpan ke Katalog';btn.disabled=false;}
+}
 
-  function cmsCloseDrawer() {
-    document.getElementById('cmsDrawer').classList.remove('active');
-    document.getElementById('cmsDrawerOverlay').classList.remove('active');
-  }
-
-  function renderCmsBadgeOpts() {
-    const val = document.getElementById('cmsBadgeVal') ? document.getElementById('cmsBadgeVal').value : '';
-    document.getElementById('cmsDrawer').querySelectorAll('[data-badge]').forEach(b => {
-      b.style.fontWeight = b.dataset.badge === val ? '700' : '500';
-      b.style.outline = b.dataset.badge === val ? '2px solid var(--accent)' : 'none';
-    });
-  }
-
-  function cmsBadgePick(val) {
-    document.getElementById('cmsBadgeVal').value = val;
-    renderCmsBadgeOpts();
-  }
-
-  function cmsHandleImg(input) {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { toast('Foto terlalu besar. Maks 2MB.', 'error'); return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-      cmsImgData = e.target.result;
-      document.getElementById('cmsImgPreview').src = cmsImgData;
-      document.getElementById('cmsImgPreview').style.display = 'block';
-      document.getElementById('cmsImgPath').value = '';
-    };
-    reader.readAsDataURL(file);
-  }
-
-  async function cmsSave() {
-    const title = (document.getElementById('cmsTitle').value || '').trim();
-    const desc  = (document.getElementById('cmsDesc').value  || '').trim();
-    if (!title) { toast('Judul wajib diisi.', 'error'); return; }
-    if (!desc)  { toast('Deskripsi wajib diisi.', 'error'); return; }
-
-    const imgPath = (document.getElementById('cmsImgPath').value || '').trim();
-    const finalImg = cmsImgData || imgPath || '';
-    const bg = document.getElementById('cmsBgColor').value || '#FFFFFF';
-    const badge = document.getElementById('cmsBadgeVal').value || '';
-    const tags = (document.getElementById('cmsTags').value || '').split(',').map(t => t.trim()).filter(Boolean);
-    const label = (document.getElementById('cmsLabel').value || '').trim() || title.substring(0,3).toUpperCase();
-    const sub   = (document.getElementById('cmsSub').value   || '').trim();
-    const shopeeUrl = (document.getElementById('cmsShopee').value || '').trim();
-    const tiktokUrl = (document.getElementById('cmsTiktok').value || '').trim();
-    const order = parseInt(document.getElementById('cmsOrder').value) || cmsPosters.length + 1;
-
-    const poster = {
-      id: cmsEditId || 'cms_' + Date.now(),
-      title, desc, tags, badge, bg,
-      dark: false, label, sub,
-      img: finalImg, shopeeUrl, tiktokUrl, order,
-      palette: [bg, bg],
-      tag: badge,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const saveBtn = document.getElementById('cmsSaveBtn');
-    if (saveBtn) { saveBtn.textContent = '⏳...'; saveBtn.disabled = true; }
-    try {
-      await fsSet('cms_posters', poster);
-      toast(cmsEditId ? 'Poster diupdate!' : 'Poster ditambahkan!');
-      cmsCloseDrawer();
-      cmsImgData = '';
-    } catch(e) {
-      toast('Gagal menyimpan: ' + e.message, 'error');
-    } finally {
-      if (saveBtn) { saveBtn.textContent = 'Simpan'; saveBtn.disabled = false; }
-    }
-  }
-
-  async function cmsDelete(id) {
-    const p = cmsPosters.find(x => x.id === id);
-    if (!p || !confirm(`Hapus poster "${p.title}"?`)) return;
-    try { await fsDel('cms_posters', id); toast('Poster dihapus.'); }
-    catch(e) { toast('Gagal hapus: ' + e.message, 'error'); }
-  }
-
-  function renderExportCode() {
-    const el = $('exportCodeBlock');
-    if (!el) return;
-    const sorted = [...cmsPosters].sort((a,b) => (a.order||99) - (b.order||99));
-    el.textContent = `const POSTERS = ${JSON.stringify(sorted, null, 2)};`;
-  }
-
-  function copyExportCode() {
-    const code = $('exportCodeBlock').textContent;
-    navigator.clipboard.writeText(code).then(() => toast('Kode berhasil dicopy!'));
-  }
-
-  function downloadBackupCMS() {
-    const blob = new Blob([JSON.stringify(cmsPosters, null, 2)], {type:'application/json'});
-    const url  = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `srupalabs-cms-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+async function cmsDel(id){
+  const p=cmsPosters.find(x=>x.id===id);
+  if(!p||!confirm('Hapus poster "'+(p.title||'ini')+'"?'))return;
+  try{await fsDel('cms_posters',id);toast('Poster dihapus.');}
+  catch(e){toast('Gagal: '+e.message,'error');}
+}
 </script>
 
-<!-- CMS DRAWER — di luar appShell agar fixed positioning bekerja -->
-<div id="cmsDrawerOverlay" onclick="cmsCloseDrawer()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:998"></div>
-<div id="cmsDrawer" style="position:fixed;top:0;right:0;bottom:0;z-index:999;width:100%;max-width:500px;background:white;box-shadow:-8px 0 32px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)">
-  <div style="padding:1.1rem 1.25rem;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <h3 id="cmsDrawerTitle" style="font-size:15px;font-weight:700;font-family:inherit">Tambah Poster</h3>
-    <button onclick="cmsCloseDrawer()" style="width:30px;height:30px;border-radius:50%;border:1px solid #e5e7eb;background:none;cursor:pointer;font-size:14px;line-height:1">✕</button>
-  </div>
-  <div style="flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1rem">
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Foto Poster</label>
-      <div style="border:2px dashed #e5e7eb;border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;position:relative" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#e5e7eb'">
-        <input type="file" accept="image/*" onchange="cmsHandleImg(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"/>
-        <div style="font-size:1.5rem;margin-bottom:.3rem">🖼️</div>
-        <p style="font-size:12px;color:#9ca3af">Klik upload foto · JPG/PNG · maks 2MB<br><small>800×800px (kotak) atau 800×1067px (portrait)</small></p>
+<!-- MODAL: CMS Poster -->
+<div class="moverlay" id="cmsModal" onclick="if(event.target===this)cmsClose()">
+  <div class="mbox" style="max-width:500px;width:95vw;max-height:92vh;overflow-y:auto">
+    <div class="mhd"><h3 id="cmsMTitle">➕ Tambah Poster CMS</h3><button class="mclose" onclick="cmsClose()">×</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:4px">
+      <div class="fg"><label>Judul Poster *</label><input type="text" id="cmsFTitle" placeholder="cth: Minimal Series 01" maxlength="100"/></div>
+      <div class="fg"><label>Deskripsi</label><textarea id="cmsFDesc" placeholder="Deskripsi singkat untuk katalog..." style="resize:vertical;min-height:64px" maxlength="300"></textarea></div>
+      <div class="fg">
+        <label>Upload Foto Poster</label>
+        <div style="border:2px dashed var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='var(--border)'">
+          <input type="file" accept="image/*" onchange="cmsHandleImg(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"/>
+          <div style="font-size:1.4rem;margin-bottom:4px">🖼️</div>
+          <p style="font-size:12px;color:var(--t2)">Klik upload · JPG/PNG/WebP · maks 2MB</p>
+          <p style="font-size:11px;color:var(--t3);margin-top:2px">800×800px (kotak) atau 800×1067px (portrait)</p>
+        </div>
+        <img id="cmsFPreview" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:8px;display:none" alt="Preview"/>
       </div>
-      <img id="cmsImgPreview" style="width:100%;max-height:180px;object-fit:contain;border-radius:8px;border:1px solid #e5e7eb;margin-top:8px;display:none" alt="Preview"/>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Atau path/URL foto</label>
-      <input type="text" id="cmsImgPath" placeholder="images/nama-poster.jpg" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-      <p style="font-size:11px;color:#9ca3af;margin-top:3px">Isi jika foto sudah diupload ke GitHub</p>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Judul Poster *</label>
-      <input type="text" id="cmsTitle" placeholder="cth: Minimal Series 01" maxlength="100" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Deskripsi *</label>
-      <textarea id="cmsDesc" placeholder="Deskripsi singkat poster ini..." maxlength="300" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:72px"></textarea>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Link Shopee (per SKU)</label>
-      <input type="text" id="cmsShopee" placeholder="https://shopee.co.id/product/..." style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Link TikTok Shop (per SKU)</label>
-      <input type="text" id="cmsTiktok" placeholder="https://www.tiktok.com/..." style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Warna Background</label>
-      <div id="cmsBgPresets" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <input type="color" id="cmsBgColor" value="#FFFFFF" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:50%;cursor:pointer;padding:0"/>
-        <span style="font-size:12px;color:#9ca3af">Pilih warna custom</span>
+      <div class="fg"><label>Atau path/URL foto <small style="color:var(--t3)">(jika sudah di GitHub)</small></label><input type="text" id="cmsFImg" placeholder="images/nama.jpg atau https://..."/></div>
+      <div class="fg"><label>Link Shopee</label><input type="text" id="cmsFShopee" placeholder="https://shopee.co.id/product/..."/></div>
+      <div class="fg"><label>Link TikTok Shop</label><input type="text" id="cmsFTiktok" placeholder="https://www.tiktok.com/..."/></div>
+      <div class="fg"><label>Tags <small style="color:var(--t3)">(pisah koma)</small></label><input type="text" id="cmsFTags" placeholder="minimalis, abstract"/></div>
+      <div class="fg">
+        <label>Warna Background Katalog</label>
+        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+          <div onclick="document.getElementById('cmsFBgColor').value='#FFFFFF'" style="width:28px;height:28px;border-radius:50%;background:#FFFFFF;border:2px solid #ddd;cursor:pointer;flex-shrink:0" title="Putih"></div>
+          <div onclick="document.getElementById('cmsFBgColor').value='#F5F2E9'" style="width:28px;height:28px;border-radius:50%;background:#F5F2E9;border:2px solid #ddd;cursor:pointer;flex-shrink:0" title="Krem Srupa"></div>
+          <input type="color" id="cmsFBgColor" value="#FFFFFF" style="width:28px;height:28px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0;flex-shrink:0"/>
+          <span style="font-size:11px;color:var(--t3)">Custom</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Badge Katalog</label>
+        <input type="hidden" id="cmsFBadge" value=""/>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" data-cbadge="" onclick="cmsBadgePick('')" style="padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
+          <button type="button" data-cbadge="hot" onclick="cmsBadgePick('hot')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
+          <button type="button" data-cbadge="new" onclick="cmsBadgePick('new')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
+          <button type="button" data-cbadge="ltd" onclick="cmsBadgePick('ltd')" style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
+        </div>
+      </div>
+      <div class="fg"><label>Label Placeholder <small style="color:var(--t3)">(maks 6 huruf)</small></label><input type="text" id="cmsFLabel" placeholder="cth: MIN" maxlength="6"/></div>
+      <div class="fg"><label>Urutan Tampil</label><input type="number" id="cmsFOrder" placeholder="1" min="1"/><div style="font-size:11px;color:var(--t3);margin-top:3px">Angka lebih kecil = tampil lebih awal</div></div>
+      <div style="display:flex;gap:8px;padding-top:4px">
+        <button onclick="cmsClose()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-weight:600;font-family:inherit;font-size:13px">Batal</button>
+        <button id="cmsSaveBtn" onclick="cmsSave()" style="flex:2;padding:10px;border:none;border-radius:8px;background:#6366f1;color:white;cursor:pointer;font-weight:700;font-family:inherit;font-size:13px">💾 Simpan ke Katalog</button>
       </div>
     </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Badge</label>
-      <input type="hidden" id="cmsBadgeVal" value=""/>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button type="button" data-badge="" onclick="cmsBadgePick('')" style="padding:5px 12px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
-        <button type="button" data-badge="hot" onclick="cmsBadgePick('hot')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
-        <button type="button" data-badge="new" onclick="cmsBadgePick('new')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
-        <button type="button" data-badge="ltd" onclick="cmsBadgePick('ltd')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div>
-        <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Label Atas <small style="color:#d1d5db">(maks 6)</small></label>
-        <input type="text" id="cmsLabel" placeholder="MIN" maxlength="6" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Label Bawah</label>
-        <input type="text" id="cmsSub" placeholder="IMAL 01" maxlength="10" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-      </div>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Tags (pisah koma)</label>
-      <input type="text" id="cmsTags" placeholder="minimalis, abstract, botanical" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-    </div>
-
-    <div>
-      <label style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px">Urutan Tampil</label>
-      <input type="number" id="cmsOrder" placeholder="1" min="1" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;outline:none"/>
-    </div>
-
-  </div>
-  <div style="padding:1rem 1.25rem;border-top:1px solid #e5e7eb;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0">
-    <button onclick="cmsCloseDrawer()" style="padding:9px 18px;border:1px solid #e5e7eb;border-radius:8px;background:white;cursor:pointer;font-weight:600;font-family:inherit;font-size:13px">Batal</button>
-    <button id="cmsSaveBtn" onclick="cmsSave()" style="padding:9px 22px;border:none;border-radius:8px;background:#6366f1;color:white;cursor:pointer;font-weight:700;font-family:inherit;font-size:13px">Simpan</button>
   </div>
 </div>
 
-<style>
-#cmsDrawer.active{transform:none}
-#cmsDrawerOverlay.active{display:block!important}
-</style>
+
 
 <!-- MODAL: Add Item ke Order -->
 <div class="moverlay" id="itemModal">
@@ -1304,77 +1042,8 @@ let cmsImgData = '';
     <form id="fEdit" novalidate>
       <div class="fg"><label id="mLabel">Item</label><input type="text" id="mItem" readonly style="background:var(--gray-lt)"></div>
       <div class="fg"><label>Stok Baru</label><input type="number" id="mStock" min="0" max="99999"><div class="ferr" id="mStockE"></div></div>
-      <button type="submit" class="pbtn">💾 Simpan Stok</button>
+      <button type="submit" class="pbtn">💾 Simpan</button>
     </form>
-  </div>
-</div>
-
-<!-- CMS POSTER MODAL -->
-<div class="moverlay" id="cmsModal" onclick="if(event.target===this)this.classList.remove('active')">
-  <div class="mbox" style="max-width:520px;width:95vw;max-height:90vh;overflow-y:auto">
-    <div class="mhd"><h3 id="cmsModalTitle">🎨 Edit Katalog</h3><button class="mclose" onclick="$('cmsModal').classList.remove('active')">×</button></div>
-    <input type="hidden" id="cmsName"/>
-    <div style="padding:0 0 16px;display:flex;flex-direction:column;gap:14px">
-
-      <div class="fg">
-        <label>Judul di Katalog Website</label>
-        <input type="text" id="cmsTitle" placeholder="Nama yang tampil di website" maxlength="100"/>
-      </div>
-
-      <div class="fg">
-        <label>Path / URL Foto</label>
-        <input type="text" id="cmsImg" placeholder="images/nama-poster.jpg atau https://..."/>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Upload foto ke folder <code>images/</code> di GitHub, lalu isi path-nya</div>
-      </div>
-
-      <div class="fg">
-        <label>Deskripsi</label>
-        <textarea id="cmsDesc" placeholder="Deskripsi singkat yang muncul di katalog..." style="resize:vertical;min-height:68px" maxlength="300"></textarea>
-      </div>
-
-      <div class="fg">
-        <label>Link Shopee (SKU ini)</label>
-        <input type="text" id="cmsShopee" placeholder="https://shopee.co.id/product/..."/>
-      </div>
-
-      <div class="fg">
-        <label>Link TikTok Shop (SKU ini)</label>
-        <input type="text" id="cmsTiktok" placeholder="https://www.tiktok.com/..."/>
-      </div>
-
-      <div class="fg">
-        <label>Tags / Kategori (pisah koma)</label>
-        <input type="text" id="cmsTags" placeholder="minimalis, abstract, botanical"/>
-      </div>
-
-      <div class="fg">
-        <label>Warna Background Katalog</label>
-        <div id="cmsBgPresets" style="display:flex;gap:8px;margin-bottom:8px"></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <input type="color" id="cmsBgColor" value="#FFFFFF" oninput="renderCMSBgPresets()" style="width:30px;height:30px;border:1px solid var(--border);border-radius:50%;cursor:pointer;padding:0"/>
-          <span style="font-size:11px;color:var(--t3)">Custom warna</span>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>Badge Katalog</label>
-        <input type="hidden" id="cmsBadgeVal" value=""/>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button type="button" data-cbadge="" onclick="cmsBadgeClick('')" style="padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:white;font-family:inherit">Tidak ada</button>
-          <button type="button" data-cbadge="hot" onclick="cmsBadgeClick('hot')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#111;color:white;font-family:inherit">🔥 Terlaris</button>
-          <button type="button" data-cbadge="new" onclick="cmsBadgeClick('new')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#16a34a;color:white;font-family:inherit">✨ Baru</button>
-          <button type="button" data-cbadge="ltd" onclick="cmsBadgeClick('ltd')" style="padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:#dc2626;color:white;font-family:inherit">⚡ Limited</button>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>Urutan Tampil di Katalog</label>
-        <input type="number" id="cmsOrder" placeholder="1" min="1"/>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Angka lebih kecil = tampil lebih awal</div>
-      </div>
-
-      <button id="cmsSaveBtn" onclick="saveCMS()" class="pbtn">💾 Simpan ke Katalog</button>
-    </div>
   </div>
 </div>
 
@@ -1389,7 +1058,6 @@ const MAX_STK=99999;
 const rl={ts:[],ok(){const n=Date.now();this.ts=this.ts.filter(t=>n-t<60000);if(this.ts.length>=30)return false;this.ts.push(n);return true;}};
 
 let inv={posters:[],frames:[]};
-let cmsData={}; // nama poster -> data CMS
 let orders=[];
 let keuangan=[];
 let pendingItems=[];  // item builder untuk form order
@@ -1430,10 +1098,10 @@ window._startListeners=function(){
   let fl={p:false,f:false,o:false,k:false};
   const chk=()=>{if(Object.values(fl).every(Boolean))fbStat('connected','Terhubung');};
   onSnapshot(collection(db,'inventory_posters'),s=>{inv.posters=s.docs.map(d=>d.data());renderPosters($('pSearch').value);updateDashboard();fl.p=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'cms_posters'),s=>{cmsData={};s.docs.forEach(d=>{const data=d.data();if(data.name)cmsData[data.name]=data;});renderPosters($('pSearch').value);},()=>{});
   onSnapshot(collection(db,'inventory_frames'),s=>{inv.frames=s.docs.map(d=>d.data());renderFrames($('fSearch').value);updateDashboard();fl.f=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();fl.o=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'keuangan'),s=>{keuangan=s.docs.map(d=>d.data());renderKeuangan();updateKeuanganSummary();renderLaporan();fl.k=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'cms_posters'),s=>{cmsPosters=s.docs.map(d=>d.data()).sort((a,b)=>(a.order||99)-(b.order||99));renderCMSTable();renderCMSStats();},()=>{});
 };
 
 /* ── AUTH ── */
@@ -1455,7 +1123,7 @@ $('lBtn').onclick=async()=>{
 function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
 
 /* ── NAVIGATION ── */
-const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Kelola Poster Website',cms_export:'Export ke Website'};
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'CMS Poster Website'};
 function goPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
@@ -1982,39 +1650,49 @@ function renderPosterTable(){
 
 function renderPosters(q=''){
   const tb=$('tbPoster'),ql=q.toLowerCase();
-  const grouped={};
-  inv.posters.forEach(p=>{
+  
+  // Group posters by name
+  const grouped = {};
+  inv.posters.forEach(p => {
     if(p.name.toLowerCase().includes(ql)){
-      if(!grouped[p.name])grouped[p.name]=[];
+      if(!grouped[p.name]) grouped[p.name] = [];
       grouped[p.name].push(p);
     }
   });
-  const groupNames=Object.keys(grouped);
-  if(!groupNames.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada data poster</td></tr>';return;}
-  tb.innerHTML=groupNames.map(name=>{
-    const posters=grouped[name];
-    const totalStock=posters.reduce((sum,p)=>sum+p.stock,0);
-    const posterIds=posters.map(p=>p.id).join(',');
-    const isChecked=posters.every(p=>selectedPosters.has(p.id));
-    const sizeDisplay=posters.map(p=>{const b=stockBadge(p.stock);return`<span class="size-tag ${b.c}">${p.size}&nbsp;(${p.stock})</span>`;}).join(' ');
-    const cms=cmsData[name];
-    const cmsStatus=cms
-      ?`<span style="font-size:11px;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:4px;font-weight:600">✅ Di katalog</span>`
-      :`<span style="font-size:11px;background:#f1f5f9;color:#94a3b8;padding:2px 7px;border-radius:4px">⚪ Belum</span>`;
-    return`<tr>
+  
+  const groupNames = Object.keys(grouped);
+  if(!groupNames.length){
+    tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data poster</td></tr>';
+    return;
+  }
+  
+  // Render grouped
+  tb.innerHTML = groupNames.map(name => {
+    const posters = grouped[name];
+    const totalStock = posters.reduce((sum, p) => sum + p.stock, 0);
+    const posterIds = posters.map(p => p.id).join(',');
+    const isChecked = posters.every(p => selectedPosters.has(p.id));
+    
+    // Build size display
+    const sizeDisplay = posters.map(p => {
+      const badge = stockBadge(p.stock);
+      return `<span class="size-tag ${badge.c}">${p.size} (${p.stock})</span>`;
+    }).join(' ');
+    
+    return `<tr>
       <td><input type="checkbox" class="poster-check" data-ids="${posterIds}" ${isChecked?'checked':''} onchange="togglePosterSelect(this)"></td>
       <td><strong>${esc(name)}</strong></td>
-      <td style="font-size:12px;line-height:1.8">${sizeDisplay}</td>
+      <td style="font-size:13px">${sizeDisplay}</td>
       <td><strong>${totalStock}</strong></td>
-      <td>${cmsStatus}</td>
-      <td class="acell" style="gap:4px;flex-wrap:wrap">
-        <button class="bsm bedit" onclick="editPosterGroup('${esc(name)}')" title="Edit Stok Inventory">📦&nbsp;Stok</button>
-        <button class="bsm" style="background:#6366f1;color:white;border-color:#6366f1" onclick="openCMSEdit('${esc(name)}')" title="Edit Data Katalog">🎨&nbsp;Katalog</button>
-        <button class="bsm bdel" onclick="deletePosterGroup('${esc(name)}')" title="Hapus">🗑️</button>
+      <td class="acell">
+        <button class="bsm bedit" onclick="editPosterGroup('${esc(name)}')">✏️</button>
+        <button class="bsm bdel" onclick="deletePosterGroup('${esc(name)}')">🗑️ Hapus Semua</button>
       </td>
     </tr>`;
   }).join('');
-  $('selectAllPosters').checked=inv.posters.length>0&&inv.posters.every(p=>selectedPosters.has(p.id));
+  
+  // Update select all checkbox
+  $('selectAllPosters').checked = inv.posters.length > 0 && inv.posters.every(p => selectedPosters.has(p.id));
 }
 
 function togglePosterSelect(checkbox){
@@ -2080,172 +1758,14 @@ async function deletePosterGroup(name){
 }
 
 function editPosterGroup(name){
-  const posters=inv.posters.filter(p=>p.name===name);
-  if(posters.length===1){openEdit('posters',posters[0].id);return;}
-  const tb=$('tbPoster');
-  const existingExpand=tb.querySelector(`tr.expand-row[data-name="${CSS.escape(name)}"]`);
-  if(existingExpand){existingExpand.remove();return;}
-  const rows=tb.querySelectorAll('tr');
-  let targetRow=null;
-  rows.forEach(row=>{const s=row.querySelector('td strong');if(s&&s.textContent===name)targetRow=row;});
-  if(!targetRow)return;
-  const expandRow=document.createElement('tr');
-  expandRow.className='expand-row';expandRow.dataset.name=name;
-  expandRow.style.cssText='background:#f8faff';
-  expandRow.innerHTML=`<td colspan="6" style="padding:10px 16px">
-    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">Pilih ukuran untuk edit stok:</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      ${posters.map(p=>{const b=stockBadge(p.stock);return`<button onclick="openEdit('posters','${esc(p.id)}');this.closest('tr.expand-row').remove()" style="padding:7px 14px;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-size:13px;font-family:var(--font);display:flex;align-items:center;gap:6px"><strong>${esc(p.size)} cm</strong><span class="badge ${b.c}">${p.stock} stok</span></button>`;}).join('')}
-    </div></td>`;
-  targetRow.insertAdjacentElement('afterend',expandRow);
+  const posters = inv.posters.filter(p => p.name === name);
+  if(posters.length === 1){
+    openEdit('posters', posters[0].id);
+  }else{
+    // TODO: implement multi-edit or show list to choose
+    alert(`Poster "${name}" punya ${posters.length} ukuran. Pilih ukuran mana yang mau diedit dari list.`);
+  }
 }
-
-function openCMSEdit(name){
-  const cms=cmsData[name]||{};
-  $('cmsModalTitle').textContent='🎨 Edit Katalog — '+name;
-  $('cmsName').value=name;
-  $('cmsTitle').value=cms.title||name;
-  $('cmsDesc').value=cms.desc||'';
-  $('cmsImg').value=cms.img||'';
-  $('cmsShopee').value=cms.shopeeUrl||'';
-  $('cmsTiktok').value=cms.tiktokUrl||'';
-  $('cmsTags').value=(cms.tags||[]).join(', ');
-  $('cmsBgColor').value=cms.bg||'#FFFFFF';
-  $('cmsBadgeVal').value=cms.badge||'';
-  $('cmsOrder').value=cms.order||'';
-  renderCMSBgPresets();
-  renderCMSBadge();
-  $('cmsModal').classList.add('active');
-}
-
-function renderCMSBgPresets(){
-  const wrap=$('cmsBgPresets');if(!wrap)return;
-  const colors=['#FFFFFF','#F5F2E9'];
-  wrap.innerHTML=colors.map(c=>`<div onclick="$('cmsBgColor').value='${c}'" title="${c}" style="width:28px;height:28px;border-radius:50%;background:${c};border:2px solid ${c===$('cmsBgColor').value?'#6366f1':'#ddd'};cursor:pointer;transition:all .15s" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"></div>`).join('');
-}
-
-function renderCMSBadge(){
-  const val=$('cmsBadgeVal').value;
-  document.querySelectorAll('[data-cbadge]').forEach(b=>{
-    b.style.outline=b.dataset.cbadge===val?'2px solid #6366f1':'none';
-    b.style.outlineOffset='2px';
-  });
-}
-
-function cmsBadgeClick(val){$('cmsBadgeVal').value=val;renderCMSBadge();}
-
-async function saveCMS(){
-  const name=$('cmsName').value;
-  const title=($('cmsTitle').value||'').trim()||name;
-  const desc=($('cmsDesc').value||'').trim();
-  const img=($('cmsImg').value||'').trim();
-  const shopeeUrl=($('cmsShopee').value||'').trim();
-  const tiktokUrl=($('cmsTiktok').value||'').trim();
-  const tags=($('cmsTags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
-  const bg=$('cmsBgColor').value||'#FFFFFF';
-  const badge=$('cmsBadgeVal').value||'';
-  const order=parseInt($('cmsOrder').value)||99;
-
-  const data={
-    id:'cms_'+name.toLowerCase().replace(/\s+/g,'_'),
-    name, title, desc, img,
-    shopeeUrl, tiktokUrl, tags, bg, badge, order,
-    dark:false,
-    label:name.substring(0,3).toUpperCase(),
-    sub:'',
-    palette:[bg,bg],
-    tag:badge,
-    updatedAt:new Date().toISOString(),
-  };
-
-  const btn=$('cmsSaveBtn');
-  btn.textContent='⏳...';btn.disabled=true;
-  try{
-    await fsSet('cms_posters',data);
-    $('cmsModal').classList.remove('active');
-    toast('✅ Data katalog disimpan!');
-  }catch(e){toast('Gagal: '+e.message,'error');}
-  finally{btn.textContent='💾 Simpan ke Katalog';btn.disabled=false;}
-}
-
-// ── CMS POSTER FUNCTIONS ─────────────────────────────────────────────────
-let cmsEditName = null;
-
-function openCMSEdit(name){
-  cmsEditName = name;
-  const d = cmsData[name] || {};
-  document.getElementById('cmsName').value = name;
-  document.getElementById('cmsTitle').value = d.title || name;
-  document.getElementById('cmsImg').value = d.img || '';
-  document.getElementById('cmsDesc').value = d.desc || '';
-  document.getElementById('cmsTags').value = (d.tags||[]).join(', ');
-  document.getElementById('cmsShopee').value = d.shopeeUrl || '';
-  document.getElementById('cmsTiktok').value = d.tiktokUrl || '';
-  document.getElementById('cmsWA').value = d.waMsg || '';
-  document.getElementById('cmsBgColor').value = d.bg || '#FFFFFF';
-  document.getElementById('cmsBadgeVal').value = d.badge || '';
-  document.getElementById('cmsOrder').value = d.order || 99;
-  renderCmsBgPresets();
-  mBadgePick(d.badge||'');
-  document.getElementById('cmsModal').classList.add('active');
-}
-
-function closeCMSModal(){
-  document.getElementById('cmsModal').classList.remove('active');
-  cmsEditName=null;
-}
-
-function renderCmsBgPresets(){
-  const wrap=document.getElementById('cmsBgPresets');
-  if(!wrap)return;
-  const colors=['#FFFFFF','#F5F2E9'];
-  wrap.innerHTML=colors.map(c=>`<div onclick="document.getElementById('cmsBgColor').value='${c}'"
-    style="width:28px;height:28px;border-radius:50%;background:${c};border:2px solid ${c==='#FFFFFF'?'#ddd':'#C9B99A'};cursor:pointer;flex-shrink:0;transition:transform .15s"
-    onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="${c}"></div>`).join('');
-}
-
-function mBadgePick(val){
-  document.getElementById('cmsBadgeVal').value=val;
-  document.querySelectorAll('[data-mbadge]').forEach(b=>{
-    b.style.outline=b.dataset.mbadge===val?'2px solid #6366f1':'none';
-    b.style.outlineOffset='2px';
-  });
-}
-
-document.getElementById('fCMS').addEventListener('submit',async function(e){
-  e.preventDefault();
-  if(!cmsEditName){toast('Nama poster tidak ditemukan.','error');return;}
-  const btn=this.querySelector('.pbtn');btn.textContent='⏳...';btn.disabled=true;
-  try{
-    const bg=document.getElementById('cmsBgColor').value||'#FFFFFF';
-    const badge=document.getElementById('cmsBadgeVal').value||'';
-    const tags=(document.getElementById('cmsTags').value||'').split(',').map(t=>t.trim()).filter(Boolean);
-    const poster={
-      id:'cms_'+cmsEditName.replace(/\s+/g,'_').toLowerCase(),
-      posterName:cmsEditName,
-      title:(document.getElementById('cmsTitle').value||cmsEditName).trim(),
-      img:(document.getElementById('cmsImg').value||'').trim(),
-      desc:(document.getElementById('cmsDesc').value||'').trim(),
-      tags, badge, bg,
-      shopeeUrl:(document.getElementById('cmsShopee').value||'').trim(),
-      tiktokUrl:(document.getElementById('cmsTiktok').value||'').trim(),
-      waMsg:(document.getElementById('cmsWA').value||'').trim(),
-      order:parseInt(document.getElementById('cmsOrder').value)||99,
-      dark:false,
-      label:cmsEditName.substring(0,3).toUpperCase(),
-      sub:'',
-      palette:[bg,bg],
-      tag:badge,
-      updatedAt:new Date().toISOString(),
-    };
-    const {db,doc,setDoc}=getDB();
-    await setDoc(doc(db,'cms_posters',poster.id),poster);
-    toast('✅ Data katalog disimpan!');
-    closeCMSModal();
-  }catch(err){toast('Gagal: '+err.message,'error');}
-  finally{btn.disabled=false;btn.textContent='💾 Simpan ke Katalog';}
-});
-
 
 function renderFrames(q=''){
   const tb=$('tbFrame'),ql=q.toLowerCase();
@@ -2288,18 +1808,15 @@ $('fFrame').addEventListener('submit',async function(e){
   finally{btn.disabled=false;}
 });
 
-function mBadgePick(val){} // legacy stub
-
 function openEdit(col,id){
   clerr('mStockE');editType=col;editId=id;
   const item=col==='posters'?inv.posters.find(p=>p.id===id):inv.frames.find(f=>f.id===id);
   if(!item){toast('Item tidak ditemukan.','error');return;}
-  $('mTitle').textContent='Edit Stok '+(col==='posters'?'Poster':'Frame');
+  $('mTitle').textContent='Edit '+(col==='posters'?'Poster':'Frame');
   $('mLabel').textContent=col==='posters'?'Poster':'Frame';
   $('mItem').value=col==='posters'?`${item.name} (${item.size} cm)`:`${item.color} — ${item.size} cm`;
   $('mStock').value=item.stock;
-  $('editModal').classList.add('active');
-  setTimeout(()=>$('mStock').focus(),100);
+  $('editModal').classList.add('active');$('mStock').focus();
 }
 function closeEdit(){$('editModal').classList.remove('active');editType=null;editId=null;}
 $('fEdit').addEventListener('submit',async function(e){
@@ -2310,11 +1827,9 @@ $('fEdit').addEventListener('submit',async function(e){
   try{
     const item=editType==='posters'?inv.posters.find(p=>p.id===editId):inv.frames.find(f=>f.id===editId);
     if(!item)throw new Error('Item tidak ditemukan.');
-    item.stock=newStk;
-    await fsSet('inventory_'+editType,item);
-    closeEdit();toast('✅ Stok diperbarui!');
+    item.stock=newStk;await fsSet('inventory_'+editType,item);closeEdit();toast('✅ Stok diperbarui!');
   }catch(err){toast('Gagal: '+err.message,'error');}
-  finally{btn.disabled=false;btn.textContent='💾 Simpan Stok';}
+  finally{btn.disabled=false;btn.textContent='💾 Simpan';}
 });
 async function delItem(col,id){
   if(!confirm('Hapus item ini?'))return;
