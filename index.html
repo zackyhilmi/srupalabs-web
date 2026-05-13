@@ -848,26 +848,29 @@ async function loadFromFirestore() {
 }
 
 // ── RENDER CAROUSEL ──────────────────────────────────────────────────────
-function makeCard(p) {
+let _activePosterList = null;
+
+function makeCard(p, sorted_idx) {
   const startPrice = formatPrice(PRICES['20x30']);
-  const bgColor = p.bg || (p.palette && p.palette[0]) || '#F0ECE5';
-  const isDark = p.dark;
+  const bgColor = p.bg || (p.palette && p.palette[0]) || '#F5F2E9';
+  const isDark = p.dark || false;
   const imgHtml = p.img
-    ? `<img src="${p.img}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+    ? `<img src="${p.img}" alt="${p.title||''}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
     : `<div class="poster-thumb-placeholder">
-        <span style="color:${isDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.12)'};">${p.label||p.title.substring(0,3).toUpperCase()}</span>
+        <span style="color:${isDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.12)'};">${p.label||(p.title||'').substring(0,3).toUpperCase()}</span>
         <small style="color:${isDark?'rgba(255,255,255,.08)':'rgba(0,0,0,.08)'};">${p.sub||''}</small>
        </div>`;
   const badge = p.badge || p.tag || '';
+  const desc = p.desc || '';
   return `
-  <div class="poster-card" onclick="openModal(${p.id})">
+  <div class="poster-card" onclick="openModalByIdx(${sorted_idx})">
     <div class="poster-thumb" style="background:${bgColor};">
       ${badge ? `<div class="poster-thumb-label">${badge==='hot'?'Terlaris':badge==='new'?'Baru':'Limited'}</div>` : ''}
       ${imgHtml}
     </div>
     <div class="poster-info">
-      <h3>${p.title}</h3>
-      <p>${p.desc.substring(0,55)}...</p>
+      <h3>${p.title||p.name||''}</h3>
+      <p>${desc.substring(0,55)}${desc.length>55?'...':''}</p>
       <div class="poster-price">Mulai ${startPrice}</div>
     </div>
   </div>`;
@@ -876,8 +879,63 @@ function makeCard(p) {
 function renderPosters(list) {
   const track = document.getElementById('carouselTrack');
   const sorted = (list || POSTERS).sort((a,b)=>(a.order||99)-(b.order||99));
-  const cards = sorted.map(makeCard).join('');
-  track.innerHTML = cards + cards; // duplicate for infinite loop
+  _activePosterList = sorted;
+  const cards = sorted.map((p,i) => makeCard(p, i)).join('');
+  track.innerHTML = cards + cards;
+}
+
+function openModalByIdx(idx) {
+  const p = (_activePosterList || POSTERS)[idx];
+  if (!p) return;
+  openModalWithPoster(p);
+}
+
+function openModal(id) {
+  const list = _activePosterList || POSTERS;
+  const p = list.find(x => x.id === id) || POSTERS.find(x => x.id === id);
+  if (!p) return;
+  openModalWithPoster(p);
+}
+
+function openModalWithPoster(p) {
+  currentPoster = p;
+  selectedSize  = null;
+  selectedFrame = 'hitam';
+
+  document.getElementById('modalTitle').textContent = p.title || p.name || '';
+  document.getElementById('modalDesc').textContent  = p.desc  || '';
+
+  const ph = document.getElementById('modalImgPlaceholder');
+  if (p.img) {
+    ph.style.display = 'none';
+    let imgEl = document.getElementById('modalImgEl');
+    if (!imgEl) {
+      imgEl = document.createElement('img');
+      imgEl.id = 'modalImgEl';
+      imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0';
+      document.getElementById('modalImg').appendChild(imgEl);
+    }
+    imgEl.src = p.img;
+    imgEl.style.display = 'block';
+  } else {
+    ph.style.display = 'flex';
+    const imgEl = document.getElementById('modalImgEl');
+    if (imgEl) imgEl.style.display = 'none';
+    const bg = p.bg || (p.palette && p.palette[0]) || '#F5F2E9';
+    const dark = p.dark || false;
+    ph.style.background = bg;
+    ph.style.color = dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.12)';
+    document.getElementById('modalImgText').textContent = p.label || (p.title||'').substring(0,3).toUpperCase();
+    document.getElementById('modalImgSub').textContent  = p.sub   || '';
+  }
+
+  renderSizes(READY_SIZES);
+  renderFrames();
+  updatePrice();
+  updateWALink();
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 // ── FORMAT ────────────────────────────────────────────────────────────────
@@ -889,28 +947,6 @@ function formatPrice(n) {
 let currentPoster = null;
 let selectedSize  = null;
 let selectedFrame = 'hitam';
-
-function openModal(id) {
-  currentPoster = POSTERS.find(p => p.id === id);
-  selectedSize  = null;
-  selectedFrame = 'hitam';
-
-  document.getElementById('modalTitle').textContent = currentPoster.title;
-  document.getElementById('modalDesc').textContent  = currentPoster.desc;
-  document.getElementById('modalImgText').textContent = currentPoster.label;
-  document.getElementById('modalImgSub').textContent  = currentPoster.sub;
-
-  const ph = document.getElementById('modalImgPlaceholder');
-  ph.style.background = currentPoster.palette[0];
-  ph.style.color = currentPoster.dark ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.12)';
-
-  renderSizes(READY_SIZES);
-  renderFrames();
-  updatePrice();
-
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
