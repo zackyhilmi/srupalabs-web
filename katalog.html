@@ -677,22 +677,23 @@ function renderGrid(posterList) {
       ? `<div class="poster-badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</div>`
       : '';
     const thumbContent = p.img
-      ? `<img src="${p.img}" alt="${p.title}" loading="lazy"/>`
-      : `<div class="thumb-placeholder" style="color:${p.fgDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.1)'}">
-           <span class="tp-main">${p.label}</span>
-           <span class="tp-sub">${p.sub}</span>
+      ? `<img src="${p.img}" alt="${p.title||''}" loading="lazy"/>`
+      : `<div class="thumb-placeholder" style="color:${p.dark||p.fgDark?'rgba(255,255,255,.15)':'rgba(0,0,0,.1)'}">
+           <span class="tp-main">${p.label||''}</span>
+           <span class="tp-sub">${p.sub||''}</span>
          </div>`;
-    const tagHtml = p.tags.map(t => `<span class="style-tag">${t}</span>`).join('');
+    const tags = p.tags||[];
+    const tagHtml = tags.map(t => `<span class="style-tag">${t}</span>`).join('');
 
     return `
-    <div class="poster-card" onclick="openModal(${p.id})" style="animation-delay:${Math.min(i*.05,0.4)}s">
-      <div class="poster-thumb" style="background:${p.bg}">
+    <div class="poster-card" onclick="openModalByIndex(${i})" style="animation-delay:${Math.min(i*.05,0.4)}s">
+      <div class="poster-thumb" style="background:${p.bg||'#F5F2E9'}">
         ${badgeHtml}
         ${thumbContent}
         <div class="thumb-overlay"><span>Pilih Desain</span></div>
       </div>
       <div class="poster-info">
-        <h3>${p.title}</h3>
+        <h3>${p.title||p.name||''}</h3>
         <div class="tag-row">${tagHtml}</div>
         <div class="price-from">${priceStr} <small>· poster + frame</small></div>
       </div>
@@ -721,33 +722,48 @@ document.getElementById('sortSelect').addEventListener('change', e => {
 // ──────────────────────────────────────────────
 // MODAL
 // ──────────────────────────────────────────────
+// Buka modal berdasarkan index di list yang sedang aktif (support Firestore data)
+function openModalByIndex(idx) {
+  const list = _activePosterList || POSTERS;
+  const p = list[idx];
+  if (!p) return;
+  _openModalWithPoster(p);
+}
+
+// Legacy support untuk data POSTERS default (integer id)
 function openModal(id) {
-  currentPoster = POSTERS.find(p => p.id === id);
+  const p = (_activePosterList||POSTERS).find(x => x.id === id) || POSTERS.find(x => x.id === id);
+  if (!p) return;
+  _openModalWithPoster(p);
+}
+
+function _openModalWithPoster(p) {
+  currentPoster = p;
   selSize = null;
   selFrame = 'hitam';
 
   // title + desc
-  document.getElementById('mTitle').textContent = currentPoster.title;
-  document.getElementById('mDesc').textContent  = currentPoster.desc;
+  document.getElementById('mTitle').textContent = p.title || p.name || '';
+  document.getElementById('mDesc').textContent  = p.desc || '';
 
   // image
   const left = document.getElementById('modalLeft');
   const ph   = document.getElementById('modalPh');
-  if (currentPoster.img) {
-    // remove placeholder, show img
+  if (p.img) {
     ph.style.display = 'none';
     let img = left.querySelector('img');
     if (!img) { img = document.createElement('img'); left.appendChild(img); }
-    img.src = currentPoster.img;
-    img.alt = currentPoster.title;
+    img.src = p.img;
+    img.alt = p.title || '';
     img.style.display = 'block';
   } else {
     ph.style.display = 'flex';
-    ph.style.background = currentPoster.bg;
-    const c = currentPoster.fgDark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.13)';
-    document.getElementById('phMain').textContent = currentPoster.label;
+    ph.style.background = p.bg || '#F5F2E9';
+    const dark = p.dark || p.fgDark || false;
+    const c = dark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.13)';
+    document.getElementById('phMain').textContent = p.label || (p.title||'').substring(0,3).toUpperCase();
     document.getElementById('phMain').style.color = c;
-    document.getElementById('phSub').textContent  = currentPoster.sub;
+    document.getElementById('phSub').textContent  = p.sub || '';
     document.getElementById('phSub').style.color  = c;
     const img = left.querySelector('img');
     if (img) img.style.display = 'none';
