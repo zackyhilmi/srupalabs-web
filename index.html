@@ -32,8 +32,8 @@ nav{
   display:flex;align-items:center;justify-content:space-between;
   padding:0 5vw;height:60px;
 }
-.nav-logo{display:flex;align-items:center;text-decoration:none;height:36px}
-.nav-logo svg{height:30px;width:auto}
+.nav-logo{display:flex;align-items:center;text-decoration:none;height:28px}
+.nav-logo svg{height:24px;width:auto}
 
 /* dropdown button */
 .nav-dropdown{position:relative}
@@ -385,11 +385,11 @@ footer{
 }
 .modal-overlay.open{display:flex}
 .modal{
-  background:var(--white);border-radius:12px;width:100%;max-width:720px;
-  margin:auto;overflow:hidden;position:relative;
+  background:white;border-radius:12px;width:100%;max-width:720px;
+  margin:auto;overflow:hidden;
   display:grid;grid-template-columns:1fr 1fr;
   animation:modalIn .28s cubic-bezier(.32,.72,0,1);
-  will-change:transform;
+  position:relative;
 }
 @keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
@@ -401,77 +401,78 @@ footer{
 }
 .modal-close:hover{background:var(--off);color:var(--dark)}
 
-/* left: image */
+/* kiri: gambar */
 .modal-img{
   position:relative;overflow:hidden;
   min-height:420px;display:flex;align-items:center;justify-content:center;
+  background:var(--off);
 }
-.modal-img img{
-  width:100%;height:100%;object-fit:cover;display:block;
-  position:absolute;inset:0;
-}
+.modal-img img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
 .modal-img-placeholder{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.35rem;font-family:var(--serif);
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.4rem;
+  font-family:var(--serif);
 }
-.modal-img-placeholder div:first-child{font-size:3.2rem;line-height:1;letter-spacing:.06em}
-.modal-img-placeholder small{font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase}
+.modal-img-placeholder div:first-child{font-size:3rem;line-height:1;letter-spacing:.04em}
+.modal-img-placeholder small{font-family:var(--sans);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase}
 
-/* right: content */
-.modal-body{padding:2rem 1.75rem;overflow-y:auto;max-height:calc(100vh - 4rem)}
-.modal-body h2{font-family:var(--serif);font-size:1.75rem;font-weight:400;margin-bottom:.5rem;line-height:1.2}
-.modal-body .modal-desc{font-size:.88rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.65}
+/* kanan: form */
+.modal-body{
+  padding:1.75rem 1.6rem;overflow-y:auto;max-height:90vh;
+  display:flex;flex-direction:column;gap:1.1rem;
+}
+.modal-body h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;line-height:1.2}
+.modal-body .modal-desc{font-size:.83rem;color:var(--muted);line-height:1.65}
+.modal-divider{height:1px;background:var(--border);flex-shrink:0}
 
-.option-label{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;display:block}
+.option-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.55rem}
 
-.size-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
 .size-btn{
-  padding:.5rem 1rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.82rem;font-weight:500;background:white;
-  cursor:pointer;transition:all .18s;position:relative;
+  padding:.5rem .4rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.76rem;font-weight:500;
+  background:white;cursor:pointer;text-align:center;transition:all .16s;line-height:1.3;
 }
-.size-btn:hover{border-color:#aaa}
+.size-btn:hover{border-color:#999}
 .size-btn.active{border-color:var(--dark);background:var(--dark);color:white}
-.size-btn .price-tag{
-  display:block;font-size:.68rem;font-weight:400;
-  color:var(--muted);margin-top:.1rem;
-}
-.size-btn.active .price-tag{color:rgba(255,255,255,.6)}
-.size-btn.no-price .price-tag{color:#888}
+.size-btn .price-tag{display:block;font-size:.66rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.size-btn.active .price-tag{color:rgba(255,255,255,.55)}
+.size-btn.no-price .price-tag{color:#bbb}
 
-.frame-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.75rem}
+.frame-grid{display:flex;gap:.45rem;flex-wrap:wrap}
 .frame-btn{
-  display:flex;align-items:center;gap:.5rem;
-  padding:.5rem 1rem;border:1px solid var(--border);border-radius:var(--r);
-  font-family:var(--sans);font-size:.82rem;font-weight:500;background:white;
-  cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;gap:.45rem;
+  padding:.45rem .85rem;border:1px solid var(--border);border-radius:var(--r);
+  font-family:var(--sans);font-size:.78rem;font-weight:500;
+  background:white;cursor:pointer;transition:all .16s;
 }
 .frame-btn:hover{border-color:#aaa}
 .frame-btn.active{border-color:var(--dark);background:var(--dark);color:white}
-.frame-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.frame-btn.active .frame-dot{outline:2px solid rgba(255,255,255,.4);outline-offset:1px}
+.frame-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
 
 .price-display{
   background:var(--off);border:1px solid var(--border);border-radius:var(--r);
-  padding:1rem 1.25rem;margin-bottom:1.25rem;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.15rem;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
 }
-.price-label{font-size:.75rem;color:var(--muted);font-weight:500}
-.price-amount{font-size:1.4rem;font-weight:600;color:var(--dark)}
-.price-amount.contact{font-size:1rem;color:var(--muted)}
+.price-label{font-size:.72rem;color:var(--muted);font-weight:500}
+.price-amount{font-size:1.35rem;font-weight:700;color:var(--dark)}
+.price-amount.contact{font-size:.88rem;color:var(--muted);font-weight:400}
+.price-amount.pending{font-size:.85rem;color:var(--muted);font-weight:400}
 
-.modal-ctas{display:flex;flex-direction:column;gap:.6rem}
+.modal-ctas{display:flex;flex-direction:column;gap:.5rem;flex-shrink:0}
 .modal-cta-btn{
-  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  display:flex;align-items:center;justify-content:center;gap:.55rem;
   padding:.85rem;border-radius:var(--r);font-family:var(--sans);
-  font-size:.88rem;font-weight:600;text-decoration:none;cursor:pointer;
-  border:none;transition:opacity .18s;
+  font-size:.85rem;font-weight:600;text-decoration:none;cursor:pointer;
+  border:none;transition:opacity .18s,transform .15s;
 }
-.modal-cta-btn:hover{opacity:.85}
+.modal-cta-btn:hover{opacity:.88;transform:translateY(-1px)}
 .cta-wa{background:#25D366;color:white}
 .cta-shopee{background:#EE4D2D;color:white}
 .cta-tiktok{background:#010101;color:white}
+
+.modal-note{font-size:.72rem;color:var(--muted);text-align:center;line-height:1.5}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
@@ -484,12 +485,22 @@ footer{
   .social-rooms{grid-template-columns:1fr 1fr}
   .room-card:last-child{display:none}
   .poster-grid{grid-template-columns:repeat(2,1fr);gap:.75rem}
+  /* modal jadi bottom sheet — sama dengan katalog */
+  .modal-overlay{padding:0;align-items:flex-end}
   .modal{
     grid-template-columns:1fr;
-    border-radius:0;min-height:100svh;margin:0;
+    border-radius:16px 16px 0 0;
+    min-height:auto;max-height:92svh;
+    margin:0;overflow:hidden;
   }
-  .modal-img{min-height:300px}
-  .modal-overlay{padding:0;align-items:flex-end}
+  .modal-img{height:240px;min-height:unset}
+  .modal-body{
+    max-height:calc(92svh - 240px);
+    padding:1.25rem 1.25rem 2rem;
+  }
+  .modal-body h2{font-size:1.2rem}
+  .modal-body .modal-desc{display:none}
+  .size-grid{grid-template-columns:repeat(3,1fr)}
   .sticky-cta{display:block}
   body{padding-bottom:80px}
 }
@@ -560,11 +571,11 @@ footer{
     </div>
     <div class="problem-img">
       <!-- Ganti src dengan foto frame di ruangan kamu -->
-      <img src="images/frame-room.jpg" alt="Frame Srupa Labs di ruangan"/>
-      <!--  <div class="problem-img-placeholder">
+      <!-- <img src="images/frame-room.jpg" alt="Frame Srupa Labs di ruangan"/> -->
+      <div class="problem-img-placeholder">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="32" height="32" rx="2"/><rect x="9" y="9" width="22" height="22" rx="1"/><circle cx="20" cy="20" r="4"/></svg>
         Foto frame di ruangan
-      </div> -->
+      </div>
     </div>
   </div>
 </section>
@@ -772,7 +783,7 @@ footer{
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-img" id="modalImg">
       <div class="modal-img-placeholder" id="modalImgPlaceholder">
-        <span id="modalImgText">SRUPA</span>
+        <div id="modalImgText">SRUPA</div>
         <small id="modalImgSub">LABS</small>
       </div>
     </div>
@@ -914,6 +925,10 @@ function openModalWithPoster(p) {
   selectedSize  = null;
   selectedFrame = 'hitam';
 
+  // Pause carousel saat modal buka (reduce Chrome lag)
+  const track = document.getElementById('carouselTrack');
+  if (track) track.style.animationPlayState = 'paused';
+
   document.getElementById('modalTitle').textContent = p.title || p.name || '';
   document.getElementById('modalDesc').textContent  = p.desc  || '';
 
@@ -963,6 +978,9 @@ let selectedFrame = 'hitam';
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
+  // Resume carousel
+  const track = document.getElementById('carouselTrack');
+  if (track) track.style.animationPlayState = 'running';
 }
 
 function handleOverlayClick(e) {
