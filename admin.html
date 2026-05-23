@@ -1047,6 +1047,18 @@ async function cmsDel(id){
   </div>
 </div>
 
+<!-- MODAL: Pilih Ukuran Poster untuk Edit -->
+<div class="moverlay" id="sizePickModal">
+  <div class="mbox" style="max-width:380px">
+    <div class="mhd">
+      <h3 id="spTitle">Pilih Ukuran untuk Diedit</h3>
+      <button class="mclose" onclick="closeSizePick()">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Poster <strong id="spPosterName"></strong> tersedia dalam beberapa ukuran. Pilih ukuran yang stoknya ingin diubah.</p>
+    <div id="spSizeList" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1762,10 +1774,31 @@ function editPosterGroup(name){
   if(posters.length === 1){
     openEdit('posters', posters[0].id);
   }else{
-    // TODO: implement multi-edit or show list to choose
-    alert(`Poster "${name}" punya ${posters.length} ukuran. Pilih ukuran mana yang mau diedit dari list.`);
+    // Tampilkan modal pemilih ukuran
+    $('spPosterName').textContent = name;
+    $('spTitle').textContent = `Pilih Ukuran — ${name}`;
+    const list = $('spSizeList');
+    list.innerHTML = posters.map(p => {
+      const b = stockBadge(p.stock);
+      return `<button onclick="closeSizePick();openEdit('posters','${esc(p.id)}')" style="
+        display:flex;align-items:center;justify-content:space-between;
+        width:100%;padding:12px 14px;border:1.5px solid var(--border);
+        border-radius:10px;background:var(--surface);cursor:pointer;
+        font-family:var(--font);font-size:13.5px;font-weight:500;color:var(--t1);
+        transition:all .15s;text-align:left;
+      " onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-lt)'"
+         onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
+        <span>📐 ${esc(p.size)} cm</span>
+        <span style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:var(--t2)">Stok: <strong>${p.stock}</strong></span>
+          <span class="badge ${b.c}">${b.l}</span>
+        </span>
+      </button>`;
+    }).join('');
+    $('sizePickModal').classList.add('active');
   }
 }
+function closeSizePick(){ $('sizePickModal').classList.remove('active'); }
 
 function renderFrames(q=''){
   const tb=$('tbFrame'),ql=q.toLowerCase();
@@ -1841,10 +1874,10 @@ $('pSearch').addEventListener('input',e=>renderPosterTable());
 $('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
 
 // Modal close on overlay click or ESC
-['editModal','itemModal'].forEach(id=>{
-  $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else closeItemModal();}});
+['editModal','itemModal','sizePickModal'].forEach(id=>{
+  $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else if(id==='sizePickModal')closeSizePick();else closeItemModal();}});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();}});
 
 // Init item list empty state
 renderItemList();
