@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Srupa Labs — Business Suite</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' font-weight='700' fill='white' font-family='sans-serif'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 847 638%22%3E%3Crect width%3D%22847%22 height%3D%22638%22 rx%3D%22140%22 fill%3D%22%23ffffff%22/%3E%3Cpath d%3D%22M649.88 8.81C662.01 12 673.96 16.08 685.65 21.02C731.83 40.52 771.21 72.23 799.53 112.73C830.07 156.43 846.22 208.43 846.22 263.1V606.32H650.23V263.1C650.23 260.47 650.1 257.96 649.87 255.53C646.55 221.02 620.88 206.43 609.42 201.59C597.15 196.4 565.52 187.36 536.87 215.25L337.17 409.63H579.41V606.32H0.01V0.21H196.7V272.88L400.19 74.81C439.36 36.69 487.88 11.99 540.5 3.39C576.93 -2.55 614.13 -0.66 649.88 8.81Z%22 fill%3D%22%231F12D4%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -1047,18 +1047,6 @@ async function cmsDel(id){
   </div>
 </div>
 
-<!-- MODAL: Pilih Ukuran Poster untuk Edit -->
-<div class="moverlay" id="sizePickModal">
-  <div class="mbox" style="max-width:380px">
-    <div class="mhd">
-      <h3 id="spTitle">Pilih Ukuran untuk Diedit</h3>
-      <button class="mclose" onclick="closeSizePick()">×</button>
-    </div>
-    <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Poster <strong id="spPosterName"></strong> tersedia dalam beberapa ukuran. Pilih ukuran yang stoknya ingin diubah.</p>
-    <div id="spSizeList" style="display:flex;flex-direction:column;gap:8px"></div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1774,31 +1762,10 @@ function editPosterGroup(name){
   if(posters.length === 1){
     openEdit('posters', posters[0].id);
   }else{
-    // Tampilkan modal pemilih ukuran
-    $('spPosterName').textContent = name;
-    $('spTitle').textContent = `Pilih Ukuran — ${name}`;
-    const list = $('spSizeList');
-    list.innerHTML = posters.map(p => {
-      const b = stockBadge(p.stock);
-      return `<button onclick="closeSizePick();openEdit('posters','${esc(p.id)}')" style="
-        display:flex;align-items:center;justify-content:space-between;
-        width:100%;padding:12px 14px;border:1.5px solid var(--border);
-        border-radius:10px;background:var(--surface);cursor:pointer;
-        font-family:var(--font);font-size:13.5px;font-weight:500;color:var(--t1);
-        transition:all .15s;text-align:left;
-      " onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-lt)'"
-         onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
-        <span>📐 ${esc(p.size)} cm</span>
-        <span style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:12px;color:var(--t2)">Stok: <strong>${p.stock}</strong></span>
-          <span class="badge ${b.c}">${b.l}</span>
-        </span>
-      </button>`;
-    }).join('');
-    $('sizePickModal').classList.add('active');
+    // TODO: implement multi-edit or show list to choose
+    alert(`Poster "${name}" punya ${posters.length} ukuran. Pilih ukuran mana yang mau diedit dari list.`);
   }
 }
-function closeSizePick(){ $('sizePickModal').classList.remove('active'); }
 
 function renderFrames(q=''){
   const tb=$('tbFrame'),ql=q.toLowerCase();
@@ -1874,10 +1841,10 @@ $('pSearch').addEventListener('input',e=>renderPosterTable());
 $('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
 
 // Modal close on overlay click or ESC
-['editModal','itemModal','sizePickModal'].forEach(id=>{
-  $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else if(id==='sizePickModal')closeSizePick();else closeItemModal();}});
+['editModal','itemModal'].forEach(id=>{
+  $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else closeItemModal();}});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();}});
 
 // Init item list empty state
 renderItemList();
