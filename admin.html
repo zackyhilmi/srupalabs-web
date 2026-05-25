@@ -978,9 +978,6 @@ tbody tr:hover{background:#fafbfc}
           <button class="drive-folder-btn" id="df-packing" onclick="openOrCreateFolder('Bukti Packing','📦',this)">
             <span>📦</span>Bukti Packing
           </button>
-          <button class="drive-folder-btn" onclick="openPackingModal()" style="padding-left:28px;font-size:12px;color:var(--accent)">
-            <span>＋</span>Upload Packing
-          </button>
           <button class="drive-folder-btn" onclick="openOrCreateFolder('Asset Desain','🎨',this)">
             <span>🎨</span>Asset Desain
           </button>
@@ -1032,7 +1029,10 @@ tbody tr:hover{background:#fafbfc}
             <!-- Toolbar -->
             <div class="drive-toolbar">
               <input class="drive-search" id="driveSearch" placeholder="Cari file..." oninput="renderDriveFiles()">
-              <button class="pbtn" style="width:auto;padding:7px 14px;font-size:12px" onclick="openDrivePicker()">
+              <button class="pbtn" style="width:auto;padding:7px 14px;font-size:12px" onclick="openUploadModal()">
+                ＋ Upload File
+              </button>
+              <button class="pbtn" style="width:auto;padding:7px 14px;font-size:12px;background:var(--surface);color:var(--t1);border:1.5px solid var(--border)" onclick="openDrivePicker()">
                 📎 Pilih dari Drive
               </button>
             </div>
@@ -1324,43 +1324,39 @@ async function cmsDel(id){
 
 
 
-<!-- MODAL: Upload Bukti Packing -->
+<!-- MODAL: Upload File ke Drive (Generik) -->
 <div class="moverlay" id="packingModal">
-  <div class="mbox" style="max-width:480px">
+  <div class="mbox" style="max-width:500px">
     <div class="mhd">
-      <h3>📦 Upload Bukti Packing</h3>
+      <h3 id="uploadModalTitle">☁️ Upload File</h3>
       <button class="mclose" onclick="closePackingModal()">×</button>
     </div>
-    <div class="fg-row">
-      <div class="fg">
-        <label>Tanggal Packing</label>
-        <input type="date" id="pkDate">
-      </div>
-      <div class="fg">
-        <label>Nama Customer</label>
-        <input type="text" id="pkCustomer" placeholder="Contoh: Rizky Aditya" maxlength="60">
-        <div class="ferr" id="pkCustomerE"></div>
-      </div>
+
+    <!-- Info folder aktif -->
+    <div id="uploadFolderInfo" style="background:var(--gray-lt);border-radius:8px;padding:8px 12px;font-size:12.5px;color:var(--t2);margin-bottom:4px">
+      📁 Menyimpan ke: <strong id="uploadFolderLabel">—</strong>
     </div>
+
+    <!-- Field dinamis per folder -->
+    <div id="uploadFieldsWrap"></div>
+
+    <!-- Nama file (selalu ada) -->
     <div class="fg">
-      <label>No. Resi <small style="color:var(--t3);font-weight:400">(opsional)</small></label>
-      <input type="text" id="pkResi" placeholder="Contoh: JX1234567890" maxlength="40">
-    </div>
-    <div class="fg">
-      <label>Foto Bukti Packing</label>
+      <label id="uploadFilesLabel">File</label>
       <div class="packing-drop" id="packingDrop"
         ondragover="event.preventDefault();this.classList.add('dragover')"
         ondragleave="this.classList.remove('dragover')"
         ondrop="handlePackingDrop(event)"
         onclick="$('pkFileInput').click()">
-        <div style="font-size:24px;margin-bottom:6px">📸</div>
-        <div style="font-size:13px;font-weight:500;color:var(--t1)">Klik atau drag foto ke sini</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px">Bisa pilih banyak foto sekaligus</div>
+        <div style="font-size:24px;margin-bottom:6px" id="uploadDropIco">📎</div>
+        <div style="font-size:13px;font-weight:500;color:var(--t1)">Klik atau drag file ke sini</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px">Bisa pilih banyak file sekaligus</div>
       </div>
-      <input type="file" id="pkFileInput" multiple accept="image/*,video/*" style="display:none" onchange="addPackingFiles(this.files)">
+      <input type="file" id="pkFileInput" multiple style="display:none" onchange="addPackingFiles(this.files)">
       <div class="packing-preview" id="packingPreview"></div>
       <div class="ferr" id="pkFileE"></div>
     </div>
+
     <div id="pkProgress" style="display:none;margin-bottom:8px">
       <div style="font-size:12px;color:var(--t2);margin-bottom:4px" id="pkProgressLabel">Mengupload...</div>
       <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden">
@@ -2631,7 +2627,7 @@ function onDriveLoggedIn(){
   sessionStorage.setItem('driveToken',driveAccessToken);
   $('driveAuthBanner').style.display='none';
   $('driveMainContent').style.display='block';
-  if(window._pendingPackingModal){window._pendingPackingModal=false;openPackingModal();return;}
+  if(window._pendingUploadFolder){const f=window._pendingUploadFolder;window._pendingUploadFolder=null;openUploadModal(f);return;}
   if(window._pendingFolder){
     const p=window._pendingFolder;
     window._pendingFolder=null;
@@ -2861,8 +2857,249 @@ function openDrivePicker(){
 }
 
 /* ══════════════════════════════════════
-   BUKTI PACKING UPLOAD
+   UPLOAD FILE KE DRIVE — GENERIK
 ══════════════════════════════════════ */
+let pkFiles = [];
+
+// Config per folder — field tambahan dan penamaan file
+const FOLDER_UPLOAD_CONFIG = {
+  'Bukti Packing': {
+    title: '📦 Upload Bukti Packing',
+    ico: '📸',
+    accept: 'image/*,video/*',
+    fields: [
+      {id:'pkDate',  type:'date',  label:'Tanggal Packing', required:true,  placeholder:''},
+      {id:'pkCustomer', type:'text', label:'Nama Customer', required:true,  placeholder:'Contoh: Rizky Aditya', max:60},
+      {id:'pkResi',  type:'text',  label:'No. Resi',        required:false, placeholder:'Contoh: JX1234567890', max:40},
+    ],
+    // subfolder = tanggal, nama file = Customer - Resi - n.ext
+    subfolderFn: ()=> $('pkDate')?.value || new Date().toISOString().split('T')[0],
+    filenameFn:  (i,ext,total)=>{
+      const c=san($('pkCustomer')?.value||'');
+      const r=san($('pkResi')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${c}${r?' - '+r:''}${idx}.${ext}`;
+    }
+  },
+  'Asset Desain': {
+    title: '🎨 Upload Asset Desain',
+    ico: '🎨',
+    accept: 'image/*,.ai,.psd,.svg,.fig,.pdf',
+    fields: [
+      {id:'pkLabel', type:'text', label:'Nama / Label Asset', required:true, placeholder:'Contoh: Logo Srupa v3', max:80},
+      {id:'pkVer',   type:'text', label:'Versi',              required:false, placeholder:'Contoh: v1, Final, Draft', max:20},
+    ],
+    subfolderFn: ()=> null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'file');
+      const v=san($('pkVer')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${v?' - '+v:''}${idx}.${ext}`;
+    }
+  },
+  'Video Konten': {
+    title: '🎬 Upload Video Konten',
+    ico: '🎬',
+    accept: 'video/*,image/*',
+    fields: [
+      {id:'pkLabel',    type:'text', label:'Judul Konten',  required:true,  placeholder:'Contoh: Unboxing Poster Stussy', max:80},
+      {id:'pkPlatform', type:'select', label:'Platform',   required:false,
+        options:['Instagram','TikTok','Shopee','YouTube','Lainnya']},
+      {id:'pkDate',     type:'date',  label:'Tanggal Rencana Posting', required:false, placeholder:''},
+    ],
+    subfolderFn: ()=> $('pkDate')?.value||null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'video');
+      const p=san($('pkPlatform')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${p?' - '+p:''}${idx}.${ext}`;
+    }
+  },
+  'Foto Produk': {
+    title: '📸 Upload Foto Produk',
+    ico: '📸',
+    accept: 'image/*',
+    fields: [
+      {id:'pkLabel', type:'text', label:'Nama Produk / Seri', required:true, placeholder:'Contoh: Stussy Racing Series', max:80},
+      {id:'pkBatch', type:'text', label:'Batch / Keterangan', required:false, placeholder:'Contoh: Batch Mei 2026', max:40},
+    ],
+    subfolderFn: ()=> null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'foto');
+      const b=san($('pkBatch')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${b?' - '+b:''}${idx}.${ext}`;
+    }
+  },
+  'Invoice': {
+    title: '🧾 Upload Invoice',
+    ico: '📄',
+    accept: 'image/*,.pdf',
+    fields: [
+      {id:'pkDate',     type:'date', label:'Tanggal Invoice', required:true, placeholder:''},
+      {id:'pkCustomer', type:'text', label:'Nama Customer',   required:true, placeholder:'Contoh: Rizky Aditya', max:60},
+      {id:'pkInvNo',    type:'text', label:'No. Invoice',     required:false, placeholder:'Contoh: INV-001', max:30},
+    ],
+    subfolderFn: ()=> $('pkDate')?.value||null,
+    filenameFn:  (i,ext,total)=>{
+      const c=san($('pkCustomer')?.value||'');
+      const n=san($('pkInvNo')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `Invoice - ${c}${n?' - '+n:''}${idx}.${ext}`;
+    }
+  },
+};
+
+// Default config untuk folder lain
+const DEFAULT_UPLOAD_CONFIG = {
+  title: '☁️ Upload File',
+  ico: '📎',
+  accept: '*/*',
+  fields: [
+    {id:'pkLabel', type:'text', label:'Nama File / Keterangan', required:false, placeholder:'', max:80},
+  ],
+  subfolderFn: ()=> null,
+  filenameFn:  (i,ext,total)=>{
+    const l=san($('pkLabel')?.value||'');
+    const idx=total>1?` (${i+1})`:'';
+    return l ? `${l}${idx}.${ext}` : null; // null = pakai nama file asli
+  }
+};
+
+function openUploadModal(folderName){
+  if(!driveAccessToken){ driveLogin(); window._pendingUploadFolder=folderName||driveCurrentLabel; return; }
+  const name = folderName || driveCurrentLabel;
+  const cfg  = FOLDER_UPLOAD_CONFIG[name] || DEFAULT_UPLOAD_CONFIG;
+
+  pkFiles = [];
+  $('uploadModalTitle').textContent = cfg.title;
+  $('uploadFolderLabel').textContent = name;
+  $('uploadDropIco').textContent = cfg.ico;
+  $('pkFileInput').accept = cfg.accept;
+  $('packingPreview').innerHTML = '';
+  $('pkProgress').style.display = 'none';
+  $('pkProgressBar').style.width = '0%';
+  $('pkSubmitBtn').disabled = false;
+
+  // Render fields dinamis
+  const wrap = $('uploadFieldsWrap');
+  wrap.innerHTML = '';
+  const pairs = [];
+  cfg.fields.forEach(f => {
+    let el;
+    if(f.type==='select'){
+      el=`<select id="${f.id}" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;background:var(--surface)">
+        ${f.options.map(o=>`<option>${o}</option>`).join('')}
+      </select>`;
+    } else {
+      el=`<input type="${f.type}" id="${f.id}" placeholder="${f.placeholder||''}" maxlength="${f.max||200}"
+        style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px">`;
+    }
+    pairs.push(`<div class="fg"><label>${f.label}${f.required?'':' <small style="color:var(--t3);font-weight:400">(opsional)</small>'}</label>${el}<div class="ferr" id="${f.id}E"></div></div>`);
+  });
+
+  // Susun 2 kolom jika ada lebih dari 1 field
+  if(pairs.length >= 2){
+    wrap.innerHTML = `<div class="fg-row">${pairs.slice(0,2).join('')}</div>${pairs.slice(2).join('')}`;
+  } else {
+    wrap.innerHTML = pairs.join('');
+  }
+
+  // Set default date ke hari ini
+  const dateEl = document.getElementById('pkDate');
+  if(dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+
+  $('packingModal').classList.add('active');
+}
+
+// Alias untuk backward compat
+function openPackingModal(){ openUploadModal('Bukti Packing'); }
+function closePackingModal(){ $('packingModal').classList.remove('active'); pkFiles=[]; }
+
+function addPackingFiles(files){
+  Array.from(files).forEach(file => pkFiles.push({file, url:URL.createObjectURL(file)}));
+  renderPackingPreview();
+  $('pkFileInput').value='';
+}
+function handlePackingDrop(e){
+  e.preventDefault();
+  $('packingDrop').classList.remove('dragover');
+  addPackingFiles(e.dataTransfer.files);
+}
+function renderPackingPreview(){
+  $('packingPreview').innerHTML = pkFiles.map((f,i)=>`
+    <div class="packing-thumb">
+      <img src="${f.url}" onerror="this.parentElement.style.background='var(--gray-lt)'">
+      <button class="packing-thumb-del" onclick="removePackingFile(${i})">×</button>
+    </div>`).join('');
+}
+function removePackingFile(i){ pkFiles.splice(i,1); renderPackingPreview(); }
+
+async function submitPackingUpload(){
+  const name = ($('uploadFolderLabel')?.textContent||'').trim();
+  const cfg  = FOLDER_UPLOAD_CONFIG[name] || DEFAULT_UPLOAD_CONFIG;
+
+  // Validasi required fields
+  let valid = true;
+  cfg.fields.forEach(f=>{
+    if(f.required){
+      const el=document.getElementById(f.id);
+      const errEl=document.getElementById(f.id+'E');
+      if(el && !el.value.trim()){
+        if(errEl) errEl.textContent=`${f.label} wajib diisi.`;
+        valid=false;
+      } else if(errEl) errEl.textContent='';
+    }
+  });
+  if(!pkFiles.length){ $('pkFileE').textContent='Pilih minimal 1 file.'; valid=false; }
+  else $('pkFileE').textContent='';
+  if(!valid) return;
+
+  $('pkSubmitBtn').disabled=true;
+  $('pkProgress').style.display='block';
+
+  try{
+    const rootId = await getSrupaRootFolder();
+    const folderParentId = await getOrCreateSubfolder(name, rootId);
+
+    // Subfolder opsional (misal tanggal)
+    const sub = cfg.subfolderFn();
+    const targetId = sub ? await getOrCreateSubfolder(sub, folderParentId) : folderParentId;
+
+    const bar=$('pkProgressBar'), label=$('pkProgressLabel');
+
+    for(let i=0;i<pkFiles.length;i++){
+      const {file}=pkFiles[i];
+      const ext=file.name.split('.').pop();
+      const fname=cfg.filenameFn(i,ext,pkFiles.length) || file.name;
+
+      label.textContent=`Mengupload ${i+1}/${pkFiles.length}: ${fname}`;
+      bar.style.width=Math.round((i/pkFiles.length)*100)+'%';
+
+      const meta=JSON.stringify({name:fname,parents:[targetId]});
+      const form=new FormData();
+      form.append('metadata',new Blob([meta],{type:'application/json'}));
+      form.append('file',file);
+
+      const res=await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+        {method:'POST',headers:{Authorization:'Bearer '+driveAccessToken},body:form}
+      );
+      if(!res.ok) throw new Error(await res.text());
+    }
+
+    bar.style.width='100%';
+    label.textContent='✅ Upload selesai!';
+    setTimeout(()=>closePackingModal(),1200);
+    loadDriveFiles();
+    toast(`✅ ${pkFiles.length} file berhasil diupload ke ${name}!`);
+
+  }catch(e){
+    toast('Gagal: '+e.message,'error');
+    $('pkSubmitBtn').disabled=false;
+  }
+}
+
 let pkFiles = []; // {file, previewUrl}
 
 function openPackingModal(){
