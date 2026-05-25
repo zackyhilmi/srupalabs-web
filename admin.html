@@ -12,7 +12,7 @@
 <script type="module">
   import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence }
+  import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, enableIndexedDbPersistence }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -32,7 +32,7 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     enableIndexedDbPersistence(db).catch(()=>{});
-    window._fb = { db, auth, collection, doc, setDoc, deleteDoc, onSnapshot };
+    window._fb = { db, auth, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot };
     onAuthStateChanged(auth, user => {
       window._user = user || null;
       const login = document.getElementById('loginScreen');
@@ -638,62 +638,12 @@ tbody tr:hover{background:#fafbfc}
     <!-- ═══ TRANSAKSI ═══ -->
     <div class="page" id="page-transaksi">
       <div class="igrid">
-
-        <!-- FORM ORDER -->
-        <div class="card">
-          <div class="chd"><div class="ctitle">➕ Order Baru</div></div>
-          <div class="cbody">
-            <form id="fOrder" novalidate>
-
-              <div class="fg">
-                <label>Channel</label>
-                <select id="oChannel">
-                  <option value="">Pilih Channel</option>
-                  <option value="shopee">🛍️ Shopee</option>
-                  <option value="tiktok">🎵 TikTok Shop</option>
-                  <option value="instagram">📸 Instagram / WA</option>
-                </select>
-                <div class="ferr" id="oChannelE"></div>
-              </div>
-
-              <div class="fg">
-                <label>Nama Pembeli</label>
-                <input type="text" id="oBuyer" placeholder="Nama pembeli" maxlength="100">
-                <div class="ferr" id="oBuyerE"></div>
-              </div>
-
-              <div class="fg">
-                <label>No. Pesanan (opsional)</label>
-                <input type="text" id="oOrderNo" placeholder="INV-001 / No. Resi" maxlength="100">
-              </div>
-
-              <!-- ITEM BUILDER -->
-              <div class="item-builder">
-                <div class="item-builder-title">📦 Item dalam Order</div>
-                <div class="item-list" id="itemList"></div>
-                <button type="button" class="add-item-btn" onclick="openItemModal()">＋ Tambah Item</button>
-                <div class="ferr" id="oItemsE" style="margin-top:6px"></div>
-              </div>
-
-              <div class="fg">
-                <label>Total Harga Order (Rp)</label>
-                <input type="number" id="oTotal" placeholder="0" min="0">
-                <div class="ferr" id="oTotalE"></div>
-              </div>
-
-              <div class="fg">
-                <label>Catatan (opsional)</label>
-                <textarea id="oNote" placeholder="Catatan tambahan..." maxlength="300"></textarea>
-              </div>
-
-              <button type="submit" class="pbtn green">💾 Simpan Order</button>
-            </form>
-          </div>
-        </div>
-
         <!-- DAFTAR ORDER -->
         <div class="card">
-          <div class="chd"><div class="ctitle">📋 Daftar Order</div></div>
+          <div class="chd">
+            <div class="ctitle">📋 Daftar Order</div>
+            <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
+          </div>
           <div class="cbody" style="padding:12px 14px 0">
             <div class="fbar">
               <select id="filterChannel" onchange="renderOrders()">
@@ -735,71 +685,10 @@ tbody tr:hover{background:#fafbfc}
     <!-- ═══ KEUANGAN ═══ -->
     <div class="page" id="page-keuangan">
       <div class="igrid">
-        <div class="card">
-          <div class="chd"><div class="ctitle">➕ Catat Keuangan</div></div>
-          <div class="cbody">
-            <form id="fKeu" novalidate>
-              <div class="fg"><label>Jenis</label>
-                <select id="kType"><option value="income">💚 Pemasukan</option><option value="expense">❤️ Pengeluaran</option></select>
-              </div>
-              <div class="fg"><label>Kategori</label>
-                <select id="kCat" onchange="toggleRestockFields()">
-                  <option value="penjualan">Penjualan</option>
-                  <option value="restock">Restock Frame</option>
-                  <option value="ongkir">Ongkir & Operasional</option>
-                  <option value="marketing">Marketing & Iklan</option>
-                  <option value="gaji">Gaji / Upah</option>
-                  <option value="lainnya">Lainnya</option>
-                </select>
-              </div>
-              
-              <!-- RESTOCK FRAME FIELDS (Hidden by default) -->
-              <div id="restockFields" style="display:none">
-                <div class="sdiv">Detail Restock Frame</div>
-                <div class="fg"><label>Warna Frame</label>
-                  <select id="kFrameColor">
-                    <option value="">Pilih Warna</option>
-                    <option value="Hitam">Hitam</option>
-                    <option value="Putih">Putih</option>
-                    <option value="Kayu">Kayu</option>
-                    <option value="Chrome">Chrome</option>
-                  </select>
-                  <div class="ferr" id="kFrameColorE"></div>
-                </div>
-                <div class="fg"><label>Ukuran Frame</label>
-                  <select id="kFrameSize">
-                    <option value="">Pilih Ukuran</option>
-                    <option value="20x20">20 × 20 cm</option>
-                    <option value="20x30">20 × 30 cm</option>
-                    <option value="30x30">30 × 30 cm</option>
-                    <option value="30x40">30 × 40 cm</option>
-                    <option value="40x60">40 × 60 cm</option>
-                    <option value="50x70">50 × 70 cm</option>
-                    <option value="60x80">60 × 80 cm</option>
-                  </select>
-                  <div class="ferr" id="kFrameSizeE"></div>
-                </div>
-                <div class="fg"><label>Jumlah Restock (pcs)</label>
-                  <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999">
-                  <div class="ferr" id="kRestockQtyE"></div>
-                </div>
-              </div>
-              <!-- END RESTOCK FIELDS -->
-              
-              <div class="fg"><label>Jumlah (Rp)</label>
-                <input type="number" id="kAmount" placeholder="0" min="0">
-                <div class="ferr" id="kAmountE"></div>
-              </div>
-              <div class="fg"><label>Tanggal</label><input type="date" id="kDate"></div>
-              <div class="fg"><label>Keterangan</label>
-                <input type="text" id="kDesc" placeholder="Contoh: Restock frame hitam 20 pcs" maxlength="200">
-                <div class="ferr" id="kDescE"></div>
-              </div>
-              <button type="submit" class="pbtn">💾 Simpan</button>
-            </form>
-          </div>
-        </div>
         <div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openKeuModal()">➕ Catat Keuangan</button>
+          </div>
           <div class="sum-grid">
             <div class="sum-card"><div class="sum-label">💚 Pemasukan Bulan Ini</div><div class="sum-val green" id="kTotalIn">Rp 0</div></div>
             <div class="sum-card"><div class="sum-label">❤️ Pengeluaran Bulan Ini</div><div class="sum-val red" id="kTotalOut">Rp 0</div></div>
@@ -884,33 +773,11 @@ tbody tr:hover{background:#fafbfc}
         <div class="igrid">
           <div class="card">
             <div class="chd"><div class="ctitle">Tambah Poster</div></div>
-            <div class="cbody">
-              <form id="fPoster" novalidate>
-                <div class="fg-row">
-                  <div class="fg" style="flex:2">
-                    <label>Nama Poster</label>
-                    <input type="text" id="pName" placeholder="Contoh: Sunset Beach" maxlength="100" autocomplete="off">
-                    <div class="ferr" id="pNameE"></div>
-                  </div>
-                  <div class="fg">
-                    <label>Ukuran</label>
-                    <select id="pSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
-                    <div class="ferr" id="pSizeE"></div>
-                  </div>
-                  <div class="fg" style="flex:0 0 110px">
-                    <label>Stok</label>
-                    <input type="number" id="pStock" placeholder="0" min="0" max="99999">
-                    <div class="ferr" id="pStockE"></div>
-                  </div>
-                  <div class="fg" style="flex:0 0 auto;justify-content:flex-end;padding-top:20px">
-                    <button type="submit" class="pbtn" style="white-space:nowrap">➕ Tambah</button>
-                  </div>
-                </div>
-              </form>
-              <div style="display:flex;align-items:center;gap:10px;margin-top:4px;padding-top:10px;border-top:1px solid var(--border)">
+            <div class="cbody" style="padding:10px 14px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openPosterModal()">➕ Tambah Poster</button>
                 <input type="file" id="bulkUpload" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleBulkUpload(event)">
                 <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;background:var(--blue)" onclick="$('bulkUpload').click()">📁 Import CSV/Excel</button>
-                <span style="font-size:11.5px;color:var(--t3)">Format: Nama, Ukuran, Stok</span>
               </div>
             </div>
           </div>
@@ -942,29 +809,8 @@ tbody tr:hover{background:#fafbfc}
         <div class="igrid">
           <div class="card">
             <div class="chd"><div class="ctitle">Tambah Frame</div></div>
-            <div class="cbody">
-              <form id="fFrame" novalidate>
-                <div class="fg-row">
-                  <div class="fg">
-                    <label>Warna Frame</label>
-                    <select id="fColor"><option value="">Pilih Warna</option><option value="Hitam">Hitam</option><option value="Putih">Putih</option><option value="Kayu">Kayu</option><option value="Chrome">Chrome</option></select>
-                    <div class="ferr" id="fColorE"></div>
-                  </div>
-                  <div class="fg">
-                    <label>Ukuran Frame</label>
-                    <select id="fSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
-                    <div class="ferr" id="fSizeE"></div>
-                  </div>
-                  <div class="fg" style="flex:0 0 110px">
-                    <label>Stok</label>
-                    <input type="number" id="fStock" placeholder="0" min="0" max="99999">
-                    <div class="ferr" id="fStockE"></div>
-                  </div>
-                  <div class="fg" style="flex:0 0 auto;justify-content:flex-end;padding-top:20px">
-                    <button type="submit" class="pbtn" style="white-space:nowrap">➕ Tambah</button>
-                  </div>
-                </div>
-              </form>
+            <div class="cbody" style="padding:10px 14px">
+              <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openFrameModal()">➕ Tambah Frame</button>
             </div>
           </div>
           <div class="card">
@@ -1442,6 +1288,197 @@ async function cmsDel(id){
   </div>
 </div>
 
+
+
+<!-- MODAL: Order Baru -->
+<div class="moverlay" id="orderModal">
+  <div class="mbox" style="max-width:520px">
+    <div class="mhd"><h3>➕ Order Baru</h3><button class="mclose" onclick="closeOrderModal()">×</button></div>
+    <form id="fOrder" novalidate>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Channel</label>
+          <select id="oChannel">
+            <option value="">Pilih Channel</option>
+            <option value="shopee">🛍️ Shopee</option>
+            <option value="tiktok">🎵 TikTok Shop</option>
+            <option value="instagram">📸 Instagram / WA</option>
+          </select>
+          <div class="ferr" id="oChannelE"></div>
+        </div>
+        <div class="fg">
+          <label>Nama Pembeli</label>
+          <input type="text" id="oBuyer" placeholder="Nama pembeli" maxlength="100">
+          <div class="ferr" id="oBuyerE"></div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>No. Pesanan / Resi <small style="color:var(--t3);font-weight:400">(opsional)</small></label>
+        <input type="text" id="oOrderNo" placeholder="INV-001 / No. Resi" maxlength="100">
+      </div>
+      <div class="item-builder">
+        <div class="item-builder-title">📦 Item dalam Order</div>
+        <div class="item-list" id="itemList"></div>
+        <button type="button" class="add-item-btn" onclick="openItemModal()">＋ Tambah Item</button>
+        <div class="ferr" id="oItemsE" style="margin-top:6px"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Total Harga Order (Rp)</label>
+          <input type="number" id="oTotal" placeholder="0" min="0">
+          <div class="ferr" id="oTotalE"></div>
+        </div>
+        <div class="fg">
+          <label>Catatan <small style="color:var(--t3);font-weight:400">(opsional)</small></label>
+          <input type="text" id="oNote" placeholder="Catatan tambahan..." maxlength="300">
+        </div>
+      </div>
+      <button type="submit" class="pbtn green">💾 Simpan Order</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Catat Keuangan -->
+<div class="moverlay" id="keuModal">
+  <div class="mbox" style="max-width:480px">
+    <div class="mhd"><h3>➕ Catat Keuangan</h3><button class="mclose" onclick="closeKeuModal()">×</button></div>
+    <form id="fKeu" novalidate>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Jenis</label>
+          <select id="kType"><option value="income">💚 Pemasukan</option><option value="expense">❤️ Pengeluaran</option></select>
+        </div>
+        <div class="fg">
+          <label>Kategori</label>
+          <select id="kCat" onchange="toggleRestockFields()">
+            <option value="penjualan">Penjualan</option>
+            <option value="restock">Restock Frame</option>
+            <option value="ongkir">Ongkir & Operasional</option>
+            <option value="marketing">Marketing & Iklan</option>
+            <option value="gaji">Gaji / Upah</option>
+            <option value="lainnya">Lainnya</option>
+          </select>
+        </div>
+      </div>
+      <div id="restockFields" style="display:none">
+        <div class="fg-row">
+          <div class="fg">
+            <label>Warna Frame</label>
+            <select id="kFrameColor">
+              <option value="">Pilih Warna</option>
+              <option value="Hitam">Hitam</option><option value="Putih">Putih</option>
+              <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
+            </select>
+            <div class="ferr" id="kFrameColorE"></div>
+          </div>
+          <div class="fg">
+            <label>Ukuran Frame</label>
+            <select id="kFrameSize">
+              <option value="">Pilih Ukuran</option>
+              <option value="20x20">20×20</option><option value="20x30">20×30</option>
+              <option value="30x30">30×30</option><option value="30x40">30×40</option>
+              <option value="40x60">40×60</option><option value="50x70">50×70</option>
+              <option value="60x80">60×80</option>
+            </select>
+            <div class="ferr" id="kFrameSizeE"></div>
+          </div>
+          <div class="fg" style="flex:0 0 110px">
+            <label>Qty Restock</label>
+            <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999">
+            <div class="ferr" id="kRestockQtyE"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="kAmount" placeholder="0" min="0">
+          <div class="ferr" id="kAmountE"></div>
+        </div>
+        <div class="fg">
+          <label>Tanggal</label>
+          <input type="date" id="kDate">
+        </div>
+      </div>
+      <div class="fg">
+        <label>Keterangan</label>
+        <input type="text" id="kDesc" placeholder="Contoh: Restock frame hitam 20 pcs" maxlength="200">
+        <div class="ferr" id="kDescE"></div>
+      </div>
+      <button type="submit" class="pbtn">💾 Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Tambah Poster -->
+<div class="moverlay" id="posterModal">
+  <div class="mbox" style="max-width:440px">
+    <div class="mhd"><h3>🖼️ Tambah Poster</h3><button class="mclose" onclick="closePosterModal()">×</button></div>
+    <form id="fPoster" novalidate>
+      <div class="fg">
+        <label>Nama Poster</label>
+        <input type="text" id="pName" placeholder="Contoh: Sunset Beach" maxlength="100" autocomplete="off">
+        <div class="ferr" id="pNameE"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Ukuran</label>
+          <select id="pSize">
+            <option value="">Pilih Ukuran</option>
+            <option value="20x20">20×20 cm</option><option value="20x30">20×30 cm</option>
+            <option value="30x30">30×30 cm</option><option value="30x40">30×40 cm</option>
+            <option value="40x60">40×60 cm</option><option value="50x70">50×70 cm</option>
+            <option value="60x80">60×80 cm</option>
+          </select>
+          <div class="ferr" id="pSizeE"></div>
+        </div>
+        <div class="fg" style="flex:0 0 130px">
+          <label>Stok</label>
+          <input type="number" id="pStock" placeholder="0" min="0" max="99999">
+          <div class="ferr" id="pStockE"></div>
+        </div>
+      </div>
+      <button type="submit" class="pbtn green">➕ Tambah Poster</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Tambah Frame -->
+<div class="moverlay" id="frameModal">
+  <div class="mbox" style="max-width:440px">
+    <div class="mhd"><h3>🪟 Tambah Frame</h3><button class="mclose" onclick="closeFrameModal()">×</button></div>
+    <form id="fFrame" novalidate>
+      <div class="fg-row">
+        <div class="fg">
+          <label>Warna Frame</label>
+          <select id="fColor">
+            <option value="">Pilih Warna</option>
+            <option value="Hitam">Hitam</option><option value="Putih">Putih</option>
+            <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
+          </select>
+          <div class="ferr" id="fColorE"></div>
+        </div>
+        <div class="fg">
+          <label>Ukuran Frame</label>
+          <select id="fSize">
+            <option value="">Pilih Ukuran</option>
+            <option value="20x20">20×20 cm</option><option value="20x30">20×30 cm</option>
+            <option value="30x30">30×30 cm</option><option value="30x40">30×40 cm</option>
+            <option value="40x60">40×60 cm</option><option value="50x70">50×70 cm</option>
+            <option value="60x80">60×80 cm</option>
+          </select>
+          <div class="ferr" id="fSizeE"></div>
+        </div>
+        <div class="fg" style="flex:0 0 110px">
+          <label>Stok</label>
+          <input type="number" id="fStock" placeholder="0" min="0" max="99999">
+          <div class="ferr" id="fStockE"></div>
+        </div>
+      </div>
+      <button type="submit" class="pbtn green">➕ Tambah Frame</button>
+    </form>
+  </div>
+</div>
 
 <!-- MODAL: Edit Inventory -->
 <div class="moverlay" id="editModal">
@@ -2532,7 +2569,7 @@ $('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
   if(!$(id)) return;
   $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else if(id==='sizePickModal')closeSizePick();else if(id==='contentModal')closeContentModal();else if(id==='addFileModal')closeAddFileModal();else closeItemModal();}});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();closeContentModal();closeAddFileModal();closePackingModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();closeContentModal();closeAddFileModal();closePackingModal();closeOrderModal();closeKeuModal();closePosterModal();closeFrameModal();}});
 
 // Init item list empty state
 renderItemList();
@@ -3559,15 +3596,26 @@ async function dropKanban(e, colId){
 }
 
 async function moveKanban(orderId, newStatus){
-  const{db,collection,doc,updateDoc}=getDB();
   try{
-    await updateDoc(doc(collection(db,'orders'),orderId),{
-      kanbanStatus: newStatus,
-      // Sync status lama
-      status: newStatus==='selesai'?'selesai':newStatus==='batal'?'batal':'proses',
-      updatedAt: new Date().toISOString()
-    });
-    toast(`✅ Order dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
+    // Update order di array lokal dulu (optimistic UI)
+    const idx = orders.findIndex(o=>o.id===orderId);
+    if(idx>=0){
+      orders[idx].kanbanStatus = newStatus;
+      orders[idx].status = newStatus==='selesai'?'selesai':'proses';
+    }
+    renderKanban();
+
+    // Simpan ke Firestore — ambil data order lengkap lalu setDoc
+    const order = orders.find(o=>o.id===orderId);
+    if(order){
+      await fsSet('orders', {
+        ...order,
+        kanbanStatus: newStatus,
+        status: newStatus==='selesai'?'selesai':'proses',
+        updatedAt: new Date().toISOString()
+      });
+    }
+    toast(`✅ Dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
   }catch(e){ toast('Gagal: '+e.message,'error'); }
 }
 
@@ -3696,6 +3744,35 @@ function renderMarginSummary(){
   if($('msProfit'))     { $('msProfit').textContent   = rp(profit); $('msProfit').className = 'margin-stat-val '+(profit>=0?'margin-green':'margin-red'); }
   if($('msMarginPct'))  { $('msMarginPct').textContent= pct+'%'; $('msMarginPct').className = 'margin-stat-val '+(pct>=0?'margin-green':'margin-red'); }
 }
+
+/* ── Modal helpers: Order, Keuangan, Poster, Frame ── */
+function openOrderModal(){
+  $('orderModal').classList.add('active');
+  currentItems=[];renderItemList();
+  setTimeout(()=>$('oChannel')?.focus(),50);
+}
+function closeOrderModal(){ $('orderModal').classList.remove('active'); }
+
+function openKeuModal(){
+  $('keuModal').classList.add('active');
+  $('kDate').value=new Date().toISOString().split('T')[0];
+  setTimeout(()=>$('kType')?.focus(),50);
+}
+function closeKeuModal(){ $('keuModal').classList.remove('active'); }
+
+function openPosterModal(){
+  $('posterModal').classList.add('active');
+  $('pName').value='';$('pStock').value='';$('pSize').value='';
+  setTimeout(()=>$('pName')?.focus(),50);
+}
+function closePosterModal(){ $('posterModal').classList.remove('active'); }
+
+function openFrameModal(){
+  $('frameModal').classList.add('active');
+  $('fColor').value='';$('fSize').value='';$('fStock').value='';
+  setTimeout(()=>$('fColor')?.focus(),50);
+}
+function closeFrameModal(){ $('frameModal').classList.remove('active'); }
 
 </script>
 </body>
