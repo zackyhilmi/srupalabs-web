@@ -384,6 +384,54 @@ tbody tr:hover{background:#fafbfc}
 .drive-breadcrumb .bcrumb{cursor:pointer;color:var(--accent)}
 .drive-breadcrumb .bcrumb:hover{text-decoration:underline}
 @media(max-width:900px){.drive-wrap{grid-template-columns:1fr}}
+/* ─── KANBAN PACKING ─── */
+.kanban-board{display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;align-items:flex-start;-webkit-overflow-scrolling:touch}
+.kanban-col{flex:0 0 220px;background:var(--gray-lt);border-radius:12px;padding:10px;min-height:200px}
+.kanban-col-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;padding:0 2px}
+.kanban-col-hd .kcnt{background:var(--border);color:var(--t2);font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px}
+.kanban-cards{display:flex;flex-direction:column;gap:7px;min-height:60px}
+.kanban-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .18s;user-select:none}
+.kanban-card:hover{border-color:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.08);transform:translateY(-1px)}
+.kanban-card.dragging{opacity:.4;transform:scale(.97)}
+.kanban-card-buyer{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.kanban-card-meta{font-size:11px;color:var(--t2);line-height:1.5}
+.kanban-card-total{font-size:12px;font-weight:700;color:var(--accent);margin-top:4px}
+.kanban-card-actions{display:flex;gap:4px;margin-top:7px;border-top:1px solid var(--border);padding-top:7px}
+.kanban-card-btn{flex:1;padding:4px 0;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;font-size:11px;font-family:var(--font);color:var(--t2);transition:all .15s}
+.kanban-card-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.kanban-card-btn.next{background:var(--accent);color:#fff;border-color:var(--accent)}
+.kanban-card-btn.next:hover{background:var(--accent-dk,#1a0fb5)}
+.kanban-empty{text-align:center;padding:24px 8px;color:var(--t3);font-size:12px}
+.kanban-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.kanban-search{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:var(--surface);width:200px}
+
+/* Status colors per kolom */
+.kcol-baru .kanban-col-hd{color:#1d4ed8}
+.kcol-cetak_menunggu .kanban-col-hd{color:#7c3aed}
+.kcol-cetak_proses .kanban-col-hd{color:#9333ea}
+.kcol-framing .kanban-col-hd{color:#b45309}
+.kcol-packing .kanban-col-hd{color:#0369a1}
+.kcol-ready .kanban-col-hd{color:#047857}
+.kcol-dikirim .kanban-col-hd{color:#0891b2}
+.kcol-selesai .kanban-col-hd{color:#16a34a}
+
+/* ─── MARGIN & PROFIT ─── */
+.hpp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
+.hpp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px}
+.hpp-card-title{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--t1)}
+.hpp-field{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.hpp-field label{font-size:12px;color:var(--t2);flex-shrink:0}
+.hpp-field input{width:110px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);text-align:right}
+.margin-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.margin-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center}
+.margin-stat-val{font-size:20px;font-weight:700;color:var(--t1)}
+.margin-stat-lbl{font-size:11px;color:var(--t2);margin-top:2px}
+.margin-green{color:#16a34a!important}
+.margin-red{color:#dc2626!important}
+.margin-row-profit{font-weight:700;color:#16a34a}
+.margin-row-loss{font-weight:700;color:#dc2626}
+@media(max-width:768px){.margin-summary{grid-template-columns:repeat(2,1fr)}.kanban-col{flex:0 0 180px}}
+
 /* ─── MODAL BUKTI PACKING ─── */
 .packing-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .packing-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border)}
@@ -516,6 +564,11 @@ tbody tr:hover{background:#fafbfc}
       <div class="nseclbl">Marketing</div>
       <button class="nitem" onclick="goPage('planner',this)"><span class="nico">📅</span>Social Planner</button>
       <button class="nitem" onclick="goPage('drive',this)"><span class="nico">📁</span>Srupa Drive</button>
+    </div>
+    <div class="nsec">
+      <div class="nseclbl">Operasional</div>
+      <button class="nitem" onclick="goPage('kanban',this)"><span class="nico">📋</span>Kanban Packing</button>
+      <button class="nitem" onclick="goPage('margin',this)"><span class="nico">💰</span>Margin & Profit</button>
     </div>
     <div class="sfooter">
       <div class="urow">
@@ -1092,6 +1145,73 @@ tbody tr:hover{background:#fafbfc}
       </div>
     </div>
 
+
+    <!-- ═══ KANBAN PACKING ═══ -->
+    <div class="page" id="page-kanban">
+
+      <div class="kanban-filter">
+        <input class="kanban-search" id="kanbanSearch" placeholder="🔍 Cari pembeli / no. resi..." oninput="renderKanban()">
+        <select id="kanbanChannel" onchange="renderKanban()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);background:var(--surface)">
+          <option value="">Semua Channel</option>
+          <option value="shopee">Shopee</option>
+          <option value="tiktok">TikTok</option>
+          <option value="instagram">Instagram/WA</option>
+        </select>
+        <span style="font-size:12px;color:var(--t3)" id="kanbanCount"></span>
+      </div>
+
+      <div class="kanban-board" id="kanbanBoard"></div>
+
+    </div>
+
+    <!-- ═══ MARGIN & PROFIT ═══ -->
+    <div class="page" id="page-margin">
+
+      <!-- Summary stats -->
+      <div class="margin-summary" id="marginSummary">
+        <div class="margin-stat"><div class="margin-stat-val" id="msTotalOrder">0</div><div class="margin-stat-lbl">Total Order</div></div>
+        <div class="margin-stat"><div class="margin-stat-val" id="msOmzet">Rp0</div><div class="margin-stat-lbl">Total Omzet</div></div>
+        <div class="margin-stat"><div class="margin-stat-val margin-green" id="msProfit">Rp0</div><div class="margin-stat-lbl">Est. Profit</div></div>
+        <div class="margin-stat"><div class="margin-stat-val margin-green" id="msMarginPct">0%</div><div class="margin-stat-lbl">Margin Rate</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+
+        <!-- HPP Setup -->
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">⚙️ Setup HPP per SKU</div>
+            <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="saveHPP()">💾 Simpan HPP</button>
+          </div>
+          <div class="cbody">
+            <p style="font-size:12.5px;color:var(--t2);margin-bottom:14px;line-height:1.6">
+              HPP = Harga Pokok Produksi. Isi estimasi biaya cetak + frame per ukuran. Dipakai untuk hitung margin per order.
+            </p>
+            <div id="hppFields"></div>
+          </div>
+        </div>
+
+        <!-- Margin per Order -->
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">📊 Margin per Order</div>
+            <select id="marginFilter" onchange="renderMarginTable()" style="font-size:12px;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);background:var(--surface)">
+              <option value="">Semua</option>
+              <option value="profit">Profit</option>
+              <option value="loss">Rugi</option>
+            </select>
+          </div>
+          <div class="twrap" style="max-height:480px;overflow-y:auto">
+            <table>
+              <thead><tr><th>Pembeli</th><th>Omzet</th><th>HPP</th><th>Profit</th><th>Margin</th></tr></thead>
+              <tbody id="tbMargin"><tr class="erow"><td colspan="5">Setup HPP dulu untuk melihat margin</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /appShell -->
 
@@ -1616,7 +1736,7 @@ window._startListeners=function(){
   const chk=()=>{if(Object.values(fl).every(Boolean))fbStat('connected','Terhubung');};
   onSnapshot(collection(db,'inventory_posters'),s=>{inv.posters=s.docs.map(d=>d.data());renderPosters($('pSearch').value);updateDashboard();fl.p=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'inventory_frames'),s=>{inv.frames=s.docs.map(d=>d.data());renderFrames($('fSearch').value);updateDashboard();fl.f=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();fl.o=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}fl.o=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'keuangan'),s=>{keuangan=s.docs.map(d=>d.data());renderKeuangan();updateKeuanganSummary();renderLaporan();fl.k=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'cms_posters'),s=>{cmsPosters=s.docs.map(d=>d.data()).sort((a,b)=>(a.order||99)-(b.order||99));renderCMSTable();renderCMSStats();},()=>{});
 };
@@ -1640,7 +1760,7 @@ $('lBtn').onclick=async()=>{
 function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
 
 /* ── NAVIGATION ── */
-const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'CMS Poster Website',planner:'Social Planner',drive:'Srupa Drive'};
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'CMS Poster Website',planner:'Social Planner',drive:'Srupa Drive',kanban:'Kanban Packing',margin:'Margin & Profit'};
 function goPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
@@ -1654,6 +1774,8 @@ function goPage(name,el){
       renderIdeaList();
     },100);
   }
+  if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
+  if(name==='margin'){loadHPP();}
   if(name==='drive'){
     if(!window._driveAPILoaded){
       window._driveAPILoaded=true;
@@ -3345,6 +3467,234 @@ async function importContentExcel(input){
   }catch(err){
     toast('Gagal import: '+err.message,'error');
   }
+}
+
+/* ══════════════════════════════════════
+   KANBAN PACKING
+══════════════════════════════════════ */
+const KANBAN_COLS = [
+  {id:'baru',           label:'📥 Order Masuk',       short:'Masuk'},
+  {id:'cetak_menunggu', label:'⏳ Menunggu Cetak',     short:'Antri Cetak'},
+  {id:'cetak_proses',   label:'🖨️ Sedang Dicetak',    short:'Dicetak'},
+  {id:'framing',        label:'🪟 Siap Framing',       short:'Framing'},
+  {id:'packing',        label:'📦 Packing',            short:'Packing'},
+  {id:'ready',          label:'✅ Ready Pickup/Kirim', short:'Ready'},
+  {id:'dikirim',        label:'🚚 Dikirim',            short:'Dikirim'},
+  {id:'selesai',        label:'🎉 Selesai',            short:'Selesai'},
+];
+
+function getKanbanStatus(order){
+  // Map status lama ke kolom kanban
+  const s = order.kanbanStatus || order.status || 'baru';
+  if(s === 'proses') return 'baru';
+  if(s === 'selesai') return 'selesai';
+  if(s === 'batal') return null; // tidak ditampilkan
+  return s;
+}
+
+function renderKanban(){
+  const board = $('kanbanBoard');
+  if(!board) return;
+  const q = ($('kanbanSearch')?.value||'').toLowerCase();
+  const ch = $('kanbanChannel')?.value||'';
+
+  let filtered = orders.filter(o => {
+    if(o.status === 'batal') return false;
+    if(ch && o.channel !== ch) return false;
+    if(q && !(o.buyer||'').toLowerCase().includes(q) && !(o.resi||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $('kanbanCount') && ($('kanbanCount').textContent = `${filtered.length} order aktif`);
+
+  board.innerHTML = KANBAN_COLS.map(col => {
+    const cards = filtered.filter(o => getKanbanStatus(o) === col.id);
+    const colIdx = KANBAN_COLS.findIndex(c => c.id === col.id);
+    const nextCol = KANBAN_COLS[colIdx + 1];
+
+    return `<div class="kanban-col kcol-${col.id}" id="kcol-${col.id}"
+      ondragover="event.preventDefault()"
+      ondrop="dropKanban(event,'${col.id}')">
+      <div class="kanban-col-hd">
+        <span>${col.label}</span>
+        <span class="kcnt">${cards.length}</span>
+      </div>
+      <div class="kanban-cards" id="kcards-${col.id}">
+        ${cards.length ? cards.map(o => kanbanCard(o, col, nextCol)).join('') :
+          '<div class="kanban-empty">Kosong</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function kanbanCard(o, col, nextCol){
+  const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : '';
+  const items = (o.items||[]).map(i=>`${i.posterName||''} ${i.posterSize||''}`).join(', ');
+  return `<div class="kanban-card" draggable="true"
+    ondragstart="dragKanban(event,'${esc(o.id)}')"
+    onclick="openKanbanDetail('${esc(o.id)}')">
+    <div class="kanban-card-buyer">${esc(o.buyer||'—')}</div>
+    <div class="kanban-card-meta">
+      ${chBadge(o.channel)}
+      ${date ? `· ${date}` : ''}
+      ${o.resi ? `<br>📦 ${esc(o.resi)}` : ''}
+      ${items ? `<br><span style="color:var(--t3)">${esc(items.slice(0,40))}${items.length>40?'…':''}</span>` : ''}
+    </div>
+    <div class="kanban-card-total">${rp(o.finalTotal!=null?o.finalTotal:o.total||0)}</div>
+    <div class="kanban-card-actions" onclick="event.stopPropagation()">
+      ${nextCol ? `<button class="kanban-card-btn next" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')">→ ${nextCol.short}</button>` : ''}
+      <button class="kanban-card-btn" onclick="openKanbanDetail('${esc(o.id)}')">Detail</button>
+    </div>
+  </div>`;
+}
+
+// Drag & drop
+let dragOrderId = null;
+function dragKanban(e, id){ dragOrderId=id; e.dataTransfer.effectAllowed='move'; }
+async function dropKanban(e, colId){
+  e.preventDefault();
+  if(!dragOrderId) return;
+  await moveKanban(dragOrderId, colId);
+  dragOrderId = null;
+}
+
+async function moveKanban(orderId, newStatus){
+  const{db,collection,doc,updateDoc}=getDB();
+  try{
+    await updateDoc(doc(collection(db,'orders'),orderId),{
+      kanbanStatus: newStatus,
+      // Sync status lama
+      status: newStatus==='selesai'?'selesai':newStatus==='batal'?'batal':'proses',
+      updatedAt: new Date().toISOString()
+    });
+    toast(`✅ Order dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
+  }catch(e){ toast('Gagal: '+e.message,'error'); }
+}
+
+function openKanbanDetail(id){
+  // Buka halaman transaksi dan scroll ke order
+  goPage('transaksi', document.querySelector('.nitem[onclick*=transaksi]'));
+  setTimeout(()=>{
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    if(row) row.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 300);
+}
+
+/* ══════════════════════════════════════
+   MARGIN & PROFIT
+══════════════════════════════════════ */
+const HPP_SIZES = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80'];
+let hppData = {}; // {size: {cetak, frame}}
+
+async function loadHPP(){
+  try{
+    const{db,collection,getDocs}=getDB();
+    const snap = await getDocs(collection(db,'hpp_settings'));
+    snap.forEach(d=>{ hppData[d.id]=d.data(); });
+  }catch(e){}
+  renderHPPFields();
+  renderMarginTable();
+  renderMarginSummary();
+}
+
+function renderHPPFields(){
+  const wrap = $('hppFields');
+  if(!wrap) return;
+  wrap.innerHTML = HPP_SIZES.map(sz => {
+    const d = hppData[sz]||{cetak:0,frame:0};
+    return `<div class="hpp-card">
+      <div class="hpp-card-title">📐 ${sz} cm</div>
+      <div class="hpp-field">
+        <label>Biaya Cetak</label>
+        <input type="number" id="hpp-cetak-${sz}" value="${d.cetak||0}" placeholder="0" min="0"
+          oninput="previewHPP('${sz}')" style="border-radius:6px">
+      </div>
+      <div class="hpp-field">
+        <label>Biaya Frame</label>
+        <input type="number" id="hpp-frame-${sz}" value="${d.frame||0}" placeholder="0" min="0"
+          oninput="previewHPP('${sz}')">
+      </div>
+      <div class="hpp-field" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        <label style="font-weight:600;color:var(--t1)">Total HPP</label>
+        <span id="hpp-total-${sz}" style="font-weight:700;color:var(--accent);font-size:13px">${rp((d.cetak||0)+(d.frame||0))}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function previewHPP(sz){
+  const c = parseFloat($(`hpp-cetak-${sz}`)?.value)||0;
+  const f = parseFloat($(`hpp-frame-${sz}`)?.value)||0;
+  const el = $(`hpp-total-${sz}`);
+  if(el) el.textContent = rp(c+f);
+}
+
+async function saveHPP(){
+  const{db,collection,doc,setDoc}=getDB();
+  try{
+    for(const sz of HPP_SIZES){
+      const cetak = parseFloat($(`hpp-cetak-${sz}`)?.value)||0;
+      const frame = parseFloat($(`hpp-frame-${sz}`)?.value)||0;
+      hppData[sz] = {cetak, frame, total: cetak+frame};
+      await setDoc(doc(collection(db,'hpp_settings'),sz),{cetak,frame,total:cetak+frame});
+    }
+    toast('✅ HPP berhasil disimpan!');
+    renderMarginTable();
+    renderMarginSummary();
+  }catch(e){ toast('Gagal simpan HPP: '+e.message,'error'); }
+}
+
+function calcOrderHPP(order){
+  let hpp = 0;
+  (order.items||[]).forEach(item=>{
+    const sz = item.posterSize||item.frameSize||'';
+    const d  = hppData[sz]||{cetak:0,frame:0};
+    const qty= item.qty||1;
+    hpp += (d.cetak + d.frame) * qty;
+  });
+  return hpp;
+}
+
+function renderMarginTable(){
+  const tb = $('tbMargin');
+  if(!tb) return;
+  const filter = $('marginFilter')?.value||'';
+  const activeOrders = orders.filter(o=>o.status!=='batal');
+  if(!activeOrders.length){tb.innerHTML='<tr class="erow"><td colspan="5">Belum ada order</td></tr>';return;}
+
+  let rows = activeOrders.map(o=>{
+    const omzet  = o.finalTotal!=null?o.finalTotal:(o.total||0);
+    const hpp    = calcOrderHPP(o);
+    const profit = omzet - hpp;
+    const pct    = omzet>0?Math.round((profit/omzet)*100):0;
+    return {o, omzet, hpp, profit, pct};
+  }).filter(r=> !filter || (filter==='profit'?r.profit>=0:r.profit<0))
+    .sort((a,b)=>b.profit-a.profit);
+
+  if(!rows.length){tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data</td></tr>';return;}
+  tb.innerHTML = rows.map(({o,omzet,hpp,profit,pct})=>{
+    const cls = profit>=0?'margin-row-profit':'margin-row-loss';
+    const pctStr = (profit>=0?'+':'')+pct+'%';
+    return `<tr>
+      <td><strong>${esc(o.buyer||'—')}</strong><br><small style="color:var(--t3)">${chBadge(o.channel)}</small></td>
+      <td>${rp(omzet)}</td>
+      <td style="color:var(--t2)">${hpp>0?rp(hpp):'—'}</td>
+      <td class="${cls}">${hpp>0?rp(profit):'—'}</td>
+      <td class="${cls}" style="font-weight:700">${hpp>0?pctStr:'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMarginSummary(){
+  const active = orders.filter(o=>o.status!=='batal');
+  const omzet  = active.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  const hpp    = active.reduce((s,o)=>s+calcOrderHPP(o),0);
+  const profit = omzet - hpp;
+  const pct    = omzet>0?Math.round((profit/omzet)*100):0;
+  if($('msTotalOrder')) $('msTotalOrder').textContent = active.length;
+  if($('msOmzet'))      $('msOmzet').textContent      = rp(omzet);
+  if($('msProfit'))     { $('msProfit').textContent   = rp(profit); $('msProfit').className = 'margin-stat-val '+(profit>=0?'margin-green':'margin-red'); }
+  if($('msMarginPct'))  { $('msMarginPct').textContent= pct+'%'; $('msMarginPct').className = 'margin-stat-val '+(pct>=0?'margin-green':'margin-red'); }
 }
 
 </script>
