@@ -310,7 +310,7 @@ tbody tr:hover{background:#fafbfc}
 .cal-more{font-size:10px;color:var(--t3);font-weight:600}
 
 /* content idea list */
-.idea-list{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 220px);overflow-y:auto}
+.idea-list{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 220px);overflow-y:auto;contain:content}
 .idea-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;transition:box-shadow .15s}
 .idea-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .idea-card-top{display:flex;align-items:center;gap:7px;margin-bottom:6px}
@@ -953,7 +953,7 @@ tbody tr:hover{background:#fafbfc}
         </div>
 
         <!-- DAFTAR IDE KONTEN -->
-        <div class="card" style="position:sticky;top:72px">
+        <div class="card" style="position:sticky;top:72px;contain:layout">
           <div class="chd">
             <div class="ctitle">💡 Semua Konten</div>
             <select id="plannerFilter" onchange="renderPlanner()" style="font-size:12px;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);background:var(--surface)">
@@ -1295,25 +1295,6 @@ async function cmsDel(id){
 </div>
 
 
-        <!-- DAFTAR IDE KONTEN -->
-        <div class="card" style="position:sticky;top:72px">
-          <div class="chd">
-            <div class="ctitle">💡 Semua Konten</div>
-            <select id="plannerFilter" onchange="renderPlanner()" style="font-size:12px;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);background:var(--surface)">
-              <option value="">Semua</option>
-              <option value="draft">Draft</option>
-              <option value="scheduled">Terjadwal</option>
-              <option value="posted">Tayang</option>
-            </select>
-          </div>
-          <div class="cbody" style="padding:8px 12px">
-            <div class="idea-list" id="ideaList"></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
 <!-- MODAL: Edit Inventory -->
 <div class="moverlay" id="editModal">
   <div class="mbox">
@@ -1449,6 +1430,111 @@ let driveCurrentIco   = '🗂️';
 let driveItems        = [];
 let driveFolderIds    = {};
 let driveNavStack     = []; // [{id, label, ico}] untuk breadcrumb
+
+// Config per folder — field tambahan dan penamaan file
+const FOLDER_UPLOAD_CONFIG = {
+  'Bukti Packing': {
+    title: '📦 Upload Bukti Packing',
+    ico: '📸',
+    accept: 'image/*,video/*',
+    fields: [
+      {id:'pkDate',  type:'date',  label:'Tanggal Packing', required:true,  placeholder:''},
+      {id:'pkCustomer', type:'text', label:'Nama Customer', required:true,  placeholder:'Contoh: Rizky Aditya', max:60},
+      {id:'pkResi',  type:'text',  label:'No. Resi',        required:false, placeholder:'Contoh: JX1234567890', max:40},
+    ],
+    // subfolder = tanggal, nama file = Customer - Resi - n.ext
+    subfolderFn: ()=> $('pkDate')?.value || new Date().toISOString().split('T')[0],
+    filenameFn:  (i,ext,total)=>{
+      const c=san($('pkCustomer')?.value||'');
+      const r=san($('pkResi')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${c}${r?' - '+r:''}${idx}.${ext}`;
+    }
+  },
+  'Asset Desain': {
+    title: '🎨 Upload Asset Desain',
+    ico: '🎨',
+    accept: 'image/*,.ai,.psd,.svg,.fig,.pdf',
+    fields: [
+      {id:'pkLabel', type:'text', label:'Nama / Label Asset', required:true, placeholder:'Contoh: Logo Srupa v3', max:80},
+      {id:'pkVer',   type:'text', label:'Versi',              required:false, placeholder:'Contoh: v1, Final, Draft', max:20},
+    ],
+    subfolderFn: ()=> null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'file');
+      const v=san($('pkVer')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${v?' - '+v:''}${idx}.${ext}`;
+    }
+  },
+  'Video Konten': {
+    title: '🎬 Upload Video Konten',
+    ico: '🎬',
+    accept: 'video/*,image/*',
+    fields: [
+      {id:'pkLabel',    type:'text', label:'Judul Konten',  required:true,  placeholder:'Contoh: Unboxing Poster Stussy', max:80},
+      {id:'pkPlatform', type:'select', label:'Platform',   required:false,
+        options:['Instagram','TikTok','Shopee','YouTube','Lainnya']},
+      {id:'pkDate',     type:'date',  label:'Tanggal Rencana Posting', required:false, placeholder:''},
+    ],
+    subfolderFn: ()=> $('pkDate')?.value||null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'video');
+      const p=san($('pkPlatform')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${p?' - '+p:''}${idx}.${ext}`;
+    }
+  },
+  'Foto Produk': {
+    title: '📸 Upload Foto Produk',
+    ico: '📸',
+    accept: 'image/*',
+    fields: [
+      {id:'pkLabel', type:'text', label:'Nama Produk / Seri', required:true, placeholder:'Contoh: Stussy Racing Series', max:80},
+      {id:'pkBatch', type:'text', label:'Batch / Keterangan', required:false, placeholder:'Contoh: Batch Mei 2026', max:40},
+    ],
+    subfolderFn: ()=> null,
+    filenameFn:  (i,ext,total)=>{
+      const l=san($('pkLabel')?.value||'foto');
+      const b=san($('pkBatch')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `${l}${b?' - '+b:''}${idx}.${ext}`;
+    }
+  },
+  'Invoice': {
+    title: '🧾 Upload Invoice',
+    ico: '📄',
+    accept: 'image/*,.pdf',
+    fields: [
+      {id:'pkDate',     type:'date', label:'Tanggal Invoice', required:true, placeholder:''},
+      {id:'pkCustomer', type:'text', label:'Nama Customer',   required:true, placeholder:'Contoh: Rizky Aditya', max:60},
+      {id:'pkInvNo',    type:'text', label:'No. Invoice',     required:false, placeholder:'Contoh: INV-001', max:30},
+    ],
+    subfolderFn: ()=> $('pkDate')?.value||null,
+    filenameFn:  (i,ext,total)=>{
+      const c=san($('pkCustomer')?.value||'');
+      const n=san($('pkInvNo')?.value||'');
+      const idx=total>1?` (${i+1})`:'';
+      return `Invoice - ${c}${n?' - '+n:''}${idx}.${ext}`;
+    }
+  },
+};
+
+// Default config untuk folder lain
+const DEFAULT_UPLOAD_CONFIG = {
+  title: '☁️ Upload File',
+  ico: '📎',
+  accept: '*/*',
+  fields: [
+    {id:'pkLabel', type:'text', label:'Nama File / Keterangan', required:false, placeholder:'', max:80},
+  ],
+  subfolderFn: ()=> null,
+  filenameFn:  (i,ext,total)=>{
+    const l=san($('pkLabel')?.value||'');
+    const idx=total>1?` (${i+1})`:'';
+    return l ? `${l}${idx}.${ext}` : null; // null = pakai nama file asli
+  }
+};
 let tokenClient       = null;
 let gapiInited        = false;
 let gisInited         = false;
@@ -2963,110 +3049,7 @@ function openDrivePicker(){
 ══════════════════════════════════════ */
 let pkFiles = [];
 
-// Config per folder — field tambahan dan penamaan file
-const FOLDER_UPLOAD_CONFIG = {
-  'Bukti Packing': {
-    title: '📦 Upload Bukti Packing',
-    ico: '📸',
-    accept: 'image/*,video/*',
-    fields: [
-      {id:'pkDate',  type:'date',  label:'Tanggal Packing', required:true,  placeholder:''},
-      {id:'pkCustomer', type:'text', label:'Nama Customer', required:true,  placeholder:'Contoh: Rizky Aditya', max:60},
-      {id:'pkResi',  type:'text',  label:'No. Resi',        required:false, placeholder:'Contoh: JX1234567890', max:40},
-    ],
-    // subfolder = tanggal, nama file = Customer - Resi - n.ext
-    subfolderFn: ()=> $('pkDate')?.value || new Date().toISOString().split('T')[0],
-    filenameFn:  (i,ext,total)=>{
-      const c=san($('pkCustomer')?.value||'');
-      const r=san($('pkResi')?.value||'');
-      const idx=total>1?` (${i+1})`:'';
-      return `${c}${r?' - '+r:''}${idx}.${ext}`;
-    }
-  },
-  'Asset Desain': {
-    title: '🎨 Upload Asset Desain',
-    ico: '🎨',
-    accept: 'image/*,.ai,.psd,.svg,.fig,.pdf',
-    fields: [
-      {id:'pkLabel', type:'text', label:'Nama / Label Asset', required:true, placeholder:'Contoh: Logo Srupa v3', max:80},
-      {id:'pkVer',   type:'text', label:'Versi',              required:false, placeholder:'Contoh: v1, Final, Draft', max:20},
-    ],
-    subfolderFn: ()=> null,
-    filenameFn:  (i,ext,total)=>{
-      const l=san($('pkLabel')?.value||'file');
-      const v=san($('pkVer')?.value||'');
-      const idx=total>1?` (${i+1})`:'';
-      return `${l}${v?' - '+v:''}${idx}.${ext}`;
-    }
-  },
-  'Video Konten': {
-    title: '🎬 Upload Video Konten',
-    ico: '🎬',
-    accept: 'video/*,image/*',
-    fields: [
-      {id:'pkLabel',    type:'text', label:'Judul Konten',  required:true,  placeholder:'Contoh: Unboxing Poster Stussy', max:80},
-      {id:'pkPlatform', type:'select', label:'Platform',   required:false,
-        options:['Instagram','TikTok','Shopee','YouTube','Lainnya']},
-      {id:'pkDate',     type:'date',  label:'Tanggal Rencana Posting', required:false, placeholder:''},
-    ],
-    subfolderFn: ()=> $('pkDate')?.value||null,
-    filenameFn:  (i,ext,total)=>{
-      const l=san($('pkLabel')?.value||'video');
-      const p=san($('pkPlatform')?.value||'');
-      const idx=total>1?` (${i+1})`:'';
-      return `${l}${p?' - '+p:''}${idx}.${ext}`;
-    }
-  },
-  'Foto Produk': {
-    title: '📸 Upload Foto Produk',
-    ico: '📸',
-    accept: 'image/*',
-    fields: [
-      {id:'pkLabel', type:'text', label:'Nama Produk / Seri', required:true, placeholder:'Contoh: Stussy Racing Series', max:80},
-      {id:'pkBatch', type:'text', label:'Batch / Keterangan', required:false, placeholder:'Contoh: Batch Mei 2026', max:40},
-    ],
-    subfolderFn: ()=> null,
-    filenameFn:  (i,ext,total)=>{
-      const l=san($('pkLabel')?.value||'foto');
-      const b=san($('pkBatch')?.value||'');
-      const idx=total>1?` (${i+1})`:'';
-      return `${l}${b?' - '+b:''}${idx}.${ext}`;
-    }
-  },
-  'Invoice': {
-    title: '🧾 Upload Invoice',
-    ico: '📄',
-    accept: 'image/*,.pdf',
-    fields: [
-      {id:'pkDate',     type:'date', label:'Tanggal Invoice', required:true, placeholder:''},
-      {id:'pkCustomer', type:'text', label:'Nama Customer',   required:true, placeholder:'Contoh: Rizky Aditya', max:60},
-      {id:'pkInvNo',    type:'text', label:'No. Invoice',     required:false, placeholder:'Contoh: INV-001', max:30},
-    ],
-    subfolderFn: ()=> $('pkDate')?.value||null,
-    filenameFn:  (i,ext,total)=>{
-      const c=san($('pkCustomer')?.value||'');
-      const n=san($('pkInvNo')?.value||'');
-      const idx=total>1?` (${i+1})`:'';
-      return `Invoice - ${c}${n?' - '+n:''}${idx}.${ext}`;
-    }
-  },
-};
 
-// Default config untuk folder lain
-const DEFAULT_UPLOAD_CONFIG = {
-  title: '☁️ Upload File',
-  ico: '📎',
-  accept: '*/*',
-  fields: [
-    {id:'pkLabel', type:'text', label:'Nama File / Keterangan', required:false, placeholder:'', max:80},
-  ],
-  subfolderFn: ()=> null,
-  filenameFn:  (i,ext,total)=>{
-    const l=san($('pkLabel')?.value||'');
-    const idx=total>1?` (${i+1})`:'';
-    return l ? `${l}${idx}.${ext}` : null; // null = pakai nama file asli
-  }
-};
 
 function openUploadModal(folderName){
   if(!driveAccessToken){ driveLogin(); window._pendingUploadFolder=folderName||driveCurrentLabel; return; }
