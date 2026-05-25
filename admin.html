@@ -3100,21 +3100,6 @@ async function submitPackingUpload(){
   }
 }
 
-let pkFiles = []; // {file, previewUrl}
-
-function openPackingModal(){
-  if(!driveAccessToken){ driveLogin(); window._pendingPackingModal=true; return; }
-  pkFiles = [];
-  $('pkDate').value = new Date().toISOString().split('T')[0];
-  $('pkCustomer').value = '';
-  $('pkResi').value = '';
-  $('packingPreview').innerHTML = '';
-  $('pkProgress').style.display = 'none';
-  $('pkProgressBar').style.width = '0%';
-  $('pkSubmitBtn').disabled = false;
-  clerr('pkCustomerE','pkFileE');
-  $('packingModal').classList.add('active');
-}
 
 function closePackingModal(){ $('packingModal').classList.remove('active'); }
 
