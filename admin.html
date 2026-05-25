@@ -162,8 +162,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .chart-wrap{position:relative;height:200px}
 
 /* ─── INVENTORY GRID ─── */
-.igrid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
-.igrid .card:first-child{position:sticky;top:72px}
+.igrid{display:flex;flex-direction:column;gap:16px}
+.igrid .card:first-child{position:relative;top:auto}
 
 /* ─── INNER TABS ─── */
 .itabs{display:flex;gap:3px;background:var(--gray-lt);padding:4px;border-radius:10px;width:fit-content;margin-bottom:16px}
@@ -401,12 +401,11 @@ tbody tr:hover{background:#fafbfc}
 ══════════════════════ */
 @media(max-width:1200px){
   .srow{grid-template-columns:repeat(3,1fr)}
-  .igrid{grid-template-columns:280px 1fr}
+
 }
 @media(max-width:1024px){
   .srow{grid-template-columns:repeat(2,1fr) !important}
-  .igrid{grid-template-columns:1fr}
-  .igrid .card:first-child{position:relative;top:auto}
+
   .two-col{grid-template-columns:1fr}
   .sum-grid{grid-template-columns:1fr 1fr}
 }
@@ -506,7 +505,6 @@ tbody tr:hover{background:#fafbfc}
     </div>
     <div class="nsec">
       <div class="nseclbl">Inventaris</div>
-      <button class="nitem" onclick="goPage('inventory',this)"><span class="nico">📦</span>Semua Stok</button>
       <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Poster</button>
       <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
     </div>
@@ -829,19 +827,31 @@ tbody tr:hover{background:#fafbfc}
             <div class="chd"><div class="ctitle">Tambah Poster</div></div>
             <div class="cbody">
               <form id="fPoster" novalidate>
-                <div class="fg"><label>Nama Poster</label><input type="text" id="pName" placeholder="Contoh: Sunset Beach" maxlength="100" autocomplete="off"><div class="ferr" id="pNameE"></div></div>
-                <div class="fg"><label>Ukuran</label>
-                  <select id="pSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
-                  <div class="ferr" id="pSizeE"></div></div>
-                <div class="fg"><label>Jumlah Stok</label><input type="number" id="pStock" placeholder="0" min="0" max="99999"><div class="ferr" id="pStockE"></div></div>
-                <button type="submit" class="pbtn">➕ Tambah Poster</button>
+                <div class="fg-row">
+                  <div class="fg" style="flex:2">
+                    <label>Nama Poster</label>
+                    <input type="text" id="pName" placeholder="Contoh: Sunset Beach" maxlength="100" autocomplete="off">
+                    <div class="ferr" id="pNameE"></div>
+                  </div>
+                  <div class="fg">
+                    <label>Ukuran</label>
+                    <select id="pSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
+                    <div class="ferr" id="pSizeE"></div>
+                  </div>
+                  <div class="fg" style="flex:0 0 110px">
+                    <label>Stok</label>
+                    <input type="number" id="pStock" placeholder="0" min="0" max="99999">
+                    <div class="ferr" id="pStockE"></div>
+                  </div>
+                  <div class="fg" style="flex:0 0 auto;justify-content:flex-end;padding-top:20px">
+                    <button type="submit" class="pbtn" style="white-space:nowrap">➕ Tambah</button>
+                  </div>
+                </div>
               </form>
-              
-              <div class="sdiv">Atau Import Bulk</div>
-              <div style="padding:12px 0">
+              <div style="display:flex;align-items:center;gap:10px;margin-top:4px;padding-top:10px;border-top:1px solid var(--border)">
                 <input type="file" id="bulkUpload" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleBulkUpload(event)">
-                <button class="pbtn" style="background:var(--blue)" onclick="$('bulkUpload').click()">📁 Upload CSV/Excel</button>
-                <div style="font-size:12px;color:var(--t3);margin-top:8px">Format: Nama, Ukuran, Stok<br>Contoh: Bauhaus, 20x30, 10</div>
+                <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;background:var(--blue)" onclick="$('bulkUpload').click()">📁 Import CSV/Excel</button>
+                <span style="font-size:11.5px;color:var(--t3)">Format: Nama, Ukuran, Stok</span>
               </div>
             </div>
           </div>
@@ -875,14 +885,26 @@ tbody tr:hover{background:#fafbfc}
             <div class="chd"><div class="ctitle">Tambah Frame</div></div>
             <div class="cbody">
               <form id="fFrame" novalidate>
-                <div class="fg"><label>Warna Frame</label>
-                  <select id="fColor"><option value="">Pilih Warna</option><option value="Hitam">Hitam</option><option value="Putih">Putih</option><option value="Kayu">Kayu</option><option value="Chrome">Chrome</option></select>
-                  <div class="ferr" id="fColorE"></div></div>
-                <div class="fg"><label>Ukuran Frame</label>
-                  <select id="fSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
-                  <div class="ferr" id="fSizeE"></div></div>
-                <div class="fg"><label>Jumlah Stok</label><input type="number" id="fStock" placeholder="0" min="0" max="99999"><div class="ferr" id="fStockE"></div></div>
-                <button type="submit" class="pbtn">➕ Tambah Frame</button>
+                <div class="fg-row">
+                  <div class="fg">
+                    <label>Warna Frame</label>
+                    <select id="fColor"><option value="">Pilih Warna</option><option value="Hitam">Hitam</option><option value="Putih">Putih</option><option value="Kayu">Kayu</option><option value="Chrome">Chrome</option></select>
+                    <div class="ferr" id="fColorE"></div>
+                  </div>
+                  <div class="fg">
+                    <label>Ukuran Frame</label>
+                    <select id="fSize"><option value="">Pilih Ukuran</option><option value="20x20">20 × 20 cm</option><option value="20x30">20 × 30 cm</option><option value="30x30">30 × 30 cm</option><option value="30x40">30 × 40 cm</option><option value="40x60">40 × 60 cm</option><option value="50x70">50 × 70 cm</option><option value="60x80">60 × 80 cm</option></select>
+                    <div class="ferr" id="fSizeE"></div>
+                  </div>
+                  <div class="fg" style="flex:0 0 110px">
+                    <label>Stok</label>
+                    <input type="number" id="fStock" placeholder="0" min="0" max="99999">
+                    <div class="ferr" id="fStockE"></div>
+                  </div>
+                  <div class="fg" style="flex:0 0 auto;justify-content:flex-end;padding-top:20px">
+                    <button type="submit" class="pbtn" style="white-space:nowrap">➕ Tambah</button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
