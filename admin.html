@@ -371,6 +371,8 @@ tbody tr:hover{background:#fafbfc}
 .drive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
 .drive-file{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .15s;text-align:center;position:relative}
 .drive-file:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(0,0,0,.07);transform:translateY(-1px)}
+.drive-folder-item{border-color:var(--accent-lt);background:var(--accent-lt)}
+.drive-folder-item:hover{background:var(--accent-lt);border-color:var(--accent)}
 .drive-file-ico{font-size:30px;margin-bottom:6px;display:block}
 .drive-file-name{font-size:11.5px;font-weight:500;color:var(--t1);word-break:break-word;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .drive-file-meta{font-size:10.5px;color:var(--t3);margin-top:3px}
@@ -926,7 +928,11 @@ tbody tr:hover{background:#fafbfc}
         <div class="card">
           <div class="chd">
             <div class="ctitle">📅 Kalender Konten</div>
-            <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="openContentModal()">＋ Tambah Konten</button>
+            <div style="display:flex;gap:6px">
+              <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;background:var(--surface);color:var(--t1);border:1.5px solid var(--border)" onclick="$('importExcelInput').click()">📥 Import Excel</button>
+              <input type="file" id="importExcelInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="importContentExcel(this)">
+              <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="openContentModal()">＋ Tambah Konten</button>
+            </div>
           </div>
           <div class="cbody">
             <div class="cal-nav">
@@ -1442,6 +1448,7 @@ let driveCurrentLabel = 'Semua File';
 let driveCurrentIco   = '🗂️';
 let driveItems        = [];
 let driveFolderIds    = {};
+let driveNavStack     = []; // [{id, label, ico}] untuk breadcrumb
 let tokenClient       = null;
 let gapiInited        = false;
 let gisInited         = false;
@@ -2687,6 +2694,7 @@ async function openOrCreateFolder(name,ico,btn){
 }
 
 function setDriveFolder(folderId,label,ico,btn){
+  driveNavStack=[];  // Reset navigation stack saat pilih folder dari sidebar
   driveCurrentFolder=folderId;
   driveCurrentLabel=label;
   driveCurrentIco=ico;
@@ -2711,35 +2719,34 @@ function setDriveFolder(folderId,label,ico,btn){
 // ── Load files ──
 async function loadDriveFiles(){
   try{
-    let q="trashed=false and mimeType!='application/vnd.google-apps.folder'";
-    if(driveCurrentFolder){
-      q+=` and '${driveCurrentFolder}' in parents`;
-    } else {
-      // Semua file — cari dalam folder Srupa Labs
-      const rootId=await getSrupaRootFolder();
-      q+=` and '${rootId}' in parents`;
-      // Juga ambil dari subfolder
-      const subRes=await gapi.client.drive.files.list({
-        q:`'${rootId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-        fields:'files(id)'
-      });
-      const subIds=subRes.result.files.map(f=>f.id);
-      if(subIds.length){
-        const subQ=subIds.map(id=>`'${id}' in parents`).join(' or ');
-        q=`trashed=false and mimeType!='application/vnd.google-apps.folder' and (${subQ} or '${rootId}' in parents)`;
-      }
-    }
-    const res=await gapi.client.drive.files.list({
-      q,
-      fields:'files(id,name,mimeType,size,createdTime,webViewLink,thumbnailLink,iconLink)',
-      orderBy:'createdTime desc',
-      pageSize:50
-    });
-    driveItems=res.result.files||[];
+    const rootId = await getSrupaRootFolder();
+    const parentId = driveCurrentFolder || rootId;
+
+    // Load folder dan file sekaligus
+    const [folderRes, fileRes] = await Promise.all([
+      gapi.client.drive.files.list({
+        q:`'${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+        fields:'files(id,name,mimeType,createdTime)',
+        orderBy:'name'
+      }),
+      gapi.client.drive.files.list({
+        q:`'${parentId}' in parents and mimeType!='application/vnd.google-apps.folder' and trashed=false`,
+        fields:'files(id,name,mimeType,size,createdTime,webViewLink,thumbnailLink)',
+        orderBy:'createdTime desc',
+        pageSize:100
+      })
+    ]);
+
+    // Folder duluan, baru file
+    driveItems = [
+      ...(folderRes.result.files||[]),
+      ...(fileRes.result.files||[])
+    ];
     renderDriveFiles();
+    updateDriveBreadcrumb();
   }catch(e){
     if(e.status===401){driveAccessToken=null;sessionStorage.removeItem('driveToken');maybeEnableDrive();}
-    else toast('Gagal load file: '+e.message,'error');
+    else toast('Gagal load: '+e.message,'error');
   }
 }
 
@@ -2767,19 +2774,114 @@ function renderDriveFiles(){
   if(q) list=list.filter(f=>(f.name||'').toLowerCase().includes(q));
   const grid=$('driveFileGrid');
   if(!list.length){
-    grid.innerHTML=`<div class="drive-empty"><div style="font-size:32px;margin-bottom:8px">📂</div>Belum ada file di sini</div>`;
+    grid.innerHTML=`<div class="drive-empty" style="grid-column:1/-1">
+      <div style="font-size:32px;margin-bottom:8px">📂</div>
+      Folder ini kosong
+    </div>`;
     return;
   }
   grid.innerHTML=list.map(f=>{
-    const ico=getMimeIco(f.mimeType);
-    const thumb=f.thumbnailLink?`<img src="${f.thumbnailLink}" style="width:100%;height:70px;object-fit:cover;border-radius:6px;margin-bottom:6px">`:
-      `<div class="drive-file-ico">${ico}</div>`;
-    return `<div class="drive-file" onclick="openDriveFile('${esc(f.webViewLink)}')">
+    const isFolder = f.mimeType==='application/vnd.google-apps.folder';
+    const ico = isFolder ? '📁' : getMimeIco(f.mimeType);
+    const thumb = (!isFolder && f.thumbnailLink)
+      ? `<img src="${f.thumbnailLink}" style="width:100%;height:70px;object-fit:cover;border-radius:6px;margin-bottom:6px">`
+      : `<div class="drive-file-ico" style="${isFolder?'font-size:36px':''}">${ico}</div>`;
+    const meta = isFolder
+      ? `<div class="drive-file-meta" style="color:var(--accent);font-weight:500">Buka folder →</div>`
+      : `<div class="drive-file-meta">${fmtSize(parseInt(f.size))||''} ${f.createdTime?new Date(f.createdTime).toLocaleDateString('id-ID'):''}</div>`;
+
+    const actions = isFolder
+      ? `<div style="display:flex;gap:4px;justify-content:center;margin-top:8px" onclick="event.stopPropagation()">
+          <button class="bsm bdel" title="Hapus folder" onclick="deleteDriveItem('${esc(f.id)}','${esc(f.name)}',true)">🗑️</button>
+        </div>`
+      : `<div style="display:flex;gap:4px;justify-content:center;margin-top:8px" onclick="event.stopPropagation()">
+          <button class="bsm bedit" title="Buka file" onclick="openDriveFile('${esc(f.webViewLink)}')">↗</button>
+          <button class="bsm bdel" title="Hapus file" onclick="deleteDriveItem('${esc(f.id)}','${esc(f.name)}',false)">🗑️</button>
+        </div>`;
+
+    const clickFn = isFolder
+      ? `navigateDriveFolder('${esc(f.id)}','${esc(f.name)}')`
+      : `openDriveFile('${esc(f.webViewLink)}')`;
+
+    return `<div class="drive-file ${isFolder?'drive-folder-item':''}" onclick="${clickFn}">
       ${thumb}
       <div class="drive-file-name">${esc(f.name)}</div>
-      <div class="drive-file-meta">${fmtSize(parseInt(f.size))||''} ${f.createdTime?new Date(f.createdTime).toLocaleDateString('id-ID'):''}</div>
+      ${meta}
+      ${actions}
     </div>`;
   }).join('');
+}
+
+
+// ── Folder Navigation ──
+function navigateDriveFolder(folderId, folderName){
+  // Push current ke stack
+  driveNavStack.push({
+    id:    driveCurrentFolder,
+    label: driveCurrentLabel,
+    ico:   driveCurrentIco
+  });
+  driveCurrentFolder = folderId;
+  driveCurrentLabel  = folderName;
+  driveCurrentIco    = '📁';
+  loadDriveFiles();
+}
+
+function navigateDriveBack(index){
+  // Kembali ke posisi tertentu di stack
+  if(index < 0){
+    // Balik ke root folder (dari sidebar)
+    driveNavStack = [];
+    driveCurrentFolder = null;
+    driveCurrentLabel  = 'Semua File';
+    driveCurrentIco    = '🗂️';
+  } else {
+    const target = driveNavStack[index];
+    driveNavStack = driveNavStack.slice(0, index);
+    driveCurrentFolder = target.id;
+    driveCurrentLabel  = target.label;
+    driveCurrentIco    = target.ico;
+  }
+  loadDriveFiles();
+}
+
+function updateDriveBreadcrumb(){
+  const bc = $('driveBreadcrumb');
+  if(!bc) return;
+
+  let crumbs = `<span class="bcrumb" onclick="navigateDriveBack(-1)">🗂️ Semua File</span>`;
+
+  driveNavStack.forEach((item, i) => {
+    if(!item.label) return;
+    crumbs += ` <span style="color:var(--t3)">›</span> <span class="bcrumb" onclick="navigateDriveBack(${i})">${item.ico} ${esc(item.label)}</span>`;
+  });
+
+  if(driveCurrentLabel && driveCurrentLabel !== 'Semua File'){
+    crumbs += ` <span style="color:var(--t3)">›</span> <span style="color:var(--t1);font-weight:500">${driveCurrentIco} ${esc(driveCurrentLabel)}</span>`;
+  }
+
+  // Tombol back jika bukan di root
+  const backBtn = driveNavStack.length > 0
+    ? `<button onclick="navigateDriveBack(${driveNavStack.length-1})" style="margin-left:8px;padding:2px 8px;border:1px solid var(--border);border-radius:5px;background:none;cursor:pointer;font-size:11px;color:var(--t2);font-family:var(--font)">← Kembali</button>`
+    : '';
+
+  bc.innerHTML = crumbs + backBtn;
+}
+
+// ── Delete file/folder ──
+async function deleteDriveItem(id, name, isFolder){
+  const type = isFolder ? 'folder' : 'file';
+  const msg  = isFolder
+    ? `Hapus folder "${name}" beserta semua isinya?`
+    : `Hapus file "${name}"?`;
+  if(!confirm(msg)) return;
+  try{
+    await gapi.client.drive.files.delete({fileId: id});
+    toast(`🗑️ ${isFolder?'Folder':'File'} "${name}" dihapus.`);
+    loadDriveFiles();
+  }catch(e){
+    toast('Gagal hapus: '+e.message,'error');
+  }
 }
 
 function openDriveFile(url){ window.open(url,'_blank'); }
@@ -3186,6 +3288,131 @@ async function submitPackingUpload(){
   } catch(e){
     toast('Gagal upload: '+e.message,'error');
     $('pkSubmitBtn').disabled = false;
+  }
+}
+
+/* ══════════════════════════════════════
+   IMPORT EXCEL → SOCIAL PLANNER
+══════════════════════════════════════ */
+async function importContentExcel(input){
+  const file = input.files[0];
+  if(!file) return;
+  input.value = '';
+
+  toast('📥 Membaca file Excel...');
+
+  try{
+    // Pakai SheetJS via CDN
+    if(!window.XLSX){
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        s.onload=res; s.onerror=rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    const buf  = await file.arrayBuffer();
+    const wb   = XLSX.read(buf, {type:'array', cellDates:true});
+
+    // Ambil sheet pertama (Content Plan)
+    const ws   = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+
+    if(!rows.length){ toast('File kosong atau format tidak dikenali','error'); return; }
+
+    // Mapping kolom — fleksibel, cari berdasarkan nama kolom
+    const colMap = {
+      date:     ['tanggal','date','tgl'],
+      platform: ['platform'],
+      status:   ['status'],
+      title:    ['judul konten','judul','title','konten'],
+      caption:  ['caption','isi','teks'],
+      hashtag:  ['hashtag','tag'],
+      note:     ['catatan','note','notes','keterangan'],
+    };
+
+    function findCol(row, keys){
+      const rowKeys = Object.keys(row).map(k=>({orig:k, lower:k.toLowerCase().trim()}));
+      for(const k of keys){
+        const found = rowKeys.find(rk=>rk.lower.includes(k));
+        if(found) return found.orig;
+      }
+      return null;
+    }
+
+    // Cari mapping dari baris pertama
+    const firstRow = rows[0];
+    const mapped   = {};
+    for(const [field, keys] of Object.entries(colMap)){
+      mapped[field] = findCol(firstRow, keys);
+    }
+
+    // Normalisasi tanggal
+    function parseDate(val){
+      if(!val) return '';
+      if(val instanceof Date) return val.toISOString().split('T')[0];
+      const s = String(val).trim();
+      // DD/MM/YYYY
+      const m1 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(m1) return `${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+      // YYYY-MM-DD
+      const m2 = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+      return s;
+    }
+
+    // Normalisasi status
+    function parseStatus(val){
+      const v = String(val||'').toLowerCase().trim();
+      if(v.includes('tayang')||v.includes('posted')||v.includes('live')) return 'posted';
+      if(v.includes('jadwal')||v.includes('sched')) return 'scheduled';
+      return 'draft';
+    }
+
+    // Normalisasi platform
+    function parsePlatform(val){
+      const v = String(val||'').toLowerCase().trim();
+      if(v.includes('tiktok')) return 'tiktok';
+      if(v.includes('shopee')) return 'shopee';
+      return 'ig'; // default instagram
+    }
+
+    // Import ke Firestore
+    let success=0, skip=0;
+    const{db,collection,doc,setDoc}=getDB();
+
+    for(const row of rows){
+      const title = mapped.title ? String(row[mapped.title]||'').trim() : '';
+      if(!title || title.toLowerCase()==='judul konten') { skip++; continue; } // skip header row jika ikut
+
+      const item = {
+        id:         `content_${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+        title,
+        platform:   parsePlatform(mapped.platform ? row[mapped.platform] : ''),
+        status:     parseStatus(mapped.status ? row[mapped.status] : ''),
+        date:       parseDate(mapped.date ? row[mapped.date] : ''),
+        caption:    mapped.caption  ? String(row[mapped.caption]||'').trim()  : '',
+        note:       [
+          mapped.hashtag ? String(row[mapped.hashtag]||'').trim() : '',
+          mapped.note    ? String(row[mapped.note]||'').trim()    : '',
+        ].filter(Boolean).join(' | '),
+        createdAt:  new Date().toISOString(),
+        updatedAt:  new Date().toISOString(),
+        importedFrom: file.name,
+      };
+
+      try{
+        await setDoc(doc(collection(db,'content_planner'), item.id), item);
+        success++;
+      }catch(e){ skip++; }
+    }
+
+    toast(`✅ Import selesai! ${success} konten masuk, ${skip} dilewati.`);
+    renderPlanner();
+
+  }catch(err){
+    toast('Gagal import: '+err.message,'error');
   }
 }
 
