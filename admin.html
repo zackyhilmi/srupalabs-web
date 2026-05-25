@@ -560,15 +560,21 @@ tbody tr:hover{background:#fafbfc}
 
       <div class="two-col">
         <div class="card">
-          <div class="chd"><div class="ctitle">🕐 Order Terbaru</div></div>
-          <div class="twrap"><table>
+          <div class="chd">
+            <div class="ctitle">🕐 Order Terbaru</div>
+            <button onclick="goPage('transaksi',document.querySelector('.nitem[onclick*=transaksi]'))" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Lihat semua →</button>
+          </div>
+          <div class="twrap" style="max-height:260px;overflow-y:auto"><table>
             <thead><tr><th>Pembeli</th><th>Channel</th><th>Total</th><th>Status</th></tr></thead>
             <tbody id="tbRecentOrders"><tr class="erow"><td colspan="4">Belum ada order</td></tr></tbody>
           </table></div>
         </div>
         <div class="card">
-          <div class="chd"><div class="ctitle">⚠️ Stok Habis</div></div>
-          <div class="twrap"><table>
+          <div class="chd">
+            <div class="ctitle">⚠️ Stok Habis / Menipis</div>
+            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=poster]'));goTab('posters')" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Kelola stok →</button>
+          </div>
+          <div class="twrap" style="max-height:260px;overflow-y:auto"><table>
             <thead><tr><th>Item</th><th>Stok</th><th>Status</th></tr></thead>
             <tbody id="tbLow"><tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr></tbody>
           </table></div>
@@ -1690,9 +1696,16 @@ function updateDashboard(){
 
 function renderLow(){
   const tb=$('tbLow');
-  const items=[...inv.posters.filter(p=>p.stock===0).map(p=>({lbl:p.name,sz:p.size,stk:p.stock})),...inv.frames.filter(f=>f.stock===0).map(f=>({lbl:f.color,sz:f.size,stk:f.stock}))];
+  // Tampilkan habis + menipis (stok <= 3), urutkan dari yang paling sedikit
+  const items=[
+    ...inv.posters.filter(p=>p.stock<=3).map(p=>({lbl:p.name,sz:p.size,stk:p.stock,type:'Poster'})),
+    ...inv.frames.filter(f=>f.stock<=3).map(f=>({lbl:f.color+' '+f.size,sz:f.size,stk:f.stock,type:'Frame'}))
+  ].sort((a,b)=>a.stk-b.stk).slice(0,10);
   if(!items.length){tb.innerHTML='<tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr>';return;}
-  tb.innerHTML=items.map(i=>{const b=stockBadge(i.stk);return`<tr><td><strong>${esc(i.lbl)}</strong> <small style="color:var(--t2)">${esc(i.sz)}</small></td><td><strong>${i.stk}</strong></td><td><span class="badge ${b.c}">${b.l}</span></td></tr>`;}).join('');
+  tb.innerHTML=items.map(i=>{
+    const b=stockBadge(i.stk);
+    return`<tr><td><strong>${esc(i.lbl)}</strong> <small style="color:var(--t2)">${esc(i.sz)} · ${i.type}</small></td><td><strong>${i.stk}</strong></td><td><span class="badge ${b.c}">${b.l}</span></td></tr>`;
+  }).join('');
 }
 
 function renderDashboardOrders(){
