@@ -546,30 +546,27 @@ tbody tr:hover{background:#fafbfc}
       <div><div class="sname">Srupa Labs</div><div class="ssub">Business Suite</div></div>
     </div>
     <div class="nsec">
-      <div class="nseclbl">Menu Utama</div>
+      <div class="nseclbl">Operasional</div>
       <button class="nitem active" onclick="goPage('dashboard',this)"><span class="nico">📊</span>Dashboard</button>
       <button class="nitem" onclick="goPage('transaksi',this)"><span class="nico">🛒</span>Transaksi<span class="nbadge" id="navProses" style="display:none">!</span></button>
+      <button class="nitem" onclick="goPage('kanban',this)"><span class="nico">📋</span>Kanban Packing</button>
+      <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Stok Poster</button>
+      <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Stok Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
+    </div>
+    <div class="nsec">
+      <div class="nseclbl">Keuangan</div>
       <button class="nitem" onclick="goPage('keuangan',this)"><span class="nico">💰</span>Keuangan</button>
+      <button class="nitem" onclick="goPage('margin',this)"><span class="nico">📊</span>Margin & Profit</button>
       <button class="nitem" onclick="goPage('laporan',this)"><span class="nico">📈</span>Laporan</button>
     </div>
     <div class="nsec">
-      <div class="nseclbl">Inventaris</div>
-      <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Poster</button>
-      <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
-    </div>
-    <div class="nsec">
-      <div class="nseclbl">Website</div>
-      <button class="nitem" onclick="goPage('cms',this)"><span class="nico">🎨</span>CMS Poster</button>
-    </div>
-    <div class="nsec">
       <div class="nseclbl">Marketing</div>
-      <button class="nitem" onclick="goPage('planner',this)"><span class="nico">📅</span>Social Planner</button>
-      <button class="nitem" onclick="goPage('drive',this)"><span class="nico">📁</span>Srupa Drive</button>
+      <button class="nitem" onclick="goPage('planner',this)"><span class="nico">📅</span>Content Planner</button>
+      <button class="nitem" onclick="goPage('cms',this)"><span class="nico">🎨</span>Website CMS</button>
     </div>
     <div class="nsec">
-      <div class="nseclbl">Operasional</div>
-      <button class="nitem" onclick="goPage('kanban',this)"><span class="nico">📋</span>Kanban Packing</button>
-      <button class="nitem" onclick="goPage('margin',this)"><span class="nico">💰</span>Margin & Profit</button>
+      <div class="nseclbl">Storage</div>
+      <button class="nitem" onclick="goPage('drive',this)"><span class="nico">📁</span>File Manager</button>
     </div>
     <div class="sfooter">
       <div class="urow">
@@ -1798,7 +1795,7 @@ $('lBtn').onclick=async()=>{
 function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
 
 /* ── NAVIGATION ── */
-const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'CMS Poster Website',planner:'Social Planner',drive:'Srupa Drive',kanban:'Kanban Packing',margin:'Margin & Profit'};
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Website CMS',planner:'Content Planner',drive:'File Manager',kanban:'Kanban Packing',margin:'Margin & Profit'};
 function goPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
