@@ -950,8 +950,28 @@ footer {
 const ro = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target) } }), {threshold:.07});
 document.querySelectorAll('.rv').forEach(el => ro.observe(el));
 
-// ── DATA KATALOG (sama persis dengan katalog.html) ──
-// Untuk menambah/edit produk: cukup edit di sini, otomatis tampil di index & katalog
+// ── FIREBASE CONFIG (sama dengan katalog.html) ──
+const FB_CFG = {
+  apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
+  authDomain:"srupa-inventory.firebaseapp.com",
+  projectId:"srupa-inventory",
+};
+
+async function loadFromFirestore() {
+  try {
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const app = getApps().length ? getApps()[0] : initializeApp(FB_CFG);
+    const db = getFirestore(app);
+    const snap = await getDocs(collection(db, 'cms_posters'));
+    if (!snap.empty) {
+      return snap.docs.map(d => d.data()).sort((a,b) => (a.order||99)-(b.order||99));
+    }
+  } catch(e) { console.warn('Firestore tidak tersedia, pakai data lokal.', e); }
+  return null;
+}
+
+// ── DATA KATALOG FALLBACK (dipakai kalau Firestore belum tersedia) ──
 const POSTERS = [
   { id:1,  title:'Minimal Series 01',  tags:['minimalis'], badge:'hot', bg:'#F0ECE5', fgDark:false, label:'MIN',  sub:'IMAL 01',   img:'' },
   { id:2,  title:'Minimal Series 02',  tags:['minimalis'], badge:'',   bg:'#EAE6DF', fgDark:false, label:'MIN',  sub:'IMAL 02',   img:'' },
@@ -967,46 +987,59 @@ const POSTERS = [
   { id:12, title:'Retro Grid',         tags:['vintage'],   badge:'',   bg:'#E8E0D2', fgDark:false, label:'RTR',  sub:'GRID',      img:'' },
 ];
 
-// Render marquee cards dari POSTERS
-(function renderDesainMarquee() {
-  const container = document.getElementById('ds-marquee');
-  if (!container) return;
+// ── RENDER MARQUEE ──
+function makeCard(p, tabIndex) {
+  const badgeLabel = p.badge === 'hot' ? 'TERLARIS' : p.badge === 'new' ? 'NEW' : p.badge === 'ltd' ? 'LIMITED' : '';
+  const badgeHtml  = badgeLabel ? '<div class="pc-badge">' + badgeLabel + '</div>' : '';
+  const tagLabel   = (p.tags[0] || '').charAt(0).toUpperCase() + (p.tags[0] || '').slice(1);
 
-  function makeCard(p, tabIndex) {
-    const badgeLabel = p.badge === 'hot' ? 'TERLARIS' : p.badge === 'new' ? 'NEW' : p.badge === 'ltd' ? 'LIMITED' : '';
-    const badgeHtml  = badgeLabel ? '<div class="pc-badge">' + badgeLabel + '</div>' : '';
-    const tagLabel   = (p.tags[0] || '').charAt(0).toUpperCase() + (p.tags[0] || '').slice(1);
-
-    let thumbInner;
-    if (p.img) {
-      thumbInner = '<img src="' + p.img + '" alt="' + p.title + '" loading="lazy" onerror="this.style.display=\'none\'"/>';
-    } else {
-      const txtColor = p.fgDark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.13)';
-      thumbInner = '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">'
-        + '<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:900;font-size:1.4rem;color:' + txtColor + ';text-transform:uppercase;letter-spacing:.06em;line-height:1">' + p.label + '</span>'
-        + '<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.62rem;color:' + txtColor + ';text-transform:uppercase;letter-spacing:.14em">' + p.sub + '</span>'
-        + '</div>';
-    }
-
-    const ti = tabIndex === -1 ? ' tabindex="-1"' : '';
-    return '<div class="pc">'
-      + '<div class="pc-img" style="background:' + p.bg + '">' + thumbInner + badgeHtml + '</div>'
-      + '<div class="pc-body"><div class="pc-cat">' + tagLabel + '</div><div class="pc-n">' + p.title + '</div></div>'
-      + '<a href="katalog.html" class="pc-btn"' + ti + '>LIHAT</a>'
+  let thumbInner;
+  if (p.img) {
+    thumbInner = '<img src="' + p.img + '" alt="' + (p.title||'') + '" loading="lazy" onerror="this.style.display=\'none\'"/>';
+  } else {
+    const txtColor = (p.dark || p.fgDark) ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.13)';
+    thumbInner = '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">'
+      + '<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:900;font-size:1.4rem;color:' + txtColor + ';text-transform:uppercase;letter-spacing:.06em;line-height:1">' + (p.label||'') + '</span>'
+      + '<span style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.62rem;color:' + txtColor + ';text-transform:uppercase;letter-spacing:.14em">' + (p.sub||'') + '</span>'
       + '</div>';
   }
 
+  const ti = tabIndex === -1 ? ' tabindex="-1"' : '';
+  return '<div class="pc">'
+    + '<div class="pc-img" style="background:' + (p.bg||'#F5F2E9') + '">' + thumbInner + badgeHtml + '</div>'
+    + '<div class="pc-body"><div class="pc-cat">' + tagLabel + '</div><div class="pc-n">' + (p.title||p.name||'') + '</div></div>'
+    + '<a href="katalog.html" class="pc-btn"' + ti + '>LIHAT</a>'
+    + '</div>';
+}
+
+function renderDesainMarquee(posterList) {
+  const container = document.getElementById('ds-marquee');
+  if (!container) return;
+
+  // Kosongkan dulu sebelum re-render
+  container.innerHTML = '';
+
   const track1 = document.createElement('div');
   track1.className = 'ds-row-track';
-  track1.innerHTML = POSTERS.map(p => makeCard(p, 0)).join('');
+  track1.innerHTML = posterList.map(p => makeCard(p, 0)).join('');
 
   const track2 = document.createElement('div');
   track2.className = 'ds-row-track';
   track2.setAttribute('aria-hidden', 'true');
-  track2.innerHTML = POSTERS.map(p => makeCard(p, -1)).join('');
+  track2.innerHTML = posterList.map(p => makeCard(p, -1)).join('');
 
   container.appendChild(track1);
   container.appendChild(track2);
+}
+
+// Render data lokal dulu (instan), lalu update dengan data Firestore jika ada
+renderDesainMarquee(POSTERS);
+
+(async () => {
+  const fbData = await loadFromFirestore();
+  if (fbData && fbData.length) {
+    renderDesainMarquee(fbData);
+  }
 })();
 
 function pf(el, frameColor, label, bgColor) {
