@@ -8,255 +8,433 @@
 <meta property="og:title" content="Srupa Labs"/>
 <meta property="og:description" content="Frame custom dan poster aesthetic untuk dekorasi dinding."/>
 <meta property="og:image" content="https://ugc.production.linktr.ee/86be38f1-2411-4ae2-aa87-8daf08fa3713_Artboard-2-4x.png"/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 847 638%22%3E%3Crect width%3D%22847%22 height%3D%22638%22 rx%3D%22140%22 fill%3D%22%23ffffff%22/%3E%3Cpath d%3D%22M649.88 8.81C662.01 12 673.96 16.08 685.65 21.02C731.83 40.52 771.21 72.23 799.53 112.73C830.07 156.43 846.22 208.43 846.22 263.1V606.32H650.23V263.1C650.23 260.47 650.1 257.96 649.87 255.53C646.55 221.02 620.88 206.43 609.42 201.59C597.15 196.4 565.52 187.36 536.87 215.25L337.17 409.63H579.41V606.32H0.01V0.21H196.7V272.88L400.19 74.81C439.36 36.69 487.88 11.99 540.5 3.39C576.93 -2.55 614.13 -0.66 649.88 8.81Z%22 fill%3D%22%231F12D4%22/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 847 638%22%3E%3Crect width%3D%22847%22 height%3D%22638%22 rx%3D%22140%22 fill%3D%22%23ffffff%22/%3E%3Cpath d%3D%22M649.88 8.81C662.01 12 673.96 16.08 685.65 21.02C731.83 40.52 771.21 72.23 799.53 112.73C830.07 156.43 846.22 208.43 846.22 263.1V606.32H650.23V263.1C650.23 260.47 650.1 257.96 649.87 255.53C646.55 221.02 620.88 206.43 609.42 201.59C597.15 196.4 565.52 187.36 536.87 215.25L337.17 409.63H579.41V606.32H0.01V0.21H196.7V272.88L400.19 74.81C439.36 36.69 487.88 11.99 540.5 3.39C576.93 -2.55 614.13 -0.66 649.88 8.81Z%22 fill%3D%22%231F12D4%22/%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,900;1,900&family=Barlow:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#FAF9F6;
-  --white:#ffffff;
-  --dark:#111110;
-  --muted:#9B9B97;
-  --border:#E8E8E6;
-  --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;
-}
-html{-webkit-font-smoothing:antialiased}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { -webkit-font-smoothing: antialiased }
 
-body{
-  background:var(--bg);
-  color:var(--dark);
-  font-family:var(--sans);
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  padding:3rem 1.25rem 4rem;
+:root {
+  --c: #F4F3EB;
+  --k: #0D0D0A;
+  --b: #1F12D4;
+  --y: #FFD600;
+  --w: #FFFFFF;
+  --g: #6A6A65;
+  --bc: 'Barlow Condensed', Impact, sans-serif;
+  --br: 'Barlow', sans-serif;
 }
 
-.container{
-  width:100%;
-  max-width:420px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0;
+body {
+  background: var(--c);
+  color: var(--k);
+  font-family: var(--br);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-/* ── AVATAR ── */
-.avatar-wrap{
-  margin-bottom:1.25rem;
-  animation:fadeUp .5s ease both;
+/* ── HERO ── */
+.hero {
+  width: 100%;
+  background: var(--b);
+  border-bottom: 2px solid var(--k);
+  padding: clamp(2.5rem, 8vw, 4rem) 1.5rem clamp(2.5rem, 8vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeDown .45s ease both;
 }
-.avatar{
-  width:88px;height:88px;border-radius:50%;
-  overflow:hidden;border:2px solid var(--border);
-  background:var(--white);
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,.03) 0px,
+    rgba(255,255,255,.03) 1px,
+    transparent 1px,
+    transparent 40px
+  );
+  pointer-events: none;
 }
-.avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* ── NAME ── */
-.name{
-  font-family:var(--serif);
-  font-size:1.5rem;font-weight:400;
-  color:var(--dark);
-  margin-bottom:.35rem;
-  animation:fadeUp .5s .08s ease both;
+.h-eyebrow {
+  font-family: var(--bc);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: 4px 12px;
+  border-radius: 100px;
+  animation: fadeUp .4s .05s ease both;
 }
 
-/* ── BIO ── */
-.bio{
-  font-size:.82rem;color:var(--muted);
-  text-align:center;line-height:1.6;
-  max-width:28ch;
-  margin-bottom:2rem;
-  animation:fadeUp .5s .12s ease both;
+.h-name {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: clamp(3.5rem, 20vw, 6rem);
+  text-transform: uppercase;
+  line-height: .88;
+  letter-spacing: -.01em;
+  color: var(--w);
+  text-align: center;
+  animation: fadeUp .4s .1s ease both;
 }
+.h-name .y { color: var(--y) }
+
+.h-sub {
+  font-size: .82rem;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 28ch;
+  animation: fadeUp .4s .15s ease both;
+}
+
+/* ── MARQUEE ── */
+.mq {
+  background: var(--y);
+  border-top: 2px solid var(--k);
+  border-bottom: 2px solid var(--k);
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  flex-shrink: 0;
+}
+.mq-t { display: inline-flex; animation: mq 14s linear infinite }
+.mq-i {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: .78rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--k);
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.mq-d { color: var(--b) }
+@keyframes mq { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 
 /* ── LINKS ── */
-.links{
-  width:100%;
-  display:flex;flex-direction:column;gap:.75rem;
+.links-wrap {
+  width: 100%;
+  max-width: 440px;
+  padding: clamp(1.5rem, 5vw, 2.5rem) 1.25rem clamp(3rem, 8vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
 }
 
-.link-btn{
-  display:flex;align-items:center;gap:.9rem;
-  width:100%;
-  padding:.9rem 1.1rem;
-  background:var(--white);
-  border:1px solid var(--border);
-  border-radius:12px;
-  text-decoration:none;color:var(--dark);
-  font-family:var(--sans);font-size:.88rem;font-weight:500;
-  transition:transform .18s cubic-bezier(.32,.72,0,1),
-             box-shadow .18s,
-             border-color .18s;
-  position:relative;overflow:hidden;
-}
-.link-btn::before{
-  content:'';position:absolute;inset:0;
-  background:var(--dark);
-  transform:translateX(-100%);
-  transition:transform .22s cubic-bezier(.32,.72,0,1);
-  z-index:0;
-}
-.link-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
-  border-color:#ccc;
-}
-.link-btn:hover::before{transform:translateX(0)}
-.link-btn:hover .link-label{color:var(--white)}
-.link-btn:hover .link-icon-wrap{background:rgba(255,255,255,.12)}
-.link-btn:hover .link-arrow{color:rgba(255,255,255,.5)}
-.link-btn:active{transform:translateY(0);transition-duration:.08s}
-
-.link-icon-wrap{
-  width:36px;height:36px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;position:relative;z-index:1;
-  transition:background .22s;
-}
-.link-label{
-  flex:1;position:relative;z-index:1;
-  transition:color .22s;
-}
-.link-arrow{
-  color:var(--muted);font-size:.8rem;
-  position:relative;z-index:1;
-  transition:color .22s, transform .18s;
-}
-.link-btn:hover .link-arrow{transform:translate(2px,-2px)}
-
-/* icon colors */
-.icon-ig{background:#fce7f3}
-.icon-wa{background:#dcfce7}
-.icon-shopee{background:#fee2e2}
-.icon-tiktok{background:#f1f0ff}
-.icon-web{background:#faf9f6;border:1px solid var(--border)}
-
-/* ── WEBSITE CARD (special) ── */
-.link-btn.featured{
-  background:var(--dark);
-  border-color:var(--dark);
-}
-.link-btn.featured .link-label{color:var(--white)}
-.link-btn.featured .link-arrow{color:rgba(255,255,255,.4)}
-.link-btn.featured .icon-web{background:rgba(255,255,255,.08);border-color:transparent}
-.link-btn.featured::before{display:none}
-.link-btn.featured:hover{
-  background:#222;
-  border-color:#222;
-  box-shadow:0 8px 24px rgba(0,0,0,.2);
-}
-.link-btn.featured:hover .link-label{color:var(--white)}
-.link-btn.featured .link-desc{
-  display:block;
-  font-size:.72rem;
-  font-weight:300;
-  color:rgba(255,255,255,.45);
-  margin-top:.15rem;
-  line-height:1.4;
+.sec-label {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: .88rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--g);
+  text-align: center;
+  padding-bottom: .5rem;
+  margin-bottom: .15rem;
+  animation: fadeUp .4s .2s ease both;
 }
 
-.link-label-wrap{flex:1;position:relative;z-index:1;transition:color .22s}
-.link-label-wrap .link-label{display:block}
+/* ── LINK BUTTON ── */
+.link-btn {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  width: 100%;
+  padding: .85rem 1rem;
+  background: var(--w);
+  border: 2px solid var(--k);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--k);
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  /* tap highlight off on mobile */
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .15s, box-shadow .15s, background .15s, color .15s;
+  position: relative;
+  /* min touch target */
+  min-height: 60px;
+}
+
+/* hover (desktop) */
+@media (hover: hover) {
+  .link-btn:hover {
+    background: var(--k);
+    color: var(--w);
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 rgba(13,13,10,.25);
+  }
+  .link-btn:hover .link-sub { color: rgba(255,255,255,.45) }
+  .link-btn:hover .link-arrow { color: rgba(255,255,255,.4); transform: translate(2px,-2px) }
+  .link-btn:hover .link-icon-wrap { border-color: rgba(255,255,255,.15) }
+
+  /* featured hover */
+  .link-btn.featured:hover { background: var(--k); color: var(--y) }
+  .link-btn.featured:hover .link-sub { color: rgba(255,214,0,.5) }
+  .link-btn.featured:hover .link-arrow { color: rgba(255,214,0,.4) }
+}
+
+/* active (mobile tap) */
+.link-btn:active {
+  transform: scale(.98);
+  box-shadow: 2px 2px 0 rgba(13,13,10,.2);
+  opacity: .9;
+}
+
+/* featured yellow */
+.link-btn.featured {
+  background: var(--y);
+  border-color: var(--k);
+  color: var(--k);
+}
+
+.link-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(13,13,10,.1);
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.link-icon-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-ig  { background: #fce4ef }
+.icon-wa  { background: #dcfce7 }
+.icon-sp  { background: #fde8e3 }
+.icon-tt  { background: #f0eeff }
+.icon-web { background: var(--k) }
+
+.link-label-wrap { flex: 1; min-width: 0 }
+.link-label {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-sub {
+  display: block;
+  font-family: var(--br);
+  font-weight: 400;
+  font-size: .72rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--g);
+  margin-top: 1px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .15s;
+}
+.link-btn.featured .link-sub { color: rgba(13,13,10,.45) }
+
+.link-arrow {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: .88rem;
+  color: var(--g);
+  flex-shrink: 0;
+  transition: color .15s, transform .15s;
+}
+
+/* stagger */
+.link-btn:nth-child(2) { animation: fadeUp .4s .24s ease both }
+.link-btn:nth-child(3) { animation: fadeUp .4s .30s ease both }
+.link-btn:nth-child(4) { animation: fadeUp .4s .36s ease both }
+.link-btn:nth-child(5) { animation: fadeUp .4s .42s ease both }
+.link-btn:nth-child(6) { animation: fadeUp .4s .48s ease both }
 
 /* ── FOOTER ── */
-.footer{
-  margin-top:2.5rem;
-  font-size:.7rem;color:var(--muted);
-  letter-spacing:.04em;
-  animation:fadeUp .5s .4s ease both;
+footer {
+  width: 100%;
+  background: var(--k);
+  border-top: 2px solid var(--k);
+  padding: clamp(1.5rem, 5vw, 2.5rem) 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  margin-top: auto;
+}
+.f-wordmark {
+  display: flex;
+  align-items: center;
+}
+.f-wm-text {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: clamp(1.8rem, 8vw, 3.5rem);
+  text-transform: uppercase;
+  color: var(--c);
+  letter-spacing: -.02em;
+  line-height: .88;
+}
+.f-wm-star {
+  font-family: var(--bc);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 6vw, 2.8rem);
+  color: var(--y);
+  padding: 0 .08em;
+  line-height: 1;
+}
+.f-copy {
+  font-family: var(--bc);
+  font-weight: 700;
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
 }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:none}
+/* ── KEYFRAMES ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px) }
+  to   { opacity: 1; transform: none }
 }
-.links .link-btn:nth-child(1){animation:fadeUp .45s .16s ease both}
-.links .link-btn:nth-child(2){animation:fadeUp .45s .22s ease both}
-.links .link-btn:nth-child(3){animation:fadeUp .45s .28s ease both}
-.links .link-btn:nth-child(4){animation:fadeUp .45s .34s ease both}
-.links .link-btn:nth-child(5){animation:fadeUp .45s .40s ease both}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px) }
+  to   { opacity: 1; transform: none }
+}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- AVATAR -->
-  <div class="avatar-wrap">
-    <div class="avatar">
-      <img src="https://ugc.production.linktr.ee/86be38f1-2411-4ae2-aa87-8daf08fa3713_Artboard-2-4x.png" alt="Srupa Labs"/>
+<!-- MARQUEE -->
+<div class="mq" aria-hidden="true">
+  <div class="mq-t">
+    <span class="mq-i">Frame Custom <span class="mq-d">✦</span> Poster Aesthetic <span class="mq-d">✦</span> Siap Pasang <span class="mq-d">✦</span> 50+ Desain <span class="mq-d">✦</span> Gratis Ongkir <span class="mq-d">✦</span> Bintang 5 <span class="mq-d">✦</span> Frame Custom <span class="mq-d">✦</span> Poster Aesthetic <span class="mq-d">✦</span> Siap Pasang <span class="mq-d">✦</span> 50+ Desain <span class="mq-d">✦</span> Gratis Ongkir <span class="mq-d">✦</span> Bintang 5 <span class="mq-d">✦</span></span>
+  </div>
+</div>
+
+<!-- LINKS -->
+<div class="links-wrap">
+
+  <div class="sec-label">Temukan kami di</div>
+
+  <!-- Instagram -->
+  <a href="https://instagram.com/srupalabs" target="_blank" rel="noopener" class="link-btn">
+    <div class="link-icon-wrap">
+      <div class="link-icon-bg icon-ig">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="1.8" stroke-linecap="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="#e1306c" stroke="none"/>
+        </svg>
+      </div>
     </div>
-  </div>
-
-  <!-- NAME -->
-  <div class="name">Srupa Labs</div>
-
-  <!-- BIO -->
-  <p class="bio">Frame & poster aesthetic untuk dekorasi dindingmu</p>
-
-  <!-- LINKS -->
-  <div class="links">
-
-    <!-- Instagram -->
-    <a href="https://instagram.com/srupalabs" target="_blank" rel="noopener" class="link-btn">
-      <div class="link-icon-wrap icon-ig">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="#e1306c" stroke="none"/></svg>
-      </div>
+    <span class="link-label-wrap">
       <span class="link-label">Instagram</span>
-      <span class="link-arrow">↗</span>
-    </a>
+      <span class="link-sub">@srupalabs</span>
+    </span>
+    <span class="link-arrow">↗</span>
+  </a>
 
-    <!-- WhatsApp -->
-    <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener" class="link-btn">
-      <div class="link-icon-wrap icon-wa">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  <!-- WhatsApp -->
+  <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener" class="link-btn">
+    <div class="link-icon-wrap">
+      <div class="link-icon-bg icon-wa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
       </div>
+    </div>
+    <span class="link-label-wrap">
       <span class="link-label">WhatsApp</span>
-      <span class="link-arrow">↗</span>
-    </a>
+      <span class="link-sub">Tanya-tanya & custom order</span>
+    </span>
+    <span class="link-arrow">↗</span>
+  </a>
 
-    <!-- Shopee -->
-    <a href="http://shopee.co.id/srupalabs" target="_blank" rel="noopener" class="link-btn">
-      <div class="link-icon-wrap icon-shopee">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#EE4D2D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="#EE4D2D" stroke-width="1.8" stroke-linecap="round"/><path d="M16 10a4 4 0 01-8 0" stroke="#EE4D2D" stroke-width="1.8" stroke-linecap="round"/></svg>
+  <!-- Shopee -->
+  <a href="http://shopee.co.id/srupalabs" target="_blank" rel="noopener" class="link-btn">
+    <div class="link-icon-wrap">
+      <div class="link-icon-bg icon-sp">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#EE4D2D">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.115.55 4.102 1.514 5.831L.057 23.215a.75.75 0 0 0 .916.919l5.506-1.44A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 5.5a2.5 2.5 0 0 1 2.5 2.5h-5A2.5 2.5 0 0 1 12 5.5zm4.5 2.5h.5a1 1 0 0 1 1 .92l.5 7a1 1 0 0 1-1 1.08H6.5a1 1 0 0 1-1-1.08l.5-7A1 1 0 0 1 7 8h.5a2.5 2.5 0 0 0 5 0z"/>
+        </svg>
       </div>
+    </div>
+    <span class="link-label-wrap">
       <span class="link-label">Shopee</span>
-      <span class="link-arrow">↗</span>
-    </a>
+      <span class="link-sub">Gratis ongkir & cashback</span>
+    </span>
+    <span class="link-arrow">↗</span>
+  </a>
 
-    <!-- TikTok -->
-    <a href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener" class="link-btn">
-      <div class="link-icon-wrap icon-tiktok">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#111"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.01-8.83a8.18 8.18 0 004.78 1.52V4.6a4.85 4.85 0 01-1.03-.91z"/></svg>
+  <!-- TikTok -->
+  <a href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener" class="link-btn">
+    <div class="link-icon-wrap">
+      <div class="link-icon-bg icon-tt">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#111">
+          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34l.01-8.83a8.18 8.18 0 004.78 1.52V4.6a4.85 4.85 0 01-1.03-.91z"/>
+        </svg>
       </div>
-      <span class="link-label">TikTok</span>
-      <span class="link-arrow">↗</span>
-    </a>
+    </div>
+    <span class="link-label-wrap">
+      <span class="link-label">TikTok Shop</span>
+      <span class="link-sub">Flash sale & live shopping</span>
+    </span>
+    <span class="link-arrow">↗</span>
+  </a>
 
-    <!-- Website (featured) -->
-    <a href="https://srupalabs.store" target="_blank" rel="noopener" class="link-btn featured">
-      <div class="link-icon-wrap icon-web">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+  <!-- Website (featured) -->
+  <a href="https://srupalabs.store" target="_blank" rel="noopener" class="link-btn featured">
+    <div class="link-icon-wrap" style="border-color:rgba(13,13,10,.18)">
+      <div class="link-icon-bg icon-web">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+        </svg>
       </div>
-      <span class="link-label-wrap">
-        <span class="link-label">Website</span>
-        <span class="link-desc">Frame custom dan poster aesthetic untuk dekorasi dinding</span>
-      </span>
-      <span class="link-arrow">↗</span>
-    </a>
-
-  </div>
-
-  <!-- FOOTER -->
-  <p class="footer">© 2025 Srupa Labs · Jakarta</p>
+    </div>
+    <span class="link-label-wrap">
+      <span class="link-label">Website</span>
+      <span class="link-sub">50+ desain frame & poster aesthetic</span>
+    </span>
+    <span class="link-arrow">↗</span>
+  </a>
 
 </div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-wordmark">
+    <span class="f-wm-text">SRUPA</span>
+    <span class="f-wm-star">✳</span>
+    <span class="f-wm-text">LABS</span>
+  </div>
+  <p class="f-copy">© 2025 Srupa Labs · Jakarta</p>
+</footer>
+
 </body>
 </html>
