@@ -145,7 +145,7 @@ nav {
 /* ── DESAIN ── */
 #desain { padding: 5vw 5vw 5vw; border-bottom: 2px solid var(--k) }
 .ds-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem }
-.ds-hd h2 { font-size: clamp(2rem, 4vw, 4rem) }
+.ds-hd h2 { font-size: clamp(2rem, 6vw, 4rem) }
 .ds-hd h2 .b { color: var(--b) }
 .see { font-family: var(--bc); font-weight: 700; font-size: .82rem; letter-spacing: .07em; text-transform: uppercase; color: var(--k); text-decoration: none; border-bottom: 2px solid var(--k); padding-bottom: 2px; transition: color .15s, border-color .15s; align-self: center }
 .see:hover { color: var(--b); border-color: var(--b) }
@@ -1063,7 +1063,16 @@ footer {
 
 <script>
 const ro = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target) } }), {threshold:.07});
-document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+
+function initReveal() {
+  document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+}
+initReveal();
+
+// Fallback: pastikan semua section terlihat setelah 800ms
+setTimeout(() => {
+  document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
+}, 800);
 
 // ── DROPDOWN NAV ──
 function toggleDropdown() {
@@ -1161,6 +1170,8 @@ function renderDesainMarquee(posterList) {
 
 // Render data lokal dulu (instan), lalu update dengan data Firestore jika ada
 renderDesainMarquee(POSTERS);
+// Re-observe setelah cards dirender agar #desain section tidak terlewat
+initReveal();
 
 (async () => {
   const fbData = await loadFromFirestore();
