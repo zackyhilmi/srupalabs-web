@@ -556,68 +556,17 @@ footer {
   .ord-steps-row { grid-template-columns: 1fr }
   .step { padding: 1.25rem 0 !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,.08) }
   .step:last-child { border-bottom: none }
-  /* Mobile: promo banner — 2 kolom sejajar, kiri konten, kanan gambar */
+  /* Mobile: promo banner — sama seperti desktop, font menyesuaikan */
   .promo-banner {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    min-height: 240px;
-    align-items: stretch;
-  }
-  .pb-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: .75rem;
-    padding: 1.5rem 1rem 1.5rem 4vw;
-  }
-  .pb-left {
-    display: contents;
-    grid-column: unset;
-    grid-row: unset;
-  }
-  .pb-left .d {
-    font-size: clamp(1.6rem, 7vw, 2.2rem);
-    line-height: .88;
-    text-align: left;
-    color: var(--w);
-  }
-  .pb-right {
-    display: contents;
-    grid-column: unset;
-    grid-row: unset;
-  }
-  .pb-right-hl { display: none }
-  .pb-right-sub { display: none }
-  .pb-btn {
-    align-self: flex-start;
-    width: auto;
-    height: 42px;
-    font-size: .82rem;
-    padding: 0 16px;
-    margin-top: 0;
-  }
-  .pb-img {
-    grid-column: unset;
-    grid-row: unset;
-    width: 100%;
+    grid-template-columns: 1fr clamp(100px, 30vw, 220px) 1fr;
     min-height: 0;
-    max-height: none;
-    align-self: stretch;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    border-top: none;
-    border-left: 1px solid rgba(255,255,255,.12);
   }
-  .pb-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: bottom center;
-    margin: 0;
-    filter: none;
-  }
+  .pb-left { padding: 1.5rem 1.5vw 1.5rem 4vw }
+  .pb-left .d { font-size: clamp(1.1rem, 4.5vw, 1.8rem) }
+  .pb-right { padding: 1.5rem 4vw 1.5rem 1.5vw }
+  .pb-right-hl { font-size: clamp(.75rem, 2.8vw, 1.1rem) }
+  .pb-right-sub { display: block; font-size: .72rem }
+  .pb-btn { height: 40px; font-size: .78rem; padding: 0 14px; white-space: nowrap }
 }
 
 /* Mobile: 560px */
@@ -644,10 +593,14 @@ footer {
   .f-wm-text { font-size: clamp(3.5rem, 14vw, 6rem) }
   .f-wm-star { font-size: clamp(2.8rem, 11vw, 5rem) }
 
-  /* Promo banner kecil: skala turun, tetap 2 kolom sejajar */
-  .pb-content { padding: 1.25rem .75rem 1.25rem 4vw; gap: .5rem }
-  .pb-left .d { font-size: clamp(1.3rem, 6.5vw, 1.8rem) }
-  .pb-btn { font-size: .78rem; height: 38px }
+  /* Promo banner xs: scale down lebih */
+  .promo-banner { grid-template-columns: 1fr clamp(80px, 28vw, 180px) 1fr }
+  .pb-left { padding: 1.25rem 1vw 1.25rem 3vw }
+  .pb-left .d { font-size: clamp(1rem, 4vw, 1.4rem) }
+  .pb-right { padding: 1.25rem 3vw 1.25rem 1vw; gap: .4rem }
+  .pb-right-hl { font-size: clamp(.65rem, 2.5vw, .95rem) }
+  .pb-right-sub { display: block; font-size: .62rem; line-height: 1.45 }
+  .pb-btn { height: 34px; font-size: .68rem; padding: 0 8px }
 }
 
 /* ── REVEAL ── */
@@ -666,15 +619,8 @@ footer {
   overflow: hidden;
 }
 
-/* pb-content: transparan di desktop, isi pb-left & pb-right tetap ikut grid */
-.pb-content {
-  display: contents;
-}
-
-/* LEFT — heading align right, explicitly placed col 1 */
+/* LEFT — heading align right */
 .pb-left {
-  grid-column: 1;
-  grid-row: 1;
   padding: 3rem 2vw 3rem 5vw;
   display: flex;
   align-items: center;
@@ -688,10 +634,8 @@ footer {
 }
 .pb-left .d .y { color: var(--y) }
 
-/* CENTER — gambar poster, explicitly placed col 2 */
+/* CENTER — gambar poster */
 .pb-img {
-  grid-column: 2;
-  grid-row: 1;
   align-self: stretch;
   display: flex;
   align-items: center;
@@ -709,10 +653,8 @@ footer {
   filter: none;
 }
 
-/* RIGHT — tagline + sub + CTA, explicitly placed col 3 */
+/* RIGHT — tagline + sub + CTA */
 .pb-right {
-  grid-column: 3;
-  grid-row: 1;
   padding: 3rem 5vw 3rem 2vw;
   display: flex;
   flex-direction: column;
@@ -721,8 +663,8 @@ footer {
   gap: .85rem;
 }
 .pb-right-hl {
-  font-size: clamp(2.2rem, 4.5vw, 5rem);
-  line-height: .88;
+  font-size: clamp(1.1rem, 2.2vw, 2.2rem);
+  line-height: .92;
   color: var(--w);
   text-align: left;
 }
@@ -832,18 +774,16 @@ footer {
 
 <!-- PROMO BANNER -->
 <div class="promo-banner">
-  <div class="pb-content">
-    <div class="pb-left">
-      <h2 class="d">RUANG<br>TERASA<br><span class="y">KOSONG?</span></h2>
-    </div>
-    <div class="pb-right">
-      <h2 class="d pb-right-hl">TINGGAL PILIH<br>&amp; PASANG.</h2>
-      <p class="pb-right-sub">Frame custom dan poster aesthetic untuk dinding kamu.</p>
-      <a href="katalog.html" class="pb-btn">LIHAT KATALOG →</a>
-    </div>
+  <div class="pb-left">
+    <h2 class="d">RUANG<br>TERASA<br><span class="y">KOSONG?</span></h2>
   </div>
   <div class="pb-img">
     <img src="images/ruangkosong.png" alt="Koleksi Poster Srupa Labs" onerror="this.style.opacity='.15'">
+  </div>
+  <div class="pb-right">
+    <h2 class="d pb-right-hl">TINGGAL PILIH<br>&amp; PASANG.</h2>
+    <p class="pb-right-sub">Frame custom dan poster aesthetic untuk dinding kamu.</p>
+    <a href="katalog.html" class="pb-btn">LIHAT KATALOG →</a>
   </div>
 </div>
 
