@@ -556,50 +556,58 @@ footer {
   .ord-steps-row { grid-template-columns: 1fr }
   .step { padding: 1.25rem 0 !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,.08) }
   .step:last-child { border-bottom: none }
-  /* Mobile: promo banner */
+  /* Mobile: promo banner — 2 kolom sejajar, kiri konten, kanan gambar */
   .promo-banner {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    min-height: 0;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "left img"
+      "left img";
+    min-height: 240px;
+    align-items: stretch;
   }
   .pb-left {
-    order: 1;
-    padding: 2rem 5vw 0 5vw;
+    grid-area: left;
+    order: unset;
+    padding: 1.5rem 1rem 0 4vw;
     align-items: flex-start;
     justify-content: flex-start;
   }
   .pb-left .d {
-    font-size: clamp(2rem, 8vw, 2.6rem);
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
     line-height: .88;
     text-align: left;
   }
   .pb-right {
-    order: 2;
-    padding: .75rem 5vw 2rem 5vw;
+    grid-area: left;
+    order: unset;
+    padding: .6rem 1rem 1.5rem 4vw;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: .75rem;
+    gap: .6rem;
   }
-  .pb-right-hl { display: block; font-size: clamp(1.5rem, 6vw, 2rem) }
-  .pb-right-sub { max-width: 100%; font-size: .85rem; text-align: left }
-  .pb-btn { width: 100%; justify-content: center }
+  .pb-right-hl { display: none }
+  .pb-right-sub { max-width: 100%; font-size: .78rem; text-align: left }
+  .pb-btn { width: 100%; justify-content: center; height: 42px; font-size: .82rem; padding: 0 12px }
   .pb-img {
-    order: 3;
+    grid-area: img;
+    order: unset;
     width: 100%;
-    min-height: 220px;
-    max-height: 300px;
+    min-height: 0;
+    max-height: none;
     align-self: stretch;
     overflow: hidden;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    border-top: 1px solid rgba(255,255,255,.12);
+    border-top: none;
+    border-left: 1px solid rgba(255,255,255,.12);
   }
   .pb-img img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    object-position: center;
+    object-position: bottom center;
     margin: 0;
     filter: none;
   }
@@ -629,12 +637,12 @@ footer {
   .f-wm-text { font-size: clamp(3.5rem, 14vw, 6rem) }
   .f-wm-star { font-size: clamp(2.8rem, 11vw, 5rem) }
 
-  /* Promo banner kecil: heading proporsional, gambar di bawah */
-  .pb-left { padding: 1.5rem 5vw 0 5vw }
-  .pb-left .d { font-size: clamp(1.75rem, 7.5vw, 2.2rem) }
-  .pb-right { padding: .65rem 5vw 1.75rem 5vw }
-  .pb-img { min-height: 180px; max-height: 260px }
-  .pb-btn { font-size: .85rem; height: 46px }
+  /* Promo banner kecil: skala turun, tetap 2 kolom sejajar */
+  .pb-left { padding: 1.25rem .75rem 0 4vw }
+  .pb-left .d { font-size: clamp(1.3rem, 6.5vw, 1.8rem) }
+  .pb-right { padding: .5rem .75rem 1.25rem 4vw; gap: .5rem }
+  .pb-right-sub { font-size: .72rem }
+  .pb-btn { font-size: .78rem; height: 38px }
 }
 
 /* ── REVEAL ── */
