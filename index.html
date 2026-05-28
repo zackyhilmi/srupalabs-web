@@ -561,13 +561,14 @@ footer {
       "left img"
       "right right";
     min-height: 0;
-    align-items: start;
+    align-items: center;
     overflow: hidden;
   }
   .pb-left {
     grid-area: left;
-    padding: 2rem 0.5rem 0 5vw;
-    align-items: flex-start;
+    padding: 2rem 0.5rem 1rem 5vw;
+    align-items: center;
+    justify-content: flex-start;
   }
   .pb-left .d {
     font-size: clamp(2rem, 8vw, 2.6rem);
@@ -576,27 +577,27 @@ footer {
   .pb-img {
     grid-area: img;
     width: 100%;
-    min-height: 200px;
+    height: 100%;
+    min-height: 180px;
     align-self: stretch;
     overflow: hidden;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
   }
   .pb-img img {
-    width: 110%;
-    height: auto;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    object-position: bottom center;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: -5%;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,.3));
+    object-position: center;
+    margin: 0;
+    filter: none;
   }
   .pb-right {
     grid-area: right;
-    padding: 1rem 5vw 2rem 5vw;
+    padding: 0.75rem 5vw 2rem 5vw;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: .75rem;
     border-top: 1px solid rgba(255,255,255,.12);
   }
@@ -629,11 +630,11 @@ footer {
   .f-wm-text { font-size: clamp(3.5rem, 14vw, 6rem) }
   .f-wm-star { font-size: clamp(2.8rem, 11vw, 5rem) }
 
-  /* Promo banner: heading lebih kecil agar pas sejajar dengan gambar */
-  .pb-left { padding: 1.75rem 0.5rem 0 5vw }
+  /* Promo banner kecil: heading proporsional, gambar center */
+  .pb-left { padding: 1.5rem 0.5rem 1rem 5vw }
   .pb-left .d { font-size: clamp(1.75rem, 7.5vw, 2.2rem) }
-  .pb-img { min-height: 180px }
-  .pb-right { padding: 0.85rem 5vw 1.75rem 5vw }
+  .pb-img { min-height: 160px }
+  .pb-right { padding: 0.75rem 5vw 1.75rem 5vw }
   .pb-btn { font-size: .85rem; height: 46px }
 }
 
@@ -658,6 +659,7 @@ footer {
   padding: 3rem 2vw 3rem 5vw;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 .pb-left .d {
   font-size: clamp(2.2rem, 4.5vw, 5rem);
@@ -666,28 +668,24 @@ footer {
 }
 .pb-left .d .y { color: var(--y) }
 
-/* CENTER — gambar poster melayang di tengah */
+/* CENTER — gambar poster */
 .pb-img {
   width: clamp(220px, 28vw, 420px);
   align-self: stretch;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
   flex-shrink: 0;
-  position: relative;
-  z-index: 2;
 }
 .pb-img img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: contain;
-  object-position: bottom center;
-  /* gambar sedikit overflow ke atas */
-  margin-top: -30px;
-  margin-bottom: 0;
-  filter: drop-shadow(0 12px 32px rgba(0,0,0,.35));
+  object-position: center;
+  margin: 0;
+  filter: none;
 }
 
 /* RIGHT — tagline + sub + CTA */
@@ -696,6 +694,7 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: .85rem;
 }
 .pb-right-hl {
