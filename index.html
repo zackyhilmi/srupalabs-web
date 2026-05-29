@@ -738,17 +738,16 @@ footer {
     min-height: 0;
   }
 
-  /* Teks dulu di atas */
+  /* Gambar di atas */
   .pb-right {
-    order: 1;
+    order: 2;
     padding: clamp(1.5rem, 6vw, 2.5rem) var(--sp-x);
     border-left: none;
-    border-bottom: 1px solid rgba(255,255,255,.1);
+    border-top: 1px solid rgba(255,255,255,.1);
     gap: .65rem;
   }
   .pb-h-main {
     font-size: clamp(2.4rem, 10vw, 3.8rem);
-    /* mobile: RUANG TERASA wraps ke 2 baris secara alami */
   }
   .pb-right-hl {
     font-size: clamp(1rem, 4.5vw, 1.4rem);
@@ -761,9 +760,9 @@ footer {
     font-size: .9rem;
   }
 
-  /* Gambar di bawah teks */
+  /* Teks di bawah gambar */
   .pb-img {
-    order: 2;
+    order: 1;
     min-height: clamp(180px, 55vw, 280px);
     max-height: 300px;
   }
