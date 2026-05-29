@@ -556,17 +556,36 @@ footer {
   .ord-steps-row { grid-template-columns: 1fr }
   .step { padding: 1.25rem 0 !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,.08) }
   .step:last-child { border-bottom: none }
-  /* Mobile: promo banner — sama seperti desktop, font menyesuaikan */
+  /* Mobile: promo banner — stack vertikal */
   .promo-banner {
-    grid-template-columns: 1fr clamp(100px, 30vw, 220px) 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 0;
   }
-  .pb-left { padding: 1.5rem 1.5vw 1.5rem 4vw }
-  .pb-left .d { font-size: clamp(1.1rem, 4.5vw, 1.8rem) }
-  .pb-right { padding: 1.5rem 4vw 1.5rem 1.5vw }
-  .pb-right-hl { font-size: clamp(.75rem, 2.8vw, 1.1rem) }
-  .pb-right-sub { display: block; font-size: .72rem }
-  .pb-btn { height: 40px; font-size: .78rem; padding: 0 14px; white-space: nowrap }
+  .pb-left {
+    padding: 2rem 5vw 1rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .pb-left .d { font-size: clamp(2rem, 8vw, 3rem); text-align: left }
+  .pb-img {
+    display: flex;
+    width: 100%;
+    min-height: 200px;
+    max-height: 260px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .pb-img img { width: 100%; height: 100%; object-fit: contain }
+  .pb-right {
+    padding: 1rem 5vw 2rem;
+    justify-content: flex-start;
+    gap: .75rem;
+  }
+  .pb-right-hl { font-size: clamp(.85rem, 3vw, 1.2rem) }
+  .pb-right-sub { display: block; font-size: .82rem; line-height: 1.6; max-width: 100% }
+  .pb-btn { height: 44px; font-size: .85rem; padding: 0 20px; white-space: nowrap; margin-top: 0 }
 }
 
 /* Mobile: 560px */
@@ -593,14 +612,14 @@ footer {
   .f-wm-text { font-size: clamp(3.5rem, 14vw, 6rem) }
   .f-wm-star { font-size: clamp(2.8rem, 11vw, 5rem) }
 
-  /* Promo banner xs: scale down lebih */
-  .promo-banner { grid-template-columns: 1fr clamp(80px, 28vw, 180px) 1fr }
-  .pb-left { padding: 1.25rem 1vw 1.25rem 3vw }
-  .pb-left .d { font-size: clamp(1rem, 4vw, 1.4rem) }
-  .pb-right { padding: 1.25rem 3vw 1.25rem 1vw; gap: .4rem }
-  .pb-right-hl { font-size: clamp(.65rem, 2.5vw, .95rem) }
-  .pb-right-sub { display: block; font-size: .62rem; line-height: 1.45 }
-  .pb-btn { height: 34px; font-size: .68rem; padding: 0 8px }
+  /* Promo banner xs */
+  .pb-left { padding: 1.5rem 5vw .75rem }
+  .pb-left .d { font-size: clamp(1.8rem, 7.5vw, 2.5rem) }
+  .pb-img { min-height: 160px; max-height: 200px }
+  .pb-right { padding: .75rem 5vw 1.5rem; gap: .6rem }
+  .pb-right-hl { font-size: clamp(.8rem, 2.8vw, 1rem) }
+  .pb-right-sub { font-size: .75rem }
+  .pb-btn { height: 40px; font-size: .8rem }
 }
 
 /* ── REVEAL ── */
