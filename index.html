@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Srupa Labs — Frame & Poster Aesthetic</title>
 <meta name="description" content="Frame custom dan poster aesthetic untuk dekorasi dinding. Pilih desain, tentukan ukuran & frame, langsung siap pasang."/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 847 638%22%3E%3Crect width%3D%22847%22 height%3D%22638%22 rx%3D%22140%22 fill%3D%22%23fff%22/%3E%3Cpath d%3D%22M649.88 8.81C662.01 12 673.96 16.08 685.65 21.02C731.83 40.52 771.21 72.23 799.53 112.73C830.07 156.43 846.22 208.43 846.22 263.1V606.32H650.23V263.1C650.23 260.47 650.1 257.96 649.87 255.53C646.55 221.02 620.88 206.43 609.42 201.59C597.15 196.4 565.52 187.36 536.87 215.25L337.17 409.63H579.41V606.32H0.01V0.21H196.7V272.88L400.19 74.81C439.36 36.69 487.88 11.99 540.5 3.39C576.93-2.55 614.13-.66 649.88 8.81Z%22 fill%3D%22%231F12D4%22/%3E%3C/svg%3E"/>
+<meta property="og:title" content="Srupa Labs"/>
+<meta property="og:description" content="Frame custom dan poster aesthetic untuk dekorasi dinding."/>
+<meta property="og:image" content="https://ugc.production.linktr.ee/86be38f1-2411-4ae2-aa87-8daf08fa3713_Artboard-2-4x.png"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 847 638%22%3E%3Crect width%3D%22847%22 height%3D%22638%22 rx%3D%22140%22 fill%3D%22%23ffffff%22/%3E%3Cpath d%3D%22M649.88 8.81C662.01 12 673.96 16.08 685.65 21.02C731.83 40.52 771.21 72.23 799.53 112.73C830.07 156.43 846.22 208.43 846.22 263.1V606.32H650.23V263.1C650.23 260.47 650.1 257.96 649.87 255.53C646.55 221.02 620.88 206.43 609.42 201.59C597.15 196.4 565.52 187.36 536.87 215.25L337.17 409.63H579.41V606.32H0.01V0.21H196.7V272.88L400.19 74.81C439.36 36.69 487.88 11.99 540.5 3.39C576.93-2.55 614.13-.66 649.88 8.81Z%22 fill%3D%22%231F12D4%22/%3E%3C/svg%3E"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,900;1,900&family=Barlow:wght@400;500&display=swap" rel="stylesheet"/>
@@ -32,38 +35,43 @@ body { background: var(--c); color: var(--k); font-family: var(--br); overflow-x
 
 /* ── NAV ── */
 nav {
-  position: sticky; top: 0; z-index: 900;
+  position: sticky; top: 0; z-index: 500;
   height: 60px; background: var(--c); border-bottom: 2px solid var(--k);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 3vw;
 }
-.n-logo {
+.nav-logo {
   display: flex; align-items: center; gap: 0;
   text-decoration: none; height: 100%;
   color: var(--k); padding: 8px 0;
 }
-.n-logo svg { height: 32px; width: auto; display: block }
-.n-links { display: none }
-.n-dropdown { position: relative }
-.n-dropdown-btn {
+.nav-logo svg { height: 32px; width: auto; display: block }
+.nav-logo-text {
+  font-family: var(--bc); font-weight: 900; font-size: 1rem;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--k); line-height: 1;
+}
+.nav-logo-text.ml { margin-left: 5px }
+.nav-dropdown { position: relative }
+.nav-dropdown-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 42px; height: 42px;
   background: var(--y); color: var(--k);
   border: none; border-radius: 6px; cursor: pointer;
   transition: background .15s, transform .15s; flex-shrink: 0;
 }
-.n-dropdown-btn:hover { background: var(--k); transform: scale(1.06) }
-.n-dropdown-btn:hover svg { stroke: var(--y) }
-.n-dropdown-btn svg { flex-shrink: 0; fill: none; stroke: var(--k); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .15s }
-.n-dropdown-menu {
+.nav-dropdown-btn:hover { background: var(--k); transform: scale(1.06) }
+.nav-dropdown-btn:hover svg { stroke: var(--y) }
+.nav-dropdown-btn svg { flex-shrink: 0; fill: none; stroke: var(--k); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .15s }
+.nav-dropdown-menu {
   position: absolute; top: calc(100% + .5rem); right: 0;
   background: var(--c); border: 2px solid var(--k); border-radius: 6px;
   box-shadow: 4px 4px 0 var(--k); min-width: 200px; overflow: hidden;
   opacity: 0; transform: translateY(-6px); pointer-events: none;
   transition: opacity .18s, transform .18s;
 }
-.n-dropdown-menu.open { opacity: 1; transform: none; pointer-events: auto }
-.n-dropdown-menu a {
+.nav-dropdown-menu.open { opacity: 1; transform: none; pointer-events: auto }
+.nav-dropdown-menu a {
   display: flex; align-items: center; gap: .65rem;
   padding: .85rem 1.1rem;
   font-family: var(--bc); font-weight: 900; font-size: .85rem;
@@ -71,10 +79,10 @@ nav {
   color: var(--k); text-decoration: none; transition: background .15s;
   border-bottom: 1px solid rgba(13,13,10,.08);
 }
-.n-dropdown-menu a:last-child { border-bottom: none }
-.n-dropdown-menu a:hover { background: var(--y) }
-.n-dropdown-menu a svg { flex-shrink: 0; stroke: var(--g); fill: none; stroke-width: 1.5; transition: stroke .15s }
-.n-dropdown-menu a:hover svg { stroke: var(--k) }
+.nav-dropdown-menu a:last-child { border-bottom: none }
+.nav-dropdown-menu a:hover { background: var(--y) }
+.nav-dropdown-menu a svg { flex-shrink: 0; stroke: var(--g); fill: none; stroke-width: 1.5; transition: stroke .15s }
+.nav-dropdown-menu a:hover svg { stroke: var(--k) }
 
 /* ── HERO ── */
 #hero {
@@ -141,10 +149,10 @@ nav {
 .btn-ow:hover { border-color: var(--w); color: var(--w) }
 
 /* ── MARQUEE ── */
-.mq { background: var(--y); border-top: 2px solid var(--k); border-bottom: 2px solid var(--k); padding: 10px 0; overflow: hidden; white-space: nowrap }
-.mq-t { display: inline-flex; animation: mq 15s linear infinite }
-.mq-i { font-family: var(--bc); font-weight: 900; font-size: .95rem; letter-spacing: .08em; text-transform: uppercase; color: var(--k); padding: 0 20px; display: inline-flex; align-items: center; gap: 20px }
-.mq-d { font-size: 1rem; color: var(--b) }
+.mq { background: var(--y); border-top: 2px solid var(--k); border-bottom: 2px solid var(--k); padding: 8px 0; overflow: hidden; white-space: nowrap }
+.mq-t { display: inline-flex; animation: mq 14s linear infinite }
+.mq-i { font-family: var(--bc); font-weight: 900; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--k); padding: 0 14px; display: inline-flex; align-items: center; gap: 14px }
+.mq-d { color: var(--b) }
 @keyframes mq { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 
 /* ── DESAIN ── */
@@ -231,7 +239,7 @@ nav {
 /* RIGHT: image */
 .fr-new-img {
   position: relative; overflow: hidden;
-  background: #F4F3EC;
+  background: #F4F3EB;
   border-left: 2px solid var(--k);
   min-height: 420px;
   height: 100%;
@@ -527,6 +535,14 @@ footer {
   text-align: center;
 }
 .f-socrow a:hover { color: var(--y) }
+.f-copy {
+  font-family: var(--bc);
+  font-weight: 700;
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
+}
 
 /* ── RESPONSIVE ── */
 
@@ -728,7 +744,7 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="n-logo" aria-label="Srupa Labs">
+  <a href="/" class="nav-logo" aria-label="Srupa Labs">
     <svg width="107" height="30" viewBox="0 0 107 30" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:28px;width:auto;display:block">
       <path d="M0.000722731 4.08874C0.000722731 3.53503 0.106259 3.01602 0.318055 2.53099C0.529128 2.04596 0.816823 1.62164 1.18114 1.25732C1.54474 0.893006 1.96905 0.606033 2.45481 0.394238C2.93984 0.183165 3.45885 0.0769043 4.01255 0.0769043H10.151V2.75435H4.01255C3.82606 2.75435 3.65185 2.78833 3.48993 2.857C3.32801 2.92494 3.18633 3.02036 3.06562 3.14108C2.94418 3.26252 2.84948 3.40419 2.78154 3.56539C2.71286 3.72731 2.67889 3.90152 2.67889 4.08801C2.67889 4.27451 2.71286 4.45016 2.78154 4.61497C2.84948 4.77978 2.9449 4.92291 3.06562 5.04435C3.18706 5.16579 3.32801 5.26048 3.48993 5.32915C3.65113 5.3971 3.82534 5.4318 4.01255 5.4318H6.69C7.2437 5.4318 7.76416 5.53589 8.25281 5.74407C8.74073 5.95225 9.16721 6.2385 9.53081 6.60209C9.8944 6.96641 10.1807 7.39217 10.3888 7.8801C10.597 8.36875 10.7011 8.88992 10.7011 9.4429C10.7011 9.99589 10.597 10.5156 10.3888 11.0014C10.1807 11.4864 9.8944 11.9107 9.53081 12.2743C9.16721 12.6386 8.74073 12.9263 8.25281 13.1374C7.76488 13.3492 7.2437 13.4547 6.69 13.4547H0.746706V10.7773H6.68928C6.87577 10.7773 7.04998 10.7426 7.2119 10.6746C7.37382 10.6067 7.5155 10.5113 7.63621 10.3898C7.75765 10.2684 7.85235 10.1274 7.92102 9.96552C7.98969 9.80433 8.02366 9.63012 8.02366 9.4429C8.02366 9.25568 7.98969 9.0822 7.92102 8.92028C7.85235 8.75909 7.75765 8.61669 7.63621 8.49597C7.51477 8.37453 7.37382 8.27984 7.2119 8.21116C7.04998 8.14322 6.8765 8.10852 6.68928 8.10852H4.01183C3.45813 8.10852 2.93912 8.00298 2.45408 7.79119C1.96905 7.57939 1.54474 7.2917 1.18042 6.9281C0.8161 6.56451 0.528405 6.13875 0.317332 5.6501C0.105536 5.16217 0 4.641 0 4.08729L0.000722731 4.08874Z" fill="black"/>
       <path d="M15.1325 13.4555H12.4551V0.0776367H17.81C18.3015 0.0776367 18.7743 0.141972 19.2282 0.269194C19.6822 0.396416 20.1065 0.577129 20.5019 0.81061C20.8965 1.04409 21.2573 1.32383 21.584 1.64984C21.9107 1.97657 22.1905 2.33872 22.4232 2.73701C22.6567 3.13458 22.8367 3.56106 22.9646 4.01502C23.0919 4.46897 23.1562 4.94171 23.1562 5.43325C23.1562 5.89371 23.0984 6.34115 22.9834 6.77631C22.8685 7.21147 22.7037 7.62494 22.489 8.01745C22.2743 8.40924 22.0119 8.76994 21.7011 9.09956C21.3903 9.42918 21.0418 9.71543 20.6558 9.95758L22.1391 13.4555H19.294L18.128 10.7592L15.1332 10.778V13.4555H15.1325ZM15.1325 2.75508V8.10997H17.81C18.1772 8.10997 18.522 8.03986 18.8458 7.89962C19.1697 7.75939 19.4523 7.56856 19.6944 7.32568C19.9373 7.0828 20.1282 6.79872 20.2684 6.47199C20.4079 6.14526 20.478 5.79901 20.478 5.43253C20.478 5.06604 20.4079 4.71907 20.2684 4.39234C20.1282 4.06561 19.9373 3.78153 19.6944 3.53865C19.4523 3.29578 19.1689 3.10494 18.8458 2.96471C18.5227 2.82448 18.1772 2.75508 17.81 2.75508H15.1325Z" fill="black"/>
@@ -741,12 +757,13 @@ footer {
       <path d="M50.4697 20.1643C50.4697 19.6106 50.5753 19.0916 50.7871 18.6066C50.9989 18.1215 51.2866 17.6972 51.6501 17.3329C52.0137 16.9686 52.4381 16.6816 52.9231 16.4698C53.4081 16.2587 53.9279 16.1525 54.4816 16.1525H60.62V18.8299H54.4816C54.2943 18.8299 54.1209 18.8639 53.9589 18.9326C53.797 19.0005 53.6553 19.0959 53.5346 19.2166C53.4132 19.3381 53.3185 19.4798 53.2498 19.641C53.1819 19.8029 53.1472 19.9771 53.1472 20.1636C53.1472 20.3501 53.1819 20.5257 53.2498 20.6905C53.3178 20.8553 53.4132 20.9985 53.5346 21.1199C53.6561 21.2413 53.797 21.336 53.9589 21.4047C54.1201 21.4727 54.2943 21.5074 54.4816 21.5074H57.159C57.7127 21.5074 58.2332 21.6114 58.7218 21.8196C59.2097 22.0278 59.6355 22.3141 59.9998 22.6777C60.3634 23.042 60.6497 23.4677 60.8578 23.9557C61.066 24.4443 61.1701 24.9655 61.1701 25.5185C61.1701 26.0714 61.066 26.5912 60.8578 27.0769C60.6497 27.562 60.3634 27.9863 59.9998 28.3499C59.6355 28.7142 59.2097 29.0019 58.7218 29.213C58.2332 29.4248 57.7127 29.5303 57.159 29.5303H51.2164V26.8529H57.159C57.3455 26.8529 57.5197 26.8182 57.6816 26.7502C57.8428 26.6823 57.9852 26.5868 58.1059 26.4654C58.2274 26.344 58.3221 26.203 58.3907 26.0411C58.4594 25.8799 58.4934 25.7057 58.4934 25.5185C58.4934 25.3312 58.4594 25.1578 58.3907 24.9958C58.3228 24.8346 58.2274 24.6922 58.1059 24.5715C57.9852 24.4501 57.8435 24.3554 57.6816 24.2867C57.5197 24.2188 57.3455 24.1841 57.159 24.1841H54.4816C53.9279 24.1841 53.4088 24.0785 52.9231 23.8667C52.4381 23.6549 52.0137 23.3673 51.6501 23.0037C51.2858 22.6401 50.9981 22.2143 50.7871 21.7257C50.5753 21.2377 50.4697 20.7166 50.4697 20.1629V20.1643Z" fill="black"/>
       <path d="M96.9042 0.430348C97.4965 0.586121 98.0801 0.785355 98.6509 1.02658C100.906 1.9788 102.829 3.52726 104.212 5.50494C105.703 7.63889 106.492 10.1781 106.492 12.8478V29.6078H96.9213V12.8478C96.9213 12.7193 96.915 12.5968 96.9037 12.4781C96.7416 10.7929 95.4881 10.0805 94.9285 9.84413C94.3293 9.5907 92.7848 9.14926 91.3857 10.5112L81.634 20.0031H93.463V29.6078H65.1699V0.0103948H74.7746V13.3254L84.7114 3.65324C86.6242 1.79178 88.9935 0.585633 91.563 0.16568C93.3419 -0.124381 95.1585 -0.032089 96.9042 0.430836V0.430348Z" fill="#1F12D4"/>
     </svg>
+    <span class="nav-logo-text ml">SRUPA LABS</span>
   </a>
-  <div class="n-dropdown">
-    <button class="n-dropdown-btn" id="navDropdownBtn" onclick="toggleDropdown()" aria-label="Menu">
+  <div class="nav-dropdown">
+    <button class="nav-dropdown-btn" id="navDropdownBtn" onclick="toggleDropdown()" aria-label="Menu">
       <svg width="18" height="18" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div class="n-dropdown-menu" id="navDropdownMenu">
+    <div class="nav-dropdown-menu" id="navDropdownMenu">
       <a href="katalog.html">
         <svg width="15" height="15" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
         Katalog Poster
@@ -1049,6 +1066,7 @@ footer {
     <a href="https://wa.me/6285830222232" target="_blank" rel="noopener">Whatsapp</a>
     <a href="mailto:srupalabs@gmail.com">Email</a>
   </div>
+  <p class="f-copy">© 2025 Srupa Labs · Jakarta</p>
 </footer>
 
 <script>
@@ -1066,13 +1084,16 @@ setTimeout(() => {
 
 // ── DROPDOWN NAV ──
 function toggleDropdown() {
-  document.getElementById('navDropdownMenu').classList.toggle('open');
+  const btn  = document.getElementById('navDropdownBtn');
+  const menu = document.getElementById('navDropdownMenu');
+  const open = menu.classList.contains('open');
+  btn.classList.toggle('open', !open);
+  menu.classList.toggle('open', !open);
 }
 document.addEventListener('click', e => {
-  const btn = document.getElementById('navDropdownBtn');
-  const menu = document.getElementById('navDropdownMenu');
-  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
-    menu.classList.remove('open');
+  if (!e.target.closest('.nav-dropdown')) {
+    document.getElementById('navDropdownBtn').classList.remove('open');
+    document.getElementById('navDropdownMenu').classList.remove('open');
   }
 });
 
