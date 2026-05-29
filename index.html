@@ -193,24 +193,20 @@ nav {
 }
 .ds-row:hover .ds-row-track { animation-play-state: paused }
 
-/* Mobile: animasi marquee sering collapse di iOS/Android — ganti ke manual scroll */
+/* Mobile: overflow:hidden bikin min-width:max-content collapse di iOS/Android */
+/* Pakai overflow:clip — tetap memotong visual tapi tidak bikin scroll container */
 @media (max-width: 768px) {
   .ds-row {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    overflow: clip;
+    overflow-clip-margin: 0px;
     min-height: unset;
     padding-bottom: 12px;
     align-items: flex-start;
   }
-  .ds-row::-webkit-scrollbar { display: none }
   .ds-row-track {
-    animation: none !important;
-    will-change: auto;
-    min-width: unset;
+    animation: ds-scroll 22s linear infinite;
+    min-width: max-content;
   }
-  .ds-row-track[aria-hidden="true"] { display: none }
   .pc { flex: 0 0 150px; }
   .pc-img { height: 200px; aspect-ratio: unset; min-height: unset; }
 }
