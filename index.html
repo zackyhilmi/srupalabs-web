@@ -864,7 +864,7 @@ footer {
 </div>
 
 <!-- PILIH DESAIN -->
-<section id="desain" class="rv">
+<section id="desain">
   <div class="ds-hd">
     <h2 class="d">PILIH<br>DESAIN<span class="b">MU?</span></h2>
     <a href="katalog.html" class="see">Lihat Semua →</a>
@@ -1194,25 +1194,7 @@ function renderDesainMarquee(posterList) {
 
 // Render data lokal dulu (instan), lalu update dengan data Firestore jika ada
 renderDesainMarquee(POSTERS);
-// Re-observe setelah cards dirender agar #desain section tidak terlewat
 initReveal();
-// Force reveal #desain langsung — karena cards dirender setelah observer dipasang
-// di mobile sering miss karena timing async
-(function forceDesainReveal() {
-  const desain = document.getElementById('desain');
-  if (!desain) return;
-  // Langsung reveal kalau sudah dalam viewport atau hampir
-  function checkAndReveal() {
-    const r = desain.getBoundingClientRect();
-    if (r.top < window.innerHeight * 1.3) {
-      desain.classList.add('in');
-    }
-  }
-  checkAndReveal();
-  // Fallback setelah 300ms (cover async render)
-  setTimeout(checkAndReveal, 300);
-  setTimeout(checkAndReveal, 800);
-})();
 
 (async () => {
   const fbData = await loadFromFirestore();
