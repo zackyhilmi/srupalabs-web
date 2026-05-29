@@ -438,3 +438,249 @@ footer {
 
 </body>
 </html>
+
+<!-- ══════════════════════════════════════════
+     SRUPA LABS LINKS — INTERACTION ENHANCEMENTS
+     Zero extra HTTP requests. Pure CSS + vanilla JS.
+     ══════════════════════════════════════════ -->
+<style>
+/* ── HERO NAME SPLIT-CHARACTER REVEAL ── */
+.h-name .char {
+  display: inline-block;
+  transform: translateY(100%) scaleY(0.6);
+  opacity: 0;
+  transform-origin: bottom center;
+  /* will-change cleaned up post-animation */
+  will-change: transform, opacity;
+}
+.h-name.chars-ready .char {
+  animation: charReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes charReveal {
+  to { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+
+/* ── EYEBROW SLIDE IN ── */
+.h-eyebrow {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s 0.05s ease, transform 0.4s 0.05s ease;
+}
+.h-eyebrow.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── SUBTEXT FADE IN ── */
+.h-sub {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.h-sub.in {
+  opacity: 1;
+}
+
+/* ── LINK BUTTONS — smoother stagger ── */
+/* Override the existing nth-child delays with better easing */
+.link-btn {
+  opacity: 0;
+  transform: translateY(20px);
+  /* reset existing animation */
+  animation: none !important;
+  transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+              transform 0.5s cubic-bezier(0.16,1,0.3,1),
+              background 0.15s, color 0.15s,
+              box-shadow 0.2s cubic-bezier(0.23,1,0.32,1) !important;
+}
+.link-btn.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hover: lift + shadow tighter */
+@media (hover: hover) {
+  .link-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 5px 5px 0 rgba(13,13,10,.2) !important;
+  }
+  .link-btn.featured:hover {
+    transform: translateY(-3px) !important;
+  }
+}
+
+/* Active press feedback — slightly springy */
+.link-btn:active {
+  transform: scale(0.97) translateY(1px) !important;
+  transition-duration: 0.1s !important;
+}
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: none !important;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.sec-label.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── HERO BACKGROUND NOISE TEXTURE (CSS-only, zero HTTP) ── */
+/* Subtle grain over the blue hero */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* SVG turbulence noise as base64 — generates grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  border-radius: inherit;
+}
+
+/* ── MARQUEE PAUSE-ON-HOVER ── */
+.mq:hover .mq-t {
+  animation-play-state: paused;
+}
+
+/* ── FOOTER WORDMARK subtle glow on hover ── */
+.f-wordmark:hover .f-wm-text {
+  color: rgba(244,243,235,0.85);
+  transition: color 0.3s ease;
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ────────────────────────────────────────
+     1. HERO NAME — PER-CHARACTER SPLIT REVEAL
+     Splits .h-name spans by character, staggers
+     with CSS animation-delay. Spaces are preserved.
+  ──────────────────────────────────────── */
+  function initNameSplit() {
+    const name = document.querySelector('.h-name');
+    if (!name) return;
+
+    // .h-name has text like: "SRUPA" + <span class="y">LABS</span>
+    // but in links.html it's plain text: SRUPA LABS with .y on LABS word
+    const STEP = 0.038; // seconds per char
+    let delay = 0.15; // initial offset after page load
+    const fragment = document.createDocumentFragment();
+
+    function splitText(text, className) {
+      text.split('').forEach(char => {
+        if (char === ' ') {
+          fragment.appendChild(document.createTextNode('\u00A0'));
+          delay += STEP * 0.5;
+          return;
+        }
+        const span = document.createElement('span');
+        span.className = 'char' + (className ? ' ' + className : '');
+        span.textContent = char;
+        span.style.animationDelay = delay + 's';
+        delay += STEP;
+        fragment.appendChild(span);
+      });
+    }
+
+    name.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        splitText(node.textContent, '');
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        splitText(node.textContent, node.className);
+      }
+    });
+
+    name.innerHTML = '';
+    name.appendChild(fragment);
+
+    // Trigger
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        name.classList.add('chars-ready');
+        const totalDur = (delay + 0.55) * 1000;
+        setTimeout(() => {
+          name.querySelectorAll('.char').forEach(el => el.style.willChange = 'auto');
+        }, totalDur);
+      });
+    });
+
+    // Animate eyebrow + sub after first char delay
+    setTimeout(() => {
+      const eyebrow = document.querySelector('.h-eyebrow');
+      const sub = document.querySelector('.h-sub');
+      if (eyebrow) eyebrow.classList.add('in');
+      if (sub) sub.classList.add('in');
+    }, 200);
+  }
+
+  /* ────────────────────────────────────────
+     2. LINK BUTTONS — STAGGER ON SCROLL/LOAD
+     Uses IntersectionObserver for each button
+     with incremental delay.
+  ──────────────────────────────────────── */
+  function initLinkStagger() {
+    const label = document.querySelector('.sec-label');
+    const buttons = document.querySelectorAll('.link-btn');
+
+    // Show label first
+    setTimeout(() => {
+      if (label) label.classList.add('visible');
+    }, 350);
+
+    // Stagger buttons
+    buttons.forEach((btn, i) => {
+      const delay = 420 + i * 80;
+      setTimeout(() => {
+        btn.classList.add('visible');
+      }, delay);
+    });
+  }
+
+  /* ────────────────────────────────────────
+     3. LINK BUTTON MAGNETIC ARROW (subtle)
+     On hover, the arrow shifts slightly toward cursor.
+  ──────────────────────────────────────── */
+  function initArrowFollow() {
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    document.querySelectorAll('.link-btn').forEach(btn => {
+      const arrow = btn.querySelector('.link-arrow');
+      if (!arrow) return;
+
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const pct = (e.clientX - r.left) / r.width;
+        // Arrow nudges right when cursor is right of center
+        const nudge = (pct - 0.5) * 6;
+        arrow.style.transform = `translate(${2 + nudge}px, ${-2}px)`;
+        arrow.style.transition = 'transform 0.15s ease';
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        arrow.style.transform = '';
+      });
+    });
+  }
+
+  /* ────────────────────────────────────────
+     INIT
+  ──────────────────────────────────────── */
+  function boot() {
+    initNameSplit();
+    initLinkStagger();
+    initArrowFollow();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
