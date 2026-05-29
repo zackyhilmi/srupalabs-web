@@ -180,14 +180,16 @@ nav {
   margin: 0 -5vw; padding: 6px 5vw 2px;
   min-height: 320px;
   align-items: stretch;
-  /* Pastikan visible di mobile */
   visibility: visible;
+  position: relative;
 }
 .ds-row-track {
   display: flex; gap: 1rem;
   animation: ds-scroll 28s linear infinite;
   flex-shrink: 0;
   align-items: stretch;
+  will-change: transform;
+  min-width: max-content;
 }
 .ds-row:hover .ds-row-track { animation-play-state: paused }
 @keyframes ds-scroll {
@@ -1193,14 +1195,21 @@ function renderDesainMarquee(posterList) {
 }
 
 // Render data lokal dulu (instan), lalu update dengan data Firestore jika ada
-renderDesainMarquee(POSTERS);
-initReveal();
+function initDesain() {
+  renderDesainMarquee(POSTERS);
+  initReveal();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDesain);
+} else {
+  initDesain();
+}
 
 (async () => {
   const fbData = await loadFromFirestore();
   if (fbData && fbData.length) {
     renderDesainMarquee(fbData);
-    // Re-reveal setelah update dari Firestore
     const desain = document.getElementById('desain');
     if (desain) desain.classList.add('in');
   }
