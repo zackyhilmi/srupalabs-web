@@ -113,42 +113,58 @@ nav{
 
 /* ── TOOLBAR ── */
 .toolbar{
-  padding:.85rem 5vw;border-bottom:2px solid var(--k);
-  display:flex;align-items:center;justify-content:flex-end;
-  gap:1rem;flex-wrap:wrap;position:sticky;top:var(--nav-h);z-index:400;
+  border-bottom:2px solid var(--k);
+  position:sticky;top:var(--nav-h);z-index:400;
   background:var(--c);
 }
-.toolbar-right{display:flex;align-items:center;gap:.6rem}
-.search-wrap{position:relative;display:flex;align-items:center}
+
+/* Row 1: filter chips — horizontal scroll, no wrap */
+.toolbar-filters{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.7rem 5vw;
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  border-bottom:1.5px solid rgba(13,13,10,.1);
+  flex-wrap:nowrap;
+}
+.toolbar-filters::-webkit-scrollbar{display:none}
+
+/* Row 2: search + sort */
+.toolbar-controls{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.6rem;padding:.6rem 5vw;
+}
+
+.search-wrap{position:relative;display:flex;align-items:center;flex:1}
 .search-wrap svg{position:absolute;left:.7rem;pointer-events:none;stroke:var(--g);fill:none;stroke-width:1.6}
 .search-input{
   font-family:var(--br);font-size:.82rem;
   padding:.45rem .85rem .45rem 2.1rem;
   border:2px solid var(--k);border-radius:6px;
   background:var(--w);color:var(--k);outline:none;
-  width:180px;transition:border-color .15s,width .3s;
+  width:100%;transition:border-color .15s;
 }
-.search-input:focus{border-color:var(--b);width:220px}
+.search-input:focus{border-color:var(--b)}
 .search-input::placeholder{color:var(--g)}
 .sort-select{
   font-family:var(--bc);font-weight:900;font-size:.78rem;
   letter-spacing:.04em;text-transform:uppercase;
   color:var(--k);border:2px solid var(--k);border-radius:6px;
   padding:.45rem .75rem;background:var(--c);outline:none;cursor:pointer;
-  transition:background .15s;
+  transition:background .15s;flex-shrink:0;
 }
 .sort-select:hover{background:var(--y)}
 
 /* ── FILTER CHIPS ── */
-.toolbar{justify-content:space-between}
-.filter-chips{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;flex:1;min-width:0}
+.filter-chips{display:contents}
 .chip{
   font-family:var(--bc);font-weight:900;font-size:.75rem;
   letter-spacing:.06em;text-transform:uppercase;
   padding:.38rem .75rem;border:2px solid var(--k);border-radius:4px;
   background:transparent;color:var(--k);cursor:pointer;
-  transition:background .12s,color .12s,transform .1s;
-  white-space:nowrap;
+  transition:background .12s,color .12s;
+  white-space:nowrap;flex-shrink:0;
 }
 .chip:hover{background:var(--k);color:var(--c)}
 .chip-active{background:var(--k);color:var(--c)}
@@ -407,11 +423,11 @@ nav{
   .page-header{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:520px){
-  .search-input{width:130px}
-  .search-input:focus{width:150px}
   .poster-grid{grid-template-columns:repeat(2,1fr);gap:.6rem}
   .size-grid{grid-template-columns:repeat(2,1fr)}
   .catalog-wrap{padding:1.5rem 4vw 5rem}
+  .toolbar-controls{gap:.45rem}
+  .sort-select{font-size:.7rem;padding:.45rem .5rem}
 }
 </style>
 </head>
@@ -465,7 +481,7 @@ nav{
 
 <!-- TOOLBAR -->
 <div class="toolbar">
-  <div class="filter-chips" id="filterChips">
+  <div class="toolbar-filters" id="filterChips">
     <button class="chip chip-active" onclick="setFilter('all')">Semua</button>
     <button class="chip" onclick="setFilter('bauhaus')">Bauhaus</button>
     <button class="chip" onclick="setFilter('street')">Street</button>
@@ -478,7 +494,7 @@ nav{
     <button class="chip" onclick="setFilter('popart')">Pop Art</button>
     <button class="chip" onclick="setFilter('vintage')">Vintage</button>
   </div>
-  <div class="toolbar-right">
+  <div class="toolbar-controls">
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
       <input type="text" class="search-input" id="searchInput" placeholder="Cari desain..."/>
