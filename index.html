@@ -161,16 +161,16 @@ nav {
 .btn-ow:hover { border-color: var(--w); color: var(--w) }
 
 /* ── MARQUEE ── */
-.mq { background: var(--y); border-top: 2px solid var(--k); border-bottom: 2px solid var(--k); padding: 8px 0; overflow: hidden; white-space: nowrap }
-.mq-t { display: inline-flex; animation: mq 14s linear infinite }
-.mq-i { font-family: var(--bc); font-weight: 900; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--k); padding: 0 14px; display: inline-flex; align-items: center; gap: 14px }
+.mq { background: var(--y); border-top: 2px solid var(--k); border-bottom: 2px solid var(--k); padding: 8px 0; overflow: hidden; white-space: nowrap; display: flex }
+.mq-t { display: inline-flex; flex-shrink: 0; min-width: 100%; animation: mq 18s linear infinite }
+.mq-i { font-family: var(--bc); font-weight: 900; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--k); padding: 0 20px; display: inline-flex; align-items: center; gap: 14px; flex-shrink: 0 }
 .mq-d { color: var(--b) }
-@keyframes mq { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@keyframes mq { from { transform: translateX(0) } to { transform: translateX(-100%) } }
 
 /* ── DESAIN ── */
 #desain { padding: 5vw 5vw 5vw; border-bottom: 2px solid var(--k) }
 .ds-hd { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 2.5rem; gap: .75rem }
-.ds-hd h2 { font-size: clamp(2rem, 6vw, 4rem) }
+.ds-hd h2 { font-size: clamp(2rem, 5vw, 4.5rem) }
 .ds-hd h2 .b { color: var(--b) }
 .see { font-family: var(--bc); font-weight: 700; font-size: .82rem; letter-spacing: .07em; text-transform: uppercase; color: var(--k); text-decoration: none; border-bottom: 2px solid var(--k); padding-bottom: 2px; transition: color .15s, border-color .15s; align-self: flex-start }
 .see:hover { color: var(--b); border-color: var(--b) }
@@ -210,7 +210,7 @@ nav {
 
 /* ── KENAPA ── */
 #kenapa { background: var(--k); color: var(--w); padding: 5vw; border-bottom: 2px solid var(--k) }
-#kenapa h2 { font-size: clamp(2rem, 4vw, 4rem); color: var(--w); margin-bottom: 3rem }
+#kenapa h2 { font-size: clamp(2rem, 5vw, 4.5rem); color: var(--w); margin-bottom: 3rem }
 #kenapa h2 .y { color: var(--y) }
 .kg { display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; overflow: hidden }
 .ki { padding: 2rem 1.75rem; border-right: 1px solid rgba(255,255,255,.08) }
@@ -283,7 +283,7 @@ nav {
 
 /* Deskripsi */
 .fr-new-sub {
-  font-size: .9rem; line-height: 1.75; color: rgba(13,13,10,.55);
+  font-size: .88rem; line-height: 1.75; color: rgba(13,13,10,.55);
   max-width: 38ch;
 }
 
@@ -321,9 +321,9 @@ nav {
 }
 #order { background: var(--k); padding: 5vw; border-bottom: 2px solid var(--k) }
 .ord-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem }
-.ord-top h2 { font-size: clamp(2rem, 4vw, 4rem); color: var(--w) }
+.ord-top h2 { font-size: clamp(2rem, 5vw, 4.5rem); color: var(--w) }
 .ord-top h2 .y { color: var(--y) }
-.ord-sub { font-size: .9rem; color: rgba(255,255,255,.45); max-width: 26ch; text-align: right; line-height: 1.65; align-self: flex-end }
+.ord-sub { font-size: .88rem; color: rgba(255,255,255,.45); max-width: 26ch; text-align: right; line-height: 1.65; align-self: flex-end }
 .ch-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem }
 .ch {
   display: flex; flex-direction: column;
@@ -367,115 +367,109 @@ nav {
 .step:not(:first-child):not(:last-child) { padding: 0 2rem }
 .step-n { font-family: var(--bc); font-weight: 900; font-size: 3rem; color: rgba(255,255,255,.25); line-height: 1; margin-bottom: .75rem }
 .step-t { font-family: var(--bc); font-weight: 900; font-size: 1.05rem; text-transform: uppercase; letter-spacing: .02em; color: var(--w); margin-bottom: .4rem }
-.step-d { font-size: .82rem; line-height: 1.65; color: rgba(255,255,255,.45) }
+.step-d { font-size: .88rem; line-height: 1.65; color: rgba(255,255,255,.45) }
 
-/* ── CUSTOM ── */
+/* ── CUSTOM — REDESIGN v2 ── */
 #custom {
-  background: var(--y); border-bottom: 2px solid var(--k);
-  padding: 5vw; position: relative; overflow: hidden;
+  background: var(--c);
+  border-bottom: 2px solid var(--k);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: clamp(420px, 55vw, 700px);
+  padding: 3vw;
+  gap: 0;
 }
 
-.cu-inner {
+.cu-left-panel {
+  background: var(--y);
+  border: 2px solid var(--k);
+  border-right: none;
+  border-radius: 16px 0 0 16px;
+  padding: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.cu-hl {
+  font-size: clamp(3rem, 7vw, 8rem);
+  color: var(--k); line-height: .88;
   position: relative; z-index: 1;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: start;
-  width: 100%; min-width: 0;
 }
-.cu-l { padding-right: 5vw }
-.cu-l h2 { font-size: clamp(2rem, 4vw, 4rem); color: var(--k); line-height: .95 }
-.cu-l h2 .y { color: var(--b) }
-.cu-l h2 .s { color: rgba(13,13,10,.25); display: block; font-size: .55em }
-.cu-l-sub { font-size: .9rem; color: rgba(13,13,10,.55); line-height: 1.7; margin-top: 1.5rem; max-width: 34ch }
-
-/* Trust badges */
+.cu-hl .b { color: var(--b) }
 .cu-trust {
-  display: flex; gap: .75rem; margin-top: 2rem; flex-wrap: wrap;
+  display: flex; gap: .5rem; flex-wrap: wrap;
+  position: relative; z-index: 1;
 }
 .cu-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(13,13,10,.07); border: 1px solid rgba(13,13,10,.12);
-  border-radius: 100px; padding: 5px 12px;
+  background: var(--k); border-radius: 4px; padding: 5px 12px;
 }
-.cu-badge svg { width: 13px; height: 13px; fill: var(--k); flex-shrink: 0 }
-.cu-badge span { font-family: var(--bc); font-weight: 700; font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; color: rgba(13,13,10,.65) }
+.cu-badge svg { width: 11px; height: 11px; fill: var(--y); flex-shrink: 0 }
+.cu-badge span { font-family: var(--bc); font-weight: 900; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--y) }
 
-/* Right column */
-.cu-r {
-  display: flex; flex-direction: column; align-items: flex-start;
-  padding-left: 5vw; border-left: 1px solid rgba(13,13,10,.12);
-  gap: 2rem;
+.cu-right-panel {
+  background: var(--b);
+  border: 2px solid var(--k);
+  border-radius: 0 16px 16px 0;
+  padding: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.cu-r-eyebrow {
-  font-family: var(--bc); font-weight: 900; font-size: .72rem;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--b); margin-bottom: -.5rem;
+.cu-steps {
+  display: flex; flex-direction: column; gap: 0;
+  border-top: 1px solid rgba(255,255,255,.2);
 }
-.cu-steps { display: flex; flex-direction: column; gap: 0 }
 .cu-step {
-  display: flex; align-items: flex-start; gap: 1rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid rgba(13,13,10,.08);
-  position: relative;
+  display: flex; align-items: baseline; gap: 1.25rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
-.cu-step:last-child { border-bottom: none }
 .cu-step-n {
-  font-family: var(--bc); font-weight: 900; font-size: .72rem;
-  letter-spacing: .08em; color: var(--k);
-  background: rgba(13,13,10,.08); border: 1px solid rgba(13,13,10,.15);
-  border-radius: 4px; padding: 3px 7px; flex-shrink: 0; margin-top: 2px;
-  min-width: 36px; text-align: center;
+  font-family: var(--bc); font-weight: 900;
+  font-size: .7rem; letter-spacing: .1em;
+  color: rgba(255,255,255,.55);
+  flex-shrink: 0; min-width: 24px;
 }
-.cu-step-t { font-family: var(--bc); font-weight: 900; font-size: .95rem; text-transform: uppercase; letter-spacing: .03em; color: var(--k); margin-bottom: 3px }
-.cu-step-d { font-size: .78rem; color: rgba(13,13,10,.5); line-height: 1.55 }
-
-/* Example photos strip */
-.cu-photos {
-  display: flex; gap: 8px; margin-top: -.5rem; width: 100%;
+.cu-step-t {
+  font-family: var(--bc); font-weight: 900;
+  font-size: clamp(.95rem, 1.5vw, 1.2rem);
+  text-transform: uppercase; letter-spacing: .02em;
+  color: var(--w); line-height: 1.1;
 }
-.cu-photo {
-  flex: 1; aspect-ratio: 2/3; border-radius: 6px;
-  border: 1.5px solid rgba(255,255,255,.1);
-  overflow: hidden; background: #1a1a18;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
+.cu-cta-block {
+  display: flex; flex-direction: column; gap: 1rem;
+  margin-top: 3vw;
 }
-.cu-photo-label {
-  font-family: var(--bc); font-weight: 900; font-size: .58rem;
-  letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(255,255,255,.2); text-align: center; padding: .5rem;
-}
-.cu-photo:nth-child(1) { background: #1c1a14 }
-.cu-photo:nth-child(2) { background: #141820 }
-.cu-photo:nth-child(3) { background: #181414 }
-.cu-photo-badge {
-  position: absolute; top: 5px; left: 5px;
-  background: var(--y); color: var(--k);
-  font-family: var(--bc); font-weight: 900; font-size: .5rem; letter-spacing: .06em;
-  padding: 1px 5px; border-radius: 2px; text-transform: uppercase;
-}
-.cu-photo-frame {
-  position: absolute; inset: 0;
-  border: 8px solid transparent;
-  border-radius: 5px;
-  pointer-events: none;
-}
-.cu-photo:nth-child(1) .cu-photo-frame { border-color: #1a1a18 }
-.cu-photo:nth-child(2) .cu-photo-frame { border-color: #c8b89a }
-.cu-photo:nth-child(3) .cu-photo-frame { border-color: #e8e8e4 }
-
-.cu-cta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap }
 .btn-k {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--k); color: var(--y);
-  font-family: var(--bc); font-weight: 900; font-size: .92rem;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--y); color: var(--k);
+  font-family: var(--bc); font-weight: 900; font-size: .95rem;
   letter-spacing: .06em; text-transform: uppercase;
-  padding: 0 24px; height: 48px; border-radius: 6px;
-  text-decoration: none; border: 2px solid var(--k);
-  transition: all .15s;
+  padding: 0 28px; height: 52px; border-radius: 6px;
+  text-decoration: none; border: 2px solid var(--y);
+  transition: all .15s; align-self: flex-start;
 }
-.btn-k:hover { background: transparent; color: var(--k) }
-.btn-k svg { width: 16px; height: 16px; fill: var(--y); transition: fill .15s }
-.btn-k:hover svg { fill: var(--k) }
-.cu-note { font-size: .75rem; color: rgba(13,13,10,.4); line-height: 1.5 }
+.btn-k:hover { background: transparent; color: var(--y) }
+.btn-k svg { width: 18px; height: 18px; fill: var(--k); transition: fill .15s; flex-shrink: 0 }
+.btn-k:hover svg { fill: var(--y) }
+.cu-note { font-size: .72rem; color: rgba(255,255,255,.25); }
+.cu-inner, .cu-l, .cu-r { display: none }
+
+@media (max-width: 860px) {
+  #custom { grid-template-columns: 1fr; min-height: unset; padding: 4vw; gap: 0 }
+  .cu-left-panel { border-right: 2px solid var(--k); border-bottom: none; border-radius: 16px 16px 0 0; padding: 8vw 5vw; min-height: 300px }
+  .cu-right-panel { border-radius: 0 0 16px 16px; padding: 8vw 5vw }
+  .btn-k { align-self: stretch; justify-content: center }
+}
+@media (max-width: 560px) {
+  .cu-left-panel { padding: 10vw 5vw }
+}
+
 
 /* ── FOOTER ── */
 footer {
@@ -607,15 +601,7 @@ footer {
   .pc { flex: 0 0 160px }
   .fr-new-body { padding: 5vw 5vw }
   .sz-strip { gap: .4rem }
-  .cu-trust { flex-direction: column; gap: .5rem }
-  .cu-cta-row { flex-direction: column; align-items: stretch }
-  .btn-k { justify-content: center }
-  #custom { padding: 8vw 5vw }
-  .cu-inner { gap: 0 }
-  .cu-l { margin-bottom: 2rem }
-  .cu-r { padding-top: 2rem }
-  .cu-steps { gap: 0 }
-  .cu-step { padding: 1rem 0 }
+  /* cu responsive handled above */
   .f-wm-text { font-size: clamp(3.5rem, 14vw, 6rem) }
   .f-wm-star { font-size: clamp(2.8rem, 11vw, 5rem) }
 }
@@ -691,7 +677,7 @@ footer {
 }
 
 .pb-right-sub {
-  font-size: clamp(.82rem, 1.1vw, .95rem);
+  font-size: .88rem;
   color: rgba(255,255,255,.5);
   line-height: 1.65;
   text-align: left;
@@ -837,18 +823,24 @@ footer {
 </section>
 
 <!-- MARQUEE -->
-<div class="mq">
+<div class="mq" aria-hidden="true">
   <div class="mq-t">
     <div class="mq-i">POSTER <span class="mq-d">✦</span></div>
     <div class="mq-i">FRAME <span class="mq-d">✦</span></div>
     <div class="mq-i">DEKORASI DINDING <span class="mq-d">✦</span></div>
     <div class="mq-i">CUSTOM DESAIN <span class="mq-d">✦</span></div>
     <div class="mq-i">PILIH &amp; PASANG <span class="mq-d">✦</span></div>
+    <div class="mq-i">CETAK RESOLUSI TINGGI <span class="mq-d">✦</span></div>
+    <div class="mq-i">SIAP PASANG <span class="mq-d">✦</span></div>
+  </div>
+  <div class="mq-t" aria-hidden="true">
     <div class="mq-i">POSTER <span class="mq-d">✦</span></div>
     <div class="mq-i">FRAME <span class="mq-d">✦</span></div>
     <div class="mq-i">DEKORASI DINDING <span class="mq-d">✦</span></div>
     <div class="mq-i">CUSTOM DESAIN <span class="mq-d">✦</span></div>
     <div class="mq-i">PILIH &amp; PASANG <span class="mq-d">✦</span></div>
+    <div class="mq-i">CETAK RESOLUSI TINGGI <span class="mq-d">✦</span></div>
+    <div class="mq-i">SIAP PASANG <span class="mq-d">✦</span></div>
   </div>
 </div>
 
@@ -1018,78 +1010,55 @@ footer {
 
 <!-- CUSTOM -->
 <section id="custom" class="rv">
-  <div class="cu-inner">
 
-    <!-- LEFT: Heading + Upload Mock + Trust -->
-    <div class="cu-l">
-      <h2 class="d">PUNYA FOTO<br><span class="y">SENDIRI?</span></h2>
-      <p class="cu-l-sub">Upload foto keluarga, momen liburan, atau foto spesial apa pun — kami cetak dan frame langsung siap pasang di dinding kamu.</p>
-
-      <!-- Upload Mock -->
-      <!-- Trust badges -->
-      <div class="cu-trust">
-        <div class="cu-badge">
-          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Privasi terjaga</span>
-        </div>
-        <div class="cu-badge">
-          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3"/></svg>
-          <span>Cetak resolusi tinggi</span>
-        </div>
-        <div class="cu-badge">
-          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          <span>Siap 2–4 hari kerja</span>
-        </div>
+  <!-- LEFT: yellow panel -->
+  <div class="cu-left-panel">
+    <h2 class="d cu-hl">PUNYA FOTO<br><span class="b">SENDIRI?</span></h2>
+    <div class="cu-trust">
+      <div class="cu-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Privasi terjaga</span>
+      </div>
+      <div class="cu-badge">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3"/></svg>
+        <span>Resolusi tinggi</span>
+      </div>
+      <div class="cu-badge">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span>2–4 hari kerja</span>
       </div>
     </div>
-
-    <!-- RIGHT: Steps + Photo Examples + CTA -->
-    <div class="cu-r">
-      <div class="cu-r-eyebrow">Cara kerja</div>
-
-      <div class="cu-steps">
-        <div class="cu-step">
-          <div class="cu-step-n">01</div>
-          <div>
-            <div class="cu-step-t">Kirim Foto</div>
-            <div class="cu-step-d">Upload file via WhatsApp atau Shopee. Pastikan resolusi cukup tajam untuk dicetak besar.</div>
-          </div>
-        </div>
-        <div class="cu-step">
-          <div class="cu-step-n">02</div>
-          <div>
-            <div class="cu-step-t">Pilih Ukuran & Frame</div>
-            <div class="cu-step-d">Tentukan ukuran (20×30 sampai 60×80 cm) dan pilihan frame: Hitam, Putih, Kayu, atau Chrome.</div>
-          </div>
-        </div>
-        <div class="cu-step">
-          <div class="cu-step-n">03</div>
-          <div>
-            <div class="cu-step-t">Konfirmasi Preview</div>
-            <div class="cu-step-d">Kami kirim preview digital sebelum cetak. Kamu setujui, baru kami proses.</div>
-          </div>
-        </div>
-        <div class="cu-step">
-          <div class="cu-step-n">04</div>
-          <div>
-            <div class="cu-step-t">Terima & Pasang</div>
-            <div class="cu-step-d">Packing aman, estimasi 2–4 hari kerja. Sampai rumah langsung bisa dipasang.</div>
-          </div>
-        </div>
-      </div>
-
-
-
-      <div class="cu-cta-row">
-        <a href="https://wa.me/6285830222232" target="_blank" class="btn-k">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.115.55 4.102 1.514 5.831L.057 23.215a.75.75 0 0 0 .916.919l5.506-1.44A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.698-.516-5.236-1.418l-.374-.22-3.882 1.016 1.035-3.77-.243-.388A9.961 9.961 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          Mulai Custom →
-        </a>
-      </div>
-      <p class="cu-note">Gratis konsultasi. Tidak ada biaya tambahan di luar harga yang disepakati.</p>
-    </div>
-
   </div>
+
+  <!-- RIGHT: dark panel — steps + CTA -->
+  <div class="cu-right-panel">
+    <div class="cu-steps">
+      <div class="cu-step">
+        <span class="cu-step-n">01</span>
+        <span class="cu-step-t">Kirim Foto</span>
+      </div>
+      <div class="cu-step">
+        <span class="cu-step-n">02</span>
+        <span class="cu-step-t">Pilih Ukuran & Frame</span>
+      </div>
+      <div class="cu-step">
+        <span class="cu-step-n">03</span>
+        <span class="cu-step-t">Konfirmasi Preview</span>
+      </div>
+      <div class="cu-step">
+        <span class="cu-step-n">04</span>
+        <span class="cu-step-t">Terima & Pasang</span>
+      </div>
+    </div>
+    <div class="cu-cta-block">
+      <a href="https://wa.me/6285830222232" target="_blank" class="btn-k">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.115.55 4.102 1.514 5.831L.057 23.215a.75.75 0 0 0 .916.919l5.506-1.44A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.698-.516-5.236-1.418l-.374-.22-3.882 1.016 1.035-3.77-.243-.388A9.961 9.961 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Mulai Custom →
+      </a>
+      <p class="cu-note">Gratis konsultasi. Tidak ada biaya tambahan.</p>
+    </div>
+  </div>
+
 </section>
 
 <!-- FOOTER -->
@@ -1329,23 +1298,11 @@ pf(document.querySelector('.fr-opt.on'), '#1a1a18', 'HITAM', '#111');
   padding-top: var(--sp-h2-mb) !important;
 }
 
-/* Custom section */
+/* Custom section — uses own card padding, outer wrapper stays tight */
 #custom {
-  padding: var(--sp-section) var(--sp-x) !important;
+  padding: 3vw !important;
 }
-.cu-inner {
-  gap: var(--sp-gap) !important;
-}
-.cu-l {
-  padding-right: clamp(20px, 3vw, 48px) !important;
-}
-.cu-l-sub {
-  margin-top: 1rem !important;
-}
-.cu-r {
-  padding-left: clamp(20px, 3vw, 48px) !important;
-  gap: var(--sp-gap) !important;
-}
+
 
 /* ─────────────────────────────────────────────
    KENAPA GRID — responsive fix
@@ -1475,8 +1432,7 @@ pf(document.querySelector('.fr-opt.on'), '#1a1a18', 'HITAM', '#111');
 #desain h2,
 #kenapa h2,
 .fr-new-h2,
-.ord-top h2,
-.cu-l h2 {
+.ord-top h2 {
   line-height: .9 !important;
 }
 
