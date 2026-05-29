@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
+<script src="firebase-config.js"></script>
 <script type="module">
   import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
@@ -17,15 +18,8 @@
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const cfg = {
-    apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
-    authDomain:"srupa-inventory.firebaseapp.com",
-    projectId:"srupa-inventory",
-    storageBucket:"srupa-inventory.firebasestorage.app",
-    messagingSenderId:"274644925840",
-    appId:"1:274644925840:web:e5f13a56077ee030db0715",
-    measurementId:"G-6DCXJ4KXXT"
-  };
+  // Config dimuat dari firebase-config.js (lihat firebase-config.example.js)
+  const cfg = window.FB_CFG || {};
   try {
     const app = initializeApp(cfg);
     getAnalytics(app);
@@ -1603,8 +1597,9 @@ let calYear       = new Date().getFullYear();
 let calMonth      = new Date().getMonth();
 let editContentId = null;
 
-const DRIVE_CLIENT_ID = '698679145322-ng87p5bos0rupvu8dhn2r1lkqdjecn3j.apps.googleusercontent.com';
-const DRIVE_API_KEY   = 'AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE';
+// Drive credentials dimuat dari firebase-config.js
+const DRIVE_CLIENT_ID = window.DRIVE_CLIENT_ID || '';
+const DRIVE_API_KEY   = window.DRIVE_API_KEY   || '';
 const DRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
 let driveAccessToken  = null;
 let driveCurrentFolder= null;
