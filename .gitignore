@@ -1,0 +1,12 @@
+# Konfigurasi sensitif — JANGAN di-commit
+firebase-config.js
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Log
+*.log
+npm-debug.log*
