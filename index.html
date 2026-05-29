@@ -1102,6 +1102,8 @@ footer {
   <p class="f-copy">© 2025 Srupa Labs · Jakarta</p>
 </footer>
 
+<script src="firebase-config.js"></script>
+<script src="products.js"></script>
 <script>
 const ro = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target) } }), {threshold:.07});
 
@@ -1133,12 +1135,9 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── FIREBASE CONFIG (sama dengan katalog.html) ──
-const FB_CFG = {
-  apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
-  authDomain:"srupa-inventory.firebaseapp.com",
-  projectId:"srupa-inventory",
-};
+// ── FIREBASE CONFIG — dimuat dari firebase-config.js ──
+// Jangan hardcode API key di sini. Lihat firebase-config.example.js
+const FB_CFG = window.FB_CFG || {};
 
 async function loadFromFirestore() {
   try {
@@ -1154,21 +1153,9 @@ async function loadFromFirestore() {
   return null;
 }
 
-// ── DATA KATALOG FALLBACK (dipakai kalau Firestore belum tersedia) ──
-const POSTERS = [
-  { id:1,  title:'Minimal Series 01',  tags:['minimalis'], badge:'hot', bg:'#F0ECE5', fgDark:false, label:'MIN',  sub:'IMAL 01',   img:'' },
-  { id:2,  title:'Minimal Series 02',  tags:['minimalis'], badge:'',   bg:'#EAE6DF', fgDark:false, label:'MIN',  sub:'IMAL 02',   img:'' },
-  { id:3,  title:'Abstract Forms',     tags:['abstract'],  badge:'new',bg:'#E5E8EA', fgDark:false, label:'ABS',  sub:'TRACT',     img:'' },
-  { id:4,  title:'Abstract Duo',       tags:['abstract'],  badge:'',   bg:'#DDE2E8', fgDark:false, label:'DUO',  sub:'ABSTRACT',  img:'' },
-  { id:5,  title:'Dark Room',          tags:['dark'],      badge:'',   bg:'#1E1E1E', fgDark:true,  label:'DRK',  sub:'ROOM',      img:'' },
-  { id:6,  title:'Noir Series',        tags:['dark'],      badge:'',   bg:'#252525', fgDark:true,  label:'NOIR', sub:'SERIES',    img:'' },
-  { id:7,  title:'Botanical Lines',    tags:['botanical'], badge:'',   bg:'#E8EDE6', fgDark:false, label:'BOT',  sub:'ANIK',      img:'' },
-  { id:8,  title:'Leaf Study',         tags:['botanical'], badge:'new',bg:'#E2E8E1', fgDark:false, label:'LEAF', sub:'STUDY',     img:'' },
-  { id:9,  title:'Typeset Vol. 1',     tags:['typografi'], badge:'',   bg:'#F2EEE8', fgDark:false, label:'TYPE', sub:'SET 01',    img:'' },
-  { id:10, title:'Typeset Vol. 2',     tags:['typografi'], badge:'',   bg:'#ECEAE4', fgDark:false, label:'TYPE', sub:'SET 02',    img:'' },
-  { id:11, title:'Vintage Catalog',    tags:['vintage'],   badge:'ltd',bg:'#EDE5D8', fgDark:false, label:'VTG',  sub:'CATALOG',   img:'' },
-  { id:12, title:'Retro Grid',         tags:['vintage'],   badge:'',   bg:'#E8E0D2', fgDark:false, label:'RTR',  sub:'GRID',      img:'' },
-];
+// ── DATA KATALOG — dimuat dari products.js ──
+// Jangan tambah/edit produk di sini. Edit products.js saja.
+const POSTERS = (window.SRUPA_POSTERS || []).slice(0, 12); // Tampilkan 12 pertama di marquee
 
 // ── RENDER MARQUEE ──
 function makeCard(p, tabIndex) {
