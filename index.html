@@ -1086,10 +1086,13 @@ function initReveal() {
 }
 initReveal();
 
-// Fallback: pastikan semua section terlihat setelah 800ms
+// Fallback: reveal hanya yang sudah dalam viewport setelah 1.2s
 setTimeout(() => {
-  document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
-}, 800);
+  document.querySelectorAll('.rv:not(.in)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight * 1.2) el.classList.add('in');
+  });
+}, 1200);
 
 // ── DROPDOWN NAV ──
 function toggleDropdown() {
@@ -1219,3 +1222,691 @@ pf(document.querySelector('.fr-opt.on'), '#1a1a18', 'HITAM', '#111');
 </script>
 </body>
 </html>
+
+<!-- ══════════════════════════════════════════
+     SRUPA LABS — LAYOUT & RHYTHM FIX
+     Sistem spacing konsisten, section rhythm breathable,
+     mobile fit, section-to-section transition smooth.
+     Override > original CSS (specificity + cascade).
+     ══════════════════════════════════════════ -->
+<style>
+
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS — spacing scale
+   Semua section pakai var ini, bukan vw bare.
+   Desktop: --sp-section = 80px
+   Tablet:  --sp-section = 60px
+   Mobile:  --sp-section = 48px
+───────────────────────────────────────────── */
+:root {
+  --sp-x: clamp(20px, 5vw, 80px);       /* horizontal padding */
+  --sp-section: clamp(48px, 7vw, 80px); /* vertical section padding */
+  --sp-gap: clamp(1.25rem, 3vw, 2.5rem);/* internal gap */
+  --sp-h2-mb: clamp(1.5rem, 4vw, 3rem); /* heading → content gap */
+}
+
+/* ─────────────────────────────────────────────
+   SECTION SEPARATOR RHYTHM
+   Setiap section punya top/bottom breathing room
+   yang konsisten dan proporsional.
+───────────────────────────────────────────── */
+
+/* Desain section */
+#desain {
+  padding: var(--sp-section) var(--sp-x) !important;
+}
+#desain .ds-hd {
+  margin-bottom: var(--sp-h2-mb) !important;
+}
+
+/* Kenapa section */
+#kenapa {
+  padding: var(--sp-section) var(--sp-x) !important;
+}
+#kenapa h2 {
+  margin-bottom: var(--sp-h2-mb) !important;
+}
+
+/* Stats section */
+#stats {
+  padding: clamp(32px, 5vw, 64px) 0 !important;
+}
+.st {
+  padding: 0 var(--sp-x) !important;
+  border-right: 1px solid rgba(13,13,10,.12);
+}
+.st:last-child { border-right: none !important }
+
+/* Frame section */
+.fr-new-body {
+  padding: var(--sp-section) clamp(24px, 4vw, 60px) var(--sp-section) var(--sp-x) !important;
+  gap: var(--sp-gap) !important;
+}
+
+/* Order section */
+#order {
+  padding: var(--sp-section) var(--sp-x) !important;
+}
+.ord-top {
+  margin-bottom: var(--sp-h2-mb) !important;
+}
+.ch-list {
+  margin-bottom: var(--sp-h2-mb) !important;
+  gap: var(--sp-gap) !important;
+}
+.ord-steps-row {
+  padding-top: var(--sp-h2-mb) !important;
+}
+
+/* Custom section */
+#custom {
+  padding: var(--sp-section) var(--sp-x) !important;
+}
+.cu-inner {
+  gap: var(--sp-gap) !important;
+}
+.cu-l {
+  padding-right: clamp(20px, 3vw, 48px) !important;
+}
+.cu-l-sub {
+  margin-top: 1rem !important;
+}
+.cu-r {
+  padding-left: clamp(20px, 3vw, 48px) !important;
+  gap: var(--sp-gap) !important;
+}
+
+/* ─────────────────────────────────────────────
+   KENAPA GRID — responsive fix
+   4col → 2col tablet → 1col mobile (tidak ada gap di 768)
+───────────────────────────────────────────── */
+.kg {
+  gap: 0;
+}
+.ki {
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.75rem) !important;
+}
+
+@media (max-width: 860px) {
+  .kg {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .ki {
+    border-right: 1px solid rgba(255,255,255,.08) !important;
+    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  }
+  .ki:nth-child(2n) { border-right: none !important }
+  .ki:nth-child(3),
+  .ki:nth-child(4) { border-bottom: none !important }
+}
+
+@media (max-width: 480px) {
+  .kg {
+    grid-template-columns: 1fr !important;
+  }
+  .ki {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  }
+  .ki:last-child { border-bottom: none !important }
+}
+
+/* ─────────────────────────────────────────────
+   ORDER CARDS (ch) — fix tablet
+───────────────────────────────────────────── */
+@media (min-width: 569px) and (max-width: 860px) {
+  .ch-list {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .ch:last-child {
+    grid-column: 1 / -1;
+  }
+  .ch {
+    flex-direction: column !important;
+    padding: 1.5rem 1.25rem !important;
+  }
+  .ch-ico { margin-bottom: 1rem !important }
+  .ch-d { display: block !important }
+  .ch-arr { margin-top: 1rem !important; margin-left: 0 !important }
+}
+
+/* ─────────────────────────────────────────────
+   STEPS — padding dan spacing mobile
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .step {
+    padding: clamp(1rem, 4vw, 1.5rem) 0 !important;
+  }
+  .step-n {
+    font-size: clamp(2rem, 6vw, 3rem) !important;
+    margin-bottom: .5rem !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   CUSTOM SECTION — col left padding fix mobile
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cu-inner {
+    grid-template-columns: 1fr !important;
+  }
+  .cu-l {
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .cu-r {
+    padding-left: 0 !important;
+    border-left: none !important;
+    border-top: 1px solid rgba(13,13,10,.15) !important;
+    padding-top: var(--sp-gap) !important;
+    margin-top: var(--sp-gap) !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   STATS MOBILE — grid 2x2 lebih rapi dari scroll
+   di 560px ke bawah kita tetap grid 2x2, bukan scroll
+   (lebih readable, tidak perlu scroll horizontal)
+───────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .st-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    flex-wrap: unset !important;
+    overflow: unset !important;
+  }
+  .st {
+    flex: unset !important;
+    padding: clamp(16px, 5vw, 24px) var(--sp-x) !important;
+    border-right: 1px solid rgba(13,13,10,.12) !important;
+    border-bottom: 1px solid rgba(13,13,10,.12) !important;
+  }
+  .st:nth-child(2n) { border-right: none !important }
+  .st:nth-child(3),
+  .st:nth-child(4) { border-bottom: none !important }
+  .st-v { font-size: clamp(2.2rem, 9vw, 3rem) !important }
+  .st-l { font-size: .72rem !important }
+}
+
+/* ─────────────────────────────────────────────
+   PROMO BANNER — tighter mobile
+───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .pb-left {
+    padding: clamp(1.25rem, 5vw, 2rem) var(--sp-x) clamp(.5rem, 2vw, 1rem) !important;
+  }
+  .pb-right {
+    padding: clamp(.5rem, 2vw, 1rem) var(--sp-x) clamp(1.25rem, 5vw, 2rem) !important;
+  }
+  .pb-img {
+    min-height: 140px !important;
+    max-height: 180px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   SECTION TRANSITION VISUAL RHYTHM
+   Tiap section dengan background berbeda punya
+   "entrance" yang lebih halus — subtle top shadow
+   agar transition background tampak smooth bukan hard cut.
+───────────────────────────────────────────── */
+
+/* Dark → Yellow: stats ke custom */
+#stats {
+  box-shadow: inset 0 -1px 0 rgba(13,13,10,1);
+}
+
+/* Section heading consistent top label spacing */
+#desain h2,
+#kenapa h2,
+.fr-new-h2,
+.ord-top h2,
+.cu-l h2 {
+  line-height: .9 !important;
+}
+
+/* ─────────────────────────────────────────────
+   REVEAL SYSTEM OVERHAUL
+   Berbeda tiap "mood" section:
+   - Light sections (cream/yellow): slide up soft
+   - Dark sections (hitam): fade in saja (translateY terasa berat di dark bg)
+   - Stats: scale up subtle
+───────────────────────────────────────────── */
+
+/* Base reset rv dengan easing lebih smooth */
+.rv {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity  .75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform .75s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.rv.in {
+  opacity: 1;
+  transform: none !important;
+}
+
+/* Dark sections — fade only, no translate */
+#kenapa,
+#order {
+  opacity: 0;
+  transform: none !important; /* no vertical shift on dark bg */
+  transition: opacity .8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#kenapa.in,
+#order.in {
+  opacity: 1 !important;
+}
+
+/* Stats section — scale + fade */
+#stats {
+  opacity: 0;
+  transform: scaleY(0.96) !important;
+  transform-origin: top center;
+  transition:
+    opacity  .6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform .6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#stats.in {
+  opacity: 1 !important;
+  transform: scaleY(1) !important;
+}
+
+/* Custom section (yellow) — slide from left subtle */
+#custom {
+  opacity: 0;
+  transform: translateY(20px) !important;
+  transition:
+    opacity  .75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform .75s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#custom.in {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Frame section */
+#frame {
+  opacity: 0;
+  transform: translateY(20px) !important;
+  transition:
+    opacity  .7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform .7s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#frame.in {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ─────────────────────────────────────────────
+   TRUST BADGES mobile stack → wrap rapi
+───────────────────────────────────────────── */
+.cu-trust {
+  gap: clamp(.5rem, 2vw, .75rem) !important;
+  flex-wrap: wrap !important;
+}
+.cu-badge {
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .cu-trust { flex-direction: row !important; }
+  .cu-badge { font-size: .68rem }
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER spacing breathable
+───────────────────────────────────────────── */
+footer {
+  padding: clamp(3rem, 7vw, 6rem) var(--sp-x) clamp(2rem, 4vw, 4rem) !important;
+  gap: clamp(1.5rem, 4vw, 3rem) !important;
+}
+.f-socrow {
+  padding-top: clamp(1.25rem, 3vw, 3vw) !important;
+}
+@media (max-width: 480px) {
+  .f-socrow {
+    flex-wrap: wrap !important;
+    gap: .75rem !important;
+    justify-content: center !important;
+  }
+  .f-socrow a {
+    flex: 0 0 auto !important;
+    font-size: .72rem !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   HEADER SECTION LABELS — consistent eyebrow spacing
+───────────────────────────────────────────── */
+.fr-new-eyebrow,
+.cu-r-eyebrow {
+  margin-bottom: 0 !important; /* gap handled by parent flex gap */
+  letter-spacing: .14em !important;
+}
+
+</style>
+
+<!-- ══════════════════════════════════════════
+     SRUPA LABS — INTERACTION ENHANCEMENTS
+     Zero extra network requests. CSS + vanilla JS only.
+     Techniques: split-text reveal, scroll counter,
+     scroll parallax (rAF throttled), magnetic CTA.
+     ══════════════════════════════════════════ -->
+<style>
+/* ── HERO HEADLINE SPLIT TEXT ── */
+.h-hl .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: inherit;
+}
+.h-hl .word-inner {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  /* use will-change only on animated elements; auto-removed after anim */
+  will-change: transform, opacity;
+}
+.h-hl.words-ready .word-inner {
+  animation: wordReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes wordReveal {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ── STATS COUNTER ── */
+.st-v[data-target] {
+  transition: color 0.2s;
+}
+
+/* ── PARALLAX HERO IMAGE ── */
+/* Slight depth layer on the .h-img::background */
+.h-img img {
+  will-change: transform;
+}
+
+/* ── MAGNETIC BUTTON ── */
+.btn-magnetic {
+  display: inline-flex; /* preserve existing display */
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.15s, color 0.15s !important;
+}
+
+/* ── LINK BTN SMOOTH PRESS (links.html compatible) ── */
+.link-btn {
+  transition: transform 0.2s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.2s cubic-bezier(0.23,1,0.32,1),
+              background 0.15s, color 0.15s !important;
+}
+
+/* ── SECTION STAGGER REVEAL UPGRADE ── */
+/* Override base .rv with a slightly smoother curve */
+.rv {
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Stats items: stagger */
+.st:nth-child(1) { transition-delay: 0s }
+.st:nth-child(2) { transition-delay: 0.08s }
+.st:nth-child(3) { transition-delay: 0.16s }
+.st:nth-child(4) { transition-delay: 0.24s }
+
+/* ki items: stagger */
+.ki:nth-child(1) { opacity: 0; transform: translateY(18px); transition: opacity 0.6s 0s cubic-bezier(0.16,1,0.3,1), transform 0.6s 0s cubic-bezier(0.16,1,0.3,1) }
+.ki:nth-child(2) { opacity: 0; transform: translateY(18px); transition: opacity 0.6s 0.08s cubic-bezier(0.16,1,0.3,1), transform 0.6s 0.08s cubic-bezier(0.16,1,0.3,1) }
+.ki:nth-child(3) { opacity: 0; transform: translateY(18px); transition: opacity 0.6s 0.16s cubic-bezier(0.16,1,0.3,1), transform 0.6s 0.16s cubic-bezier(0.16,1,0.3,1) }
+.ki:nth-child(4) { opacity: 0; transform: translateY(18px); transition: opacity 0.6s 0.24s cubic-bezier(0.16,1,0.3,1), transform 0.6s 0.24s cubic-bezier(0.16,1,0.3,1) }
+#kenapa.in .ki { opacity: 1; transform: none }
+
+/* ch cards stagger */
+.ch:nth-child(1) { transition-delay: 0s }
+.ch:nth-child(2) { transition-delay: 0.09s }
+.ch:nth-child(3) { transition-delay: 0.18s }
+
+/* step stagger */
+.step:nth-child(1) { opacity: 0; transform: translateY(14px); transition: opacity 0.5s 0s ease, transform 0.5s 0s ease }
+.step:nth-child(2) { opacity: 0; transform: translateY(14px); transition: opacity 0.5s 0.1s ease, transform 0.5s 0.1s ease }
+.step:nth-child(3) { opacity: 0; transform: translateY(14px); transition: opacity 0.5s 0.2s ease, transform 0.5s 0.2s ease }
+#order.in .step { opacity: 1; transform: none }
+
+/* ── PROMO BANNER HOVER TILT ── */
+.promo-banner {
+  transition: none;
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ────────────────────────────────────────
+     1. HERO HEADLINE — SPLIT TEXT WORD REVEAL
+     Splits .h-hl by word, wraps in .word > .word-inner,
+     animates with CSS stagger delays. Lightweight: no library.
+  ──────────────────────────────────────── */
+  function initHeroSplit() {
+    const hl = document.querySelector('.h-hl');
+    if (!hl) return;
+
+    // We need to handle mixed text + <span class="y"> children
+    // Walk child nodes, split text into words, preserve spans
+    const fragment = document.createDocumentFragment();
+    let wordDelay = 0;
+    const DELAY_STEP = 0.08; // seconds per word
+
+    function wrapWord(text, extraClass) {
+      const word = document.createElement('span');
+      word.className = 'word' + (extraClass ? ' ' + extraClass : '');
+      const inner = document.createElement('span');
+      inner.className = 'word-inner';
+      inner.textContent = text;
+      word.appendChild(inner);
+      word.style.setProperty('--d', wordDelay + 's');
+      inner.style.animationDelay = wordDelay + 's';
+      wordDelay += DELAY_STEP;
+      return word;
+    }
+
+    hl.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        // split by whitespace, preserve <br> via \n
+        const parts = node.textContent.split(/(\s+)/);
+        parts.forEach(part => {
+          if (part.trim()) {
+            fragment.appendChild(wrapWord(part));
+          } else if (part.includes('\n')) {
+            fragment.appendChild(document.createElement('br'));
+          } else if (part) {
+            // space between words
+            fragment.appendChild(document.createTextNode(' '));
+          }
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName === 'BR') {
+          fragment.appendChild(document.createElement('br'));
+        } else {
+          // e.g. <span class="y">SPACE</span>
+          const words = node.textContent.split(/\s+/).filter(Boolean);
+          words.forEach((w, i) => {
+            const wrapped = wrapWord(w, node.className);
+            fragment.appendChild(wrapped);
+            if (i < words.length - 1) fragment.appendChild(document.createTextNode(' '));
+          });
+        }
+      }
+    });
+
+    hl.innerHTML = '';
+    hl.appendChild(fragment);
+
+    // Trigger after a short frame delay so layout is stable
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        hl.classList.add('words-ready');
+        // Clean up will-change after animations complete
+        const totalDur = (wordDelay + 0.65) * 1000;
+        setTimeout(() => {
+          hl.querySelectorAll('.word-inner').forEach(el => el.style.willChange = 'auto');
+        }, totalDur);
+      });
+    });
+  }
+
+  /* ────────────────────────────────────────
+     2. STATS COUNTER — animate numbers on scroll-in
+     Parses .st-v text (handles "50+", "100%", bare numbers)
+  ──────────────────────────────────────── */
+  function initCounters() {
+    const stats = document.querySelector('#stats');
+    if (!stats) return;
+
+    const items = stats.querySelectorAll('.st-v');
+    items.forEach(el => {
+      const raw = el.textContent.trim();
+      const num = parseInt(raw, 10);
+      if (isNaN(num)) return;
+      const suffix = raw.replace(/[0-9]/g, '');
+      el.dataset.target = num;
+      el.dataset.suffix = suffix;
+      el.textContent = '0' + suffix;
+    });
+
+    let animated = false;
+    const countObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !animated) {
+          animated = true;
+          countObs.disconnect();
+          items.forEach(el => {
+            if (!el.dataset.target) return;
+            const target = +el.dataset.target;
+            const suffix = el.dataset.suffix || '';
+            const duration = 1200;
+            const start = performance.now();
+            function tick(now) {
+              const elapsed = now - start;
+              const progress = Math.min(elapsed / duration, 1);
+              // ease out quart
+              const eased = 1 - Math.pow(1 - progress, 4);
+              el.textContent = Math.round(eased * target) + suffix;
+              if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    countObs.observe(stats);
+  }
+
+  /* ────────────────────────────────────────
+     3. HERO PARALLAX — subtle scroll depth
+     rAF-throttled, reads scroll once per frame.
+     Only active when hero is visible (~1 viewport).
+  ──────────────────────────────────────── */
+  function initParallax() {
+    const heroImg = document.querySelector('#hero .h-img img');
+    if (!heroImg) return;
+
+    // Skip on touch/mobile — parallax can feel janky on scroll
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    let ticking = false;
+    let lastY = 0;
+    const FACTOR = 0.18; // 0 = none, 1 = full scroll — keep subtle
+
+    window.addEventListener('scroll', () => {
+      lastY = window.scrollY;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          const heroH = document.getElementById('hero').offsetHeight;
+          if (lastY < heroH * 1.5) { // only when hero in range
+            heroImg.style.transform = `translateY(${lastY * FACTOR}px) scale(1.05)`;
+          }
+          ticking = false;
+        });
+      }
+    }, { passive: true });
+
+    // Initial scale so parallax doesn't show gap at top
+    heroImg.style.transform = 'translateY(0) scale(1.05)';
+  }
+
+  /* ────────────────────────────────────────
+     4. MAGNETIC BUTTONS — subtle cursor pull
+     Only on desktop hover-capable devices.
+     Applies to .btn-y, .fr-cta, .btn-k
+  ──────────────────────────────────────── */
+  function initMagnetic() {
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    const targets = document.querySelectorAll('.btn-y, .fr-cta, .btn-k, .pb-btn');
+    const STRENGTH = 0.32; // 0–1, how much the button follows cursor
+
+    targets.forEach(btn => {
+      btn.classList.add('btn-magnetic');
+
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = (e.clientX - cx) * STRENGTH;
+        const dy = (e.clientY - cy) * STRENGTH;
+        btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0,0)';
+      });
+    });
+  }
+
+  /* ────────────────────────────────────────
+     5. SECTION HIGHLIGHT LINES (Step numbers)
+     Animate the faint step numbers from 0 opacity
+     with a quick fade when section enters view.
+  ──────────────────────────────────────── */
+  function initStepNumbers() {
+    const steps = document.querySelectorAll('.step-n');
+    steps.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transition = `opacity 0.6s ${0.15 + i * 0.12}s ease`;
+    });
+
+    const section = document.querySelector('#order');
+    if (!section) return;
+
+    const obs = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (e.isIntersecting) {
+          steps.forEach(el => el.style.opacity = '');
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.15 });
+    obs.observe(section);
+  }
+
+  /* ────────────────────────────────────────
+     INIT — run after DOM ready
+  ──────────────────────────────────────── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  function boot() {
+    initHeroSplit();
+    initCounters();
+    initParallax();
+    initMagnetic();
+    initStepNumbers();
+  }
+
+})();
+</script>
