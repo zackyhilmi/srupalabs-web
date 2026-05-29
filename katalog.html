@@ -139,6 +139,21 @@ nav{
 }
 .sort-select:hover{background:var(--y)}
 
+/* ── FILTER CHIPS ── */
+.toolbar{justify-content:space-between}
+.filter-chips{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;flex:1;min-width:0}
+.chip{
+  font-family:var(--bc);font-weight:900;font-size:.75rem;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:.38rem .75rem;border:2px solid var(--k);border-radius:4px;
+  background:transparent;color:var(--k);cursor:pointer;
+  transition:background .12s,color .12s,transform .1s;
+  white-space:nowrap;
+}
+.chip:hover{background:var(--k);color:var(--c)}
+.chip-active{background:var(--k);color:var(--c)}
+.chip-active:hover{background:var(--b);border-color:var(--b)}
+
 /* ── GRID ── */
 .catalog-wrap{padding:2rem 5vw 5rem}
 .poster-grid{
@@ -450,6 +465,19 @@ nav{
 
 <!-- TOOLBAR -->
 <div class="toolbar">
+  <div class="filter-chips" id="filterChips">
+    <button class="chip chip-active" onclick="setFilter('all')">Semua</button>
+    <button class="chip" onclick="setFilter('bauhaus')">Bauhaus</button>
+    <button class="chip" onclick="setFilter('street')">Street</button>
+    <button class="chip" onclick="setFilter('typografi')">Tipografi</button>
+    <button class="chip" onclick="setFilter('peta')">Peta Kota</button>
+    <button class="chip" onclick="setFilter('minimalis')">Minimalis</button>
+    <button class="chip" onclick="setFilter('abstract')">Abstract</button>
+    <button class="chip" onclick="setFilter('motivasi')">Motivasi</button>
+    <button class="chip" onclick="setFilter('budaya')">Budaya</button>
+    <button class="chip" onclick="setFilter('popart')">Pop Art</button>
+    <button class="chip" onclick="setFilter('vintage')">Vintage</button>
+  </div>
   <div class="toolbar-right">
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
@@ -533,15 +561,15 @@ nav{
   </div>
 </div>
 
+<script src="firebase-config.js"></script>
+<script src="products.js"></script>
 <script>
 // ──────────────────────────────────────────────
 // FIREBASE: baca cms_posters dari Firestore
 // ──────────────────────────────────────────────
-const FB_CFG = {
-  apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
-  authDomain:"srupa-inventory.firebaseapp.com",
-  projectId:"srupa-inventory",
-};
+// ── FIREBASE CONFIG — dimuat dari firebase-config.js ──
+// Jangan hardcode API key di sini. Lihat firebase-config.example.js
+const FB_CFG = window.FB_CFG || {};
 
 async function loadFromFirestore() {
   try {
@@ -578,94 +606,52 @@ const FRAMES = [
 ];
 
 // ── POSTER DATABASE ──
-// Tambah poster baru di sini. Untuk 'img', isi path foto aslimu.
-// Contoh: img:'images/poster-minimal-01.jpg'
-// Kosongkan img:'' jika belum ada foto.
-const POSTERS = [
-  {
-    id:1, title:'Minimal Series 01',
-    desc:'Garis-garis bersih yang menenangkan. Komposisi geometris sederhana yang cocok untuk kamar atau ruang kerja minimalis.',
-    tags:['minimalis'],badge:'hot',
-    bg:'#F0ECE5', fgDark:false, label:'MIN', sub:'IMAL 01',
-    img:'',
-  },
-  {
-    id:2, title:'Minimal Series 02',
-    desc:'Variasi kedua dari seri Minimal — lebih asimetris, lebih dinamis. Tetap clean dan elegan.',
-    tags:['minimalis'],badge:'',
-    bg:'#EAE6DF', fgDark:false, label:'MIN', sub:'IMAL 02',
-    img:'',
-  },
-  {
-    id:3, title:'Abstract Forms',
-    desc:'Bentuk geometris abstrak yang playful. Energik dan modern — cocok jadi focal point ruangan manapun.',
-    tags:['abstract'],badge:'new',
-    bg:'#E5E8EA', fgDark:false, label:'ABS', sub:'TRACT',
-    img:'',
-  },
-  {
-    id:4, title:'Abstract Duo',
-    desc:'Dua komposisi abstract yang saling melengkapi. Ideal untuk dipasang berdampingan sebagai diptych.',
-    tags:['abstract'],badge:'',
-    bg:'#DDE2E8', fgDark:false, label:'DUO', sub:'ABSTRACT',
-    img:'',
-  },
-  {
-    id:5, title:'Dark Room',
-    desc:'Kontras tinggi, suasana dramatis. Cocok jadi statement piece di ruang tamu atau area lounge.',
-    tags:['dark'],badge:'',
-    bg:'#1E1E1E', fgDark:true, label:'DRK', sub:'ROOM',
-    img:'',
-  },
-  {
-    id:6, title:'Noir Series',
-    desc:'Palette monokrom dengan tekstur halus. Elegan dan timeless untuk ruang bergaya industrial.',
-    tags:['dark','minimalis'],badge:'',
-    bg:'#252525', fgDark:true, label:'NOIR', sub:'SERIES',
-    img:'',
-  },
-  {
-    id:7, title:'Botanical Lines',
-    desc:'Ilustrasi botanical minimalis bergaya line art. Natural dan menenangkan untuk dapur atau ruang makan.',
-    tags:['botanical'],badge:'',
-    bg:'#E8EDE6', fgDark:false, label:'BOT', sub:'ANIK',
-    img:'',
-  },
-  {
-    id:8, title:'Leaf Study',
-    desc:'Studi detail daun tropis dalam gaya ilustrasi halus. Nuansa segar dan organik.',
-    tags:['botanical'],badge:'new',
-    bg:'#E2E8E1', fgDark:false, label:'LEAF', sub:'STUDY',
-    img:'',
-  },
-  {
-    id:9, title:'Typeset Vol. 1',
-    desc:'Tipografi bold dengan layout editorial yang kuat. Personal, inspiring, dan langsung menjadi karakter ruangan.',
-    tags:['typografi'],badge:'',
-    bg:'#F2EEE8', fgDark:false, label:'TYPE', sub:'SET 01',
-    img:'',
-  },
-  {
-    id:10, title:'Typeset Vol. 2',
-    desc:'Kata-kata pendek yang penuh makna. Font serif klasik bertemu layout kontemporer.',
-    tags:['typografi'],badge:'',
-    bg:'#ECEAE4', fgDark:false, label:'TYPE', sub:'SET 02',
-    img:'',
-  },
-  {
-    id:11, title:'Vintage Catalog',
-    desc:'Nuansa zine dan catalog vintage tahun 70-an. Hangat, nostalgik, dan berkarakter kuat.',
-    tags:['vintage'],badge:'ltd',
-    bg:'#EDE5D8', fgDark:false, label:'VTG', sub:'CATALOG',
-    img:'',
-  },
-  {
-    id:12, title:'Retro Grid',
-    desc:'Grid sistem retro dengan warna faded. Cocok untuk ruang yang butuh sentuhan kepribadian.',
-    tags:['vintage','abstract'],badge:'',
-    bg:'#E8E0D2', fgDark:false, label:'RTR', sub:'GRID',
-    img:'',
-  },
+// Data dimuat dari products.js (window.SRUPA_POSTERS).
+// Untuk menambah/edit produk: edit products.js saja — berlaku di semua halaman.
+// Firestore akan override data ini jika tersedia.
+const POSTERS = (window.SRUPA_POSTERS && window.SRUPA_POSTERS.length) ? window.SRUPA_POSTERS : [
+  {id:1,title:'Urban Mask Portrait',desc:'Potret urban dengan topeng — bold, misterius, dan punya karakter kuat. Cocok jadi statement piece.',tags:['street','abstract'],badge:'hot',bg:'#1A1A1A',fgDark:true,label:'URBAN',sub:'MASK',img:'images/1. Urban Mask Portrait.webp'},
+  {id:2,title:'Vintage Racing Street Culture',desc:'Nuansa street racing era 70-an yang raw dan authentic. Untuk ruangan yang punya kepribadian.',tags:['street','vintage'],badge:'hot',bg:'#2B2B2B',fgDark:true,label:'VTG',sub:'RACE',img:'images/2. Vintage Racing Street Culture.webp'},
+  {id:3,title:'Peace Hand Pop Art',desc:'Ikon tangan peace dalam estetika pop art yang vivid. Playful, colorful, dan penuh energi positif.',tags:['popart','street'],badge:'new',bg:'#E8E0D2',fgDark:false,label:'POP',sub:'ART',img:'images/3. Peace Hand Pop Art.webp'},
+  {id:4,title:'Keep Going Motivation',desc:'Tipografi motivasional yang kuat. Pengingat harian yang elegan untuk ruang kerja atau kamar.',tags:['typografi','motivasi'],badge:'',bg:'#F0EBE3',fgDark:false,label:'KEEP',sub:'GOING',img:'images/4. Keep Going Motivation.webp'},
+  {id:5,title:'Metal Hand Gesture',desc:'Gesture tangan metal yang ikonik — raw, edgy, dan berkarakter kuat untuk ruang personal.',tags:['street','abstract'],badge:'',bg:'#1C1C1C',fgDark:true,label:'MTL',sub:'HAND',img:'images/5. Metal Hand Gesture.webp'},
+  {id:6,title:'Bauhaus Rising Sun',desc:'Komposisi Bauhaus terinspirasi matahari terbit — geometris, bold, dan optimistik.',tags:['bauhaus'],badge:'',bg:'#E8C84A',fgDark:false,label:'BAUS',sub:'SUN',img:'images/7. Bauhaus Rising Sun.webp'},
+  {id:7,title:'Eight Ball Minimal',desc:'Bola biliar 8 dalam presentasi minimalis yang clean. Simpel tapi punya presence yang kuat.',tags:['minimalis','dark'],badge:'',bg:'#111111',fgDark:true,label:'8',sub:'BALL',img:'images/8. Eight Ball Minimal.webp'},
+  {id:8,title:'Moist Typography',desc:'Eksplorasi tipografi eksperimental dengan tekstur dan mood yang unik. Untuk ruangan yang berani.',tags:['typografi'],badge:'',bg:'#D4E8E0',fgDark:false,label:'TYPE',sub:'MOIST',img:'images/9. Moist Typography.webp'},
+  {id:9,title:'Minesweeper',desc:'Nostalgia game klasik dalam format poster art. Unik, unexpected, dan pasti jadi conversation starter.',tags:['abstract','popart'],badge:'',bg:'#C0C0C0',fgDark:false,label:'MINE',sub:'SWEEP',img:'images/10. Minesweeper.webp'},
+  {id:10,title:'Bandung City Map',desc:'Peta kota Bandung dalam estetika minimalis yang bersih. Sempurna untuk warga atau pecinta Bandung.',tags:['peta','minimalis'],badge:'',bg:'#EDE8E0',fgDark:false,label:'BDG',sub:'MAP',img:'images/11. Bandung City Map.webp'},
+  {id:11,title:'Turn It On',desc:'Tipografi energetik yang memanggil aksi. Visual yang cocok untuk ruang produktif atau gym.',tags:['typografi','motivasi'],badge:'',bg:'#F5F0E8',fgDark:false,label:'TURN',sub:'IT ON',img:'images/12. Turn It On.webp'},
+  {id:12,title:'Control Your World',desc:'Pesan yang kuat dalam layout tipografi yang commanding. Untuk ruang yang butuh inspirasi.',tags:['typografi','motivasi'],badge:'',bg:'#E8EFF5',fgDark:false,label:'CTRL',sub:'WORLD',img:'images/13. Control Your World.webp'},
+  {id:13,title:'Mind Maze',desc:'Eksplorasi visual labirin psikologis yang menarik. Intriging dan penuh lapisan makna.',tags:['abstract'],badge:'',bg:'#2A2A2A',fgDark:true,label:'MIND',sub:'MAZE',img:'images/14. Mind Maze.webp'},
+  {id:14,title:'Bauhaus Vertical Motion',desc:'Dinamika vertikal dalam komposisi Bauhaus yang kuat. Memberi ilusi gerak dan energi.',tags:['bauhaus'],badge:'',bg:'#F5F0E8',fgDark:false,label:'BAUS',sub:'VERT',img:'images/15. Bauhaus Vertical Motion.webp'},
+  {id:15,title:'Bauhaus Organic Blocks',desc:'Blok-blok geometris dengan sentuhan organik. Balance sempurna antara struktur dan kebebasan.',tags:['bauhaus'],badge:'',bg:'#E8F0E0',fgDark:false,label:'BAUS',sub:'BLOK',img:'images/16. Bauhaus Organic Blocks.webp'},
+  {id:16,title:'Bauhaus Color Mosaic',desc:'Mosaik warna Bauhaus yang vivid dan ritmis. Sumber energi visual untuk ruangan manapun.',tags:['bauhaus'],badge:'',bg:'#F8F0D8',fgDark:false,label:'BAUS',sub:'MOSAIC',img:'images/17. Bauhaus Color Mosaic.webp'},
+  {id:17,title:'Bauhaus Linear Wave',desc:'Gelombang linear yang flowing dan meditatif. Estetika Bauhaus yang tenang namun tegas.',tags:['bauhaus'],badge:'',bg:'#E8ECF5',fgDark:false,label:'BAUS',sub:'WAVE',img:'images/18. Bauhaus Linear Wave.webp'},
+  {id:18,title:'Toy Soldier Defy Expectation',desc:'Soldadu mainan yang menantang ekspektasi — playful meets rebellious dalam satu frame.',tags:['street','popart'],badge:'new',bg:'#F0E8E8',fgDark:false,label:'TOY',sub:'SOLDIER',img:'images/19. Toy Soldier Defy Expectation.webp'},
+  {id:19,title:'Javanese Dance',desc:'Keindahan tari Jawa dalam visual kontemporer. Warisan budaya yang timeless dan elegan.',tags:['budaya','abstract'],badge:'new',bg:'#F5EDD8',fgDark:false,label:'JAVA',sub:'DANCE',img:'images/20. Javanese Dance.webp'},
+  {id:20,title:'Bauhaus Circular Contrast',desc:'Kontras dramatis dalam komposisi sirkular Bauhaus. Bold, tegas, dan memorable.',tags:['bauhaus'],badge:'',bg:'#1A1A1A',fgDark:true,label:'BAUS',sub:'CIRCLE',img:'images/21. Bauhaus Circular Contrast.webp'},
+  {id:21,title:'Surabaya City Map',desc:'Peta kota Surabaya dalam estetika minimalis bersih. Untuk warga atau siapapun yang cinta Surabaya.',tags:['peta','minimalis'],badge:'',bg:'#EDE8E0',fgDark:false,label:'SBY',sub:'MAP',img:'images/22. Surabaya City Map.webp'},
+  {id:22,title:'Silent Power',desc:'Kekuatan dalam keheningan — tipografi dark yang powerful dan penuh kedalaman.',tags:['typografi','dark'],badge:'',bg:'#1E1E1E',fgDark:true,label:'SLNT',sub:'POWER',img:'images/23. Silent Power.webp'},
+  {id:23,title:'High Voltage',desc:'Energi tinggi dalam tipografi yang elektrifying. Untuk ruangan yang butuh dosis adrenalin visual.',tags:['typografi','street'],badge:'',bg:'#F5F0E0',fgDark:false,label:'HIGH',sub:'VOLT',img:'images/24. High Voltage.webp'},
+  {id:24,title:'Jakarta City Map',desc:'Peta ibu kota dalam format poster yang presisi dan elegan. Kebanggaan warga Jakarta.',tags:['peta','minimalis'],badge:'hot',bg:'#EDE8E0',fgDark:false,label:'JKT',sub:'MAP',img:'images/25. Jakarta City Map.webp'},
+  {id:25,title:'Denpasar City Map',desc:'Peta kota Denpasar dengan detail yang indah. Kenangan Bali yang bisa dipasang di dinding.',tags:['peta','minimalis'],badge:'',bg:'#EDE8E0',fgDark:false,label:'DPS',sub:'MAP',img:'images/26. Denpasar City Map.webp'},
+  {id:26,title:'Bauhaus Full Focus',desc:'Komposisi Bauhaus yang memusatkan perhatian ke satu titik. Impactful dan penuh intensi.',tags:['bauhaus'],badge:'',bg:'#E8ECF5',fgDark:false,label:'BAUS',sub:'FOCUS',img:'images/27. Bauhaus Full Focus.webp'},
+  {id:27,title:'Bauhaus Dynamic Run',desc:'Dinamika lari dalam estetika Bauhaus — gerakan, momentum, dan semangat terasa nyata.',tags:['bauhaus'],badge:'',bg:'#F5F0E8',fgDark:false,label:'BAUS',sub:'RUN',img:'images/28. Bauhaus Dynamic Run.webp'},
+  {id:28,title:'Bauhaus Pattern Rhythm',desc:'Ritme visual dari pola Bauhaus yang berulang. Meditatif dan harmonis untuk ruang santai.',tags:['bauhaus'],badge:'',bg:'#F0EBE0',fgDark:false,label:'BAUS',sub:'RTHM',img:'images/29. Bauhaus Pattern Rhythm.webp'},
+  {id:29,title:'Bauhaus Perfect Balance',desc:'Keseimbangan sempurna dalam komposisi Bauhaus. Clean, presisi, dan memuaskan secara visual.',tags:['bauhaus'],badge:'',bg:'#E8F0E8',fgDark:false,label:'BAUS',sub:'BALAN',img:'images/30. Bauhaus Perfect Balance.webp'},
+  {id:30,title:'Bauhaus Eye Geometry',desc:'Mata manusia dalam interpretasi geometris Bauhaus. Misterius, intriging, dan tak terlupakan.',tags:['bauhaus','abstract'],badge:'',bg:'#1A1A1A',fgDark:true,label:'BAUS',sub:'EYE',img:'images/31. Bauhaus Eye Geometry.webp'},
+  {id:31,title:'Bauhaus Sunset Lines',desc:'Garis-garis sunset dalam palet hangat Bauhaus. Romantis, lembut, namun tetap struktural.',tags:['bauhaus'],badge:'',bg:'#F5E8D8',fgDark:false,label:'BAUS',sub:'SUNST',img:'images/32. Bauhaus Sunset Lines.webp'},
+  {id:32,title:'Bauhaus Dual Vision',desc:'Dua perspektif dalam satu komposisi Bauhaus yang kohesif. Playful dan penuh kejutan.',tags:['bauhaus'],badge:'',bg:'#E8EAF0',fgDark:false,label:'BAUS',sub:'DUAL',img:'images/33. Bauhaus Dual Vision.webp'},
+  {id:33,title:'Bauhaus Abstract Balance',desc:'Abstraksi dan keseimbangan bertemu dalam Bauhaus. Sophisticated dan estetis.',tags:['bauhaus','abstract'],badge:'',bg:'#F0ECE8',fgDark:false,label:'BAUS',sub:'ABSTR',img:'images/34. Bauhaus Abstract Balance.webp'},
+  {id:34,title:'Bauhaus Playful Geometry',desc:'Geometri yang bermain-main — humor visual ala Bauhaus yang mengundang senyum.',tags:['bauhaus'],badge:'',bg:'#F8F0E0',fgDark:false,label:'BAUS',sub:'PLAY',img:'images/35. Bauhaus Playful Geometry.webp'},
+  {id:35,title:'Bauhaus Green Horizon',desc:'Cakrawala hijau dalam komposisi Bauhaus yang menyegarkan. Natural dan penuh harapan.',tags:['bauhaus'],badge:'',bg:'#E0EDE4',fgDark:false,label:'BAUS',sub:'GREEN',img:'images/36. Bauhaus Green Horizon.webp'},
+  {id:36,title:'Bauhaus Primary Grid',desc:'Grid primer Bauhaus yang ikonik — merah, kuning, biru dalam tatanan yang presisi.',tags:['bauhaus'],badge:'',bg:'#F5F0E8',fgDark:false,label:'BAUS',sub:'GRID',img:'images/37. Bauhaus Primary Grid.webp'},
+  {id:37,title:'Bauhaus Color Skyline',desc:'Skyline urban dalam warna-warna Bauhaus. Modern, urban, dan penuh visi.',tags:['bauhaus'],badge:'',bg:'#E8F0F8',fgDark:false,label:'BAUS',sub:'SKY',img:'images/38. Bauhaus Color Skyline.webp'},
+  {id:38,title:'Bauhaus Sonic Circle',desc:'Lingkaran sonik Bauhaus yang bergetar dan berdenyut. Musik visual yang bisa dirasakan.',tags:['bauhaus','abstract'],badge:'',bg:'#F0EBE8',fgDark:false,label:'BAUS',sub:'SONIC',img:'images/39. Bauhaus Sonic Circle.webp'},
+  {id:39,title:'Bauhaus Blue Construct',desc:'Konstruksi biru Bauhaus yang bold dan industrial. Maskulin, kuat, dan presisi.',tags:['bauhaus'],badge:'',bg:'#1F2A3A',fgDark:true,label:'BAUS',sub:'BLUE',img:'images/40. Bauhaus Blue Construct.webp'},
+  {id:40,title:'Japanese Kanji Typography',desc:'Karakter Kanji dalam komposisi tipografi kontemporer. Misteri timur yang elegan dan powerful.',tags:['typografi','budaya'],badge:'',bg:'#1A1A1A',fgDark:true,label:'漢字',sub:'TYPE',img:'images/41. Japanese Kanji Typography.webp'},
+  {id:41,title:'Street Racing Helmet Fashion',desc:'Helm balap street style yang melebur fashion dan motorsport. Edgy dan penuh karakter.',tags:['street','vintage'],badge:'',bg:'#1E1E1E',fgDark:true,label:'RACE',sub:'HELM',img:'images/42. Street Racing Helmet Fashion.webp'},
+  {id:42,title:'The Unknown Is Beautiful',desc:'Tipografi kontemplasi tentang keindahan hal yang belum diketahui. Filosofis dan menenangkan.',tags:['typografi','motivasi'],badge:'',bg:'#F5F0EC',fgDark:false,label:'UNKN',sub:'BEAU',img:'images/43. The Unknown Is Beautiful.webp'},
 ];
 
 // ──────────────────────────────────────────────
@@ -685,6 +671,9 @@ function getFiltered(posterList) {
   let list = posterList || POSTERS;
   list = [...list].sort((a,b)=>(a.order||99)-(b.order||99));
 
+  if (activeFilter !== 'all')
+    list = list.filter(p => p.tags && p.tags.includes(activeFilter));
+
   if (searchQuery)
     list = list.filter(p =>
       p.title.toLowerCase().includes(searchQuery) ||
@@ -695,6 +684,15 @@ function getFiltered(posterList) {
     list.sort((a,b) => a.title.localeCompare(b.title));
 
   return list;
+}
+
+function setFilter(tag) {
+  activeFilter = tag;
+  // Update chip active state
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.classList.toggle('chip-active', btn.getAttribute('onclick') === `setFilter('${tag}')`);
+  });
+  renderGrid(_activePosterList || POSTERS);
 }
 
 // ──────────────────────────────────────────────
@@ -746,8 +744,12 @@ function renderGrid(posterList) {
 function resetAll() {
   searchQuery = '';
   sortMode = 'default';
+  activeFilter = 'all';
   document.getElementById('searchInput').value = '';
   document.getElementById('sortSelect').value = 'default';
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.classList.toggle('chip-active', btn.getAttribute('onclick') === "setFilter('all')");
+  });
   renderGrid();
 }
 
