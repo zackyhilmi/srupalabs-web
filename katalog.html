@@ -195,24 +195,22 @@ nav{
   padding:.55rem 1.25rem;border-radius:4px;border:2px solid var(--k);
 }
 
-.poster-info{padding:.85rem .9rem .9rem;border-top:2px solid var(--k)}
+.poster-info{padding:11px 12px 0}
+.poster-info .pc-cat{font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:3px}
 .poster-info h3{
   font-family:var(--bc);font-weight:900;
-  font-size:1rem;letter-spacing:.02em;text-transform:uppercase;
-  margin-bottom:.3rem;color:var(--k);line-height:1.1;
+  font-size:1.05rem;letter-spacing:.01em;text-transform:uppercase;
+  margin-bottom:10px;color:var(--k);line-height:1.1;
 }
-.poster-info .tag-row{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.4rem}
-.style-tag{
-  font-family:var(--bc);font-weight:700;
-  font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
-  padding:.15rem .5rem;border-radius:3px;
-  background:var(--c);color:var(--g);border:1px solid rgba(13,13,10,.15);
+.poster-btn{
+  display:block;width:100%;background:var(--k);color:var(--c);
+  font-family:var(--bc);font-weight:900;font-size:.82rem;
+  letter-spacing:.07em;text-transform:uppercase;
+  padding:9px 12px;border:none;cursor:pointer;
+  text-align:center;transition:background .15s;
+  border-radius:0 0 6px 6px;
 }
-.poster-info .price-from{
-  font-family:var(--bc);font-weight:900;
-  font-size:.88rem;letter-spacing:.02em;color:var(--k);
-}
-.poster-info .price-from small{font-size:.72rem;font-weight:400;color:var(--g);margin-left:.2rem}
+.poster-btn:hover{background:var(--b)}
 
 /* empty state */
 .empty-state{text-align:center;padding:5rem 2rem;grid-column:1/-1}
@@ -728,7 +726,6 @@ function renderGrid(posterList) {
   }
 
   grid.innerHTML = list.map((p, i) => {
-    const priceStr = 'Mulai ' + fmt(PRICES['20x30']);
     const badgeHtml = p.badge
       ? `<div class="poster-badge badge-${p.badge}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</div>`
       : '';
@@ -739,7 +736,7 @@ function renderGrid(posterList) {
            <span class="tp-sub">${p.sub||''}</span>
          </div>`;
     const tags = p.tags||[];
-    const tagHtml = tags.map(t => `<span class="style-tag">${t}</span>`).join('');
+    const tagLabel = (tags[0]||'').charAt(0).toUpperCase() + (tags[0]||'').slice(1);
 
     return `
     <div class="poster-card" onclick="openModalByIndex(${i})" style="animation-delay:${Math.min(i*.05,0.4)}s">
@@ -749,10 +746,10 @@ function renderGrid(posterList) {
         <div class="thumb-overlay"><span>Pilih Desain</span></div>
       </div>
       <div class="poster-info">
+        <div class="pc-cat">${tagLabel}</div>
         <h3>${p.title||p.name||''}</h3>
-        <div class="tag-row">${tagHtml}</div>
-        <div class="price-from">${priceStr} <small>· poster + frame</small></div>
       </div>
+      <button class="poster-btn">LIHAT</button>
     </div>`;
   }).join('');
 }
