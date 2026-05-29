@@ -575,10 +575,11 @@ footer {
   .cu-inner { grid-template-columns: 1fr }
   .cu-l { padding-right: 0; margin-bottom: 2.5rem }
   .cu-r { padding-left: 0; border-left: none; border-top: 1px solid rgba(13,13,10,.12); padding-top: 2.5rem }
-  .st-row { display: grid; grid-template-columns: 1fr 1fr }
-  .st { padding: 3vw 5vw; border-bottom: 1px solid rgba(13,13,10,.1) }
-  .st:nth-child(odd) { border-right: 1px solid rgba(13,13,10,.1) }
+  .st-row { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none }
+  .st { flex: 1; min-width: max-content; padding: 3vw 5vw; border-bottom: none; border-right: 1px solid rgba(13,13,10,.1) }
+  .st:last-child { border-right: none }
   .st-v { font-size: clamp(3rem, 9vw, 5rem) }
+  .st-l { white-space: nowrap }
   .ord-top { flex-direction: column; align-items: flex-start; gap: .75rem }
   .ord-sub { text-align: left; max-width: 100% }
   .ch-list { grid-template-columns: 1fr }
@@ -597,12 +598,12 @@ footer {
   .h-hl { font-size: clamp(2.4rem, 11vw, 4rem); padding: 0 5vw 7vw; }
   .h-img img { object-position: center; }
   .kg { grid-template-columns: 1fr }
-  .st-row { display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none }
+  .st-row { display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch }
   .st-row::-webkit-scrollbar { display: none }
-  .st { flex: 0 0 auto; padding: 3vw 5vw; border-bottom: none; border-right: 1px solid rgba(13,13,10,.1) }
+  .st { flex: 0 0 auto; min-width: max-content; padding: 3vw 5vw; border-bottom: none; border-right: 1px solid rgba(13,13,10,.1) }
   .st:last-child { border-right: none }
   .st-v { font-size: clamp(2.4rem, 9vw, 3.5rem) }
-  .st-l { font-size: .65rem; letter-spacing: .04em }
+  .st-l { font-size: .65rem; letter-spacing: .04em; white-space: nowrap }
   .pc { flex: 0 0 160px }
   .fr-new-body { padding: 5vw 5vw }
   .sz-strip { gap: .4rem }
@@ -641,15 +642,17 @@ footer {
   overflow: hidden;
   align-self: stretch;
   min-height: clamp(240px, 30vw, 460px);
+  background: var(--b); /* sama dengan banner, seamless */
 }
 .pb-img img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   display: block;
+  padding: clamp(12px, 3vw, 32px); /* breathing room agar poster tidak terpotong */
 }
 
 /* RIGHT — semua teks + CTA */
@@ -660,7 +663,6 @@ footer {
   align-items: flex-start;
   justify-content: center;
   gap: 1rem;
-  border-left: 2px solid rgba(0,0,0,.2);
 }
 
 /* Heading utama: RUANG TERASA KOSONG? */
@@ -775,9 +777,6 @@ footer {
     order: 2;
     min-height: clamp(180px, 55vw, 280px);
     max-height: 300px;
-  }
-  .pb-img img {
-    object-position: center top;
   }
 }
 </style>
@@ -1436,28 +1435,28 @@ pf(document.querySelector('.fr-opt.on'), '#1a1a18', 'HITAM', '#111');
 }
 
 /* ─────────────────────────────────────────────
-   STATS MOBILE — grid 2x2 lebih rapi dari scroll
-   di 560px ke bawah kita tetap grid 2x2, bukan scroll
-   (lebih readable, tidak perlu scroll horizontal)
+   STATS MOBILE — tetap 1 baris horizontal, no wrap
 ───────────────────────────────────────────── */
 @media (max-width: 560px) {
   .st-row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    flex-wrap: unset !important;
-    overflow: unset !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    scrollbar-width: none !important;
+    grid-template-columns: unset !important;
   }
   .st {
-    flex: unset !important;
-    padding: clamp(16px, 5vw, 24px) var(--sp-x) !important;
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    padding: clamp(16px, 5vw, 24px) clamp(16px, 5vw, 28px) !important;
     border-right: 1px solid rgba(13,13,10,.12) !important;
-    border-bottom: 1px solid rgba(13,13,10,.12) !important;
+    border-bottom: none !important;
   }
-  .st:nth-child(2n) { border-right: none !important }
-  .st:nth-child(3),
-  .st:nth-child(4) { border-bottom: none !important }
-  .st-v { font-size: clamp(2.2rem, 9vw, 3rem) !important }
-  .st-l { font-size: .72rem !important }
+  .st:last-child { border-right: none !important }
+  .st-v { font-size: clamp(2rem, 8vw, 3rem) !important }
+  .st-l { font-size: .65rem !important; white-space: nowrap !important; letter-spacing: .04em !important }
 }
 
 /* ─────────────────────────────────────────────
