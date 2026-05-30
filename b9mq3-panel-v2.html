@@ -705,7 +705,8 @@ tbody tr:hover{background:#fafbfc}
                 <select id="kFilterType" onchange="renderKeuangan()"><option value="">Semua</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select>
                 <select id="kFilterCat" onchange="renderKeuangan()">
                   <option value="">Semua Kategori</option>
-                  <option value="penjualan">Penjualan</option><option value="restock">Restock</option>
+                  <option value="restock">Restock Frame</option>
+                  <option value="cetak">Cetak</option>
                   <option value="ongkir">Ongkir</option><option value="marketing">Marketing</option>
                   <option value="gaji">Gaji</option><option value="lainnya">Lainnya</option>
                 </select>
@@ -1345,31 +1346,35 @@ async function cmsDel(id){
 <!-- MODAL: Catat Keuangan -->
 <div class="moverlay" id="keuModal">
   <div class="mbox" style="max-width:480px">
-    <div class="mhd"><h3>➕ Catat Keuangan</h3><button class="mclose" onclick="closeKeuModal()">×</button></div>
+    <div class="mhd"><h3>➕ Catat Pengeluaran</h3><button class="mclose" onclick="closeKeuModal()">×</button></div>
     <form id="fKeu" novalidate>
+      <!-- Jenis selalu expense, hidden -->
+      <input type="hidden" id="kType" value="expense">
+
       <div class="fg-row">
         <div class="fg">
-          <label>Jenis</label>
-          <select id="kType"><option value="income">💚 Pemasukan</option><option value="expense">❤️ Pengeluaran</option></select>
-        </div>
-        <div class="fg">
           <label>Kategori</label>
-          <select id="kCat" onchange="toggleRestockFields()">
-            <option value="penjualan">Penjualan</option>
-            <option value="restock">Restock Frame</option>
-            <option value="ongkir">Ongkir & Operasional</option>
-            <option value="marketing">Marketing & Iklan</option>
-            <option value="gaji">Gaji / Upah</option>
-            <option value="lainnya">Lainnya</option>
+          <select id="kCat" onchange="toggleKeuFields()">
+            <option value="restock">🖼️ Restock Frame</option>
+            <option value="cetak">🖨️ Cetak</option>
+            <option value="ongkir">🚚 Ongkir & Operasional</option>
+            <option value="marketing">📣 Marketing & Iklan</option>
+            <option value="gaji">👤 Gaji / Upah</option>
+            <option value="lainnya">📌 Lainnya</option>
           </select>
         </div>
+        <div class="fg">
+          <label>Tanggal</label>
+          <input type="date" id="kDate">
+        </div>
       </div>
+
       <!-- RESTOCK: multi-item builder -->
       <div id="restockFields" style="display:none">
         <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">📦 Item Frame yang Dibeli</div>
         <div id="restockItemList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
         <div style="background:var(--gray-lt);border-radius:10px;padding:10px;display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
-          <div class="fg" style="flex:1;min-width:100px;margin:0">
+          <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Warna</label>
             <select id="kFrameColor" style="font-size:13px;padding:7px 8px">
               <option value="">Pilih</option>
@@ -1377,7 +1382,7 @@ async function cmsDel(id){
               <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
             </select>
           </div>
-          <div class="fg" style="flex:1;min-width:100px;margin:0">
+          <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Ukuran</label>
             <select id="kFrameSize" style="font-size:13px;padding:7px 8px">
               <option value="">Pilih</option>
@@ -1387,13 +1392,29 @@ async function cmsDel(id){
               <option value="60x80">60×80</option>
             </select>
           </div>
-          <div class="fg" style="flex:0 0 70px;margin:0">
+          <div class="fg" style="flex:0 0 66px;margin:0">
             <label style="font-size:11px">Qty</label>
             <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999" style="font-size:13px;padding:7px 8px">
           </div>
-          <button type="button" onclick="addRestockItem()" style="height:36px;padding:0 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">+ Tambah</button>
+          <button type="button" onclick="addRestockItem()" style="height:36px;padding:0 12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">+ Tambah</button>
         </div>
         <div class="ferr" id="kRestockItemsE" style="margin-top:4px"></div>
+      </div>
+
+      <!-- CETAK fields -->
+      <div id="cetakFields" style="display:none">
+        <div class="fg-row">
+          <div class="fg">
+            <label>Ukuran (cm)</label>
+            <input type="text" id="kCetakUkuran" placeholder="Contoh: 40x60" maxlength="20">
+            <div class="ferr" id="kCetakUkuranE"></div>
+          </div>
+          <div class="fg">
+            <label>Bahan / Media</label>
+            <input type="text" id="kCetakBahan" placeholder="Contoh: Luster, Glossy" maxlength="80">
+            <div class="ferr" id="kCetakBahanE"></div>
+          </div>
+        </div>
       </div>
 
       <div class="fg-row">
@@ -1402,17 +1423,13 @@ async function cmsDel(id){
           <input type="number" id="kAmount" placeholder="0" min="0">
           <div class="ferr" id="kAmountE"></div>
         </div>
-        <div class="fg">
-          <label>Tanggal</label>
-          <input type="date" id="kDate">
-        </div>
       </div>
       <div class="fg">
         <label>Keterangan <span style="font-weight:400;color:var(--t3)">(opsional)</span></label>
-        <input type="text" id="kDesc" placeholder="Contoh: Beli dari supplier X" maxlength="200">
+        <input type="text" id="kDesc" placeholder="" maxlength="200">
         <div class="ferr" id="kDescE"></div>
       </div>
-      <button type="submit" class="pbtn">💾 Simpan</button>
+      <button type="submit" class="pbtn">💾 Simpan Pengeluaran</button>
     </form>
   </div>
 </div>
@@ -2202,18 +2219,20 @@ async function delOrder(id){
 // ── RESTOCK MULTI-ITEM ──────────────────────────────────────────────
 let restockItems = []; // [{color, size, qty}]
 
-function toggleRestockFields(){
+function toggleKeuFields(){
   const cat = $('kCat').value;
-  const restockDiv = $('restockFields');
-  if(cat === 'restock'){
-    restockDiv.style.display = 'block';
-    // Paksa type jadi expense
-    $('kType').value = 'expense';
-  } else {
-    restockDiv.style.display = 'none';
-    restockItems = [];
-    renderRestockItemList();
-  }
+  $('restockFields').style.display = cat === 'restock' ? 'block' : 'none';
+  $('cetakFields').style.display   = cat === 'cetak'   ? 'block' : 'none';
+  if(cat !== 'restock'){ restockItems = []; renderRestockItemList(); }
+  const ph = {
+    restock:   'Contoh: Beli dari supplier X',
+    cetak:     'Contoh: Cetak batch order minggu ini',
+    ongkir:    'Contoh: Ongkir JNE batch 5 order',
+    marketing: 'Contoh: Meta Ads April',
+    gaji:      'Contoh: Gaji admin April',
+    lainnya:   'Keterangan pengeluaran'
+  };
+  if($('kDesc')) $('kDesc').placeholder = ph[cat] || '';
 }
 
 function addRestockItem(){
@@ -2221,19 +2240,11 @@ function addRestockItem(){
   const size  = $('kFrameSize').value;
   const qty   = parseInt($('kRestockQty').value, 10);
   $('kRestockItemsE').textContent = '';
-
   if(!color || !size){ $('kRestockItemsE').textContent = 'Pilih warna & ukuran frame.'; return; }
   if(!qty || qty < 1){ $('kRestockItemsE').textContent = 'Qty minimal 1.'; return; }
-
-  // Kalau kombinasi warna+ukuran sudah ada, tambah qty saja
   const existing = restockItems.find(i => i.color === color && i.size === size);
-  if(existing){
-    existing.qty += qty;
-  } else {
-    restockItems.push({ color, size, qty });
-  }
-
-  // Reset input tambah
+  if(existing){ existing.qty += qty; }
+  else { restockItems.push({ color, size, qty }); }
   $('kFrameColor').value = '';
   $('kFrameSize').value  = '';
   $('kRestockQty').value = '';
@@ -2264,43 +2275,50 @@ $('kDate').value = new Date().toISOString().split('T')[0];
 
 $('fKeu').addEventListener('submit', async function(e){
   e.preventDefault();
-  clerr('kAmountE','kDescE','kRestockItemsE');
-  const btn  = this.querySelector('.pbtn');
-  const type = $('kType').value;
-  const cat  = $('kCat').value;
+  clerr('kAmountE','kDescE','kRestockItemsE','kCetakUkuranE','kCetakBahanE');
+  const btn    = this.querySelector('.pbtn');
+  const cat    = $('kCat').value;
   const amount = parseInt($('kAmount').value, 10) || 0;
   const date   = $('kDate').value;
   const desc   = san($('kDesc').value);
 
   let ok = true;
   if(!amount || amount <= 0){ ferr('kAmountE','Jumlah harus lebih dari 0.'); ok = false; }
-  // Keterangan opsional untuk restock, wajib untuk lainnya
-  if(cat !== 'restock' && desc.length < 2){ ferr('kDescE','Keterangan minimal 2 karakter.'); ok = false; }
-  if(cat === 'restock' && !restockItems.length){ $('kRestockItemsE').textContent = 'Tambahkan minimal 1 item frame.'; ok = false; }
+  if(cat === 'restock' && !restockItems.length){
+    $('kRestockItemsE').textContent = 'Tambahkan minimal 1 item frame.'; ok = false;
+  }
+  if(cat === 'cetak'){
+    if(!san($('kCetakUkuran').value)){ ferr('kCetakUkuranE','Isi ukuran cetak.'); ok = false; }
+    if(!san($('kCetakBahan').value)) { ferr('kCetakBahanE','Isi bahan / media cetak.'); ok = false; }
+  }
   if(!ok) return;
 
   const orig = btn.textContent; btn.textContent = '⏳...'; btn.disabled = true;
 
-  // Buat deskripsi otomatis dari item list kalau keterangan kosong
-  const autoDesc = cat === 'restock'
-    ? (desc || 'Restock: ' + restockItems.map(i=>`${i.color} ${i.size} ${i.qty}pcs`).join(', '))
-    : desc;
+  // Auto-desc kalau dikosongkan
+  let autoDesc = desc;
+  if(!autoDesc){
+    if(cat === 'restock')
+      autoDesc = 'Restock: ' + restockItems.map(i=>`${i.color} ${i.size} ${i.qty}pcs`).join(', ');
+    else if(cat === 'cetak')
+      autoDesc = `Cetak ${san($('kCetakUkuran').value)} cm, ${san($('kCetakBahan').value)}`;
+  }
 
   const item = {
     id: `keu_${Date.now()}`,
-    type, cat, amount,
+    type: 'expense', cat, amount,
     date, desc: autoDesc,
     createdAt: new Date().toISOString()
   };
-
-  if(cat === 'restock'){
-    item.restockItems = [...restockItems]; // simpan semua item ke Firestore
+  if(cat === 'restock') item.restockItems = [...restockItems];
+  if(cat === 'cetak'){
+    item.cetakUkuran = san($('kCetakUkuran').value);
+    item.cetakBahan  = san($('kCetakBahan').value);
   }
 
   try{
     await fsSet('keuangan', item);
 
-    // ── UPDATE STOK SEMUA ITEM SEKALIGUS ────────────────────────────
     if(cat === 'restock'){
       let summary = [];
       for(const ri of restockItems){
@@ -2324,12 +2342,13 @@ $('fKeu').addEventListener('submit', async function(e){
       restockItems = [];
       renderRestockItemList();
     } else {
-      toast('✅ Catatan disimpan!');
+      toast('✅ Pengeluaran disimpan!');
     }
 
     this.reset();
     $('kDate').value = new Date().toISOString().split('T')[0];
     $('restockFields').style.display = 'none';
+    $('cetakFields').style.display   = 'none';
     btn.textContent = orig;
   } catch(err){
     btn.textContent = orig;
@@ -2360,12 +2379,12 @@ function renderKeuangan(){
   if(fc)list=list.filter(k=>k.cat===fc);
   if(fm)list=list.filter(k=>k.date?.startsWith(fm));
   if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada catatan</td></tr>';return;}
-  const catLbl={penjualan:'Penjualan',restock:'Restock',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
+  const catLbl={penjualan:'Penjualan',restock:'Restock',cetak:'Cetak',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
   tb.innerHTML=list.map(k=>`<tr>
     <td>${esc(k.date||'—')}</td>
     <td><span class="badge ${k.type==='income'?'income':'expense'}">${k.type==='income'?'💚 Masuk':'❤️ Keluar'}</span></td>
     <td>${esc(catLbl[k.cat]||k.cat)}${k.sourceOrderId?` <span style="font-size:10px;background:var(--accent-lt);color:var(--accent);padding:1px 5px;border-radius:4px;font-weight:600;">auto</span>`:''}</td>
-    <td style="font-size:12px;max-width:260px;word-break:break-word">${esc(k.desc)}</td>
+    <td style="font-size:12px;max-width:260px;word-break:break-word">${esc(k.desc)}${k.cetakUkuran?`<br><span style="color:var(--t3)">📐 ${esc(k.cetakUkuran)} cm · ${esc(k.cetakBahan)}</span>`:''}</td>
     <td><strong style="color:${k.type==='income'?'var(--green)':'var(--red)'}">${rp(k.amount)}</strong></td>
     <td class="acell"><button class="bsm bdel" onclick="delKeu('${esc(k.id)}')">🗑️</button></td>
   </tr>`).join('');
@@ -2481,7 +2500,7 @@ function buildLapCharts(fo,fk){
   const ctx1=$('chartLapOmzet').getContext('2d');
   if(chartLapOmzet)chartLapOmzet.destroy();
   chartLapOmzet=new Chart(ctx1,{type:'line',data:{labels,datasets:[{label:'Omzet',data:omzetData,borderColor:'#1A73E8',backgroundColor:'rgba(26,115,232,.1)',fill:true,tension:.3,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v>=1000000?'Rp'+(v/1000000).toFixed(1)+'jt':v>=1000?'Rp'+(v/1000).toFixed(0)+'rb':'Rp'+v}}}}});
-  const catLbl={penjualan:'Penjualan',restock:'Restock',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
+  const catLbl={penjualan:'Penjualan',restock:'Restock',cetak:'Cetak',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
   const exp=fk.filter(k=>k.type==='expense');
   const catMap={};exp.forEach(k=>{catMap[k.cat]=(catMap[k.cat]||0)+k.amount;});
   const catKeys=Object.keys(catMap);
