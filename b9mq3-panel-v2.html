@@ -75,7 +75,7 @@ window.DRIVE_API_KEY   = "AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE";
   --amber:#D97706;--amber-lt:#FEF3C7;
   --red:#DC2626;--red-lt:#FEE2E2;
   --gray-lt:#F3F4F6;
-  --nav:240px;--hdr:60px;--r:12px;
+  --nav:240px;--nav-mini:60px;--hdr:60px;--r:12px;
   --font:'DM Sans',sans-serif;
 }
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
@@ -104,7 +104,46 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sidebar{
   width:var(--nav);background:var(--surface);border-right:1px solid var(--border);
   display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;
-  z-index:200;overflow-y:auto;transition:transform .25s ease;
+  z-index:200;overflow-y:auto;overflow-x:hidden;
+  transition:width .22s cubic-bezier(.4,0,.2,1),transform .25s ease;
+}
+/* collapsed / minimized state */
+.sidebar.collapsed{width:var(--nav-mini)}
+.sidebar.collapsed .sname,
+.sidebar.collapsed .ssub,
+.sidebar.collapsed .nseclbl,
+.sidebar.collapsed .nitem-label,
+.sidebar.collapsed .nbadge,
+.sidebar.collapsed .uinfo,
+.sidebar.collapsed .logoutbtn{opacity:0;pointer-events:none;width:0;overflow:hidden;white-space:nowrap}
+.sidebar.collapsed .slogo{padding:16px 12px;justify-content:center}
+.sidebar.collapsed .nsec{padding:8px 6px 4px}
+.sidebar.collapsed .nitem{justify-content:center;padding:9px 0;gap:0}
+.sidebar.collapsed .nico{width:auto;font-size:18px}
+.sidebar.collapsed .sfooter{padding:10px 6px}
+.sidebar.collapsed .urow{justify-content:center}
+.sidebar.collapsed .uavatar{margin:0}
+.sidebar.collapsed .stoggle-btn{transform:rotate(180deg)}
+
+/* toggle button inside sidebar */
+.stoggle-btn{
+  background:none;border:none;cursor:pointer;
+  color:var(--t2);font-size:14px;padding:5px;
+  border-radius:6px;transition:all .2s;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;
+}
+.stoggle-btn:hover{background:var(--gray-lt);color:var(--t1)}
+
+/* tooltip saat collapsed */
+.sidebar.collapsed .nitem{position:relative}
+.sidebar.collapsed .nitem:hover::after{
+  content:attr(data-label);
+  position:absolute;left:calc(var(--nav-mini) - 4px);top:50%;transform:translateY(-50%);
+  background:var(--t1);color:#fff;font-size:12px;font-weight:500;
+  padding:5px 10px;border-radius:7px;white-space:nowrap;z-index:999;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  pointer-events:none;
 }
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:190}
 .slogo{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -127,7 +166,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .logoutbtn:hover{color:var(--red);background:var(--red-lt)}
 
 /* ─── TOPBAR ─── */
-.main{margin-left:var(--nav);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+.main{margin-left:var(--nav);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
+.sidebar.collapsed~.main{margin-left:var(--nav-mini)}
 .topbar{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
 .topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--t2);font-size:20px;flex-shrink:0}
@@ -490,11 +530,13 @@ tbody tr:hover{background:var(--accent-lt)}
 ══════════════════════ */
 @media(max-width:768px){
   :root{--nav:240px;--hdr:56px}
-  .sidebar{transform:translateX(-100%)}
+  .sidebar{transform:translateX(-100%);width:var(--nav)!important}
   .sidebar.open{transform:translateX(0)}
+  .sidebar.collapsed{width:var(--nav)!important}
   .sidebar-overlay.open{display:block}
-  .main{margin-left:0}
+  .main{margin-left:0!important}
   .hamburger{display:flex}
+  .stoggle-btn{display:none}
   .page{padding:14px 14px}
   .topbar{padding:0 14px}
   .srow{grid-template-columns:1fr 1fr !important}
@@ -510,6 +552,19 @@ tbody tr:hover{background:var(--accent-lt)}
   .igrid{grid-template-columns:1fr}
   .igrid .card:first-child{position:relative;top:auto}
   .chart-wrap{height:180px}
+  /* on mobile collapsed class should not affect label visibility */
+  .sidebar.collapsed .sname,
+  .sidebar.collapsed .ssub,
+  .sidebar.collapsed .nseclbl,
+  .sidebar.collapsed .nitem-label,
+  .sidebar.collapsed .nbadge,
+  .sidebar.collapsed .uinfo,
+  .sidebar.collapsed .logoutbtn{opacity:1;pointer-events:auto;width:auto;overflow:visible}
+  .sidebar.collapsed .nitem{justify-content:flex-start;padding:8px 10px;gap:9px}
+  .sidebar.collapsed .slogo{padding:16px 16px 14px;justify-content:flex-start}
+  .sidebar.collapsed .nsec{padding:12px 10px 5px}
+  .sidebar.collapsed .sfooter{padding:12px 10px}
+  .sidebar.collapsed .urow{justify-content:flex-start}
 }
 @media(max-width:400px){
   .srow{grid-template-columns:1fr 1fr !important}
@@ -569,30 +624,31 @@ tbody tr:hover{background:var(--accent-lt)}
           <path d="M649.88 8.81287C662.01 12.0029 673.96 16.0829 685.65 21.0229C731.83 40.5229 771.21 72.2329 799.53 112.733C830.07 156.433 846.22 208.433 846.22 263.103V606.323H650.23V263.103C650.23 260.473 650.1 257.963 649.87 255.533C646.55 221.023 620.88 206.433 609.42 201.593C597.15 196.403 565.52 187.363 536.87 215.253L337.17 409.633H579.41V606.323H0.0100021V0.212869H196.7V272.883L400.19 74.8129C439.36 36.6929 487.88 11.9929 540.5 3.39287C576.93 -2.54713 614.13 -0.657133 649.88 8.82287V8.81287Z" fill="#1F12D4"/>
         </svg>
       </div>
-      <div><div class="sname">Srupa Labs</div><div class="ssub">Business Suite</div></div>
+      <div style="flex:1;min-width:0"><div class="sname">Srupa Labs</div><div class="ssub">Business Suite</div></div>
+      <button class="stoggle-btn" id="sidebarToggle" onclick="toggleSidebar()" title="Minimize sidebar">‹</button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Operasional</div>
-      <button class="nitem active" onclick="goPage('dashboard',this)"><span class="nico">📊</span>Dashboard</button>
-      <button class="nitem" onclick="goPage('transaksi',this)"><span class="nico">🛒</span>Transaksi<span class="nbadge" id="navProses" style="display:none">!</span></button>
-      <button class="nitem" onclick="goPage('kanban',this)"><span class="nico">📋</span>Kanban Packing</button>
-      <button class="nitem" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span>Stok Poster</button>
-      <button class="nitem" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span>Stok Frame<span class="nbadge" id="navBadge" style="display:none">!</span></button>
+      <button class="nitem active" data-label="Dashboard" onclick="goPage('dashboard',this)"><span class="nico">📊</span><span class="nitem-label">Dashboard</span></button>
+      <button class="nitem" data-label="Transaksi" onclick="goPage('transaksi',this)"><span class="nico">🛒</span><span class="nitem-label">Transaksi</span><span class="nbadge" id="navProses" style="display:none">!</span></button>
+      <button class="nitem" data-label="Kanban Packing" onclick="goPage('kanban',this)"><span class="nico">📋</span><span class="nitem-label">Kanban Packing</span></button>
+      <button class="nitem" data-label="Stok Poster" onclick="goPage('inventory',this);goTab('posters')"><span class="nico">🖼️</span><span class="nitem-label">Stok Poster</span></button>
+      <button class="nitem" data-label="Stok Frame" onclick="goPage('inventory',this);goTab('frames')"><span class="nico">🪟</span><span class="nitem-label">Stok Frame</span><span class="nbadge" id="navBadge" style="display:none">!</span></button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Keuangan</div>
-      <button class="nitem" onclick="goPage('keuangan',this)"><span class="nico">💰</span>Keuangan</button>
-      <button class="nitem" onclick="goPage('margin',this)"><span class="nico">📊</span>Margin & Profit</button>
-      <button class="nitem" onclick="goPage('laporan',this)"><span class="nico">📈</span>Laporan</button>
+      <button class="nitem" data-label="Keuangan" onclick="goPage('keuangan',this)"><span class="nico">💰</span><span class="nitem-label">Keuangan</span></button>
+      <button class="nitem" data-label="Margin & Profit" onclick="goPage('margin',this)"><span class="nico">📊</span><span class="nitem-label">Margin & Profit</span></button>
+      <button class="nitem" data-label="Laporan" onclick="goPage('laporan',this)"><span class="nico">📈</span><span class="nitem-label">Laporan</span></button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Marketing</div>
-      <button class="nitem" onclick="goPage('planner',this)"><span class="nico">📅</span>Content Planner</button>
-      <button class="nitem" onclick="goPage('cms',this)"><span class="nico">🎨</span>Website CMS</button>
+      <button class="nitem" data-label="Content Planner" onclick="goPage('planner',this)"><span class="nico">📅</span><span class="nitem-label">Content Planner</span></button>
+      <button class="nitem" data-label="Website CMS" onclick="goPage('cms',this)"><span class="nico">🎨</span><span class="nitem-label">Website CMS</span></button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Storage</div>
-      <button class="nitem" onclick="goPage('drive',this)"><span class="nico">📁</span>File Manager</button>
+      <button class="nitem" data-label="File Manager" onclick="goPage('drive',this)"><span class="nico">📁</span><span class="nitem-label">File Manager</span></button>
     </div>
     <div class="sfooter">
       <div class="urow">
@@ -1804,6 +1860,19 @@ function clerr(...ids){ids.forEach(id=>ferr(id,''));}
 /* ── SIDEBAR MOBILE ── */
 function openSidebar(){$('sidebar').classList.add('open');$('sOverlay').classList.add('open');document.body.style.overflow='hidden';}
 function closeSidebar(){$('sidebar').classList.remove('open');$('sOverlay').classList.remove('open');document.body.style.overflow='';}
+
+function toggleSidebar(){
+  const sb=$('sidebar');
+  const collapsed=sb.classList.toggle('collapsed');
+  localStorage.setItem('sidebarCollapsed', collapsed?'1':'0');
+}
+
+// Restore sidebar state on load
+(function(){
+  if(localStorage.getItem('sidebarCollapsed')==='1'){
+    document.getElementById('sidebar')?.classList.add('collapsed');
+  }
+})();
 
 /* ── FIREBASE STATUS ── */
 function fbStat(state,txt){const el=$('fbStat'),dot=el.querySelector('.fdot');el.className='fbstat '+state;dot.className='fdot'+(state==='connecting'?' pulse':'');$('fbTxt').textContent=txt;}
