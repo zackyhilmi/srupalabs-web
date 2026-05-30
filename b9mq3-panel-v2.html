@@ -1298,8 +1298,9 @@ async function cmsDel(id){
 <!-- MODAL: Order Baru -->
 <div class="moverlay" id="orderModal">
   <div class="mbox" style="max-width:520px">
-    <div class="mhd"><h3>➕ Order Baru</h3><button class="mclose" onclick="closeOrderModal()">×</button></div>
+    <div class="mhd"><h3 id="orderModalTitle">➕ Order Baru</h3><button class="mclose" onclick="closeOrderModal()">×</button></div>
     <form id="fOrder" novalidate>
+      <input type="hidden" id="editingOrderId" value="">
       <div class="fg-row">
         <div class="fg">
           <label>Channel</label>
@@ -1338,7 +1339,7 @@ async function cmsDel(id){
           <input type="text" id="oNote" placeholder="Catatan tambahan..." maxlength="300">
         </div>
       </div>
-      <button type="submit" class="pbtn green">💾 Simpan Order</button>
+      <button type="submit" class="pbtn green" id="orderSubmitBtn">💾 Simpan Order</button>
     </form>
   </div>
 </div>
@@ -2045,11 +2046,12 @@ function addItemToOrder(){
   toast('✅ Item ditambahkan ke order');
 }
 
-/* ── SAVE ORDER ── */
+/* ── SAVE / EDIT ORDER ── */
 $('fOrder').addEventListener('submit',async function(e){
   e.preventDefault();
   clerr('oChannelE','oBuyerE','oItemsE','oTotalE');
   const btn=this.querySelector('.pbtn');
+  const editId=$('editingOrderId').value; // '' = baru, ada isi = edit
   const channel=$('oChannel').value,buyer=san($('oBuyer').value);
   const orderNo=san($('oOrderNo').value),note=san($('oNote').value);
   const total=parseInt($('oTotal').value,10)||0;
@@ -2060,49 +2062,105 @@ $('fOrder').addEventListener('submit',async function(e){
   if(total<=0){ferr('oTotalE','Total harga harus lebih dari 0.');ok=false;}
   if(!ok)return;
 
-  // Validasi & cek stok semua frame
-  for(const it of pendingItems){
-    const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-    if(!frame){ferr('oItemsE',`Frame ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);return;}
-    if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} habis!`);return;}
-  }
-
   const orig=btn.textContent;btn.textContent='⏳ Menyimpan...';btn.disabled=true;
-  const id=`order_${Date.now()}`;
-  const item={
-    id,channel,buyer,orderNo,note,total,
-    finalTotal:null,   // diisi saat edit harga final
-    items:[...pendingItems],
-    status:'proses',
-    createdAt:new Date().toISOString()
-  };
 
-  try{
-    await fsSet('orders',item);
-    // Kurangi stok frame DAN poster untuk setiap item
-    for(const it of pendingItems){
-      // Kurangi stok frame
-      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-      if(frame){
-        frame.stock=Math.max(0,frame.stock-1);
-        await fsSet('inventory_frames',frame);
-      }
-      
-      // Kurangi stok poster (hanya jika bukan custom)
-      if(!it.isCustomPoster && it.posterId){
-        const poster=inv.posters.find(p=>p.id===it.posterId);
-        if(poster){
-          poster.stock=Math.max(0,poster.stock-1);
-          await fsSet('inventory_posters',poster);
+  if(editId){
+    // ── MODE EDIT ────────────────────────────────────────────────
+    const old=orders.find(o=>o.id===editId);
+    if(!old){toast('Order tidak ditemukan.','error');btn.textContent=orig;btn.disabled=false;return;}
+    try{
+      // Kembalikan stok lama dulu
+      for(const it of (old.items||[])){
+        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(frame){frame.stock+=1;await fsSet('inventory_frames',frame);}
+        if(!it.isCustomPoster&&it.posterId){
+          const poster=inv.posters.find(p=>p.id===it.posterId);
+          if(poster){poster.stock+=1;await fsSet('inventory_posters',poster);}
         }
       }
+      // Validasi & kurangi stok baru
+      for(const it of pendingItems){
+        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(!frame||frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} tidak cukup!`);btn.textContent=orig;btn.disabled=false;return;}
+      }
+      const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],updatedAt:new Date().toISOString()};
+      await fsSet('orders',updated);
+      for(const it of pendingItems){
+        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
+        if(!it.isCustomPoster&&it.posterId){
+          const poster=inv.posters.find(p=>p.id===it.posterId);
+          if(poster){poster.stock=Math.max(0,poster.stock-1);await fsSet('inventory_posters',poster);}
+        }
+      }
+      toast('✅ Order berhasil diupdate!');
+    }catch(err){toast('Gagal: '+err.message,'error');}
+  } else {
+    // ── MODE BARU ────────────────────────────────────────────────
+    // Validasi stok frame
+    for(const it of pendingItems){
+      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+      if(!frame){ferr('oItemsE',`Frame ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);btn.textContent=orig;btn.disabled=false;return;}
+      if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} habis!`);btn.textContent=orig;btn.disabled=false;return;}
     }
-    pendingItems=[];renderItemList();
-    this.reset();btn.textContent=orig;
-    toast('✅ Order disimpan! Stok frame & poster otomatis dikurangi.');
-  }catch(err){btn.textContent=orig;toast('Gagal: '+err.message,'error');}
-  finally{btn.disabled=false;}
+    const id=`order_${Date.now()}`;
+    const item={id,channel,buyer,orderNo,note,total,finalTotal:null,items:[...pendingItems],status:'proses',createdAt:new Date().toISOString()};
+    try{
+      await fsSet('orders',item);
+      for(const it of pendingItems){
+        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
+        if(!it.isCustomPoster&&it.posterId){
+          const poster=inv.posters.find(p=>p.id===it.posterId);
+          if(poster){poster.stock=Math.max(0,poster.stock-1);await fsSet('inventory_posters',poster);}
+        }
+      }
+      toast('✅ Order disimpan! Stok frame & poster otomatis dikurangi.');
+    }catch(err){toast('Gagal: '+err.message,'error');}
+  }
+
+  pendingItems=[];renderItemList();
+  this.reset();$('editingOrderId').value='';
+  $('orderModalTitle').textContent='➕ Order Baru';
+  $('orderSubmitBtn').textContent='💾 Simpan Order';
+  btn.textContent=orig;btn.disabled=false;
+  closeOrderModal();
 });
+
+function openEditOrder(id){
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  // Isi form dengan data existing
+  $('editingOrderId').value=id;
+  $('orderModalTitle').textContent='✏️ Edit Order';
+  $('orderSubmitBtn').textContent='💾 Simpan Perubahan';
+  $('oChannel').value=o.channel||'';
+  $('oBuyer').value=o.buyer||'';
+  $('oOrderNo').value=o.orderNo||'';
+  $('oNote').value=o.note||'';
+  $('oTotal').value=o.total||'';
+  pendingItems=[...(o.items||[])];
+  renderItemList();
+  $('orderModal').classList.add('active');
+}
+
+function editFinalPrice(id){
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  const val=prompt(`Edit harga final untuk order ${o.buyer||id}:`,o.finalTotal||'');
+  if(val===null)return; // cancel
+  const parsed=parseInt(val,10);
+  if(isNaN(parsed)||parsed<0){toast('Harga tidak valid.','error');return;}
+  // Gunakan saveFinalPrice logic langsung
+  const fakeInput={value:String(parsed)};
+  // patch inline
+  o.finalTotal=parsed;
+  fsSet('orders',o).then(()=>{
+    const existing=keuangan.find(k=>k.sourceOrderId===id&&k.type==='income');
+    if(existing){existing.amount=parsed;fsSet('keuangan',existing);}
+    toast('✅ Harga final diupdate!');
+  }).catch(err=>toast('Gagal: '+err.message,'error'));
+}
 
 /* ── RENDER ORDERS ── */
 function renderOrders(){
@@ -2123,7 +2181,10 @@ function renderOrders(){
            <input class="inline-edit-input" type="number" id="fin_${esc(o.id)}" placeholder="Harga final" value="${hasFinal?o.finalTotal:''}">
            <button class="inline-edit-save" onclick="saveFinalPrice('${esc(o.id)}')">✔</button>
          </div>`
-      : `<strong>${hasFinal?rp(o.finalTotal):'—'}</strong>`;
+      : `<div style="display:flex;align-items:center;gap:6px">
+           <strong>${hasFinal?rp(o.finalTotal):'—'}</strong>
+           ${o.status==='selesai'?`<button class="bsm" style="font-size:10px;padding:2px 6px" onclick="editFinalPrice('${esc(o.id)}')">✏️</button>`:''}
+         </div>`;
 
     return`<tr>
       <td style="white-space:nowrap">${fmtDate(o.createdAt)}</td>
@@ -2134,6 +2195,7 @@ function renderOrders(){
       <td>${finalCell}</td>
       <td>${stBadge(o.status)}</td>
       <td class="acell">
+        ${o.status==='proses'?`<button class="bsm" onclick="openEditOrder('${esc(o.id)}')">✏️ Edit</button>`:''}
         ${o.status==='proses'?`<button class="bsm bdel" onclick="batalOrder('${esc(o.id)}')">❌ Batal</button>`:''}
         <button class="bsm bdel" onclick="delOrder('${esc(o.id)}')">🗑️</button>
       </td>
@@ -3734,6 +3796,19 @@ function renderKanban(){
 function kanbanCard(o, col, nextCol){
   const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : '';
   const items = (o.items||[]).map(i=>`${i.posterName||''} ${i.posterSize||''}`).join(', ');
+  // Tampilkan input harga final di kolom packing (kolom sebelum selesai)
+  const isPackingCol = nextCol && nextCol.id === 'selesai';
+  const hasFinal = o.finalTotal != null;
+  const finalPriceHtml = isPackingCol ? `
+    <div style="margin-top:8px;display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
+      <input type="number" id="kfin_${esc(o.id)}"
+        placeholder="Harga final (Rp)"
+        value="${hasFinal ? o.finalTotal : ''}"
+        style="flex:1;font-size:12px;padding:5px 7px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--t1);min-width:0">
+      <button onclick="saveKanbanFinalPrice('${esc(o.id)}')"
+        style="font-size:11px;padding:5px 8px;background:var(--green);color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;white-space:nowrap">✔ Set</button>
+    </div>` : '';
+
   return `<div class="kanban-card" draggable="true"
     ondragstart="dragKanban(event,'${esc(o.id)}')"
     onclick="openKanbanDetail('${esc(o.id)}')">
@@ -3745,8 +3820,10 @@ function kanbanCard(o, col, nextCol){
       ${items ? `<br><span style="color:var(--t3)">${esc(items.slice(0,40))}${items.length>40?'…':''}</span>` : ''}
     </div>
     <div class="kanban-card-total">${rp(o.finalTotal!=null?o.finalTotal:o.total||0)}</div>
+    ${finalPriceHtml}
     <div class="kanban-card-actions" onclick="event.stopPropagation()">
-      ${nextCol ? `<button class="kanban-card-btn next" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')">→ ${nextCol.short}</button>` : ''}
+      ${nextCol ? `<button class="kanban-card-btn next" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')"
+        ${isPackingCol && !hasFinal ? `style="opacity:.5" title="Isi harga final dulu"` : ''}>→ ${nextCol.short}</button>` : ''}
       <button class="kanban-card-btn" onclick="openKanbanDetail('${esc(o.id)}')">Detail</button>
     </div>
   </div>`;
@@ -3810,6 +3887,22 @@ async function moveKanban(orderId, newStatus){
       // ──────────────────────────────────────────────────────────────
     }
   }catch(e){ toast('Gagal: '+e.message,'error'); }
+}
+
+async function saveKanbanFinalPrice(id){
+  const input = $('kfin_'+id);
+  if(!input) return;
+  const val = parseInt(input.value, 10);
+  if(isNaN(val) || val < 0){ toast('Harga final tidak valid.','error'); return; }
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  try{
+    o.finalTotal = val;
+    o.updatedAt  = new Date().toISOString();
+    await fsSet('orders', o);
+    renderKanban(); // refresh card supaya angka total update
+    toast(`✅ Harga final disimpan: ${rp(val)}`);
+  }catch(err){ toast('Gagal: '+err.message,'error'); }
 }
 
 function openKanbanDetail(id){
@@ -3940,8 +4033,12 @@ function renderMarginSummary(){
 
 /* ── Modal helpers: Order, Keuangan, Poster, Frame ── */
 function openOrderModal(){
+  $('editingOrderId').value='';
+  $('orderModalTitle').textContent='➕ Order Baru';
+  $('orderSubmitBtn').textContent='💾 Simpan Order';
+  pendingItems=[];renderItemList();
+  $('fOrder').reset();
   $('orderModal').classList.add('active');
-  currentItems=[];renderItemList();
   setTimeout(()=>$('oChannel')?.focus(),50);
 }
 function closeOrderModal(){ $('orderModal').classList.remove('active'); }
