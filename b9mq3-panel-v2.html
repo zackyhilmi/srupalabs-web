@@ -2132,7 +2132,37 @@ async function saveFinalPrice(id){
     o.status='selesai';  // auto selesai saat harga final diisi
     o.updatedAt=new Date().toISOString();
     await fsSet('orders',o);
-    toast('✅ Harga final disimpan — Order otomatis Selesai!');
+
+    // ── AUTO CATAT KE KEUANGAN ──────────────────────────────────────
+    // Cek apakah sudah pernah dicatat (hindari duplikat jika diedit ulang)
+    const dupKey = `order_income_${id}`;
+    const sudahAda = keuangan.some(k => k.sourceOrderId === id && k.type === 'income');
+    if(!sudahAda){
+      const itemDesc = (o.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+      const keuEntry = {
+        id: dupKey,
+        type: 'income',
+        cat: 'penjualan',
+        amount: finalTotal,
+        date: new Date().toISOString().split('T')[0],
+        desc: `Penjualan${o.buyer?` — ${o.buyer}`:''}${o.orderNo?` (${o.orderNo})`:''} | ${itemDesc}`,
+        sourceOrderId: id,          // referensi ke order, untuk cegah duplikat
+        channel: o.channel || '',
+        createdAt: new Date().toISOString()
+      };
+      await fsSet('keuangan', keuEntry);
+      toast('✅ Order Selesai! Pemasukan otomatis tercatat di Keuangan 💰');
+    } else {
+      // Sudah ada entri → update jumlahnya saja
+      const existing = keuangan.find(k => k.sourceOrderId === id && k.type === 'income');
+      if(existing){
+        existing.amount = finalTotal;
+        existing.updatedAt = new Date().toISOString();
+        await fsSet('keuangan', existing);
+      }
+      toast('✅ Harga final diupdate — Catatan keuangan ikut disesuaikan.');
+    }
+    // ───────────────────────────────────────────────────────────────
   }catch(err){toast('Gagal: '+err.message,'error');}
 }
 
@@ -2276,8 +2306,8 @@ function renderKeuangan(){
   tb.innerHTML=list.map(k=>`<tr>
     <td>${esc(k.date||'—')}</td>
     <td><span class="badge ${k.type==='income'?'income':'expense'}">${k.type==='income'?'💚 Masuk':'❤️ Keluar'}</span></td>
-    <td>${esc(catLbl[k.cat]||k.cat)}</td>
-    <td>${esc(k.desc)}</td>
+    <td>${esc(catLbl[k.cat]||k.cat)}${k.sourceOrderId?` <span style="font-size:10px;background:var(--accent-lt);color:var(--accent);padding:1px 5px;border-radius:4px;font-weight:600;">auto</span>`:''}</td>
+    <td style="font-size:12px;max-width:260px;word-break:break-word">${esc(k.desc)}</td>
     <td><strong style="color:${k.type==='income'?'var(--green)':'var(--red)'}">${rp(k.amount)}</strong></td>
     <td class="acell"><button class="bsm bdel" onclick="delKeu('${esc(k.id)}')">🗑️</button></td>
   </tr>`).join('');
@@ -3618,8 +3648,34 @@ async function moveKanban(orderId, newStatus){
         status: newStatus==='selesai'?'selesai':'proses',
         updatedAt: new Date().toISOString()
       });
+
+      // ── AUTO CATAT KE KEUANGAN saat pindah ke Selesai ─────────────
+      if(newStatus === 'selesai'){
+        const sudahAda = keuangan.some(k => k.sourceOrderId === orderId && k.type === 'income');
+        if(!sudahAda){
+          const amount = order.finalTotal ?? order.total ?? 0;
+          const itemDesc = (order.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+          const keuEntry = {
+            id: `order_income_${orderId}`,
+            type: 'income',
+            cat: 'penjualan',
+            amount,
+            date: new Date().toISOString().split('T')[0],
+            desc: `Penjualan${order.buyer?` — ${order.buyer}`:''}${order.orderNo?` (${order.orderNo})`:''} | ${itemDesc}`,
+            sourceOrderId: orderId,
+            channel: order.channel || '',
+            createdAt: new Date().toISOString()
+          };
+          await fsSet('keuangan', keuEntry);
+          toast(`✅ Dipindah ke Selesai! Pemasukan otomatis tercatat di Keuangan 💰`);
+        } else {
+          toast(`✅ Dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
+        }
+      } else {
+        toast(`✅ Dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
+      }
+      // ──────────────────────────────────────────────────────────────
     }
-    toast(`✅ Dipindah ke: ${KANBAN_COLS.find(c=>c.id===newStatus)?.short||newStatus}`);
   }catch(e){ toast('Gagal: '+e.message,'error'); }
 }
 
