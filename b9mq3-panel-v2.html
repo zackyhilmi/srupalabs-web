@@ -528,6 +528,24 @@ tbody tr:hover{background:var(--accent-lt)}
 .margin-row-loss{font-weight:700;color:#dc2626}
 @media(max-width:768px){.margin-summary{grid-template-columns:repeat(2,1fr)}.kanban-col{flex:0 0 180px}}
 
+/* ─── KALKULATOR HARGA JUAL ─── */
+.kal-price-input{
+  width:110px;padding:5px 8px;
+  border:1.5px solid var(--border);border-radius:6px;
+  font-size:13px;font-family:var(--font);font-weight:600;
+  color:var(--t1);background:var(--surface);
+  outline:none;text-align:right;transition:border-color .2s,box-shadow .2s;
+}
+.kal-price-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.kal-price-input.modified{border-color:var(--amber);background:var(--amber-lt)}
+.kal-price-input.saved{border-color:var(--green);background:var(--green-lt)}
+.kal-group-row td{background:var(--gray-lt)!important;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;padding:6px 12px!important}
+.kal-badge-hpp{background:var(--accent-lt);color:var(--accent);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.kal-badge-jual{background:var(--green-lt);color:var(--green);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.kal-badge-margin-ok{background:var(--amber-lt);color:var(--amber);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
+.kal-badge-margin-bad{background:var(--red-lt);color:var(--red);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
+.kal-badge-new{background:var(--amber-lt);color:var(--amber);font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px}
+
 /* ─── MODAL BUKTI PACKING ─── */
 .packing-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .packing-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border)}
@@ -1157,49 +1175,126 @@ tbody tr:hover{background:var(--accent-lt)}
     <!-- ═══ MARGIN & PROFIT ═══ -->
     <div class="page" id="page-margin">
 
-      <!-- Summary stats -->
-      <div class="margin-summary" id="marginSummary">
-        <div class="margin-stat"><div class="margin-stat-val" id="msTotalOrder">0</div><div class="margin-stat-lbl">Total Order</div></div>
-        <div class="margin-stat"><div class="margin-stat-val" id="msOmzet">Rp0</div><div class="margin-stat-lbl">Total Omzet</div></div>
-        <div class="margin-stat"><div class="margin-stat-val margin-green" id="msProfit">Rp0</div><div class="margin-stat-lbl">Est. Profit</div></div>
-        <div class="margin-stat"><div class="margin-stat-val margin-green" id="msMarginPct">0%</div><div class="margin-stat-lbl">Margin Rate</div></div>
+      <!-- Inner tabs -->
+      <div class="itabs" style="margin-bottom:16px">
+        <button class="itab active" id="mtab-analisis" onclick="goMarginTab('analisis')">📊 Analisis Order</button>
+        <button class="itab" id="mtab-kalkulator" onclick="goMarginTab('kalkulator')">🧮 Kalkulator Harga Jual</button>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <!-- ─── TAB: ANALISIS ORDER ─── -->
+      <div id="msec-analisis">
+        <!-- Summary stats -->
+        <div class="margin-summary" id="marginSummary">
+          <div class="margin-stat"><div class="margin-stat-val" id="msTotalOrder">0</div><div class="margin-stat-lbl">Total Order</div></div>
+          <div class="margin-stat"><div class="margin-stat-val" id="msOmzet">Rp0</div><div class="margin-stat-lbl">Total Omzet</div></div>
+          <div class="margin-stat"><div class="margin-stat-val margin-green" id="msProfit">Rp0</div><div class="margin-stat-lbl">Est. Profit</div></div>
+          <div class="margin-stat"><div class="margin-stat-val margin-green" id="msMarginPct">0%</div><div class="margin-stat-lbl">Margin Rate</div></div>
+        </div>
 
-        <!-- HPP Setup -->
-        <div class="card">
-          <div class="chd">
-            <div class="ctitle">⚙️ Setup HPP per SKU</div>
-            <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="saveHPP()">💾 Simpan HPP</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+          <!-- HPP Setup -->
+          <div class="card">
+            <div class="chd">
+              <div class="ctitle">⚙️ Setup HPP per SKU</div>
+              <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="saveHPP()">💾 Simpan HPP</button>
+            </div>
+            <div class="cbody">
+              <p style="font-size:12.5px;color:var(--t2);margin-bottom:14px;line-height:1.6">
+                HPP = Harga Pokok Produksi. Isi estimasi <strong>biaya cetak</strong>, <strong>frame</strong>, dan <strong>produksi &amp; packing</strong> per ukuran. Biaya prod+pack terisi otomatis dari default — kamu bisa override manual.
+              </p>
+              <div id="hppFields"></div>
+            </div>
           </div>
-          <div class="cbody">
-            <p style="font-size:12.5px;color:var(--t2);margin-bottom:14px;line-height:1.6">
-              HPP = Harga Pokok Produksi. Isi estimasi biaya cetak + frame per ukuran. Dipakai untuk hitung margin per order.
-            </p>
-            <div id="hppFields"></div>
+
+          <!-- Margin per Order -->
+          <div class="card">
+            <div class="chd">
+              <div class="ctitle">📊 Margin per Order</div>
+              <select id="marginFilter" onchange="renderMarginTable()" style="font-size:12px;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);background:var(--surface)">
+                <option value="">Semua</option>
+                <option value="profit">Profit</option>
+                <option value="loss">Rugi</option>
+              </select>
+            </div>
+            <div class="twrap" style="max-height:480px;overflow-y:auto">
+              <table>
+                <thead><tr><th>Pembeli</th><th>Omzet</th><th>HPP ⓘ</th><th>Profit</th><th>Margin</th><th></th></tr></thead>
+                <tbody id="tbMargin"><tr class="erow"><td colspan="5">Setup HPP dulu untuk melihat margin</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB: KALKULATOR HARGA JUAL ─── -->
+      <div id="msec-kalkulator" style="display:none">
+
+        <!-- Parameter inputs -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px">
+          <div class="margin-stat" style="text-align:left;padding:12px 14px">
+            <div class="margin-stat-lbl" style="margin-bottom:6px">💵 Harga Sheet Cetak</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:12px;color:var(--t2)">Rp</span>
+              <input type="number" id="kal-sheet" value="87500" min="1000" step="500"
+                style="width:90px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                oninput="renderKalkulator()">
+            </div>
+          </div>
+          <div class="margin-stat" style="text-align:left;padding:12px 14px">
+            <div class="margin-stat-lbl" style="margin-bottom:6px">🗑️ Overhead Cetak</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="number" id="kal-waste" value="10" min="0" max="50" step="1"
+                style="width:60px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                oninput="renderKalkulator()">
+              <span style="font-size:12px;color:var(--t2)">%</span>
+            </div>
+          </div>
+          <div class="margin-stat" style="text-align:left;padding:12px 14px">
+            <div class="margin-stat-lbl" style="margin-bottom:6px">🛍️ Komisi Platform</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="number" id="kal-komisi" value="21" min="0" max="40" step="0.5"
+                style="width:60px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                oninput="renderKalkulator()">
+              <span style="font-size:12px;color:var(--t2)">%</span>
+            </div>
+          </div>
+          <div class="margin-stat" style="text-align:left;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div class="margin-stat-lbl" style="margin-bottom:6px">💾 Harga Jual Manual</div>
+            <button class="pbtn" style="margin:0;padding:7px 14px;font-size:12px" onclick="saveAllKalkulatorPrices()">Simpan Semua</button>
           </div>
         </div>
 
-        <!-- Margin per Order -->
+        <!-- Kalkulator table -->
         <div class="card">
           <div class="chd">
-            <div class="ctitle">📊 Margin per Order</div>
-            <select id="marginFilter" onchange="renderMarginTable()" style="font-size:12px;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);background:var(--surface)">
-              <option value="">Semua</option>
-              <option value="profit">Profit</option>
-              <option value="loss">Rugi</option>
-            </select>
+            <div class="ctitle">🧮 Rekomendasi & Harga Jual</div>
+            <span style="font-size:11.5px;color:var(--t2)">Edit kolom "Harga Jual" lalu klik Simpan Semua</span>
           </div>
-          <div class="twrap" style="max-height:480px;overflow-y:auto">
-            <table>
-              <thead><tr><th>Pembeli</th><th>Omzet</th><th>HPP</th><th>Profit</th><th>Margin</th></tr></thead>
-              <tbody id="tbMargin"><tr class="erow"><td colspan="5">Setup HPP dulu untuk melihat margin</td></tr></tbody>
+          <div class="twrap">
+            <table id="kalTable">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Ukuran</th>
+                  <th>Biaya Cetak</th>
+                  <th>Frame</th>
+                  <th>Prod+Pack</th>
+                  <th>Total HPP</th>
+                  <th>Rekomendasi</th>
+                  <th>Harga Jual</th>
+                  <th>Margin</th>
+                  <th>Profit/pcs</th>
+                </tr>
+              </thead>
+              <tbody id="tbKalkulator"><tr class="erow"><td colspan="10">Memuat...</td></tr></tbody>
             </table>
           </div>
+          <div style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);background:var(--gray-lt)">
+            💡 Rekomendasi dihitung otomatis dari HPP + komisi + target margin. Harga Jual bisa kamu edit manual — klik Simpan Semua untuk menyimpan ke database.
+          </div>
         </div>
-
       </div>
+
     </div>
 
   </div><!-- /main -->
@@ -1990,7 +2085,7 @@ function goPage(name,el){
     },100);
   }
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
-  if(name==='margin'){loadHPP();}
+  if(name==='margin'){loadHPP();loadKalkulatorPrices();}
   if(name==='drive'){
     if(!window._driveAPILoaded){
       window._driveAPILoaded=true;
@@ -4104,8 +4199,15 @@ function openKanbanDetail(id){
 /* ══════════════════════════════════════
    MARGIN & PROFIT
 ══════════════════════════════════════ */
-const HPP_SIZES = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80'];
-let hppData = {}; // {size: {cetak, frame}}
+// Size keys yang dipakai di inventory (format "20x30")
+const HPP_SIZES = ['20x30','30x40','40x60','50x70','60x80'];
+
+// Default produksi+packing per ukuran (sama dengan KAL_PROD_PACK, tapi key format "20x30")
+const HPP_DEFAULT_PP = {
+  '20x30': 4000, '30x40': 5000, '40x60': 6000, '50x70': 8000, '60x80': 10000,
+};
+
+let hppData = {}; // { size: { cetak, frame, prodpack } }
 
 async function loadHPP(){
   try{
@@ -4122,42 +4224,54 @@ function renderHPPFields(){
   const wrap = $('hppFields');
   if(!wrap) return;
   wrap.innerHTML = HPP_SIZES.map(sz => {
-    const d = hppData[sz]||{cetak:0,frame:0};
+    const d       = hppData[sz] || {};
+    const cetak   = d.cetak    || 0;
+    const frame   = d.frame    || 0;
+    const prodpack= d.prodpack != null ? d.prodpack : (HPP_DEFAULT_PP[sz] || 0);
+    const total   = cetak + frame + prodpack;
     return `<div class="hpp-card">
       <div class="hpp-card-title">📐 ${sz} cm</div>
       <div class="hpp-field">
         <label>Biaya Cetak</label>
-        <input type="number" id="hpp-cetak-${sz}" value="${d.cetak||0}" placeholder="0" min="0"
+        <input type="number" id="hpp-cetak-${sz}" value="${cetak}" placeholder="0" min="0"
           oninput="previewHPP('${sz}')" style="border-radius:6px">
       </div>
       <div class="hpp-field">
         <label>Biaya Frame</label>
-        <input type="number" id="hpp-frame-${sz}" value="${d.frame||0}" placeholder="0" min="0"
+        <input type="number" id="hpp-frame-${sz}" value="${frame}" placeholder="0" min="0"
+          oninput="previewHPP('${sz}')">
+      </div>
+      <div class="hpp-field">
+        <label>Produksi &amp; Packing</label>
+        <input type="number" id="hpp-pp-${sz}" value="${prodpack}" placeholder="0" min="0"
           oninput="previewHPP('${sz}')">
       </div>
       <div class="hpp-field" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
         <label style="font-weight:600;color:var(--t1)">Total HPP</label>
-        <span id="hpp-total-${sz}" style="font-weight:700;color:var(--accent);font-size:13px">${rp((d.cetak||0)+(d.frame||0))}</span>
+        <span id="hpp-total-${sz}" style="font-weight:700;color:var(--accent);font-size:13px">${rp(total)}</span>
       </div>
     </div>`;
   }).join('');
 }
 
 function previewHPP(sz){
-  const c = parseFloat($(`hpp-cetak-${sz}`)?.value)||0;
-  const f = parseFloat($(`hpp-frame-${sz}`)?.value)||0;
+  const c  = parseFloat($(`hpp-cetak-${sz}`)?.value)  || 0;
+  const f  = parseFloat($(`hpp-frame-${sz}`)?.value)  || 0;
+  const pp = parseFloat($(`hpp-pp-${sz}`)?.value)     || 0;
   const el = $(`hpp-total-${sz}`);
-  if(el) el.textContent = rp(c+f);
+  if(el) el.textContent = rp(c + f + pp);
 }
 
 async function saveHPP(){
   const{db,collection,doc,setDoc}=getDB();
   try{
     for(const sz of HPP_SIZES){
-      const cetak = parseFloat($(`hpp-cetak-${sz}`)?.value)||0;
-      const frame = parseFloat($(`hpp-frame-${sz}`)?.value)||0;
-      hppData[sz] = {cetak, frame, total: cetak+frame};
-      await setDoc(doc(collection(db,'hpp_settings'),sz),{cetak,frame,total:cetak+frame});
+      const cetak    = parseFloat($(`hpp-cetak-${sz}`)?.value) || 0;
+      const frame    = parseFloat($(`hpp-frame-${sz}`)?.value) || 0;
+      const prodpack = parseFloat($(`hpp-pp-${sz}`)?.value)    || 0;
+      const total    = cetak + frame + prodpack;
+      hppData[sz]    = { cetak, frame, prodpack, total };
+      await setDoc(doc(collection(db,'hpp_settings'),sz), { cetak, frame, prodpack, total });
     }
     toast('✅ HPP berhasil disimpan!');
     renderMarginTable();
@@ -4168,10 +4282,13 @@ async function saveHPP(){
 function calcOrderHPP(order){
   let hpp = 0;
   (order.items||[]).forEach(item=>{
-    const sz = item.posterSize||item.frameSize||'';
-    const d  = hppData[sz]||{cetak:0,frame:0};
-    const qty= item.qty||1;
-    hpp += (d.cetak + d.frame) * qty;
+    // Normalise size key: "30x40 cm" → "30x40", "30×40" → "30x40"
+    const raw = (item.posterSize || item.frameSize || '').replace('×','x').replace(/\s*cm$/i,'').trim();
+    const d   = hppData[raw] || {};
+    const qty = item.qty || 1;
+    // cetak + frame + produksi & packing, fallback ke default jika belum di-set
+    const prodpack = d.prodpack != null ? d.prodpack : (HPP_DEFAULT_PP[raw] || 0);
+    hpp += ((d.cetak||0) + (d.frame||0) + prodpack) * qty;
   });
   return hpp;
 }
@@ -4181,27 +4298,47 @@ function renderMarginTable(){
   if(!tb) return;
   const filter = $('marginFilter')?.value||'';
   const activeOrders = orders.filter(o=>o.status!=='batal');
-  if(!activeOrders.length){tb.innerHTML='<tr class="erow"><td colspan="5">Belum ada order</td></tr>';return;}
+  if(!activeOrders.length){tb.innerHTML='<tr class="erow"><td colspan="6">Belum ada order</td></tr>';return;}
 
   let rows = activeOrders.map(o=>{
-    const omzet  = o.finalTotal!=null?o.finalTotal:(o.total||0);
+    const omzet  = o.finalTotal!=null ? o.finalTotal : (o.total||0);
     const hpp    = calcOrderHPP(o);
     const profit = omzet - hpp;
-    const pct    = omzet>0?Math.round((profit/omzet)*100):0;
-    return {o, omzet, hpp, profit, pct};
+    const pct    = omzet>0 ? Math.round((profit/omzet)*100) : 0;
+
+    // HPP breakdown per item untuk tooltip
+    const breakdown = (o.items||[]).map(item=>{
+      const raw      = (item.posterSize||item.frameSize||'').replace('×','x').replace(/\s*cm$/i,'').trim();
+      const d        = hppData[raw]||{};
+      const qty      = item.qty||1;
+      const pp       = d.prodpack!=null ? d.prodpack : (HPP_DEFAULT_PP[raw]||0);
+      const itemHpp  = ((d.cetak||0)+(d.frame||0)+pp)*qty;
+      return `${esc(raw)} ×${qty}: cetak ${rp(d.cetak||0)} + frame ${rp(d.frame||0)} + pp ${rp(pp)} = ${rp(itemHpp)}`;
+    }).join('&#10;');
+
+    return {o, omzet, hpp, profit, pct, breakdown};
   }).filter(r=> !filter || (filter==='profit'?r.profit>=0:r.profit<0))
     .sort((a,b)=>b.profit-a.profit);
 
-  if(!rows.length){tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data</td></tr>';return;}
-  tb.innerHTML = rows.map(({o,omzet,hpp,profit,pct})=>{
-    const cls = profit>=0?'margin-row-profit':'margin-row-loss';
+  if(!rows.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada data</td></tr>';return;}
+
+  tb.innerHTML = rows.map(({o,omzet,hpp,profit,pct,breakdown})=>{
+    const cls    = profit>=0 ? 'margin-row-profit' : 'margin-row-loss';
     const pctStr = (profit>=0?'+':'')+pct+'%';
+    const hppLabel = hpp>0
+      ? `<span style="cursor:default;border-bottom:1px dashed var(--border)" title="${breakdown}">${rp(hpp)}</span>`
+      : '<span style="color:var(--t3)">—</span>';
     return `<tr>
-      <td><strong>${esc(o.buyer||'—')}</strong><br><small style="color:var(--t3)">${chBadge(o.channel)}</small></td>
+      <td>
+        <strong>${esc(o.buyer||'—')}</strong><br>
+        <small style="color:var(--t3)">${chBadge(o.channel)}</small>
+        ${(o.items||[]).length ? `<div style="font-size:10.5px;color:var(--t3);margin-top:2px">${(o.items||[]).length} item</div>` : ''}
+      </td>
       <td>${rp(omzet)}</td>
-      <td style="color:var(--t2)">${hpp>0?rp(hpp):'—'}</td>
+      <td style="color:var(--t2)">${hppLabel}</td>
       <td class="${cls}">${hpp>0?rp(profit):'—'}</td>
       <td class="${cls}" style="font-weight:700">${hpp>0?pctStr:'—'}</td>
+      <td style="font-size:11px;color:var(--t3)">${hpp===0?'<span style="color:var(--amber);font-size:11px">⚠ Isi HPP</span>':''}</td>
     </tr>`;
   }).join('');
 }
@@ -4218,7 +4355,179 @@ function renderMarginSummary(){
   if($('msMarginPct'))  { $('msMarginPct').textContent= pct+'%'; $('msMarginPct').className = 'margin-stat-val '+(pct>=0?'margin-green':'margin-red'); }
 }
 
-/* ── Modal helpers: Order, Keuangan, Poster, Frame ── */
+/* ══════════════════════════════════════
+   MARGIN TABS
+══════════════════════════════════════ */
+function goMarginTab(tab) {
+  ['analisis','kalkulator'].forEach(t => {
+    document.getElementById('msec-'+t).style.display = t===tab ? '' : 'none';
+    document.getElementById('mtab-'+t).classList.toggle('active', t===tab);
+  });
+  if (tab === 'kalkulator') renderKalkulator();
+}
+
+/* ══════════════════════════════════════
+   KALKULATOR HARGA JUAL
+══════════════════════════════════════ */
+const KAL_SHEET_AREA = 10000;
+
+const KAL_FRAMES = [
+  { model: 'Blok 2,5 cm',     ukuran: '20×30', w: 20, h: 30, hppFrame: 10000, status: 'aktif' },
+  { model: 'Blok 2,5 cm',     ukuran: '30×40', w: 30, h: 40, hppFrame: 14000, status: 'aktif' },
+  { model: 'Blok 2,5 cm',     ukuran: '40×60', w: 40, h: 60, hppFrame: 24000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'aktif' },
+  { model: 'Minimalist 2×2',  ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'baru'  },
+  { model: 'Minimalist 2×2',  ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'baru'  },
+  { model: 'Minimalist 2×2',  ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'baru'  },
+  { model: 'Minimalist 2×2',  ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'baru'  },
+];
+
+const KAL_PROD_PACK = {
+  '20×30': 4000, '30×40': 5000, '40×60': 6000, '50×70': 8000, '60×80': 10000,
+};
+
+const KAL_TARGET_MARGIN = {
+  '20×30': 0.30, '30×40': 0.28, '40×60': 0.25, '50×70': 0.22, '60×80': 0.20,
+};
+
+// Saved prices from Firestore: { 'Blok 2,5 cm|20×30': 69000, ... }
+let kalSavedPrices = {};
+
+function kalKey(model, ukuran) { return model + '|' + ukuran; }
+
+async function loadKalkulatorPrices() {
+  try {
+    const { db, collection } = getDB();
+    const { getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const snap = await getDocs(collection(db, 'harga_jual'));
+    snap.forEach(d => { kalSavedPrices[d.id.replace(/__/g,'|').replace(/x/g,'×')] = d.data().hargaJual || 0; });
+  } catch(e) {}
+  renderKalkulator();
+}
+
+function kalPsychPrice(raw) {
+  const steps = [9000,19000,29000,39000,49000,59000,69000,79000,89000,99000,
+    109000,119000,129000,139000,149000,159000,169000,179000,189000,199000,
+    219000,239000,249000,259000,279000,299000,319000,349000,379000,399000,
+    429000,449000,479000,499000,549000,599000,649000,699000,749000,799000];
+  for (const s of steps) { if (s >= raw) return s; }
+  return Math.ceil(raw / 10000) * 10000 - 1000;
+}
+
+function renderKalkulator() {
+  const sheetPrice = parseFloat(document.getElementById('kal-sheet')?.value) || 87500;
+  const waste      = parseFloat(document.getElementById('kal-waste')?.value)  || 0;
+  const komisi     = parseFloat(document.getElementById('kal-komisi')?.value) || 0;
+  const pricePerCm2 = sheetPrice / KAL_SHEET_AREA;
+  const tb = document.getElementById('tbKalkulator');
+  if (!tb) return;
+
+  let html = '';
+  let lastModel = '';
+
+  KAL_FRAMES.forEach(f => {
+    if (f.model !== lastModel) {
+      lastModel = f.model;
+      html += `<tr class="kal-group-row"><td colspan="10">${esc(f.model)}</td></tr>`;
+    }
+    const area     = f.w * f.h;
+    const hppCetak = area * pricePerCm2 * (1 + waste / 100);
+    const hppPP    = KAL_PROD_PACK[f.ukuran] || 5000;
+    const hppTotal = hppCetak + f.hppFrame + hppPP;
+    const margin   = KAL_TARGET_MARGIN[f.ukuran] || 0.25;
+    const rawJual  = hppTotal / (1 - (komisi / 100) - margin);
+    const rekJual  = kalPsychPrice(rawJual);
+    const key      = kalKey(f.model, f.ukuran);
+    const savedVal = kalSavedPrices[key] || rekJual;
+
+    // compute margin from saved price
+    const komisiNom = savedVal * (komisi / 100);
+    const profit    = savedVal - hppTotal - komisiNom;
+    const marginPct = savedVal > 0 ? Math.round((profit / savedVal) * 100) : 0;
+    const marginBadgeCls = marginPct >= 20 ? 'kal-badge-margin-ok' : 'kal-badge-margin-bad';
+    const newBadge = f.status === 'baru' ? `<span class="kal-badge-new">Baru</span>` : '';
+
+    html += `<tr>
+      <td style="font-size:12px;color:var(--t2)">${esc(f.model)}${newBadge}</td>
+      <td style="font-weight:600">${esc(f.ukuran)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(hppCetak)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(f.hppFrame)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(hppPP)}</td>
+      <td><span class="kal-badge-hpp">${rp(hppTotal)}</span></td>
+      <td><span class="kal-badge-jual">${rp(rekJual)}</span></td>
+      <td>
+        <input
+          class="kal-price-input${kalSavedPrices[key] ? ' saved' : ''}"
+          id="kal-input-${esc(key.replace(/[|×]/g,'-'))}"
+          data-key="${esc(key)}"
+          data-hpp="${Math.round(hppTotal)}"
+          data-komisi="${komisi}"
+          type="number" min="0" step="1000"
+          value="${savedVal}"
+          oninput="onKalPriceInput(this)">
+      </td>
+      <td><span class="${marginBadgeCls}" id="kal-margin-${esc(key.replace(/[|×]/g,'-'))}">${marginPct}%</span></td>
+      <td style="font-weight:600;font-size:13px" id="kal-profit-${esc(key.replace(/[|×]/g,'-'))}">${rp(profit)}</td>
+    </tr>`;
+  });
+
+  tb.innerHTML = html;
+}
+
+function onKalPriceInput(input) {
+  // Update margin & profit live
+  const key     = input.dataset.key;
+  const hpp     = parseFloat(input.dataset.hpp) || 0;
+  const komisi  = parseFloat(input.dataset.komisi) || 0;
+  const hj      = parseFloat(input.value) || 0;
+  const komisiN = hj * (komisi / 100);
+  const profit  = hj - hpp - komisiN;
+  const pct     = hj > 0 ? Math.round((profit / hj) * 100) : 0;
+
+  const safeId = key.replace(/[|×]/g, '-');
+  const marginEl = document.getElementById('kal-margin-' + safeId);
+  const profitEl = document.getElementById('kal-profit-' + safeId);
+  if (marginEl) {
+    marginEl.textContent = pct + '%';
+    marginEl.className = pct >= 20 ? 'kal-badge-margin-ok' : 'kal-badge-margin-bad';
+  }
+  if (profitEl) profitEl.textContent = rp(profit);
+  input.classList.remove('saved');
+  input.classList.add('modified');
+}
+
+async function saveAllKalkulatorPrices() {
+  const inputs = document.querySelectorAll('.kal-price-input');
+  if (!inputs.length) return;
+  const btn = document.querySelector('[onclick="saveAllKalkulatorPrices()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
+  try {
+    const { db, doc, setDoc } = getDB();
+    const { collection } = getDB();
+    for (const inp of inputs) {
+      const key = inp.dataset.key;
+      const val = parseInt(inp.value, 10);
+      if (isNaN(val) || val < 0) continue;
+      kalSavedPrices[key] = val;
+      const docId = key.replace(/\|/g, '__').replace(/×/g, 'x');
+      await setDoc(doc(db, 'harga_jual', docId), {
+        key, model: key.split('|')[0], ukuran: key.split('|')[1],
+        hargaJual: val, updatedAt: new Date().toISOString()
+      });
+      inp.classList.remove('modified');
+      inp.classList.add('saved');
+    }
+    toast('✅ Harga jual berhasil disimpan!');
+  } catch(e) {
+    toast('Gagal simpan: ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Simpan Semua'; }
+  }
+}
+
+
+
 function openOrderModal(){
   $('editingOrderId').value='';
   $('orderModalTitle').textContent='➕ Order Baru';
