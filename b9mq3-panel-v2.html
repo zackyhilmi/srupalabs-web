@@ -689,7 +689,8 @@ tbody tr:hover{background:#fafbfc}
     <div class="page" id="page-keuangan">
       <div class="igrid">
         <div>
-          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px">
+            <button class="pbtn outline" style="width:auto;padding:6px 16px;font-size:13px" onclick="syncOrdersToKeuangan()" id="btnSync">🔄 Sync Order Lama</button>
             <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openKeuModal()">➕ Catat Keuangan</button>
           </div>
           <div class="sum-grid">
@@ -2316,6 +2317,62 @@ async function delKeu(id){
   if(!confirm('Hapus catatan ini?'))return;
   try{await fsDel('keuangan',id);toast('🗑️ Catatan dihapus.');}
   catch(err){toast('Gagal: '+err.message,'error');}
+}
+
+async function syncOrdersToKeuangan(){
+  // Kumpulkan semua order yang sudah selesai
+  const done = orders.filter(o => o.status === 'selesai');
+  if(!done.length){
+    toast('Tidak ada order selesai yang perlu disync.','error');
+    return;
+  }
+
+  // Order yang sudah punya entri keuangan (cegah duplikat)
+  const sudahSyncIds = new Set(
+    keuangan.filter(k => k.sourceOrderId).map(k => k.sourceOrderId)
+  );
+
+  const belumSync = done.filter(o => !sudahSyncIds.has(o.id));
+  if(!belumSync.length){
+    toast('✅ Semua order selesai sudah tersync ke Keuangan!');
+    return;
+  }
+
+  const konfirm = confirm(
+    `Ditemukan ${belumSync.length} order selesai yang belum tercatat di Keuangan.\n\nLanjutkan sync otomatis?`
+  );
+  if(!konfirm) return;
+
+  const btn = document.getElementById('btnSync');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ Menyync...'; }
+
+  let sukses = 0, gagal = 0;
+  for(const o of belumSync){
+    try{
+      const amount = o.finalTotal ?? o.total ?? 0;
+      const itemDesc = (o.items||[])
+        .map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`)
+        .join(', ');
+      // Gunakan tanggal order asli (bukan hari ini)
+      const tgl = (o.updatedAt || o.createdAt || new Date().toISOString()).split('T')[0];
+      const keuEntry = {
+        id: `order_income_${o.id}`,
+        type: 'income',
+        cat: 'penjualan',
+        amount,
+        date: tgl,
+        desc: `Penjualan${o.buyer?` — ${o.buyer}`:''}${o.orderNo?` (${o.orderNo})`:''} | ${itemDesc}`,
+        sourceOrderId: o.id,
+        channel: o.channel || '',
+        createdAt: new Date().toISOString()
+      };
+      await fsSet('keuangan', keuEntry);
+      sukses++;
+    } catch(e){ gagal++; }
+  }
+
+  if(btn){ btn.disabled = false; btn.textContent = '🔄 Sync Order Lama'; }
+  toast(`✅ Sync selesai! ${sukses} order masuk ke Keuangan${gagal?`, ${gagal} gagal`:''}.`);
 }
 
 /* ── LAPORAN ── */
