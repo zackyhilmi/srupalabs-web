@@ -1364,38 +1364,41 @@ async function cmsDel(id){
           </select>
         </div>
       </div>
+      <!-- RESTOCK: multi-item builder -->
       <div id="restockFields" style="display:none">
-        <div class="fg-row">
-          <div class="fg">
-            <label>Warna Frame</label>
-            <select id="kFrameColor">
-              <option value="">Pilih Warna</option>
+        <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">📦 Item Frame yang Dibeli</div>
+        <div id="restockItemList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div style="background:var(--gray-lt);border-radius:10px;padding:10px;display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+          <div class="fg" style="flex:1;min-width:100px;margin:0">
+            <label style="font-size:11px">Warna</label>
+            <select id="kFrameColor" style="font-size:13px;padding:7px 8px">
+              <option value="">Pilih</option>
               <option value="Hitam">Hitam</option><option value="Putih">Putih</option>
               <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
             </select>
-            <div class="ferr" id="kFrameColorE"></div>
           </div>
-          <div class="fg">
-            <label>Ukuran Frame</label>
-            <select id="kFrameSize">
-              <option value="">Pilih Ukuran</option>
+          <div class="fg" style="flex:1;min-width:100px;margin:0">
+            <label style="font-size:11px">Ukuran</label>
+            <select id="kFrameSize" style="font-size:13px;padding:7px 8px">
+              <option value="">Pilih</option>
               <option value="20x20">20×20</option><option value="20x30">20×30</option>
               <option value="30x30">30×30</option><option value="30x40">30×40</option>
               <option value="40x60">40×60</option><option value="50x70">50×70</option>
               <option value="60x80">60×80</option>
             </select>
-            <div class="ferr" id="kFrameSizeE"></div>
           </div>
-          <div class="fg" style="flex:0 0 110px">
-            <label>Qty Restock</label>
-            <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999">
-            <div class="ferr" id="kRestockQtyE"></div>
+          <div class="fg" style="flex:0 0 70px;margin:0">
+            <label style="font-size:11px">Qty</label>
+            <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999" style="font-size:13px;padding:7px 8px">
           </div>
+          <button type="button" onclick="addRestockItem()" style="height:36px;padding:0 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">+ Tambah</button>
         </div>
+        <div class="ferr" id="kRestockItemsE" style="margin-top:4px"></div>
       </div>
+
       <div class="fg-row">
         <div class="fg">
-          <label>Jumlah (Rp)</label>
+          <label>Total Harga (Rp)</label>
           <input type="number" id="kAmount" placeholder="0" min="0">
           <div class="ferr" id="kAmountE"></div>
         </div>
@@ -1405,8 +1408,8 @@ async function cmsDel(id){
         </div>
       </div>
       <div class="fg">
-        <label>Keterangan</label>
-        <input type="text" id="kDesc" placeholder="Contoh: Restock frame hitam 20 pcs" maxlength="200">
+        <label>Keterangan <span style="font-weight:400;color:var(--t3)">(opsional)</span></label>
+        <input type="text" id="kDesc" placeholder="Contoh: Beli dari supplier X" maxlength="200">
         <div class="ferr" id="kDescE"></div>
       </div>
       <button type="submit" class="pbtn">💾 Simpan</button>
@@ -2196,92 +2199,146 @@ async function delOrder(id){
 }
 
 /* ── KEUANGAN ── */
+// ── RESTOCK MULTI-ITEM ──────────────────────────────────────────────
+let restockItems = []; // [{color, size, qty}]
+
 function toggleRestockFields(){
-  const cat=$('kCat').value;
-  const restockDiv=$('restockFields');
-  if(cat==='restock'){
-    restockDiv.style.display='block';
-  }else{
-    restockDiv.style.display='none';
-    $('kFrameColor').value='';
-    $('kFrameSize').value='';
-    $('kRestockQty').value='';
+  const cat = $('kCat').value;
+  const restockDiv = $('restockFields');
+  if(cat === 'restock'){
+    restockDiv.style.display = 'block';
+    // Paksa type jadi expense
+    $('kType').value = 'expense';
+  } else {
+    restockDiv.style.display = 'none';
+    restockItems = [];
+    renderRestockItemList();
   }
 }
 
-$('kDate').value=new Date().toISOString().split('T')[0];
-$('fKeu').addEventListener('submit',async function(e){
-  e.preventDefault();clerr('kAmountE','kDescE','kFrameColorE','kFrameSizeE','kRestockQtyE');
-  const btn=this.querySelector('.pbtn');
-  const type=$('kType').value,cat=$('kCat').value;
-  const amount=parseInt($('kAmount').value,10)||0,date=$('kDate').value,desc=san($('kDesc').value);
-  
-  // Restock frame fields
-  const frameColor=$('kFrameColor').value;
-  const frameSize=$('kFrameSize').value;
-  const restockQty=parseInt($('kRestockQty').value,10)||0;
-  
-  let ok=true;
-  if(!amount||amount<=0){ferr('kAmountE','Jumlah harus lebih dari 0.');ok=false;}
-  if(desc.length<2){ferr('kDescE','Keterangan minimal 2 karakter.');ok=false;}
-  
-  // Validasi restock frame
-  if(cat==='restock'){
-    if(!frameColor){ferr('kFrameColorE','Pilih warna frame.');ok=false;}
-    if(!frameSize){ferr('kFrameSizeE','Pilih ukuran frame.');ok=false;}
-    if(!restockQty||restockQty<1){ferr('kRestockQtyE','Jumlah restock minimal 1.');ok=false;}
+function addRestockItem(){
+  const color = $('kFrameColor').value;
+  const size  = $('kFrameSize').value;
+  const qty   = parseInt($('kRestockQty').value, 10);
+  $('kRestockItemsE').textContent = '';
+
+  if(!color || !size){ $('kRestockItemsE').textContent = 'Pilih warna & ukuran frame.'; return; }
+  if(!qty || qty < 1){ $('kRestockItemsE').textContent = 'Qty minimal 1.'; return; }
+
+  // Kalau kombinasi warna+ukuran sudah ada, tambah qty saja
+  const existing = restockItems.find(i => i.color === color && i.size === size);
+  if(existing){
+    existing.qty += qty;
+  } else {
+    restockItems.push({ color, size, qty });
   }
-  
-  if(!ok)return;
-  
-  const orig=btn.textContent;btn.textContent='⏳...';btn.disabled=true;
-  const item={id:`keu_${Date.now()}`,type,cat,amount,date,desc,createdAt:new Date().toISOString()};
-  
-  // Tambah info restock jika kategori restock
-  if(cat==='restock'){
-    item.restockFrameColor=frameColor;
-    item.restockFrameSize=frameSize;
-    item.restockQty=restockQty;
+
+  // Reset input tambah
+  $('kFrameColor').value = '';
+  $('kFrameSize').value  = '';
+  $('kRestockQty').value = '';
+  renderRestockItemList();
+}
+
+function renderRestockItemList(){
+  const wrap = $('restockItemList');
+  if(!wrap) return;
+  if(!restockItems.length){
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:4px 0">Belum ada item — tambahkan frame di atas</div>';
+    return;
   }
-  
+  wrap.innerHTML = restockItems.map((it, idx) => `
+    <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px">
+      <span style="font-size:13px;flex:1">🖼️ <strong>${esc(it.color)} ${esc(it.size)}</strong></span>
+      <span style="font-size:13px;font-weight:600;color:var(--accent)">${it.qty} pcs</span>
+      <button type="button" onclick="removeRestockItem(${idx})" style="background:var(--red-lt);color:var(--red);border:none;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer">✕</button>
+    </div>`).join('');
+}
+
+function removeRestockItem(idx){
+  restockItems.splice(idx, 1);
+  renderRestockItemList();
+}
+
+$('kDate').value = new Date().toISOString().split('T')[0];
+
+$('fKeu').addEventListener('submit', async function(e){
+  e.preventDefault();
+  clerr('kAmountE','kDescE','kRestockItemsE');
+  const btn  = this.querySelector('.pbtn');
+  const type = $('kType').value;
+  const cat  = $('kCat').value;
+  const amount = parseInt($('kAmount').value, 10) || 0;
+  const date   = $('kDate').value;
+  const desc   = san($('kDesc').value);
+
+  let ok = true;
+  if(!amount || amount <= 0){ ferr('kAmountE','Jumlah harus lebih dari 0.'); ok = false; }
+  // Keterangan opsional untuk restock, wajib untuk lainnya
+  if(cat !== 'restock' && desc.length < 2){ ferr('kDescE','Keterangan minimal 2 karakter.'); ok = false; }
+  if(cat === 'restock' && !restockItems.length){ $('kRestockItemsE').textContent = 'Tambahkan minimal 1 item frame.'; ok = false; }
+  if(!ok) return;
+
+  const orig = btn.textContent; btn.textContent = '⏳...'; btn.disabled = true;
+
+  // Buat deskripsi otomatis dari item list kalau keterangan kosong
+  const autoDesc = cat === 'restock'
+    ? (desc || 'Restock: ' + restockItems.map(i=>`${i.color} ${i.size} ${i.qty}pcs`).join(', '))
+    : desc;
+
+  const item = {
+    id: `keu_${Date.now()}`,
+    type, cat, amount,
+    date, desc: autoDesc,
+    createdAt: new Date().toISOString()
+  };
+
+  if(cat === 'restock'){
+    item.restockItems = [...restockItems]; // simpan semua item ke Firestore
+  }
+
   try{
-    await fsSet('keuangan',item);
-    
-    // AUTO RESTOCK FRAME
-    if(cat==='restock'){
-      let frame=inv.frames.find(f=>f.color===frameColor&&f.size===frameSize);
-      if(frame){
-        // Frame sudah ada, tambah stok
-        frame.stock+=restockQty;
-        await fsSet('inventory_frames',frame);
-        toast(`✅ Catatan disimpan! Stok Frame ${frameColor} ${frameSize} +${restockQty} (Total: ${frame.stock})`);
-      }else{
-        // Frame belum ada, buat baru
-        const newFrame={
-          id:`frame_${frameColor}_${frameSize}_${Date.now()}`.replace(/\s+/g,'_'),
-          color:frameColor,
-          size:frameSize,
-          stock:restockQty,
-          createdAt:new Date().toISOString()
-        };
-        await fsSet('inventory_frames',newFrame);
-        toast(`✅ Catatan disimpan! Frame ${frameColor} ${frameSize} dibuat dengan stok ${restockQty}`);
+    await fsSet('keuangan', item);
+
+    // ── UPDATE STOK SEMUA ITEM SEKALIGUS ────────────────────────────
+    if(cat === 'restock'){
+      let summary = [];
+      for(const ri of restockItems){
+        let frame = inv.frames.find(f => f.color === ri.color && f.size === ri.size);
+        if(frame){
+          frame.stock += ri.qty;
+          await fsSet('inventory_frames', frame);
+          summary.push(`${ri.color} ${ri.size} +${ri.qty} → ${frame.stock}`);
+        } else {
+          const newFrame = {
+            id: `frame_${ri.color}_${ri.size}_${Date.now()}`.replace(/\s+/g,'_'),
+            color: ri.color, size: ri.size, stock: ri.qty,
+            createdAt: new Date().toISOString()
+          };
+          await fsSet('inventory_frames', newFrame);
+          inv.frames.push(newFrame);
+          summary.push(`${ri.color} ${ri.size} baru +${ri.qty}`);
+        }
       }
-    }else{
+      toast(`✅ Restock disimpan! ${summary.join(' | ')}`);
+      restockItems = [];
+      renderRestockItemList();
+    } else {
       toast('✅ Catatan disimpan!');
     }
-    
+
     this.reset();
-    $('kDate').value=new Date().toISOString().split('T')[0];
-    $('restockFields').style.display='none';
-    btn.textContent=orig;
-  }catch(err){
-    btn.textContent=orig;
-    toast('Gagal: '+err.message,'error');
-  }finally{
-    btn.disabled=false;
+    $('kDate').value = new Date().toISOString().split('T')[0];
+    $('restockFields').style.display = 'none';
+    btn.textContent = orig;
+  } catch(err){
+    btn.textContent = orig;
+    toast('Gagal: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
   }
 });
+// ────────────────────────────────────────────────────────────────────
 
 function updateKeuanganSummary(){
   const m=thisMonth();
@@ -3873,9 +3930,14 @@ function closeOrderModal(){ $('orderModal').classList.remove('active'); }
 function openKeuModal(){
   $('keuModal').classList.add('active');
   $('kDate').value=new Date().toISOString().split('T')[0];
+  restockItems = [];
+  renderRestockItemList();
   setTimeout(()=>$('kType')?.focus(),50);
 }
-function closeKeuModal(){ $('keuModal').classList.remove('active'); }
+function closeKeuModal(){
+  $('keuModal').classList.remove('active');
+  restockItems = [];
+}
 
 function openPosterModal(){
   $('posterModal').classList.add('active');
