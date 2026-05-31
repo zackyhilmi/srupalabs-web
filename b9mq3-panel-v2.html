@@ -180,7 +180,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sname{font-size:15px;font-weight:700}.ssub{font-size:11px;color:var(--t2)}
 .nsec{padding:12px 10px 5px}
 .nseclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:0 8px;margin-bottom:4px}
-.nitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
+.nitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:1px;min-height:44px;touch-action:manipulation}
 .nitem:hover{background:var(--gray-lt);color:var(--t1)}
 .nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:600}
 .nico{font-size:16px;width:20px;text-align:center;flex-shrink:0;line-height:1;display:flex;align-items:center;justify-content:center}
@@ -271,7 +271,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .add-item-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
 
 /* ─── BUTTONS ─── */
-.pbtn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;margin-top:3px}
+.pbtn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;margin-top:3px;min-height:40px;touch-action:manipulation}
 .pbtn:hover:not(:disabled){background:#1558b8}
 .pbtn:disabled{opacity:.65;cursor:not-allowed}
 .pbtn.green{background:var(--green)}.pbtn.green:hover:not(:disabled){background:#15803d}
@@ -529,6 +529,10 @@ tbody tr:hover{background:var(--accent-lt)}
 @media(max-width:768px){.margin-summary{grid-template-columns:repeat(2,1fr)}.kanban-col{flex:0 0 180px}}
 
 /* ─── KALKULATOR HARGA JUAL ─── */
+/* touch: remove number spinners on iOS for cleaner look */
+input[type=number]{-webkit-appearance:none;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .kal-price-input{
   width:110px;padding:5px 8px;
   border:1.5px solid var(--border);border-radius:6px;
@@ -584,8 +588,8 @@ tbody tr:hover{background:var(--accent-lt)}
   .main{margin-left:0!important}
   .hamburger{display:flex}
   .stoggle-btn{display:none}
-  .page{padding:14px 14px}
-  .topbar{padding:0 14px}
+  .page{padding:12px}
+  .topbar{padding:0 12px}
   .srow{grid-template-columns:1fr 1fr !important}
   .sval{font-size:18px}
   .two-col{grid-template-columns:1fr}
@@ -593,12 +597,35 @@ tbody tr:hover{background:var(--accent-lt)}
   .fg-row{grid-template-columns:1fr}
   .fbar{gap:6px}
   .fbar select,.fbar input[type=month]{font-size:12px;padding:6px 8px}
-  .lcard{padding:28px 22px}
-  .mbox{padding:18px;margin:0}
-  table{min-width:460px}
+  .lcard{padding:24px 18px}
+  .mbox{padding:16px;margin:0;border-radius:14px;max-width:100%;max-height:95vh}
+  table{min-width:420px}
   .igrid{grid-template-columns:1fr}
   .igrid .card:first-child{position:relative;top:auto}
   .chart-wrap{height:180px}
+  /* margin summary → 2 col on mobile */
+  .margin-summary{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  /* card headers flex-wrap */
+  .chd{flex-wrap:wrap;gap:8px}
+  /* kalkulator table min-width for scrolling */
+  #kalTable{min-width:680px}
+  /* kalkulator params stack vertically on mobile */
+  .kal-params-row{flex-direction:column!important}
+  .kal-params-row .margin-stat{min-width:100%!important}
+  /* toast above mobile nav */
+  .toast{bottom:72px;right:12px;left:12px;max-width:100%;text-align:center}
+  /* cetak preview single col on small screens */
+  #cetakPreview{grid-template-columns:1fr!important}
+  /* data master two-col grid becomes single col */
+  .master-margin-grid{grid-template-columns:1fr!important}
+  /* inline preview grid wraps */
+  #kal-cetak-preview-inline{grid-template-columns:1fr 1fr!important;gap:3px 8px}
+  /* make kal-price-input easier to tap */
+  .kal-price-input{width:90px;font-size:12px}
+  /* itabs scroll on mobile */
+  .itabs{overflow-x:auto;width:100%;padding-bottom:2px}
+  /* modal full-width on small screens */
+  .moverlay{padding:8px}
   /* on mobile collapsed class should not affect label visibility */
   .sidebar.collapsed .sname,
   .sidebar.collapsed .ssub,
@@ -617,6 +644,15 @@ tbody tr:hover{background:var(--accent-lt)}
   .srow{grid-template-columns:1fr 1fr !important}
   .sval{font-size:16px}
   .sico{width:34px;height:34px;font-size:15px}
+  /* even tighter screens */
+  .page{padding:10px}
+  .chd{padding:10px 12px}
+  .cbody{padding:12px}
+  .margin-summary{grid-template-columns:1fr 1fr!important}
+  .margin-stat-val{font-size:16px}
+  .kal-price-input{width:80px}
+  /* stack all flex rows that can wrap */
+  .hpp-field{flex-wrap:wrap}
 }
 
 /* Size Tags for Grouped Posters */
@@ -751,12 +787,20 @@ tbody tr:hover{background:var(--accent-lt)}
 
     <!-- ═══ DASHBOARD ═══ -->
     <div class="page active" id="page-dashboard">
+      <!-- Filter bulan dashboard -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px">
+          <span style="font-size:13px">📅</span>
+          <select id="dashMonth" onchange="updateDashboard()" style="border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:110px"></select>
+        </div>
+        <div id="dashMonthLabel" style="font-size:12px;color:var(--t2)"></div>
+      </div>
       <!-- 5 stat cards: poster, frame, omzet, order, stok menipis -->
       <div class="srow">
         <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval" id="sPoster">0</div><div class="slbl">Item Poster</div></div></div>
         <div class="scard"><div class="sico purple">🪟</div><div><div class="sval" id="sFrame">0</div><div class="slbl">Item Frame</div></div></div>
-        <div class="scard"><div class="sico green">💰</div><div><div class="sval" id="sOmzet">Rp 0</div><div class="slbl">Omzet Bulan Ini</div></div></div>
-        <div class="scard"><div class="sico amber">🛒</div><div><div class="sval" id="sOrders">0</div><div class="slbl">Order Bulan Ini</div></div></div>
+        <div class="scard"><div class="sico green">💰</div><div><div class="sval" id="sOmzet">Rp 0</div><div class="slbl" id="sOmzetLbl">Omzet Bulan Ini</div></div></div>
+        <div class="scard"><div class="sico amber">🛒</div><div><div class="sval" id="sOrders">0</div><div class="slbl" id="sOrdersLbl">Order Bulan Ini</div></div></div>
         <div class="scard"><div class="sico red">⚠️</div><div><div class="sval" id="sLow">0</div><div class="slbl">Stok Habis</div></div></div>
       </div>
 
@@ -1191,7 +1235,7 @@ tbody tr:hover{background:var(--accent-lt)}
           <div class="margin-stat"><div class="margin-stat-val margin-green" id="msMarginPct">0%</div><div class="margin-stat-lbl">Margin Rate</div></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div class="master-margin-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
           <!-- Data Master Biaya -->
           <div class="card">
             <div class="chd">
@@ -1201,13 +1245,19 @@ tbody tr:hover{background:var(--accent-lt)}
             <div class="cbody">
               <div style="margin-bottom:16px">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:8px">Biaya Cetak</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--gray-lt);border-radius:8px">
-                  <span style="font-size:12px;color:var(--t2);flex-shrink:0">Harga per 100×100 cm</span>
-                  <div style="display:flex;align-items:center;gap:5px;margin-left:auto">
-                    <span style="font-size:12px;color:var(--t3)">Rp</span>
-                    <input type="number" id="master-sheet" value="87500" min="1000" step="500"
-                      style="width:85px;padding:4px 7px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none;text-align:right;background:var(--surface)"
-                      oninput="previewCetak()">
+                <div style="padding:10px 12px;background:var(--gray-lt);border-radius:8px;margin-bottom:6px">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                    <span style="font-size:12px;font-weight:600;color:var(--t1);flex-shrink:0">Harga Cetak per 100×100 cm</span>
+                    <div style="display:flex;align-items:center;gap:5px;margin-left:auto">
+                      <span style="font-size:12px;color:var(--t3)">Rp</span>
+                      <input type="number" id="master-sheet" value="87500" min="1000" step="500"
+                        style="width:90px;padding:4px 7px;border:1.5px solid var(--accent);border-radius:6px;font-size:13px;font-family:var(--font);outline:none;text-align:right;background:var(--surface);font-weight:600"
+                        oninput="previewCetak();renderKalkulator()">
+                    </div>
+                  </div>
+                  <div id="hargaPerCm2Display" style="font-size:11px;color:var(--t2);padding:4px 8px;background:var(--surface);border-radius:5px;display:flex;justify-content:space-between">
+                    <span>Harga per cm²</span>
+                    <span id="hargaPerCm2Val" style="font-weight:600;color:var(--accent)">Rp 8,75</span>
                   </div>
                 </div>
                 <div id="cetakPreview" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px"></div>
@@ -1246,8 +1296,22 @@ tbody tr:hover{background:var(--accent-lt)}
       <!-- ─── TAB: KALKULATOR HARGA JUAL ─── -->
       <div id="msec-kalkulator" style="display:none">
 
+        <!-- Info banner: harga cetak otomatis -->
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--accent-lt);border:1.5px solid #bfdbfe;border-radius:10px;margin-bottom:14px;flex-wrap:wrap">
+          <span style="font-size:18px">🖨️</span>
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:1px">Biaya Cetak Otomatis</div>
+            <div style="font-size:11.5px;color:#1e40af;line-height:1.5">
+              Dihitung dari <strong>Harga Cetak per 100×100 cm</strong> di Data Master:
+              <span id="kal-sheet-info" style="font-weight:700">Rp 87.500</span>
+              → per cm² <span id="kal-percm2-info" style="font-weight:700;color:var(--accent)">Rp 8,75</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#3b82f6;display:grid;grid-template-columns:1fr 1fr;gap:3px 12px" id="kal-cetak-preview-inline"></div>
+        </div>
+
         <!-- Parameter inputs -->
-        <div style="display:flex;align-items:stretch;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="kal-params-row" style="display:flex;align-items:stretch;gap:12px;margin-bottom:18px;flex-wrap:wrap">
           <div class="margin-stat" style="text-align:left;padding:12px 14px;flex:1;min-width:140px">
             <div class="margin-stat-lbl" style="margin-bottom:6px">🗑️ Overhead Cetak</div>
             <div style="display:flex;align-items:center;gap:5px">
@@ -2118,15 +2182,42 @@ function goTab(name){
 }
 
 /* ── DASHBOARD ── */
+function initDashMonthPicker(){
+  const sel=$('dashMonth');
+  if(!sel||sel.options.length>0) return;
+  const now=new Date();
+  // generate 13 bulan terakhir + bulan ini
+  for(let i=12;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const val=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const lbl=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    const opt=document.createElement('option');
+    opt.value=val; opt.textContent=lbl;
+    if(i===0) opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+
 function updateDashboard(){
-  const m=thisMonth();
+  initDashMonthPicker();
+  const sel=$('dashMonth');
+  const m=sel?.value||thisMonth();
+  const isCurrentMonth=m===thisMonth();
   const mo=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal');
-  // Gunakan harga final jika ada, fallback ke total awal
   const omzet=mo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
   $('sPoster').textContent=inv.posters.length;
   $('sFrame').textContent=inv.frames.length;
   $('sOmzet').textContent=rp(omzet);
   $('sOrders').textContent=mo.length;
+  // update label dinamis
+  const d=new Date(m+'-01');
+  const lbl=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  if($('sOmzetLbl')) $('sOmzetLbl').textContent='Omzet '+lbl;
+  if($('sOrdersLbl')) $('sOrdersLbl').textContent='Order '+lbl;
+  if($('dashMonthLabel')){
+    const orderCount=mo.length;
+    $('dashMonthLabel').textContent=orderCount>0?`${orderCount} order · ${rp(omzet)}`:' ';
+  }
   const all=[...inv.posters,...inv.frames];
   $('sLow').textContent=all.filter(i=>i.stock===0).length;
   $('navBadge').style.display=inv.frames.filter(f=>f.stock===0).length?'inline-block':'none';
@@ -4316,12 +4407,19 @@ function previewCetak(){
   const sheetPrice = parseFloat($('master-sheet')?.value) || 87500;
   masterData.sheetPrice = sheetPrice;
   const perCm2 = sheetPrice / 10000;
+
+  // Update harga per cm2 display
+  const perCm2El = $('hargaPerCm2Val');
+  if(perCm2El){
+    perCm2El.textContent = 'Rp ' + perCm2.toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
   const el = $('cetakPreview');
   if(!el) return;
   el.innerHTML = HPP_SIZES.map(sz => {
     const d = SIZE_DIMS[sz];
     const biaya = d.w * d.h * perCm2;
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:var(--gray-lt);border-radius:6px">
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:var(--surface);border-radius:6px;border:1px solid var(--border)">
       <span style="font-size:11.5px;color:var(--t2)">${sz.replace('x','×')} cm</span>
       <span style="font-size:12px;font-weight:600;color:var(--t1)">${rp(biaya)}</span>
     </div>`;
@@ -4508,6 +4606,20 @@ function renderKalkulator() {
   const waste      = parseFloat(document.getElementById('kal-waste')?.value)  || 0;
   const komisi     = parseFloat(document.getElementById('kal-komisi')?.value) || 0;
   const pricePerCm2 = sheetPrice / KAL_SHEET_AREA;
+
+  // Update info banner
+  const sheetInfoEl = document.getElementById('kal-sheet-info');
+  const percm2El    = document.getElementById('kal-percm2-info');
+  const previewInlineEl = document.getElementById('kal-cetak-preview-inline');
+  if(sheetInfoEl) sheetInfoEl.textContent = 'Rp ' + sheetPrice.toLocaleString('id-ID');
+  if(percm2El)    percm2El.textContent    = 'Rp ' + pricePerCm2.toLocaleString('id-ID', {minimumFractionDigits:2, maximumFractionDigits:2});
+  if(previewInlineEl){
+    const sizes = [['20×30',20,30],['30×40',30,40],['40×60',40,60],['50×70',50,70],['60×80',60,80]];
+    previewInlineEl.innerHTML = sizes.map(([lbl,w,h]) =>
+      `<span>${lbl}: <strong>${rp(w*h*pricePerCm2)}</strong></span>`
+    ).join('');
+  }
+
   const tb = document.getElementById('tbKalkulator');
   if (!tb) return;
 
