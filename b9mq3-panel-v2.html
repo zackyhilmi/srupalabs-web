@@ -4742,8 +4742,9 @@ function closeOrderModal(){ $('orderModal').classList.remove('active'); }
 function openKeuModal(){
   $('keuModal').classList.add('active');
   $('kDate').value=new Date().toISOString().split('T')[0];
+  $('kCat').value='restock';
   restockItems = [];
-  renderRestockItemList();
+  toggleKeuFields();
   setTimeout(()=>$('kType')?.focus(),50);
 }
 function closeKeuModal(){
