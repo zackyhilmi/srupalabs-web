@@ -2236,7 +2236,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const san=s=>String(s).replace(/[<>"'`]/g,'').trim().slice(0,200);
 const rp=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
-const fmtDate=iso=>{ if(!iso)return'—'; const d=new Date(iso); return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'}); };
+const fmtDate=iso=>{ if(!iso)return'—'; const [y,m,d]=iso.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'}); };
 const thisMonth=()=>new Date().toISOString().slice(0,7);
 
 function stockBadge(n){if(n===0)return{c:'out',l:'Habis'};if(n<=5)return{c:'low',l:'Menipis'};if(n<=20)return{c:'medium',l:'Cukup'};return{c:'high',l:'Banyak'};}
@@ -2284,9 +2284,10 @@ function renderTaskCalendar(){
   const headers=grid.querySelectorAll('.cal-day-hdr');
   grid.innerHTML='';
   headers.forEach(h=>grid.appendChild(h.cloneNode(true)));
+  const now=new Date();
+  const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const firstDay=d.getDay();
   const daysInMonth=new Date(taskCalYear,taskCalMonth+1,0).getDate();
-  const today=new Date().toISOString().slice(0,10);
   for(let i=0;i<firstDay;i++){const c=document.createElement('div');c.className='cal-cell other-month';grid.appendChild(c);}
   for(let day=1;day<=daysInMonth;day++){
     const dateStr=`${taskCalYear}-${String(taskCalMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
@@ -2302,7 +2303,7 @@ function renderTaskCalendar(){
       const btn=$('btnClearDateFilter');
       const title=$('taskListTitle');
       if(taskSelectedDate){
-        const dl=new Date(taskSelectedDate+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long'});
+        const dl=new Date(+taskSelectedDate.split('-')[0],+taskSelectedDate.split('-')[1]-1,+taskSelectedDate.split('-')[2]).toLocaleDateString('id-ID',{day:'numeric',month:'long'});
         if(lbl){lbl.textContent=dl;lbl.style.display='inline-block';}
         if(btn)btn.style.display='inline-block';
         if(title)title.textContent='📋 Task — '+dl;
@@ -2453,7 +2454,9 @@ function openTaskModal(dateStr){
   $('taskModalTitle').textContent='➕ Tambah Task';
   $('tId').value='';
   $('tTitle').value='';
-  $('tDate').value=dateStr||new Date().toISOString().slice(0,10);
+  const now2=new Date();
+  const localToday=`${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
+  $('tDate').value=dateStr||localToday;
   $('tPriority').value='med';
   $('tCategory').value='shopee';
   $('tStatus').value='todo';
