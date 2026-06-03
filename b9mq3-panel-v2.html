@@ -1154,6 +1154,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <button class="task-filter-btn" id="btnClearDateFilter" onclick="clearTaskDateFilter()" style="display:none;font-size:11px;padding:4px 10px">✕ Semua tanggal</button>
+            <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;background:var(--green)" onclick="confirmImportJuni()" id="btnImportJuni">📥 Import Task Juni</button>
             <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px" onclick="openTaskModal()">＋ Tambah Task</button>
           </div>
         </div>
@@ -2382,6 +2383,57 @@ function filterTasks(f,btn){
   document.querySelectorAll('.task-filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderTaskList();
+}
+
+async function confirmImportJuni(){
+  if(!confirm('Import 31 task Juni 2025 ke Daily Task?\n\nTask yang sudah ada dengan ID sama akan di-overwrite.'))return;
+  const btn=$('btnImportJuni');
+  btn.disabled=true;btn.textContent='⏳ Importing...';
+  const TASKS=[
+    {id:'task_jun_01',title:'Naikkan budget Shopee Ads ke Rp 33k/hari — jangan biarkan mati',date:'2025-06-01',priority:'high',category:'shopee',status:'todo',note:'Target Rp 1 juta/bulan. Set daily budget bukan total budget.'},
+    {id:'task_jun_02',title:'Aktifkan auto top-up Shopee Ads supaya iklan tidak reset learning phase',date:'2025-06-01',priority:'high',category:'shopee',status:'todo',note:'Atur threshold saldo minimum supaya tidak pernah sampai 0.'},
+    {id:'task_jun_03',title:'Update foto produk terlaris jadi lifestyle shot — frame terpasang di dinding nyata',date:'2025-06-02',priority:'high',category:'shopee',status:'todo',note:'Prioritaskan 2-3 produk terlaris dulu. Background natural, bukan studio putih.'},
+    {id:'task_jun_04',title:'Optimasi jam tayang Shopee Ads: peak hours 11.00–13.00 dan 19.00–22.00 WIB',date:'2025-06-02',priority:'high',category:'shopee',status:'todo',note:'Matikan atau kurangi bid di luar jam peak untuk efisiensi budget.'},
+    {id:'task_jun_05',title:'DM semua pembeli bulan lalu — minta review + kasih voucher Rp 15k',date:'2025-06-03',priority:'high',category:'shopee',status:'todo',note:'Target minimal 10 review baru dari pembeli lama.'},
+    {id:'task_jun_06',title:'Daftarkan produk ke event 6.6 Shopee Flash Sale',date:'2025-06-03',priority:'high',category:'shopee',status:'todo',note:'Deadline daftar biasanya H-3. Diskon minimal 15% untuk lolos kurasi Shopee.'},
+    {id:'task_jun_07',title:'Lengkapi semua produk di TikTok Shop showcase — foto, deskripsi, harga',date:'2025-06-04',priority:'high',category:'tiktok',status:'todo',note:'Pastikan semua ukuran dan varian sudah terdaftar dengan foto yang menarik.'},
+    {id:'task_jun_08',title:'Aktifkan program TikTok Affiliate — set komisi 7–10%',date:'2025-06-05',priority:'med',category:'tiktok',status:'todo',note:'Komisi 7-10% kompetitif untuk kategori dekorasi.'},
+    {id:'task_jun_09',title:'Tambahkan tag produk TikTok Shop di semua video lama yang sudah ada',date:'2025-06-06',priority:'med',category:'tiktok',status:'todo',note:'Masuk ke setiap video lama, edit, tambahkan tag produk yang relevan.'},
+    {id:'task_jun_10',title:'Jalankan promo 6.6 — monitor tiap jam, balas chat pembeli cepat',date:'2025-06-06',priority:'high',category:'shopee',status:'todo',note:'Response time < 5 menit meningkatkan konversi signifikan.'},
+    {id:'task_jun_11',title:'Tambahkan keyword baru di Shopee Ads dari data search term minggu 1',date:'2025-06-09',priority:'high',category:'shopee',status:'todo',note:'Lihat di Shopee Ads > Laporan > Search Term.'},
+    {id:'task_jun_12',title:'Matikan ad group CTR < 1%, naikkan budget ad group CTR > 2%',date:'2025-06-09',priority:'high',category:'shopee',status:'todo',note:'Evaluasi setelah 7 hari berjalan. Jangan ubah terlalu cepat sebelum data cukup.'},
+    {id:'task_jun_13',title:'Sisipkan kartu insert di setiap paket — "Snap & review, dapat voucher Rp 15k"',date:'2025-06-10',priority:'med',category:'operasional',status:'todo',note:'Cetak kartu ukuran kartu nama. QR code ke toko Shopee + nomor WA.'},
+    {id:'task_jun_14',title:'Upload 7 konten TikTok dengan tag produk — format before/after dan unboxing',date:'2025-06-09',priority:'high',category:'konten',status:'todo',note:'1 video per hari. Hook 3 detik pertama wajib visual WOW.'},
+    {id:'task_jun_15',title:'Live Shopping TikTok pertama — Rabu atau Jumat malam, durasi 1–1.5 jam',date:'2025-06-11',priority:'high',category:'tiktok',status:'todo',note:'Rundown: showcase produk > demo pasang frame > flash deal khusus live > Q&A > closing.'},
+    {id:'task_jun_16',title:'DM 5 micro kreator dekorasi (3K–30K followers) untuk jadi affiliate',date:'2025-06-12',priority:'med',category:'marketing',status:'todo',note:'Cari kreator yang kontennya aesthetic, engagement rate > 3%.'},
+    {id:'task_jun_17',title:'Launch bundle promo: 2 frame + custom foto = hemat 20% di Shopee',date:'2025-06-15',priority:'high',category:'shopee',status:'todo',note:'Buat listing bundle baru. Foto bundle tampilkan kedua frame terpasang bersamaan.'},
+    {id:'task_jun_18',title:'Follow up semua pembeli Juni minggu 1–2 via chat Shopee',date:'2025-06-15',priority:'high',category:'shopee',status:'todo',note:'Tanyakan kepuasan produk, tawarkan repeat discount 10%.'},
+    {id:'task_jun_19',title:'Jalankan mid-month voucher: cashback Rp 20k min. belanja Rp 150k',date:'2025-06-15',priority:'med',category:'shopee',status:'todo',note:'Set di Shopee Seller Centre > Voucher Toko. Durasi 15-17 Juni.'},
+    {id:'task_jun_20',title:'Evaluasi keyword Shopee Ads, tambah keyword dari data aktual',date:'2025-06-16',priority:'med',category:'shopee',status:'todo',note:'Fokus ke keyword dengan impresi tinggi tapi CTR rendah.'},
+    {id:'task_jun_21',title:'Upload 7 konten TikTok — fokus edukasi: cara pilih ukuran, cara dekor dinding',date:'2025-06-16',priority:'high',category:'konten',status:'todo',note:'Konten edukasi biasanya di-save lebih banyak = jangkauan organik lebih luas.'},
+    {id:'task_jun_22',title:'Live Shopping TikTok ke-2 — showcase bundle baru + flash deal khusus penonton',date:'2025-06-18',priority:'high',category:'tiktok',status:'todo',note:'Announce H-1 via story/video pendek. Siapkan stok khusus untuk harga live.'},
+    {id:'task_jun_23',title:'Buat 1 konten collab atau repost dari affiliate yang paling aktif',date:'2025-06-19',priority:'med',category:'marketing',status:'todo',note:'Repost ke story srupalabs + tag kreator.'},
+    {id:'task_jun_24',title:'Minta 5 pembeli kirim foto frame terpasang di rumah untuk social proof',date:'2025-06-20',priority:'low',category:'marketing',status:'todo',note:'Untuk digunakan di website srupalabs.store dan highlight story.'},
+    {id:'task_jun_25',title:'Daftar dan jalankan Payday Sale Shopee 25–28 Juni',date:'2025-06-22',priority:'high',category:'shopee',status:'todo',note:'Naikkan budget Ads 50% selama event payday.'},
+    {id:'task_jun_26',title:'Rekap performa Shopee Ads Juni: ROAS, CTR, keyword terbaik, produk terlaris',date:'2025-06-28',priority:'high',category:'shopee',status:'todo',note:'Screenshot semua data sebelum bulan berganti. Jadikan baseline target Juli.'},
+    {id:'task_jun_27',title:'Review total order dan omset Juni vs target — hitung gap',date:'2025-06-29',priority:'high',category:'operasional',status:'todo',note:'Target: 40-50 order, Rp 10-12 juta. Identifikasi minggu paling produktif.'},
+    {id:'task_jun_28',title:'Upload 7 konten TikTok — fokus custom order reveal dan testimonial',date:'2025-06-23',priority:'high',category:'konten',status:'todo',note:'Custom order reveal = konten paling tinggi konversinya.'},
+    {id:'task_jun_29',title:'Live Shopping TikTok ke-3 — akhir bulan sale, dorong bundle dan clearance',date:'2025-06-25',priority:'med',category:'tiktok',status:'todo',note:'Manfaatkan momentum payday. Penawaran bundling eksklusif hanya untuk penonton live.'},
+    {id:'task_jun_30',title:'Identifikasi 1 konten TikTok terbaik bulan ini — plan boost di Juli',date:'2025-06-28',priority:'med',category:'konten',status:'todo',note:'Konten dengan views organik tertinggi = kandidat terbaik untuk Spark Ads Juli.'},
+    {id:'task_jun_31',title:'Susun strategy dan budget plan untuk Juli berdasarkan data Juni',date:'2025-06-30',priority:'high',category:'operasional',status:'todo',note:'Target Juli: 80-120 order. Naikkan Shopee Ads ke Rp 2 juta/bulan jika ROAS > 5x.'},
+  ];
+  let ok=0;
+  for(const t of TASKS){
+    try{
+      await fsSet('daily_tasks',{...t,updatedAt:new Date().toISOString()});
+      ok++;
+    }catch(e){console.error('gagal:',t.id,e);}
+    await new Promise(r=>setTimeout(r,80));
+  }
+  btn.textContent=`✅ ${ok}/31 task diimport`;
+  btn.style.background='var(--accent)';
+  setTimeout(()=>{btn.style.display='none';},3000);
+  toast(`✅ ${ok} task Juni 2025 berhasil diimport!`);
 }
 
 function clearTaskDateFilter(){
