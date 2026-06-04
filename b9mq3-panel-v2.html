@@ -3553,7 +3553,7 @@ $('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
   if(!$(id)) return;
   $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else if(id==='sizePickModal')closeSizePick();else if(id==='contentModal')closeContentModal();else if(id==='addFileModal')closeAddFileModal();else closeItemModal();}});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();closeContentModal();closeAddFileModal();closePackingModal();closeOrderModal();closeKeuModal();closePosterModal();closeFrameModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();closeContentModal();closeAddFileModal();closePackingModal();closeOrderModal();closeKeuModal();closePosterModal();closeFrameModal();closeResiModal();}});
 
 // Init item list empty state
 renderItemList();
@@ -4272,8 +4272,75 @@ function openUploadModal(folderName){
   const dateEl = document.getElementById('pkDate');
   if(dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
 
+  // Rekomendasi nama + resi dari order (khusus Bukti Packing)
+  if(name === 'Bukti Packing'){
+    const dateEl2 = document.getElementById('pkDate');
+    if(dateEl2){
+      dateEl2.addEventListener('change', _injectPackingSuggestions);
+      // Langsung trigger untuk tanggal default
+      setTimeout(_injectPackingSuggestions, 50);
+    }
+  }
+
   $('packingModal').classList.add('active');
 }
+
+function _injectPackingSuggestions(){
+  const dateVal = document.getElementById('pkDate')?.value || '';
+  // Cari elemen container untuk suggestion — inject setelah field pkResi
+  let wrap = document.getElementById('_packingSuggWrap');
+  if(!wrap){
+    const resiField = document.getElementById('pkResiE')?.closest?.('.fg') ||
+      document.getElementById('pkResi')?.closest?.('.fg');
+    if(!resiField) return;
+    wrap = document.createElement('div');
+    wrap.id = '_packingSuggWrap';
+    resiField.after(wrap);
+  }
+
+  if(!dateVal){ wrap.innerHTML=''; return; }
+
+  // Filter orders yang di-packing atau ready atau dikirim di tanggal ini
+  const matched = (window.orders||[]).filter(o=>{
+    const st = o.kanbanStatus || o.status || '';
+    if(!['packing','ready','dikirim'].includes(st)) return false;
+    // Cek tanggal updatedAt atau createdAt
+    const d = (o.updatedAt || o.createdAt || '').slice(0,10);
+    return d === dateVal;
+  });
+
+  if(!matched.length){
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:4px">Tidak ada order ditemukan di tanggal ini</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div style="margin-top:6px">
+      <div style="font-size:11.5px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">
+        📋 Rekomendasi dari order (${matched.length})
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${matched.map(o=>`
+          <button type="button"
+            onclick="_applyPackingSugg(${JSON.stringify(o.buyer||'').replace(/"/g,'&quot;')},${JSON.stringify(o.resi||'').replace(/"/g,'&quot;')})"
+            style="text-align:left;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-family:var(--font);font-size:12.5px;color:var(--t1);transition:all .15s"
+            onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-lt)'"
+            onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
+            <span style="font-weight:600">${_esc(o.buyer||'—')}</span>
+            ${o.resi?`<span style="color:var(--t2);font-size:11.5px;margin-left:8px">📦 ${_esc(o.resi)}</span>`:'<span style="color:var(--t3);font-size:11px;margin-left:8px">Belum ada resi</span>'}
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function _applyPackingSugg(name, resi){
+  const nameEl = document.getElementById('pkCustomer');
+  const resiEl = document.getElementById('pkResi');
+  if(nameEl) nameEl.value = name;
+  if(resiEl && resi) resiEl.value = resi;
+}
+
+function _esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // Alias untuk backward compat
 function openPackingModal(){ openUploadModal('Bukti Packing'); }
@@ -4594,13 +4661,52 @@ async function dropKanban(e, colId){
   dragOrderId = null;
 }
 
-async function moveKanban(orderId, newStatus){
+// ── RESI MODAL ──────────────────────────────────────────────────
+let _pendingResiOrderId = null;
+
+function openResiModal(orderId){
+  const order = orders.find(o=>o.id===orderId);
+  if(!order) return;
+  _pendingResiOrderId = orderId;
+  const info = $('resiModalBuyerInfo');
+  if(info) info.textContent = `👤 ${order.buyer||'—'}${order.orderNo?' · '+order.orderNo:''}`;
+  const inp = $('resiModalInput');
+  if(inp){ inp.value = order.resi||''; inp.focus(); }
+  $('resiModalErr') && ($('resiModalErr').textContent='');
+  $('resiModal').classList.add('active');
+}
+
+function closeResiModal(){
+  $('resiModal').classList.remove('active');
+  _pendingResiOrderId = null;
+}
+
+async function confirmResiAndMove(){
+  const resi = ($('resiModalInput')?.value||'').trim();
+  if(!resi){ $('resiModalErr').textContent='No. resi wajib diisi.'; return; }
+  const orderId = _pendingResiOrderId;
+  if(!orderId) return;
+  // Simpan resi ke order dulu
+  const idx = orders.findIndex(o=>o.id===orderId);
+  if(idx>=0) orders[idx].resi = resi;
+  closeResiModal();
+  await moveKanban(orderId, 'dikirim', resi);
+}
+// ────────────────────────────────────────────────────────────────
+
+async function moveKanban(orderId, newStatus, resiValue){
   try{
+    // Intercept: pindah ke dikirim harus input resi dulu
+    if(newStatus === 'dikirim' && resiValue === undefined){
+      openResiModal(orderId);
+      return;
+    }
     // Update order di array lokal dulu (optimistic UI)
     const idx = orders.findIndex(o=>o.id===orderId);
     if(idx>=0){
       orders[idx].kanbanStatus = newStatus;
       orders[idx].status = newStatus==='selesai'?'selesai':'proses';
+      if(resiValue !== undefined) orders[idx].resi = resiValue;
     }
     renderKanban();
 
@@ -4611,6 +4717,7 @@ async function moveKanban(orderId, newStatus){
         ...order,
         kanbanStatus: newStatus,
         status: newStatus==='selesai'?'selesai':'proses',
+        ...(resiValue !== undefined ? {resi: resiValue} : {}),
         updatedAt: new Date().toISOString()
       });
 
@@ -5141,5 +5248,31 @@ function openFrameModal(){
 function closeFrameModal(){ $('frameModal').classList.remove('active'); }
 
 </script>
+<!-- MODAL: Input No. Resi (intercept pindah ke Dikirim) -->
+<div class="moverlay" id="resiModal">
+  <div class="mbox" style="max-width:420px">
+    <div class="mhd">
+      <h3>🚚 Input No. Resi</h3>
+      <button class="mclose" onclick="closeResiModal()">×</button>
+    </div>
+    <div style="font-size:13px;color:var(--t2);margin-bottom:14px">
+      Masukkan nomor resi sebelum order dipindah ke <strong>Dikirim</strong>.
+    </div>
+    <div id="resiModalBuyerInfo" style="background:var(--gray-lt);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t1);margin-bottom:14px;font-weight:600"></div>
+    <div class="fg">
+      <label>No. Resi <small style="color:var(--t3);font-weight:400">(wajib diisi)</small></label>
+      <input type="text" id="resiModalInput" placeholder="Contoh: JX1234567890ID"
+        maxlength="60"
+        style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:.03em"
+        onkeydown="if(event.key==='Enter')confirmResiAndMove()">
+      <div class="ferr" id="resiModalErr"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="pbtn" style="background:var(--surface);color:var(--t1);border:1.5px solid var(--border);flex:1" onclick="closeResiModal()">Batal</button>
+      <button class="pbtn" style="flex:2" onclick="confirmResiAndMove()">✅ Konfirmasi &amp; Pindah ke Dikirim</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
