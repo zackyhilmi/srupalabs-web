@@ -4298,15 +4298,15 @@ function _injectPackingSuggestions(){
     resiField.after(wrap);
   }
 
-  // Ambil semua order yang sedang di-packing, ready, atau dikirim
+  // Ambil semua order aktif (bukan selesai/batal)
   const allActive = (typeof orders!=='undefined'?orders:[]).filter(o=>{
     const st = (typeof getKanbanStatus==='function' ? getKanbanStatus(o) : null)
                || o.kanbanStatus || o.status || '';
-    return ['packing','ready','dikirim'].includes(st);
+    return st !== 'selesai' && st !== 'batal' && o.status !== 'batal';
   });
 
   if(!allActive.length){
-    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:6px">Tidak ada order aktif di kolom Packing / Ready / Dikirim</div>`;
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:6px">Tidak ada order aktif</div>`;
     return;
   }
 
