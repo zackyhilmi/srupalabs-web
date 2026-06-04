@@ -4298,37 +4298,45 @@ function _injectPackingSuggestions(){
     resiField.after(wrap);
   }
 
-  if(!dateVal){ wrap.innerHTML=''; return; }
-
-  // Filter orders yang di-packing atau ready atau dikirim di tanggal ini
-  const matched = (window.orders||[]).filter(o=>{
+  // Ambil semua order yang sedang di-packing, ready, atau dikirim
+  const allActive = (window.orders||[]).filter(o=>{
     const st = o.kanbanStatus || o.status || '';
-    if(!['packing','ready','dikirim'].includes(st)) return false;
-    // Cek tanggal updatedAt atau createdAt
-    const d = (o.updatedAt || o.createdAt || '').slice(0,10);
-    return d === dateVal;
+    return ['packing','ready','dikirim'].includes(st);
   });
 
-  if(!matched.length){
-    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:4px">Tidak ada order ditemukan di tanggal ini</div>`;
+  if(!allActive.length){
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:6px">Tidak ada order aktif di kolom Packing / Ready / Dikirim</div>`;
     return;
   }
 
+  // Prioritaskan order yang updatedAt-nya cocok dengan tanggal dipilih
+  const sameDate = dateVal ? allActive.filter(o=>(o.updatedAt||o.createdAt||'').slice(0,10)===dateVal) : [];
+  const others   = allActive.filter(o=>!sameDate.includes(o));
+  const sorted   = [...sameDate, ...others];
+
   wrap.innerHTML = `
-    <div style="margin-top:6px">
+    <div style="margin-top:8px">
       <div style="font-size:11.5px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">
-        📋 Rekomendasi dari order (${matched.length})
+        📋 Pilih dari order aktif${sameDate.length?` · <span style="color:var(--accent);font-weight:700">${sameDate.length} cocok tanggal ini</span>`:''}
       </div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        ${matched.map(o=>`
-          <button type="button"
+      <div style="display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto">
+        ${sorted.map(o=>{
+          const isMatch = sameDate.includes(o);
+          return `<button type="button"
             onclick="_applyPackingSugg(${JSON.stringify(o.buyer||'').replace(/"/g,'&quot;')},${JSON.stringify(o.resi||'').replace(/"/g,'&quot;')})"
-            style="text-align:left;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-family:var(--font);font-size:12.5px;color:var(--t1);transition:all .15s"
+            style="text-align:left;padding:7px 10px;border:1.5px solid ${isMatch?'var(--accent)':'var(--border)'};border-radius:8px;background:${isMatch?'var(--accent-lt)':'var(--surface)'};cursor:pointer;font-family:var(--font);font-size:12.5px;color:var(--t1);transition:all .15s"
             onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-lt)'"
-            onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
-            <span style="font-weight:600">${_esc(o.buyer||'—')}</span>
-            ${o.resi?`<span style="color:var(--t2);font-size:11.5px;margin-left:8px">📦 ${_esc(o.resi)}</span>`:'<span style="color:var(--t3);font-size:11px;margin-left:8px">Belum ada resi</span>'}
-          </button>`).join('')}
+            onmouseout="this.style.borderColor='${isMatch?'var(--accent)':'var(--border)'}'${isMatch?";this.style.background='var(--accent-lt)'":";this.style.background='var(--surface)'"}">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-weight:600">${_esc(o.buyer||'—')}</span>
+              <span style="font-size:10.5px;color:var(--t3);background:var(--gray-lt);padding:1px 6px;border-radius:10px">${_esc(o.kanbanStatus||o.status||'')}</span>
+            </div>
+            <div style="font-size:11.5px;color:var(--t2);margin-top:2px">
+              ${o.resi?`📦 ${_esc(o.resi)}`:'<span style="color:var(--t3)">Belum ada resi</span>'}
+              ${o.orderNo?` · ${_esc(o.orderNo)}`:''}
+            </div>
+          </button>`;
+        }).join('')}
       </div>
     </div>`;
 }
