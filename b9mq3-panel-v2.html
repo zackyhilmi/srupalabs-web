@@ -4300,7 +4300,8 @@ function _injectPackingSuggestions(){
 
   // Ambil semua order yang sedang di-packing, ready, atau dikirim
   const allActive = (typeof orders!=='undefined'?orders:[]).filter(o=>{
-    const st = o.kanbanStatus || o.status || '';
+    const st = (typeof getKanbanStatus==='function' ? getKanbanStatus(o) : null)
+               || o.kanbanStatus || o.status || '';
     return ['packing','ready','dikirim'].includes(st);
   });
 
