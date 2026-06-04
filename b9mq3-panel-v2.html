@@ -4653,8 +4653,6 @@ function kanbanCard(o, col, nextCol){
     <div class="kanban-card-total">${rp(o.finalTotal!=null?o.finalTotal:o.total||0)}</div>
     ${finalPriceHtml}
     <div class="kanban-card-actions" onclick="event.stopPropagation()">
-      ${nextCol ? `<button class="kanban-card-btn next" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')"
-        ${isPackingCol && !hasFinal ? `style="opacity:.5" title="Isi harga final dulu"` : ''}>→ ${nextCol.short}</button>` : ''}
       <button class="kanban-card-btn" onclick="openKanbanDetail('${esc(o.id)}')">Detail</button>
     </div>
   </div>`;
