@@ -4290,23 +4290,23 @@ function _injectPackingSuggestions(){
   // Cari elemen container untuk suggestion — inject setelah field pkResi
   let wrap = document.getElementById('_packingSuggWrap');
   if(!wrap){
-    const resiField = document.getElementById('pkResiE')?.closest?.('.fg') ||
-      document.getElementById('pkResi')?.closest?.('.fg');
-    if(!resiField) return;
+    // Inject langsung ke uploadFieldsWrap (works desktop + mobile)
+    const container = document.getElementById('uploadFieldsWrap');
+    if(!container) return;
     wrap = document.createElement('div');
     wrap.id = '_packingSuggWrap';
-    resiField.after(wrap);
+    container.appendChild(wrap);
   }
 
-  // Ambil semua order aktif (bukan selesai/batal)
+  // Ambil semua order dari kolom Dikirim
   const allActive = (typeof orders!=='undefined'?orders:[]).filter(o=>{
     const st = (typeof getKanbanStatus==='function' ? getKanbanStatus(o) : null)
                || o.kanbanStatus || o.status || '';
-    return st !== 'selesai' && st !== 'batal' && o.status !== 'batal';
+    return st === 'dikirim';
   });
 
   if(!allActive.length){
-    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:6px">Tidak ada order aktif</div>`;
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--t3);margin-top:6px">Tidak ada order di kolom Dikirim pada tanggal ini</div>`;
     return;
   }
 
@@ -4318,7 +4318,7 @@ function _injectPackingSuggestions(){
   wrap.innerHTML = `
     <div style="margin-top:8px">
       <div style="font-size:11.5px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">
-        📋 Pilih dari order aktif${sameDate.length?` · <span style="color:var(--accent);font-weight:700">${sameDate.length} cocok tanggal ini</span>`:''}
+        📋 Order Dikirim${sameDate.length?` · <span style="color:var(--accent);font-weight:700">${sameDate.length} cocok tanggal ini</span>`:''}
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto">
         ${sorted.map(o=>{
