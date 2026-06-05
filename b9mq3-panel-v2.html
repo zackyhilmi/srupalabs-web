@@ -4828,7 +4828,6 @@ async function sendAiMessage(){
   aiAppendMsg('user', text);
   aiHistory.push({role:'user', content: text});
 
-  // Hide quick prompts after first message
   const qp = $('aiQuickPrompts');
   if(qp) qp.style.display = 'none';
 
@@ -4837,7 +4836,6 @@ async function sendAiMessage(){
   aiAppendLoading();
 
   try{
-    // Ambil API key dari localStorage (user input sekali, tersimpan)
     let apiKey = localStorage.getItem('srupa_ai_key') || '';
     if(!apiKey){
       document.getElementById('aiLoadingBubble')?.remove();
@@ -4846,6 +4844,7 @@ async function sendAiMessage(){
       return;
     }
 
+    // Gunakan no-cors workaround dengan mode cors + credentials omit
     const res = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{
@@ -4862,25 +4861,32 @@ async function sendAiMessage(){
       })
     });
 
-    if(res.status === 401){
-      localStorage.removeItem('srupa_ai_key');
-      document.getElementById('aiLoadingBubble')?.remove();
-      aiAppendMsg('assistant','API key tidak valid. Silakan masukkan ulang.');
-      _showAiKeyPrompt();
-      if(sendBtn) sendBtn.disabled = false;
-      return;
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      if(res.status === 401){
+        localStorage.removeItem('srupa_ai_key');
+        document.getElementById('aiLoadingBubble')?.remove();
+        aiAppendMsg('assistant','❌ API key tidak valid atau expired. Masukkan ulang ya.');
+        _showAiKeyPrompt();
+        if(sendBtn) sendBtn.disabled = false;
+        return;
+      }
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
-    const reply = (data.content||[]).map(b=>b.text||'').join('').trim()
-                  || 'Maaf, tidak ada respons.';
+    const reply = (data.content||[]).map(b=>b.text||'').join('').trim() || 'Maaf, tidak ada respons.';
 
     document.getElementById('aiLoadingBubble')?.remove();
     aiAppendMsg('assistant', reply);
     aiHistory.push({role:'assistant', content: reply});
+
   } catch(e){
     document.getElementById('aiLoadingBubble')?.remove();
-    aiAppendMsg('assistant', 'Ups, gagal konek ke AI. Coba lagi ya.');
+    const msg = e.message?.includes('Failed to fetch')
+      ? '❌ Tidak bisa konek ke AI. Pastikan browser mengizinkan koneksi ke api.anthropic.com (coba disable adblocker/VPN).'
+      : `❌ Error: ${e.message}`;
+    aiAppendMsg('assistant', msg);
     console.error('AI error:', e);
   }
 
@@ -5516,11 +5522,7 @@ function closeFrameModal(){ $('frameModal').classList.remove('active'); }
 
 </script>
 <!-- ═══ AI ASSISTANT PANEL ═══ -->
-<div id="aiPanel" style="
-  display:none;position:fixed;bottom:24px;right:24px;width:360px;max-width:calc(100vw - 32px);
-  height:520px;max-height:calc(100vh - 100px);
-  background:var(--surface);border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.18);
-  border:1.5px solid var(--border);z-index:999;display:none;flex-direction:column;overflow:hidden">
+<div id="aiPanel" style="position:fixed;bottom:24px;right:24px;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 100px);background:var(--surface);border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,.18);border:1.5px solid var(--border);z-index:999;display:none;flex-direction:column;overflow:hidden">
 
   <!-- Header -->
   <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--accent);border-radius:17px 17px 0 0">
