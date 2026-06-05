@@ -4837,16 +4837,40 @@ async function sendAiMessage(){
   aiAppendLoading();
 
   try{
+    // Ambil API key dari localStorage (user input sekali, tersimpan)
+    let apiKey = localStorage.getItem('srupa_ai_key') || '';
+    if(!apiKey){
+      document.getElementById('aiLoadingBubble')?.remove();
+      _showAiKeyPrompt();
+      if(sendBtn) sendBtn.disabled = false;
+      return;
+    }
+
     const res = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system: getAiSystemPrompt(aiContext),
         messages: aiHistory
       })
     });
+
+    if(res.status === 401){
+      localStorage.removeItem('srupa_ai_key');
+      document.getElementById('aiLoadingBubble')?.remove();
+      aiAppendMsg('assistant','API key tidak valid. Silakan masukkan ulang.');
+      _showAiKeyPrompt();
+      if(sendBtn) sendBtn.disabled = false;
+      return;
+    }
+
     const data = await res.json();
     const reply = (data.content||[]).map(b=>b.text||'').join('').trim()
                   || 'Maaf, tidak ada respons.';
@@ -4879,7 +4903,47 @@ function openResiModal(orderId){
   $('resiModal').classList.add('active');
 }
 
-function closeResiModal(){
+function _showAiKeyPrompt(){
+  // Cek apakah sudah ada prompt di messages
+  if(document.getElementById('aiKeyPromptEl')) return;
+  const wrap = $('aiMessages');
+  if(!wrap) return;
+  const div = document.createElement('div');
+  div.id = 'aiKeyPromptEl';
+  div.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:4px 0';
+  div.innerHTML = `
+    <div style="font-size:13px;color:var(--t2);line-height:1.5">
+      🔑 Masukkan <strong>Anthropic API Key</strong> untuk mengaktifkan AI.<br>
+      <span style="font-size:11.5px">Key tersimpan di browser kamu, tidak dikirim ke server manapun.</span>
+    </div>
+    <div style="display:flex;gap:6px">
+      <input type="password" id="aiKeyInput" placeholder="sk-ant-..." 
+        style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;outline:none"
+        onkeydown="if(event.key==='Enter')_saveAiKey()">
+      <button onclick="_saveAiKey()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer">Simpan</button>
+    </div>
+    <div style="font-size:11px;color:var(--t3)">
+      Dapatkan API key di <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a>
+    </div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  setTimeout(()=>document.getElementById('aiKeyInput')?.focus(), 100);
+}
+
+function _saveAiKey(){
+  const key = (document.getElementById('aiKeyInput')?.value||'').trim();
+  if(!key){ return; }
+  localStorage.setItem('srupa_ai_key', key);
+  document.getElementById('aiKeyPromptEl')?.remove();
+  aiAppendMsg('assistant','✅ API key tersimpan! Sekarang coba tanya sesuatu.');
+}
+
+function _clearAiKey(){
+  localStorage.removeItem('srupa_ai_key');
+  toast('🗑️ API key dihapus.');
+}
+
+
   $('resiModal').classList.remove('active');
   _pendingResiOrderId = null;
 }
