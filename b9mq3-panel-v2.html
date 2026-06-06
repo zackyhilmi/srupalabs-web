@@ -1779,6 +1779,11 @@ async function cmsDel(id){
       <div id="restockFields" style="display:none">
         <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">📦 Item Frame yang Dibeli</div>
         <div id="restockItemList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <!-- Grand total row -->
+        <div id="restockGrandTotal" style="display:none;background:var(--accent-lt);border:1.5px solid #bfdbfe;border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12px;font-weight:600;color:var(--accent)">Total Estimasi Restock</span>
+          <span style="font-size:14px;font-weight:700;color:var(--accent)" id="restockGrandTotalVal">Rp 0</span>
+        </div>
         <div style="background:var(--gray-lt);border-radius:10px;padding:10px;display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
           <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Warna</label>
@@ -1790,7 +1795,7 @@ async function cmsDel(id){
           </div>
           <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Ukuran</label>
-            <select id="kFrameSize" style="font-size:13px;padding:7px 8px">
+            <select id="kFrameSize" style="font-size:13px;padding:7px 8px" onchange="onRestockSizeChange()">
               <option value="">Pilih</option>
               <option value="20x20">20×20</option><option value="20x30">20×30</option>
               <option value="30x30">30×30</option><option value="30x40">30×40</option>
@@ -1800,9 +1805,17 @@ async function cmsDel(id){
           </div>
           <div class="fg" style="flex:0 0 66px;margin:0">
             <label style="font-size:11px">Qty</label>
-            <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999" style="font-size:13px;padding:7px 8px">
+            <input type="number" id="kRestockQty" placeholder="0" min="1" max="9999" style="font-size:13px;padding:7px 8px" oninput="onRestockQtyInput()">
           </div>
           <button type="button" onclick="addRestockItem()" style="height:36px;padding:0 12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">+ Tambah</button>
+        </div>
+        <!-- Harga satuan hint -->
+        <div id="kRestockPriceHint" style="display:none;margin-top:6px;padding:7px 10px;background:var(--green-lt);border-radius:7px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-size:12px;color:var(--green);font-weight:500">💰 Harga satuan frame ini</span>
+          <div style="text-align:right">
+            <span style="font-size:13px;font-weight:700;color:var(--green)" id="kRestockUnitPrice">—</span>
+            <span id="kRestockSubtotal" style="font-size:11px;color:var(--t2);display:block"></span>
+          </div>
         </div>
         <div class="ferr" id="kRestockItemsE" style="margin-top:4px"></div>
       </div>
@@ -3016,6 +3029,10 @@ function toggleKeuFields(){
   $('restockFields').style.display = cat === 'restock' ? 'block' : 'none';
   $('cetakFields').style.display   = cat === 'cetak'   ? 'block' : 'none';
   if(cat !== 'restock'){ restockItems = []; renderRestockItemList(); }
+  // Pastikan masterData sudah di-load untuk restock (lazy load)
+  if(cat === 'restock' && (!masterData.frame || !Object.keys(masterData.frame).length)){
+    loadMaster().catch(()=>{});
+  }
   const ph = {
     restock:   'Contoh: Beli dari supplier X',
     cetak:     'Contoh: Cetak batch order minggu ini',
@@ -3027,6 +3044,60 @@ function toggleKeuFields(){
   if($('kDesc')) $('kDesc').placeholder = ph[cat] || '';
 }
 
+// ── Ambil harga frame dari master_biaya untuk ukuran tertentu ──────────
+function getRestockFramePrice(size) {
+  // size format: "30x40", perlu match ke masterData.frame keys format "Model|30×40"
+  // Ambil harga terendah dari semua model yang ada ukuran ini, tapi preferensikan Blok 2,5cm / Blok 3cm
+  const normSize = size.replace('x','×'); // "30×40"
+  let found = null;
+  // Prioritas: cek KAL_FRAMES yang bukan Minimalist 2×2
+  for(const f of KAL_FRAMES){
+    if(f.ukuran === normSize && !f.model.toLowerCase().includes('minimalis')){
+      const key = f.model + '|' + f.ukuran;
+      const masterVal = masterData && masterData.frame && masterData.frame[key] != null
+        ? masterData.frame[key] : f.hppFrame;
+      if(found === null || masterVal < found) found = masterVal;
+    }
+  }
+  // Fallback: cek semua KAL_FRAMES
+  if(found === null){
+    for(const f of KAL_FRAMES){
+      if(f.ukuran === normSize){
+        const key = f.model + '|' + f.ukuran;
+        const masterVal = masterData && masterData.frame && masterData.frame[key] != null
+          ? masterData.frame[key] : f.hppFrame;
+        if(found === null || masterVal < found) found = masterVal;
+      }
+    }
+  }
+  return found; // null jika tidak ada di master
+}
+
+function onRestockSizeChange(){
+  const size = $('kFrameSize').value;
+  const qty  = parseInt($('kRestockQty').value, 10) || 0;
+  const hint = $('kRestockPriceHint');
+  const unitEl = $('kRestockUnitPrice');
+  const subEl  = $('kRestockSubtotal');
+  if(!hint || !unitEl) return;
+  if(!size){ hint.style.display='none'; return; }
+  const price = getRestockFramePrice(size);
+  if(price == null || price === 0){ hint.style.display='none'; return; }
+  unitEl.textContent = rp(price) + ' / pcs';
+  subEl.textContent  = qty > 0 ? `Subtotal: ${rp(price * qty)}` : '';
+  hint.style.display = 'flex';
+}
+
+function onRestockQtyInput(){
+  const size  = $('kFrameSize').value;
+  const qty   = parseInt($('kRestockQty').value, 10) || 0;
+  const subEl = $('kRestockSubtotal');
+  if(!subEl || !size) return;
+  const price = getRestockFramePrice(size);
+  if(price == null || price === 0){ subEl.textContent=''; return; }
+  subEl.textContent = qty > 0 ? `Subtotal: ${rp(price * qty)}` : '';
+}
+
 function addRestockItem(){
   const color = $('kFrameColor').value;
   const size  = $('kFrameSize').value;
@@ -3034,28 +3105,77 @@ function addRestockItem(){
   $('kRestockItemsE').textContent = '';
   if(!color || !size){ $('kRestockItemsE').textContent = 'Pilih warna & ukuran frame.'; return; }
   if(!qty || qty < 1){ $('kRestockItemsE').textContent = 'Qty minimal 1.'; return; }
+  const unitPrice = getRestockFramePrice(size); // null jika tidak ada di master
   const existing = restockItems.find(i => i.color === color && i.size === size);
-  if(existing){ existing.qty += qty; }
-  else { restockItems.push({ color, size, qty }); }
+  if(existing){
+    existing.qty += qty;
+    // update unitPrice kalau sebelumnya null
+    if(existing.unitPrice == null && unitPrice != null) existing.unitPrice = unitPrice;
+  } else {
+    restockItems.push({ color, size, qty, unitPrice });
+  }
   $('kFrameColor').value = '';
   $('kFrameSize').value  = '';
   $('kRestockQty').value = '';
+  // Reset hint
+  const hint = $('kRestockPriceHint');
+  if(hint) hint.style.display = 'none';
   renderRestockItemList();
 }
 
 function renderRestockItemList(){
   const wrap = $('restockItemList');
+  const totalEl = $('restockGrandTotal');
+  const totalValEl = $('restockGrandTotalVal');
   if(!wrap) return;
   if(!restockItems.length){
     wrap.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:4px 0">Belum ada item — tambahkan frame di atas</div>';
+    if(totalEl) totalEl.style.display = 'none';
     return;
   }
-  wrap.innerHTML = restockItems.map((it, idx) => `
-    <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px">
-      <span style="font-size:13px;flex:1">🖼️ <strong>${esc(it.color)} ${esc(it.size)}</strong></span>
-      <span style="font-size:13px;font-weight:600;color:var(--accent)">${it.qty} pcs</span>
-      <button type="button" onclick="removeRestockItem(${idx})" style="background:var(--red-lt);color:var(--red);border:none;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer">✕</button>
-    </div>`).join('');
+
+  // Hitung grand total
+  let grandTotal = 0;
+  let allHavePrice = true;
+  restockItems.forEach(it => {
+    if(it.unitPrice != null && it.unitPrice > 0) grandTotal += it.unitPrice * it.qty;
+    else allHavePrice = false;
+  });
+
+  wrap.innerHTML = restockItems.map((it, idx) => {
+    const hasPrice = it.unitPrice != null && it.unitPrice > 0;
+    const subtotal = hasPrice ? it.unitPrice * it.qty : null;
+    return `
+    <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--t1)">🖼️ ${esc(it.color)} — ${esc(it.size)}</div>
+        ${hasPrice
+          ? `<div style="font-size:11.5px;color:var(--t2);margin-top:2px">${rp(it.unitPrice)}/pcs × ${it.qty} pcs</div>`
+          : `<div style="font-size:11px;color:var(--t3);margin-top:2px">Harga tidak tersedia di master</div>`}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        ${hasPrice
+          ? `<div style="font-size:13px;font-weight:700;color:var(--accent)">${rp(subtotal)}</div>`
+          : `<div style="font-size:12px;font-weight:600;color:var(--t2)">${it.qty} pcs</div>`}
+      </div>
+      <button type="button" onclick="removeRestockItem(${idx})" style="background:var(--red-lt);color:var(--red);border:none;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0">✕</button>
+    </div>`;
+  }).join('');
+
+  // Tampilkan grand total jika ada minimal 1 item dengan harga
+  if(totalEl && totalValEl){
+    if(grandTotal > 0){
+      totalEl.style.display = 'flex';
+      totalValEl.textContent = rp(grandTotal);
+      // Saran: auto-fill field kAmount jika masih 0
+      const amountEl = $('kAmount');
+      if(amountEl && (!amountEl.value || parseInt(amountEl.value,10) === 0)){
+        amountEl.value = grandTotal;
+      }
+    } else {
+      totalEl.style.display = 'none';
+    }
+  }
 }
 
 function removeRestockItem(idx){
@@ -3091,7 +3211,10 @@ $('fKeu').addEventListener('submit', async function(e){
   let autoDesc = desc;
   if(!autoDesc){
     if(cat === 'restock')
-      autoDesc = 'Restock: ' + restockItems.map(i=>`${i.color} ${i.size} ${i.qty}pcs`).join(', ');
+      autoDesc = 'Restock: ' + restockItems.map(i=>{
+        const priceStr = (i.unitPrice && i.unitPrice > 0) ? ` @${rp(i.unitPrice)}` : '';
+        return `${i.color} ${i.size} ${i.qty}pcs${priceStr}`;
+      }).join(', ');
     else if(cat === 'cetak')
       autoDesc = `Cetak ${san($('kCetakUkuran').value)} cm, ${san($('kCetakBahan').value)}`;
   }
@@ -3174,7 +3297,11 @@ function renderKeuangan(){
   const catLbl={penjualan:'Penjualan',restock:'Restock',cetak:'Cetak',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
   tb.innerHTML=list.map(k=>{
     let descSub='';
-    if(k.restockItems?.length) descSub=k.restockItems.map(i=>`${i.color} ${i.size} ×${i.qty}pcs`).join(' · ');
+    if(k.restockItems?.length) descSub=k.restockItems.map(i=>{
+      const priceInfo = (i.unitPrice && i.unitPrice > 0) ? ` · ${rp(i.unitPrice)}/pcs` : '';
+      const subtotalInfo = (i.unitPrice && i.unitPrice > 0) ? ` = ${rp(i.unitPrice * i.qty)}` : '';
+      return `${esc(i.color)} ${esc(i.size)} ×${i.qty}pcs${priceInfo}${subtotalInfo}`;
+    }).join(' &nbsp;|&nbsp; ');
     else if(k.cetakUkuran)    descSub=`📐 ${esc(k.cetakUkuran)} cm · ${esc(k.cetakBahan)}`;
     const autoTag=k.sourceOrderId?`<span style="font-size:10px;background:var(--accent-lt);color:var(--accent);padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px;vertical-align:middle">auto</span>`:'';
     return`<tr>
@@ -5232,6 +5359,10 @@ function openKeuModal(){
   $('kDate').value=new Date().toISOString().split('T')[0];
   $('kCat').value='restock';
   restockItems = [];
+  const hint = $('kRestockPriceHint');
+  if(hint) hint.style.display = 'none';
+  const gtEl = $('restockGrandTotal');
+  if(gtEl) gtEl.style.display = 'none';
   toggleKeuFields();
   setTimeout(()=>$('kType')?.focus(),50);
 }
