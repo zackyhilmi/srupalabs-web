@@ -1979,6 +1979,18 @@ async function cmsDel(id){
         <div class="ferr" id="kRestockItemsE" style="margin-top:4px"></div>
       </div>
 
+      <!-- MARKETING: platform selector -->
+      <div id="marketingFields" style="display:none">
+        <div class="fg">
+          <label>Platform Iklan</label>
+          <select id="kAdPlatform" style="font-size:13.5px">
+            <option value="shopee">&#x1F6CD;&#xFE0F; Shopee Ads</option>
+            <option value="tiktok">&#x1F3B5; TikTok Ads</option>
+            <option value="other">&#x1F4E3; Lainnya / Campuran</option>
+          </select>
+        </div>
+      </div>
+
       <!-- CETAK fields -->
       <div id="cetakFields" style="display:none">
         <div class="fg-row">
@@ -2676,25 +2688,21 @@ const RT_WEEK_TASKS = [
 ];
 
 function rtGetWeeks(year, month){
-  // month: 0-indexed. Returns array of {start, end, label} for each week in month
-  const weeks = [];
-  const firstDay = new Date(year, month, 1);
-  const lastDay  = new Date(year, month+1, 0);
-  let cur = new Date(firstDay);
-  let wNum = 1;
-  while(cur <= lastDay){
-    const wStart = new Date(cur);
-    // end = Saturday or last day of month
-    const wEnd = new Date(cur);
-    wEnd.setDate(wEnd.getDate() + (6 - wEnd.getDay()));
-    if(wEnd > lastDay) wEnd.setTime(lastDay.getTime());
-    const fmt = d => d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
-    weeks.push({ num: wNum, start: new Date(wStart), end: new Date(wEnd), label: `${fmt(wStart)} – ${fmt(wEnd)}` });
-    wNum++;
-    cur = new Date(wEnd);
-    cur.setDate(cur.getDate()+1);
-  }
-  return weeks;
+  // month: 0-indexed. Always returns exactly 4 weeks per month.
+  // Week 1: 1–7, Week 2: 8–14, Week 3: 15–21, Week 4: 22–last day
+  const lastDay = new Date(year, month+1, 0).getDate();
+  const fmt = d => d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+  const boundaries = [
+    [1, 7],
+    [8, 14],
+    [15, 21],
+    [22, lastDay],
+  ];
+  return boundaries.map(([ s, e ], i) => {
+    const start = new Date(year, month, s);
+    const end   = new Date(year, month, e);
+    return { num: i+1, start, end, label: `${fmt(start)} – ${fmt(end)}` };
+  });
 }
 
 function rtMonthKey(year,month){ return `${year}-${month+1}`; }
@@ -2821,9 +2829,13 @@ function rtCalc(){
   function weekSpendAuto(wStart, wEnd){
     const ws = wStart.toISOString().split('T')[0];
     const we = wEnd.toISOString().split('T')[0];
-    return (keuangan||[])
-      .filter(k=>k.type==='expense' && k.cat==='marketing' && k.date>=ws && k.date<=we)
-      .reduce((s,k)=>s+(k.amount||0),0);
+    const entries = (keuangan||[])
+      .filter(k=>k.type==='expense' && k.cat==='marketing' && k.date>=ws && k.date<=we);
+    const total   = entries.reduce((s,k)=>s+(k.amount||0),0);
+    const shopee  = entries.filter(k=>k.adPlatform==='shopee').reduce((s,k)=>s+(k.amount||0),0);
+    const tiktok  = entries.filter(k=>k.adPlatform==='tiktok').reduce((s,k)=>s+(k.amount||0),0);
+    const other   = entries.filter(k=>!k.adPlatform||k.adPlatform==='other').reduce((s,k)=>s+(k.amount||0),0);
+    return {total, shopee, tiktok, other};
   }
 
   function weekTaskCount(wStart, wEnd){
@@ -2860,7 +2872,10 @@ function rtCalc(){
     const breakdownTxt = `🛍️ ${rtRp(autoBreak.shopee)} · 🎵 ${rtRp(autoBreak.tiktok)}`;
 
     // Spend iklan aktual dari keuangan kategori marketing
-    const wSpend    = weekSpendAuto(w.start, w.end);
+    const wSpendObj = weekSpendAuto(w.start, w.end);
+    const wSpend    = wSpendObj.total;
+    const wSpendShopee = wSpendObj.shopee;
+    const wSpendTiktok = wSpendObj.tiktok;
     const wRoasAkt  = wSpend > 0 ? (rev / wSpend).toFixed(1) : '—';
     const roasCls   = wSpend > 0 ? (parseFloat(wRoasAkt) >= parseFloat(wRoas) ? 'color:var(--green)' : 'color:var(--red)') : 'color:var(--t3)';
 
@@ -2916,11 +2931,15 @@ function rtCalc(){
 
         <!-- Metrics row: Spend + ROAS + Min Order -->
         <div class="rt-wcard-metrics">
-          <div class="rt-wcard-metric">
-            <div class="rt-wcard-metric-val" style="${wSpend>0?'color:var(--t1)':'color:var(--t3)'}">
-              ${wSpend>0 ? rtRp(wSpend) : '—'}
+          <div class="rt-wcard-metric" style="grid-column:span 2">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <div style="font-size:12px;font-weight:700;color:${wSpend>0?'var(--t1)':'var(--t3)'}">
+                ${wSpend>0 ? rtRp(wSpend) : '—'}
+              </div>
+              ${wSpendShopee>0 ? `<span style="font-size:10px;background:#fff2e8;color:#d4380d;padding:2px 6px;border-radius:4px;font-weight:600">🛍️ ${rtRp(wSpendShopee)}</span>` : ''}
+              ${wSpendTiktok>0 ? `<span style="font-size:10px;background:#f0e6ff;color:#531dab;padding:2px 6px;border-radius:4px;font-weight:600">🎵 ${rtRp(wSpendTiktok)}</span>` : ''}
             </div>
-            <div class="rt-wcard-metric-lbl">Spend Iklan</div>
+            <div class="rt-wcard-metric-lbl">Spend Iklan Aktual</div>
           </div>
           <div class="rt-wcard-metric">
             <div class="rt-wcard-metric-val" style="${wSpend>0?(roasGood?'color:var(--green)':'color:var(--red)'):'color:var(--t3)'}">
@@ -3800,8 +3819,9 @@ let restockItems = []; // [{color, size, qty}]
 
 function toggleKeuFields(){
   const cat = $('kCat').value;
-  $('restockFields').style.display = cat === 'restock' ? 'block' : 'none';
-  $('cetakFields').style.display   = cat === 'cetak'   ? 'block' : 'none';
+  $('restockFields').style.display    = cat === 'restock'   ? 'block' : 'none';
+  $('cetakFields').style.display      = cat === 'cetak'     ? 'block' : 'none';
+  $('marketingFields').style.display  = cat === 'marketing' ? 'block' : 'none';
   if(cat !== 'restock'){ restockItems = []; renderRestockItemList(); }
   // Pastikan masterData sudah di-load untuk restock (lazy load)
   if(cat === 'restock' && (!masterData.frame || !Object.keys(masterData.frame).length)){
@@ -3993,10 +4013,12 @@ $('fKeu').addEventListener('submit', async function(e){
       autoDesc = `Cetak ${san($('kCetakUkuran').value)} cm, ${san($('kCetakBahan').value)}`;
   }
 
+  const adPlatform = cat === 'marketing' ? ($('kAdPlatform').value || 'other') : null;
   const item = {
     id: `keu_${Date.now()}`,
     type: 'expense', cat, amount,
     date, desc: autoDesc,
+    ...(adPlatform ? {adPlatform} : {}),
     createdAt: new Date().toISOString()
   };
   if(cat === 'restock') item.restockItems = [...restockItems];
