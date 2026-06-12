@@ -690,6 +690,68 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .task-progress-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:14px}
 .task-progress-fill{height:100%;background:var(--green);border-radius:99px;transition:width .4s}
 
+/* ─── REVENUE TARGET PANEL ─── */
+.rt-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
+.rt-header{background:linear-gradient(135deg,#1A73E8,#0f5bb5);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rt-header-left{display:flex;align-items:center;gap:10px}
+.rt-title{font-size:14px;font-weight:700;color:#fff}
+.rt-subtitle{font-size:11px;color:rgba(255,255,255,.75);margin-top:1px}
+.rt-header-right{display:flex;align-items:center;gap:8px}
+.rt-toggle-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s}
+.rt-toggle-btn:hover{background:rgba(255,255,255,.25)}
+.rt-body{padding:16px 18px}
+/* Input row */
+.rt-inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+@media(max-width:900px){.rt-inputs{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.rt-inputs{grid-template-columns:1fr}}
+.rt-input-group{display:flex;flex-direction:column;gap:5px}
+.rt-input-label{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+.rt-input-wrap{position:relative}
+.rt-prefix{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:var(--t2);pointer-events:none}
+.rt-input{width:100%;padding:8px 9px 8px 30px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;font-family:var(--font);color:var(--t1);outline:none;transition:border-color .2s,box-shadow .2s;background:var(--surface)}
+.rt-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.rt-input.no-prefix{padding-left:9px}
+/* KPI row */
+.rt-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:1100px){.rt-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.rt-kpis{grid-template-columns:repeat(2,1fr)}}
+.rt-kpi{background:var(--gray-lt);border-radius:10px;padding:11px 13px;border:1px solid var(--border)}
+.rt-kpi-val{font-size:18px;font-weight:700;color:var(--t1);line-height:1;margin-bottom:3px}
+.rt-kpi-lbl{font-size:10.5px;color:var(--t2);font-weight:500}
+.rt-kpi.accent{background:var(--accent-lt);border-color:rgba(26,115,232,.2)}
+.rt-kpi.accent .rt-kpi-val{color:var(--accent)}
+.rt-kpi.green{background:var(--green-lt);border-color:rgba(22,163,74,.2)}
+.rt-kpi.green .rt-kpi-val{color:var(--green)}
+.rt-kpi.red{background:#fef2f2;border-color:rgba(220,38,38,.2)}
+.rt-kpi.red .rt-kpi-val{color:var(--red)}
+.rt-warn{background:#fef2f2;border:1px solid rgba(220,38,38,.25);color:var(--red);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.rt-realisasi-breakdown{display:flex;gap:6px;font-size:9.5px;color:var(--t3);margin-top:2px}
+/* Weekly breakdown table */
+.rt-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+.rt-table{width:100%;border-collapse:collapse;min-width:700px}
+.rt-table thead tr{background:var(--gray-lt)}
+.rt-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;border-bottom:1.5px solid var(--border)}
+.rt-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--t1);vertical-align:middle}
+.rt-table tbody tr:last-child td{border-bottom:none}
+.rt-table tbody tr:hover{background:var(--accent-lt)}
+.rt-week-label{font-weight:700;color:var(--t1)}
+.rt-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.rt-badge.shopee{background:#fff2e8;color:#d4380d}
+.rt-badge.tiktok{background:#f0f0fe;color:#531dab}
+.rt-progress-cell{display:flex;align-items:center;gap:6px}
+.rt-prog-bar{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;min-width:60px}
+.rt-prog-fill{height:100%;border-radius:99px;transition:width .4s}
+.rt-prog-fill.on-track{background:var(--green)}
+.rt-prog-fill.at-risk{background:var(--amber)}
+.rt-prog-fill.behind{background:var(--red)}
+/* Task pills di breakdown */
+.rt-task-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:0}
+.rt-task-pill{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--gray-lt);color:var(--t2);border:1px solid var(--border);cursor:pointer;transition:all .12s;white-space:nowrap}
+.rt-task-pill:hover{background:var(--accent-lt);color:var(--accent);border-color:var(--accent)}
+.rt-week-input{padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.rt-week-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,115,232,.1)}
+.rt-week-input::placeholder{color:var(--t3)}
+
 .size-tag{
   display:inline-block;
   padding:4px 10px;
@@ -1144,6 +1206,84 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
     <!-- ═══ DAILY TASK ═══ -->
     <div class="page" id="page-tasks">
+
+      <!-- ── REVENUE TARGET PANEL ── -->
+      <div class="rt-panel" id="rtPanel">
+        <div class="rt-header">
+          <div class="rt-header-left">
+            <div>
+              <div class="rt-title">🎯 Target &amp; Budget Bulanan</div>
+              <div class="rt-subtitle"><span id="rtHeaderSub">Set target omset &amp; alokasi ads untuk breakdown mingguan</span> <span id="rtSyncStatus" style="opacity:.7"></span></div>
+            </div>
+          </div>
+          <div class="rt-header-right">
+            <div id="rtHeaderKpis" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"></div>
+            <button class="rt-toggle-btn" onclick="$('rtImportInput').click()" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35)">📥 Import Strategi</button>
+            <input type="file" id="rtImportInput" accept=".xlsx,.xls" style="display:none" onchange="rtImportExcel(this)">
+            <button class="rt-toggle-btn" onclick="rtToggleBody()" id="rtToggleBtn">▲ Sembunyikan</button>
+          </div>
+        </div>
+        <div id="rtBody" class="rt-body">
+          <!-- INPUT ROW -->
+          <div class="rt-inputs">
+            <div class="rt-input-group">
+              <div class="rt-input-label">🎯 Target Omset Bulanan</div>
+              <div class="rt-input-wrap">
+                <span class="rt-prefix">Rp</span>
+                <input class="rt-input" type="number" id="rtTargetOmset" min="0" step="500000" value="8000000" oninput="rtCalc()" onchange="rtScheduleSave()">
+              </div>
+            </div>
+            <div class="rt-input-group">
+              <div class="rt-input-label">💰 Total Budget Ads/Bulan</div>
+              <div class="rt-input-wrap">
+                <span class="rt-prefix">Rp</span>
+                <input class="rt-input" type="number" id="rtBudgetTotal" min="0" step="100000" value="1000000" oninput="rtCalc()" onchange="rtScheduleSave()">
+              </div>
+            </div>
+            <div class="rt-input-group">
+              <div class="rt-input-label">🛍️ Alokasi Shopee (%)</div>
+              <div class="rt-input-wrap">
+                <input class="rt-input no-prefix" type="number" id="rtShopeeAloc" min="0" max="100" step="5" value="60" oninput="rtCalc()" onchange="rtScheduleSave()">
+              </div>
+            </div>
+            <div class="rt-input-group">
+              <div class="rt-input-label">🎵 Alokasi TikTok (%)</div>
+              <div class="rt-input-wrap">
+                <input class="rt-input no-prefix" type="number" id="rtTiktokAloc" min="0" max="100" step="5" value="40" oninput="rtCalc()" onchange="rtScheduleSave()">
+              </div>
+            </div>
+          </div>
+          <!-- VALIDATION WARNING -->
+          <div id="rtAlocWarning" style="display:none"></div>
+          <!-- KPI ROW -->
+          <div class="rt-kpis" id="rtKpis">
+            <!-- filled by JS -->
+          </div>
+          <!-- WEEKLY BREAKDOWN TABLE -->
+          <div class="rt-table-wrap">
+            <table class="rt-table">
+              <thead>
+                <tr>
+                  <th>Minggu</th>
+                  <th>Periode</th>
+                  <th>Target Omset ✏️</th>
+                  <th>Budget Shopee 🛍️ ✏️</th>
+                  <th>Budget TikTok 🎵 ✏️</th>
+                  <th>Min. Order</th>
+                  <th>ROAS Target</th>
+                  <th>Realisasi</th>
+                  <th>Task</th>
+                  <th>Catatan ✏️</th>
+                </tr>
+              </thead>
+              <tbody id="rtTableBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:var(--t3)">
+            💡 Klik <strong>Minggu N</strong> atau kolom Task untuk filter task list. Kolom ✏️ bisa diedit langsung — tersimpan otomatis. Realisasi 🔄 = auto dari order, ✏️ = input manual.
+          </div>
+        </div>
+      </div>
 
       <!-- KALENDER FULL WIDTH -->
       <div class="card" style="margin-bottom:16px">
@@ -2087,7 +2227,10 @@ async function cmsDel(id){
       <textarea id="tNote" placeholder="Detail tambahan..." maxlength="500" style="min-height:70px"></textarea>
     </div>
     <input type="hidden" id="tId">
-    <button class="pbtn green" onclick="saveTask()">💾 Simpan Task</button>
+    <div style="display:flex;gap:8px">
+      <button class="pbtn green" style="flex:2" onclick="saveTask()">💾 Simpan Task</button>
+      <button class="pbtn" id="btnDeleteTask" style="flex:1;background:#fef2f2;color:var(--red);border:1.5px solid rgba(220,38,38,.25);display:none" onclick="deleteTask()">🗑️ Hapus</button>
+    </div>
   </div>
 </div>
 
@@ -2309,6 +2452,7 @@ function renderTaskCalendar(){
     cell.className=cls;
     cell.onclick=()=>{
       taskSelectedDate=taskSelectedDate===dateStr?null:dateStr;
+      window._rtWeekFilter=null;
       renderTaskCalendar();
       renderTaskList();
       const lbl=$('taskSelectedDateLabel');
@@ -2395,13 +2539,15 @@ function filterTasks(f,btn){
   taskFilter=f;
   document.querySelectorAll('.task-filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderTaskList();
+  if(window._rtWeekFilter) renderTaskListWithWeekFilter();
+  else renderTaskList();
 }
 
 
 
 function clearTaskDateFilter(){
   taskSelectedDate=null;
+  window._rtWeekFilter=null;
   const lbl=$('taskSelectedDateLabel');const btn=$('btnClearDateFilter');const title=$('taskListTitle');
   if(lbl)lbl.style.display='none';
   if(btn)btn.style.display='none';
@@ -2425,6 +2571,7 @@ function openTaskModal(dateStr){
   $('tStatus').value='todo';
   $('tNote').value='';
   clerr('tTitleE','tDateE');
+  $('btnDeleteTask').style.display='none';
   $('taskModal').classList.add('active');
 }
 
@@ -2439,6 +2586,7 @@ function editTask(t){
   $('tStatus').value=t.status||'todo';
   $('tNote').value=t.note||'';
   clerr('tTitleE','tDateE');
+  $('btnDeleteTask').style.display='block';
   $('taskModal').classList.add('active');
 }
 
@@ -2460,6 +2608,24 @@ async function saveTask(){
   }catch(e){toast('Gagal menyimpan: '+e.message,'error');}
 }
 
+async function deleteTask(){
+  if(!editTaskId)return;
+  const title=$('tTitle').value||'task ini';
+  if(!confirm(`Hapus task "${title}"? Tindakan ini tidak bisa dibatalkan.`))return;
+  const btn=$('btnDeleteTask');
+  btn.disabled=true;btn.textContent='⏳ Menghapus...';
+  try{
+    await fsDel('daily_tasks',editTaskId);
+    closeTaskModal();
+    toast('Task dihapus 🗑️');
+    if(window._rtWeekFilter) renderTaskListWithWeekFilter();
+  }catch(e){
+    toast('Gagal menghapus: '+e.message,'error');
+  }finally{
+    btn.disabled=false;btn.textContent='🗑️ Hapus';
+  }
+}
+
 async function quickToggleTask(id,currentStatus){
   const newStatus=currentStatus==='done'?'todo':'done';
   const task=taskItems.find(t=>t.id===id);
@@ -2470,6 +2636,503 @@ async function quickToggleTask(id,currentStatus){
   }catch(e){toast('Gagal update: '+e.message,'error');}
 }
 
+/* ══════════════════════════════════════════
+   REVENUE TARGET & BUDGET BREAKDOWN
+══════════════════════════════════════════ */
+let rtBodyVisible = true;
+
+function rtToggleBody(){
+  rtBodyVisible = !rtBodyVisible;
+  $('rtBody').style.display = rtBodyVisible ? 'block' : 'none';
+  $('rtToggleBtn').textContent = rtBodyVisible ? '▲ Sembunyikan' : '▼ Tampilkan';
+}
+
+function rtRp(n){
+  if(n>=1000000) return 'Rp'+(n/1000000).toFixed(1).replace(/\.0$/,'')+'jt';
+  if(n>=1000) return 'Rp'+(n/1000).toFixed(0)+'k';
+  return 'Rp'+Math.round(n);
+}
+
+// Task unggulan per minggu untuk strategi penjualan
+const RT_WEEK_TASKS = [
+  ['Update SEO Title & Deskripsi','Cek ROAS Pagi','Monitoring Omset'],
+  ['Setup Flash Deal','Pantau Flash Deal Live','Evaluasi SEO Title'],
+  ['Evaluasi Hasil Flash Deal','Cek ROAS Post-Flash','TikTok Shop Ads Review'],
+  ['Flash Deal Round 2','Monitoring Omset Akhir Bulan','Closing Recap'],
+];
+
+function rtGetWeeks(year, month){
+  // month: 0-indexed. Returns array of {start, end, label} for each week in month
+  const weeks = [];
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month+1, 0);
+  let cur = new Date(firstDay);
+  let wNum = 1;
+  while(cur <= lastDay){
+    const wStart = new Date(cur);
+    // end = Saturday or last day of month
+    const wEnd = new Date(cur);
+    wEnd.setDate(wEnd.getDate() + (6 - wEnd.getDay()));
+    if(wEnd > lastDay) wEnd.setTime(lastDay.getTime());
+    const fmt = d => d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+    weeks.push({ num: wNum, start: new Date(wStart), end: new Date(wEnd), label: `${fmt(wStart)} – ${fmt(wEnd)}` });
+    wNum++;
+    cur = new Date(wEnd);
+    cur.setDate(cur.getDate()+1);
+  }
+  return weeks;
+}
+
+function rtMonthKey(year,month){ return `${year}-${month+1}`; }
+
+function rtCalc(){
+  const target   = parseFloat($('rtTargetOmset').value)  || 0;
+  const budget   = parseFloat($('rtBudgetTotal').value)  || 0;
+  const shopeeP  = parseFloat($('rtShopeeAloc').value)   || 0;
+  const tiktokP  = parseFloat($('rtTiktokAloc').value)   || 0;
+  const now      = new Date();
+  const year     = now.getFullYear();
+  const month    = now.getMonth();
+
+  const shopeeB  = budget * (shopeeP/100);
+  const tiktokB  = budget * (tiktokP/100);
+
+  // ── Validasi alokasi % ──
+  const alocTotal = Math.round((shopeeP+tiktokP)*10)/10;
+  const warnEl = $('rtAlocWarning');
+  if(budget>0 && Math.abs(alocTotal-100) > 0.5){
+    warnEl.style.display='block';
+    warnEl.innerHTML = `<div class="rt-warn">⚠️ Total alokasi Shopee + TikTok = <strong>${alocTotal}%</strong> (seharusnya 100%). Sesuaikan agar budget per platform akurat.</div>`;
+  } else {
+    warnEl.style.display='none';
+  }
+
+  // Avg order value from orders data (fallback 90000)
+  // ── Sama persis dengan formula di updateDashboard(): createdAt + status!=='batal' + finalTotal??total ──
+  const thisMonthStr = `${year}-${String(month+1).padStart(2,'0')}`;
+  const monthOrders  = (orders||[]).filter(o=>o.createdAt?.startsWith(thisMonthStr)&&o.status!=='batal');
+  const totalRev     = monthOrders.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  const avgOrder     = monthOrders.length ? totalRev/monthOrders.length : 90000;
+  const daysInMonth  = new Date(year, month+1, 0).getDate();
+  const todayDate    = now.getDate();
+  const daysLeft     = daysInMonth - todayDate;
+
+  // Realisasi per platform (bulan ini)
+  const monthByChannel = {shopee:0, tiktok:0, instagram:0};
+  monthOrders.forEach(o=>{
+    const val = parseFloat(o.finalTotal!=null?o.finalTotal:o.total)||0;
+    const ch  = o.channel||'instagram';
+    monthByChannel[ch] = (monthByChannel[ch]||0) + val;
+  });
+
+  // KPIs
+  const targetPerDay = target / daysInMonth;
+  const minOrders    = Math.ceil(target / avgOrder);
+  const roasNeeded   = budget > 0 ? (target / budget).toFixed(1) : '—';
+  const realisasi    = totalRev;
+  const gap          = target - realisasi;
+  const dailyNeeded  = daysLeft > 0 ? gap / daysLeft : 0;
+
+  // Proyeksi akhir bulan (linear berdasarkan pace saat ini)
+  const projection   = todayDate>0 ? (totalRev/todayDate)*daysInMonth : totalRev;
+  const projCls      = projection>=target ? 'green' : (projection>=target*0.85 ? 'accent' : 'red');
+
+  // Render KPIs
+  const kpis = [
+    { val: rtRp(targetPerDay),  lbl: 'Target/Hari',       cls: 'accent' },
+    { val: rtRp(dailyNeeded>0?dailyNeeded:targetPerDay), lbl: daysLeft>0?`Butuh/Hari (${daysLeft} hari lagi)`:'Target/Hari', cls: dailyNeeded>targetPerDay*1.5?'red':'green' },
+    { val: minOrders+' order',  lbl: 'Min. Order/Bulan',  cls: '' },
+    { val: roasNeeded+'×',       lbl: 'ROAS Minimum',       cls: '' },
+    { val: rtRp(realisasi), lbl: 'Realisasi Bulan Ini', cls: realisasi>=target*0.5?'green':'',
+      sub: `🛍️ ${rtRp(monthByChannel.shopee||0)} · 🎵 ${rtRp(monthByChannel.tiktok||0)} · 📸 ${rtRp(monthByChannel.instagram||0)}` },
+    { val: rtRp(projection), lbl: `Proyeksi Akhir Bulan${projection>=target?' ✅':projection>=target*0.85?' ⚠️':' 🔴'}`, cls: projCls },
+  ];
+  $('rtKpis').innerHTML = kpis.map(k=>`
+    <div class="rt-kpi ${k.cls||''}">
+      <div class="rt-kpi-val">${k.val}</div>
+      <div class="rt-kpi-lbl">${k.lbl}</div>
+      ${k.sub?`<div class="rt-realisasi-breakdown">${k.sub}</div>`:''}
+    </div>
+  `).join('');
+
+  // Header mini KPIs (when collapsed)
+  $('rtHeaderKpis').innerHTML = `
+    <div style="color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
+      Target: <strong style="color:#fff">${rtRp(target)}</strong>
+    </div>
+    <div style="color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
+      Realisasi: <strong style="color:${realisasi>=target*0.5?'#86efac':'#fca5a5'}">${rtRp(realisasi)}</strong>
+    </div>
+    <div style="color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
+      Proyeksi: <strong style="color:${projection>=target?'#86efac':'#fde68a'}">${rtRp(projection)}</strong>
+    </div>
+    <div style="color:rgba(255,255,255,.9);font-size:12px;font-weight:600">
+      Budget: <strong style="color:#fff">${rtRp(budget)}</strong>
+      <span style="font-weight:400;opacity:.8">(${shopeeP}% Shopee / ${tiktokP}% TikTok)</span>
+    </div>
+  `;
+  $('rtHeaderSub').textContent = `${now.toLocaleDateString('id-ID',{month:'long',year:'numeric'})} · ${daysLeft} hari lagi`;
+  rtUpdateSyncStatus();
+
+  // ── Weekly data: load saved overrides (Firestore cache → localStorage fallback) ──
+  const weeks       = rtGetWeeks(year, month);
+  const wCount      = weeks.length;
+  const rtSavedWeeks = rtLoadWeekData(year, month);
+
+  // Default per-week values (rata-rata), bisa di-override
+  const defWeekTarget  = target / wCount;
+  const defWeekShopeeB = shopeeB / wCount;
+  const defWeekTiktokB = tiktokB / wCount;
+  const defWeekMinOrd  = Math.ceil(minOrders / wCount);
+
+  // Realisasi per minggu dari orders (auto), dipecah per channel
+  function weekRevAuto(wStart, wEnd){
+    const res = {shopee:0, tiktok:0, instagram:0, total:0};
+    (orders||[]).forEach(o=>{
+      if(o.status==='batal') return;
+      const d = new Date(o.createdAt||'');
+      if(isNaN(d) || d<wStart || d>wEnd) return;
+      const val = o.finalTotal!=null?o.finalTotal:(o.total||0);
+      const ch  = o.channel||'instagram';
+      res[ch] = (res[ch]||0) + val;
+      res.total += val;
+    });
+    return res;
+  }
+
+  // Hitung task per minggu dari taskItems
+  function weekTaskCount(wStart, wEnd){
+    const ws = wStart.toISOString().split('T')[0];
+    const we = wEnd.toISOString().split('T')[0];
+    const all  = taskItems.filter(t=>t.date>=ws&&t.date<=we).length;
+    const done = taskItems.filter(t=>t.date>=ws&&t.date<=we&&t.status==='done').length;
+    return {all, done};
+  }
+
+  $('rtTableBody').innerHTML = weeks.map((w,i)=>{
+    const saved      = rtSavedWeeks[i] || {};
+    const wTarget    = saved.target  ?? defWeekTarget;
+    const wShopeeB   = saved.shopeeB ?? defWeekShopeeB;
+    const wTiktokB   = saved.tiktokB ?? defWeekTiktokB;
+    const wMinOrd    = saved.minOrd  ?? defWeekMinOrd;
+    const wNote      = saved.note    || '';
+    const wRoas      = (wShopeeB+wTiktokB)>0 ? (wTarget/(wShopeeB+wTiktokB)).toFixed(1) : '—';
+
+    const autoBreak  = weekRevAuto(w.start, w.end);
+    const manualRev  = saved.rev ?? null;
+    const rev        = manualRev !== null ? manualRev : autoBreak.total;
+    const revSrc     = manualRev !== null ? '✏️' : '🔄';
+
+    const pct        = wTarget>0 ? Math.min((rev/wTarget)*100,100) : 0;
+    const cls        = pct>=80?'on-track':pct>=50?'at-risk':'behind';
+    const isCur      = now>=w.start && now<=w.end;
+    const rowBg      = isCur ? 'background:var(--accent-lt)' : '';
+
+    const {all:tAll, done:tDone} = weekTaskCount(w.start, w.end);
+    const tPct = tAll>0 ? Math.round((tDone/tAll)*100) : 0;
+
+    // Breakdown realisasi per platform (selalu dari data order, walau total pakai manual)
+    const breakdownTxt = `🛍️ ${rtRp(autoBreak.shopee)} · 🎵 ${rtRp(autoBreak.tiktok)}`;
+
+    return `<tr style="${rowBg}" id="rt-row-${i}">
+      <!-- Minggu label — klik untuk filter task -->
+      <td style="white-space:nowrap">
+        <span class="rt-week-label" style="cursor:pointer;text-decoration:underline dotted" onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')" title="Filter task minggu ini">
+          ${isCur?'▶ ':''}Minggu ${w.num}
+        </span>
+      </td>
+      <!-- Periode -->
+      <td style="font-size:11.5px;color:var(--t2);white-space:nowrap">${w.label}</td>
+      <!-- Target — editable -->
+      <td>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:var(--t3)">Rp</span>
+          <input class="rt-week-input" style="width:78px" type="number" min="0" step="100000"
+            value="${Math.round(wTarget)}"
+            onchange="rtSaveWeekField(${i},'target',this.value,${year},${month})"
+            title="Edit target minggu ini">
+        </div>
+      </td>
+      <!-- Budget Shopee — editable -->
+      <td>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="rt-badge shopee" style="cursor:pointer" onclick="this.nextElementSibling.style.display='flex';this.style.display='none'">
+            ${rtRp(wShopeeB)}
+          </span>
+          <div style="display:none;align-items:center;gap:3px">
+            <span style="font-size:11px;color:var(--t3)">Rp</span>
+            <input class="rt-week-input" style="width:68px" type="number" min="0" step="50000"
+              value="${Math.round(wShopeeB)}"
+              onchange="rtSaveWeekField(${i},'shopeeB',this.value,${year},${month})"
+              title="Edit budget Shopee minggu ini">
+          </div>
+        </div>
+      </td>
+      <!-- Budget TikTok — editable -->
+      <td>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="rt-badge tiktok" style="cursor:pointer" onclick="this.nextElementSibling.style.display='flex';this.style.display='none'">
+            ${rtRp(wTiktokB)}
+          </span>
+          <div style="display:none;align-items:center;gap:3px">
+            <span style="font-size:11px;color:var(--t3)">Rp</span>
+            <input class="rt-week-input" style="width:68px" type="number" min="0" step="50000"
+              value="${Math.round(wTiktokB)}"
+              onchange="rtSaveWeekField(${i},'tiktokB',this.value,${year},${month})"
+              title="Edit budget TikTok minggu ini">
+          </div>
+        </div>
+      </td>
+      <!-- Min Order -->
+      <td style="font-weight:600">${wMinOrd}x</td>
+      <!-- ROAS -->
+      <td style="font-weight:700;color:var(--accent)">${wRoas}×</td>
+      <!-- Realisasi — manual input + auto, dipecah per platform -->
+      <td style="min-width:150px">
+        <div class="rt-progress-cell" style="margin-bottom:3px">
+          <div class="rt-prog-bar"><div class="rt-prog-fill ${cls}" style="width:${pct.toFixed(0)}%"></div></div>
+          <span style="font-size:11px;font-weight:700;color:var(--t2);min-width:36px">${rtRp(rev)}</span>
+          <span style="font-size:10px;color:var(--t3)" title="${manualRev!==null?'Input manual — klik ↺ untuk reset ke auto':'Auto dari order'}">${revSrc}</span>
+        </div>
+        <div style="font-size:9.5px;color:var(--t3);margin-bottom:4px">${breakdownTxt}</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:10px;color:var(--t3)">Manual:</span>
+          <input class="rt-week-input" style="width:78px;font-size:11px" type="number" min="0" step="100000"
+            placeholder="Rp..."
+            value="${manualRev!==null?Math.round(manualRev):''}"
+            onchange="rtSaveWeekField(${i},'rev',this.value||null,${year},${month})"
+            title="Input realisasi manual (kosongkan untuk pakai data order otomatis)">
+          ${manualRev!==null?`<span style="font-size:10px;color:var(--t3);cursor:pointer" onclick="rtResetWeekRev(${i},${year},${month})" title="Reset ke auto">↺</span>`:''}
+        </div>
+      </td>
+      <!-- Task progress — klik untuk filter -->
+      <td style="min-width:120px">
+        <div onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')"
+          style="cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:5px" title="Klik untuk lihat task minggu ini">
+          <div class="rt-prog-bar"><div class="rt-prog-fill ${tPct>=80?'on-track':tPct>=50?'at-risk':'behind'}" style="width:${tPct}%"></div></div>
+          <span style="font-size:11px;font-weight:700;color:var(--t2)">${tDone}/${tAll}</span>
+        </div>
+        <div style="font-size:10px;color:var(--t3)">${tAll?tPct+'% selesai':'Belum ada task'}</div>
+      </td>
+      <!-- Catatan — editable inline -->
+      <td style="min-width:150px">
+        <input class="rt-week-input" style="width:100%;font-size:11px" type="text"
+          placeholder="Catatan minggu ini..."
+          value="${esc(wNote)}"
+          onchange="rtSaveWeekField(${i},'note',this.value,${year},${month})"
+          maxlength="120">
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Persist settings (fallback cache, instant)
+  try{localStorage.setItem(`rt_settings_${rtMonthKey(year,month)}`,JSON.stringify({target,budget,shopeeP,tiktokP}));}catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   PERSISTENCE: Firestore (rt_config) + localStorage fallback
+══════════════════════════════════════════ */
+let rtSaveTimer = null;
+
+function rtUpdateSyncStatus(){
+  const el = $('rtSyncStatus');
+  if(!el) return;
+  if(window._rtSaving)         el.textContent = '· 🔄 menyimpan...';
+  else if(window._rtConfigLoaded) el.textContent = '· ☁️ tersinkron';
+  else                          el.textContent = '· 📴 lokal (belum sync)';
+}
+
+function rtScheduleSave(targetYear, targetMonth){
+  clearTimeout(rtSaveTimer);
+  window._rtSaving = true;
+  rtUpdateSyncStatus();
+  rtSaveTimer = setTimeout(()=>rtPersistConfig(targetYear, targetMonth), 800);
+}
+
+async function rtPersistConfig(targetYear, targetMonth){
+  const now    = new Date();
+  const year   = targetYear  ?? now.getFullYear();
+  const month  = targetMonth ?? now.getMonth();
+  const key    = rtMonthKey(year, month);
+  const target = parseFloat($('rtTargetOmset').value) || 0;
+  const budget = parseFloat($('rtBudgetTotal').value) || 0;
+  const shopeeP= parseFloat($('rtShopeeAloc').value)  || 0;
+  const tiktokP= parseFloat($('rtTiktokAloc').value)  || 0;
+  const weeks  = rtLoadWeekData(year, month);
+
+  try{
+    const {db,doc,setDoc} = getDB();
+    await setDoc(doc(db,'rt_config',key), {target,budget,shopeeP,tiktokP,weeks,updatedAt:new Date().toISOString()});
+    window.rtConfigCache = window.rtConfigCache || {};
+    window.rtConfigCache[key] = {target,budget,shopeeP,tiktokP,weeks};
+    window._rtConfigLoaded = true;
+  }catch(e){
+    console.error('Gagal sync target/budget:', e);
+  }finally{
+    window._rtSaving = false;
+    rtUpdateSyncStatus();
+  }
+}
+
+/* ── Week data persistence: Firestore cache → localStorage fallback ── */
+function rtWeekKey(year,month){ return `rt_weeks_${year}_${month}`; }
+
+function rtLoadWeekData(year,month){
+  const key = rtMonthKey(year,month);
+  if(window.rtConfigCache && window.rtConfigCache[key] && window.rtConfigCache[key].weeks){
+    return window.rtConfigCache[key].weeks;
+  }
+  try{ return JSON.parse(localStorage.getItem(rtWeekKey(year,month))||'{}'); }catch(e){ return {}; }
+}
+
+function rtSaveWeekField(weekIdx,field,value,year,month){
+  const data = rtLoadWeekData(year,month);
+  if(!data[weekIdx]) data[weekIdx]={};
+  if(value===null||value==='') delete data[weekIdx][field];
+  else data[weekIdx][field] = isNaN(value)?value:parseFloat(value);
+
+  // Update local cache immediately + localStorage fallback
+  const key = rtMonthKey(year,month);
+  window.rtConfigCache = window.rtConfigCache || {};
+  window.rtConfigCache[key] = window.rtConfigCache[key] || {};
+  window.rtConfigCache[key].weeks = data;
+  try{ localStorage.setItem(rtWeekKey(year,month), JSON.stringify(data)); }catch(e){}
+
+  rtCalc();
+  rtScheduleSave();
+}
+
+function rtResetWeekRev(weekIdx,year,month){
+  rtSaveWeekField(weekIdx,'rev',null,year,month);
+}
+
+/* Simpan target/budget untuk bulan tertentu (bukan bulan yang sedang tampil) */
+async function rtPersistConfigFor(year, month, data){
+  const key   = rtMonthKey(year, month);
+  const weeks = rtLoadWeekData(year, month);
+  const merged = {
+    target:  data.target  || (window.rtConfigCache?.[key]?.target  || 0),
+    budget:  data.budget  || (window.rtConfigCache?.[key]?.budget  || 0),
+    shopeeP: data.shopeeP || (window.rtConfigCache?.[key]?.shopeeP || 0),
+    tiktokP: data.tiktokP || (window.rtConfigCache?.[key]?.tiktokP || 0),
+    weeks, updatedAt: new Date().toISOString()
+  };
+  try{
+    const {db,doc,setDoc} = getDB();
+    await setDoc(doc(db,'rt_config',key), merged);
+    window.rtConfigCache = window.rtConfigCache || {};
+    window.rtConfigCache[key] = merged;
+  }catch(e){
+    console.error('Gagal simpan target bulan target:', e);
+    toast('Gagal simpan target untuk bulan tersebut: '+e.message,'error');
+  }
+}
+
+/* ── Filter task list ke minggu tertentu ── */
+function rtFilterWeek(dateStart, dateEnd, label){
+  // Set filter bulan di task list
+  const selMonth = $('taskMonthFilter');
+  const ym = dateStart.slice(0,7);
+  if(selMonth){
+    // Cari option yang cocok
+    Array.from(selMonth.options).forEach(o=>{ if(o.value===ym) o.selected=true; });
+  }
+  taskSelectedDate = null;
+  // Filter task list berdasarkan range tanggal
+  window._rtWeekFilter = {start: dateStart, end: dateEnd, label};
+  renderTaskListWithWeekFilter();
+  // Scroll ke task list
+  setTimeout(()=>{ $('taskListWrap')?.scrollIntoView({behavior:'smooth',block:'start'}); },100);
+  // Update title
+  const title = $('taskListTitle');
+  if(title) title.textContent = `📋 Task — ${label}`;
+  const lbl = $('taskSelectedDateLabel');
+  if(lbl){ lbl.textContent=label; lbl.style.display='inline-block'; }
+  const btn = $('btnClearDateFilter');
+  if(btn){ btn.style.display='inline-block'; btn.onclick=()=>{ window._rtWeekFilter=null; clearTaskDateFilter(); }; }
+}
+
+function renderTaskListWithWeekFilter(){
+  // Override renderTaskList jika ada week filter aktif
+  if(!window._rtWeekFilter){ renderTaskList(); return; }
+  const {start,end} = window._rtWeekFilter;
+  if(!$('taskListWrap')) return;
+  let filtered = taskItems.filter(t=>t.date>=start && t.date<=end);
+  if(taskFilter!=='all') filtered=filtered.filter(t=>t.status===taskFilter);
+  filtered.sort((a,b)=>{
+    const pd={high:0,med:1,low:2};
+    if(a.date!==b.date) return a.date.localeCompare(b.date);
+    return (pd[a.priority]||1)-(pd[b.priority]||1);
+  });
+  const done=filtered.filter(t=>t.status==='done').length;
+  const total=filtered.length;
+  const pct=total?Math.round((done/total)*100):0;
+  $('taskProgressLabel').textContent=`${done} / ${total} selesai`;
+  $('taskProgressPct').textContent=pct+'%';
+  $('taskProgressFill').style.width=pct+'%';
+  const wrap=$('taskListWrap');
+  if(!filtered.length){wrap.innerHTML='<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">Belum ada task di minggu ini</div>';return;}
+  const catIcon={shopee:'🛍️',tiktok:'🎵',konten:'🎬',operasional:'⚙️',marketing:'📣',lainnya:'📌'};
+  const prioLabel={high:'Wajib',med:'Penting',low:'Nice to have'};
+  const statusLabel={todo:'Belum',inprogress:'On Progress',done:'Selesai'};
+  wrap.innerHTML=filtered.map(t=>`
+    <div class="task-card${t.status==='done'?' done-card':''}" onclick="editTask(${JSON.stringify(t).replace(/"/g,'&quot;')})">
+      <div class="task-card-top">
+        <div class="task-check-box${t.status==='done'?' checked':''}" onclick="event.stopPropagation();quickToggleTask('${t.id}','${t.status}')">
+          ${t.status==='done'?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}
+        </div>
+        <div class="task-card-body">
+          <div class="task-card-title">${esc(t.title||'')}</div>
+          <div class="task-card-meta">
+            <span class="task-priority ${t.priority||'med'}">${prioLabel[t.priority]||'Penting'}</span>
+            <span class="task-status-badge ${t.status||'todo'}">${statusLabel[t.status]||'Belum'}</span>
+            <span style="font-size:10px;padding:2px 7px;background:var(--gray-lt);border-radius:4px;color:var(--t2)">${catIcon[t.category]||'📌'} ${esc(t.category||'')}</span>
+            <span class="task-date-lbl">${fmtDate(t.date)}</span>
+          </div>
+          ${t.note?`<div class="task-card-note">${esc(t.note)}</div>`:''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function rtFilterByTask(keyword){
+  window._rtWeekFilter = null;
+  taskFilter='all';
+  document.querySelectorAll('.task-filter-btn').forEach(b=>b.classList.remove('active'));
+  $('taskListWrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  const wrap=$('taskListWrap');
+  if(!wrap) return;
+  Array.from(wrap.querySelectorAll('.task-card')).forEach(card=>{
+    const title=card.querySelector('.task-card-title')?.textContent||'';
+    const match=title.toLowerCase().includes(keyword.toLowerCase());
+    card.style.outline=match?'2px solid var(--accent)':'';
+    card.style.background=match?'var(--accent-lt)':'';
+  });
+  setTimeout(()=>{
+    Array.from(wrap.querySelectorAll('.task-card')).forEach(card=>{card.style.outline='';card.style.background='';});
+  },3000);
+}
+
+function rtInit(){
+  const now = new Date();
+  const key = rtMonthKey(now.getFullYear(), now.getMonth());
+  let cfg = (window.rtConfigCache && window.rtConfigCache[key]) || null;
+  if(!cfg){
+    try{ cfg = JSON.parse(localStorage.getItem(`rt_settings_${key}`)||'null'); }catch(e){}
+  }
+  if(!cfg){
+    // backward-compat: cek key lama tanpa bulan
+    try{ cfg = JSON.parse(localStorage.getItem('rt_settings')||'null'); }catch(e){}
+  }
+  if(cfg){
+    if(cfg.target!=null)  $('rtTargetOmset').value = cfg.target;
+    if(cfg.budget!=null)  $('rtBudgetTotal').value  = cfg.budget;
+    if(cfg.shopeeP!=null) $('rtShopeeAloc').value   = cfg.shopeeP;
+    if(cfg.tiktokP!=null) $('rtTiktokAloc').value   = cfg.tiktokP;
+  }
+  rtCalc();
+}
 
 /* ── SIDEBAR MOBILE ── */
 function openSidebar(){$('sidebar').classList.add('open');$('sOverlay').classList.add('open');document.body.style.overflow='hidden';}
@@ -2503,10 +3166,19 @@ window._startListeners=function(){
   const chk=()=>{if(Object.values(fl).every(Boolean))fbStat('connected','Terhubung');};
   onSnapshot(collection(db,'inventory_posters'),s=>{inv.posters=s.docs.map(d=>d.data());renderPosters($('pSearch').value);updateDashboard();fl.p=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'inventory_frames'),s=>{inv.frames=s.docs.map(d=>d.data());renderFrames($('fSearch').value);updateDashboard();fl.f=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}fl.o=true;chk();},()=>fbStat('error','Terputus'));
+  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}if(document.getElementById('page-tasks').classList.contains('active'))rtCalc();fl.o=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'keuangan'),s=>{keuangan=s.docs.map(d=>d.data());renderKeuangan();updateKeuanganSummary();renderLaporan();fl.k=true;chk();},()=>fbStat('error','Terputus'));
   onSnapshot(collection(db,'cms_posters'),s=>{cmsPosters=s.docs.map(d=>d.data()).sort((a,b)=>(a.order||99)-(b.order||99));renderCMSTable();renderCMSStats();},()=>{});
   onSnapshot(collection(db,'daily_tasks'),s=>{taskItems=s.docs.map(d=>d.data());if(document.getElementById('page-tasks').classList.contains('active')){renderTaskCalendar();renderTaskList();}updateTaskBadge();},()=>{});
+  onSnapshot(collection(db,'rt_config'),s=>{
+    window.rtConfigCache=window.rtConfigCache||{};
+    s.docs.forEach(d=>{window.rtConfigCache[d.id]=d.data();});
+    const firstLoad = !window._rtConfigLoaded;
+    window._rtConfigLoaded=true;
+    if(document.getElementById('page-tasks').classList.contains('active')){
+      if(firstLoad) rtInit(); else rtCalc();
+    }
+  },()=>{});
 };
 
 /* ── AUTH ── */
@@ -2542,7 +3214,7 @@ function goPage(name,el){
       renderIdeaList();
     },100);
   }
-  if(name==='tasks'){setTimeout(()=>{renderTaskCalendar();renderTaskList();},100);}
+  if(name==='tasks'){setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
   if(name==='margin'){loadMaster();loadKalkulatorPrices();}
   if(name==='drive'){
@@ -5411,6 +6083,377 @@ function closeFrameModal(){ $('frameModal').classList.remove('active'); }
     </div>
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: Import Strategi Bulanan
+══════════════════════════════════════════ -->
+<div class="moverlay" id="rtImportModal">
+  <div class="mbox" style="max-width:780px;width:95vw">
+    <div class="mhd">
+      <h3 id="rtImportModalTitle">📥 Import Strategi Bulanan</h3>
+      <button class="mclose" onclick="rtCloseImportModal()">×</button>
+    </div>
+
+    <!-- Step 1: Info file + pilih bulan target -->
+    <div id="rtImportStep1">
+      <div style="background:var(--accent-lt);border:1px solid rgba(26,115,232,.2);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:var(--accent)">
+        <strong>Format Excel yang dibutuhkan:</strong><br>
+        • <strong>Sheet "Task Import"</strong> — kolom: <code>title, date, priority, category, status, note</code><br>
+        • <strong>Sheet "Revenue Target"</strong> (opsional) — kolom: <code>target_omset, budget_total, shopee_pct, tiktok_pct</code>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap">
+        <div class="fg" style="margin:0;flex:1;min-width:180px">
+          <label>Bulan Target Import</label>
+          <select id="rtImportMonth" style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:var(--surface)"></select>
+        </div>
+        <div style="font-size:12px;color:var(--t2);padding-bottom:4px">
+          Tanggal task di Excel akan <strong>disesuaikan ke bulan ini</strong> secara otomatis.<br>
+          Misal: 12 Juni → 12 Juli jika pilih Juli.
+        </div>
+      </div>
+      <div id="rtImportFileInfo" style="display:none;background:var(--green-lt);border-radius:8px;padding:10px 13px;font-size:12.5px;color:var(--green);margin-bottom:10px"></div>
+    </div>
+
+    <!-- Step 2: Preview tabel -->
+    <div id="rtImportStep2" style="display:none">
+      <!-- Revenue target dari Excel -->
+      <div id="rtImportTargetPreview" style="display:none;background:var(--gray-lt);border-radius:10px;padding:12px 14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📊 Target & Budget (dari Excel)</div>
+        <div id="rtImportTargetValues" style="display:flex;gap:16px;flex-wrap:wrap"></div>
+      </div>
+
+      <!-- Task preview table -->
+      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+        <span id="rtImportTaskCount">0 task ditemukan</span>
+        <span style="font-weight:400;color:var(--t3)">Centang/hapus sebelum import</span>
+      </div>
+      <div style="overflow-x:auto;max-height:340px;overflow-y:auto;border-radius:10px;border:1px solid var(--border)">
+        <table style="width:100%;border-collapse:collapse;min-width:560px">
+          <thead style="position:sticky;top:0;z-index:2">
+            <tr style="background:var(--gray-lt)">
+              <th style="padding:8px 10px;width:36px"><input type="checkbox" id="rtImportSelectAll" onchange="rtImportToggleAll(this)" checked></th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Nama Task</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;white-space:nowrap">Tanggal</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase">Prioritas</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase">Kategori</th>
+            </tr>
+          </thead>
+          <tbody id="rtImportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer buttons -->
+    <div style="display:flex;gap:8px;margin-top:14px" id="rtImportFooter">
+      <button class="pbtn" style="background:var(--surface);color:var(--t1);border:1.5px solid var(--border);flex:1" onclick="rtCloseImportModal()">Batal</button>
+      <button class="pbtn" id="rtImportConfirmBtn" style="flex:2;display:none" onclick="rtConfirmImport()">✅ Import ke Daily Task</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   IMPORT STRATEGI BULANAN — JS
+══════════════════════════════════════════ */
+let rtImportParsedTasks   = [];  // raw parsed dari Excel
+let rtImportTargetData    = null;
+let rtImportSelectedMonth = null;
+
+function rtCloseImportModal(){
+  $('rtImportModal').classList.remove('active');
+  rtImportParsedTasks = [];
+  rtImportTargetData  = null;
+}
+
+function rtInitImportMonthPicker(){
+  const sel = $('rtImportMonth');
+  if(!sel || sel.options.length > 0) return;
+  const now = new Date();
+  for(let i = 0; i <= 5; i++){
+    const d   = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const lbl = d.toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = lbl;
+    if(i === 1) opt.selected = true; // default = bulan depan
+    sel.appendChild(opt);
+  }
+}
+
+async function rtImportExcel(input){
+  const file = input.files[0];
+  if(!file){ input.value=''; return; }
+  input.value = '';
+
+  // Load SheetJS jika belum ada
+  if(!window.XLSX){
+    toast('⏳ Memuat library Excel...');
+    await new Promise((res,rej)=>{
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  try{
+    toast('📥 Membaca file...');
+    const buf = await file.arrayBuffer();
+    const wb  = XLSX.read(buf, {type:'array', cellDates:true});
+
+    // ── Baca Sheet "Task Import" ──
+    const taskSheetName = wb.SheetNames.find(n => n.toLowerCase().includes('task')) || wb.SheetNames[0];
+    const taskWS  = wb.Sheets[taskSheetName];
+    const rawRows = XLSX.utils.sheet_to_json(taskWS, {defval:'', raw:false});
+
+    // Cari baris header task (skip baris instruksi)
+    const taskRows = rawRows.filter(r => {
+      const vals = Object.values(r).map(v=>String(v).toLowerCase());
+      // skip baris yang isinya instruksi / label saja
+      const hasTitle = Object.keys(r).some(k => k.toLowerCase().includes('title') || k.toLowerCase().includes('nama task'));
+      return Object.values(r).some(v => v && !String(v).startsWith('priority:') && !String(v).startsWith('Isi data'));
+    });
+
+    function findVal(row, keys){
+      for(const k of Object.keys(row)){
+        if(keys.some(q => k.toLowerCase().includes(q))) return String(row[k]||'').trim();
+      }
+      return '';
+    }
+
+    function parseDate(val){
+      if(!val) return '';
+      if(val instanceof Date) return val.toISOString().split('T')[0];
+      const s = String(val).trim();
+      const m1 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(m1) return `${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+      const m2 = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+      return s;
+    }
+
+    function normPriority(v){
+      const s = v.toLowerCase();
+      if(s.includes('high')||s.includes('wajib')) return 'high';
+      if(s.includes('low')||s.includes('nice'))   return 'low';
+      return 'med';
+    }
+    function normCategory(v){
+      const s = v.toLowerCase();
+      if(s.includes('shopee'))  return 'shopee';
+      if(s.includes('tiktok'))  return 'tiktok';
+      if(s.includes('market'))  return 'marketing';
+      if(s.includes('konten'))  return 'konten';
+      return 'operasional';
+    }
+    function normStatus(v){
+      const s = v.toLowerCase();
+      if(s.includes('done')||s.includes('selesai'))       return 'done';
+      if(s.includes('progress')||s.includes('inprogress'))return 'inprogress';
+      return 'todo';
+    }
+
+    rtImportParsedTasks = taskRows
+      .map(r => ({
+        title:    findVal(r,['title','nama task','nama']),
+        date:     parseDate(findVal(r,['date','tanggal','tgl'])),
+        priority: normPriority(findVal(r,['priority','prioritas'])),
+        category: normCategory(findVal(r,['category','kategori'])),
+        status:   normStatus(findVal(r,['status'])),
+        note:     findVal(r,['note','catatan','keterangan']),
+      }))
+      .filter(r => r.title && r.title.length > 1 && !r.title.toLowerCase().startsWith('nama task'));
+
+    // ── Baca Sheet "Revenue Target" jika ada ──
+    const rtSheetName = wb.SheetNames.find(n => n.toLowerCase().includes('revenue')||n.toLowerCase().includes('target')||n.toLowerCase().includes('summary'));
+    rtImportTargetData = null;
+    if(rtSheetName){
+      const rtWS   = wb.Sheets[rtSheetName];
+      const rtRows = XLSX.utils.sheet_to_json(rtWS, {defval:'', raw:false});
+      if(rtRows.length){
+        const r = rtRows.find(row => Object.values(row).some(v=>String(v).includes('jt')||String(v).includes('000'))) || rtRows[0];
+        const getNum = (keys) => {
+          const v = findVal(r, keys);
+          return parseFloat(String(v).replace(/[^0-9.]/g,''))||0;
+        };
+        rtImportTargetData = {
+          target:   getNum(['target','omset']),
+          budget:   getNum(['budget','anggaran']),
+          shopeeP:  getNum(['shopee']),
+          tiktokP:  getNum(['tiktok']),
+        };
+      }
+    }
+
+    if(!rtImportParsedTasks.length){
+      toast('Tidak ada task ditemukan. Pastikan format kolom sesuai template.', 'error');
+      return;
+    }
+
+    // Buka modal preview
+    rtInitImportMonthPicker();
+    $('rtImportFileInfo').style.display = 'block';
+    $('rtImportFileInfo').innerHTML = `✅ File <strong>${esc(file.name)}</strong> berhasil dibaca — <strong>${rtImportParsedTasks.length} task</strong> ditemukan.`;
+    $('rtImportStep1').style.display = 'block';
+    $('rtImportStep2').style.display = 'block';
+    $('rtImportConfirmBtn').style.display = 'block';
+    rtRenderImportPreview();
+    $('rtImportModal').classList.add('active');
+
+  }catch(e){
+    toast('Gagal membaca file: '+e.message, 'error');
+    console.error(e);
+  }
+}
+
+function rtRenderImportPreview(){
+  const monthVal = $('rtImportMonth')?.value || '';
+  const [tYear, tMonth] = monthVal.split('-').map(Number); // tMonth = 1-indexed
+
+  // Revenue target preview
+  if(rtImportTargetData && (rtImportTargetData.target || rtImportTargetData.budget)){
+    $('rtImportTargetPreview').style.display = 'block';
+    const d = rtImportTargetData;
+    $('rtImportTargetValues').innerHTML = [
+      d.target  ? `<div style="background:var(--surface);border-radius:8px;padding:8px 12px;font-size:12px"><div style="font-weight:700;color:var(--accent)">${rtRp(d.target)}</div><div style="color:var(--t2)">Target Omset</div></div>` : '',
+      d.budget  ? `<div style="background:var(--surface);border-radius:8px;padding:8px 12px;font-size:12px"><div style="font-weight:700;color:var(--t1)">${rtRp(d.budget)}</div><div style="color:var(--t2)">Budget Ads</div></div>` : '',
+      d.shopeeP ? `<div style="background:var(--surface);border-radius:8px;padding:8px 12px;font-size:12px"><div style="font-weight:700;color:#d4380d">${d.shopeeP}%</div><div style="color:var(--t2)">Alokasi Shopee</div></div>` : '',
+      d.tiktokP ? `<div style="background:var(--surface);border-radius:8px;padding:8px 12px;font-size:12px"><div style="font-weight:700;color:#531dab">${d.tiktokP}%</div><div style="color:var(--t2)">Alokasi TikTok</div></div>` : '',
+    ].join('');
+  } else {
+    $('rtImportTargetPreview').style.display = 'none';
+  }
+
+  // Remap tanggal task ke bulan target
+  const remapped = rtImportParsedTasks.map(t => {
+    let newDate = t.date;
+    if(t.date && tYear && tMonth){
+      const d = new Date(t.date);
+      if(!isNaN(d)){
+        newDate = `${tYear}-${String(tMonth).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        // Clamp to last day of target month
+        const lastDay = new Date(tYear, tMonth, 0).getDate();
+        const day = Math.min(d.getDate(), lastDay);
+        newDate = `${tYear}-${String(tMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      }
+    }
+    return {...t, date: newDate};
+  });
+
+  const prioColor = {high:'var(--red)',med:'var(--amber)',low:'var(--green)'};
+  const prioLbl   = {high:'Wajib',med:'Penting',low:'Nice'};
+  const catIco    = {shopee:'🛍️',tiktok:'🎵',konten:'🎬',operasional:'⚙️',marketing:'📣',lainnya:'📌'};
+
+  $('rtImportTaskCount').textContent = `${remapped.length} task ditemukan`;
+  $('rtImportTableBody').innerHTML = remapped.map((t,i) => `
+    <tr style="${i%2===0?'':'background:var(--gray-lt)'}">
+      <td style="padding:8px 10px;text-align:center">
+        <input type="checkbox" class="rt-import-chk" data-idx="${i}" checked>
+      </td>
+      <td style="padding:8px 10px;font-size:12.5px;font-weight:500;color:var(--t1)">${esc(t.title)}</td>
+      <td style="padding:8px 10px;font-size:12px;color:var(--t2);white-space:nowrap">${t.date||'—'}</td>
+      <td style="padding:8px 10px"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${prioColor[t.priority]+'22'};color:${prioColor[t.priority]}">${prioLbl[t.priority]||t.priority}</span></td>
+      <td style="padding:8px 10px;font-size:12px">${catIco[t.category]||'📌'} ${t.category}</td>
+    </tr>
+  `).join('');
+
+  // Store remapped for confirm
+  window._rtRemappedTasks = remapped;
+}
+
+// Re-render preview saat bulan target berubah
+document.addEventListener('change', e => {
+  if(e.target.id === 'rtImportMonth') rtRenderImportPreview();
+});
+
+function rtImportToggleAll(cb){
+  document.querySelectorAll('.rt-import-chk').forEach(c => c.checked = cb.checked);
+}
+
+async function rtConfirmImport(){
+  const checked = Array.from(document.querySelectorAll('.rt-import-chk:checked'))
+    .map(c => parseInt(c.dataset.idx));
+
+  if(!checked.length){ toast('Pilih minimal 1 task untuk diimport','error'); return; }
+
+  let tasks = (window._rtRemappedTasks||[]).filter((_,i) => checked.includes(i));
+
+  // ── Cegah duplikat: skip task dengan title+tanggal yang sudah ada ──
+  const existingKeys = new Set(
+    taskItems.map(t => `${(t.title||'').trim().toLowerCase()}|${t.date}`)
+  );
+  const duplicates = tasks.filter(t => existingKeys.has(`${(t.title||'').trim().toLowerCase()}|${t.date}`));
+  tasks = tasks.filter(t => !existingKeys.has(`${(t.title||'').trim().toLowerCase()}|${t.date}`));
+
+  if(!tasks.length){
+    toast(`⚠️ Semua ${duplicates.length} task sudah ada di Daily Task (duplikat), tidak ada yang diimport.`,'error');
+    return;
+  }
+
+  const btn   = $('rtImportConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = `⏳ Mengimport ${tasks.length} task...`;
+
+  try{
+    const { db, doc, setDoc } = getDB();
+    const { collection } = getDB();
+    for(const t of tasks){
+      const id   = 'task_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+      const item = {
+        id, title:san(t.title), date:t.date,
+        priority:t.priority, category:t.category,
+        status:t.status, note:san(t.note||''),
+        updatedAt: new Date().toISOString(),
+        importedAt: new Date().toISOString(),
+      };
+      await setDoc(doc(db,'daily_tasks',id), item);
+    }
+
+    const dupNote = duplicates.length ? ` (${duplicates.length} duplikat dilewati)` : '';
+    const monthVal = $('rtImportMonth')?.value||'';
+    const [iYear, iMonth1] = monthVal.split('-').map(Number); // iMonth1 = 1-indexed
+    const now = new Date();
+    const isCurrentMonth = monthVal === rtMonthKey(now.getFullYear(), now.getMonth());
+
+    // Terapkan Revenue Target jika ada di Excel
+    if(rtImportTargetData){
+      const d = rtImportTargetData;
+      if(isCurrentMonth){
+        // Bulan yang diimport = bulan yang sedang tampil → update input & tampilan langsung
+        if(d.target)  $('rtTargetOmset').value = d.target;
+        if(d.budget)  $('rtBudgetTotal').value  = d.budget;
+        if(d.shopeeP) $('rtShopeeAloc').value   = d.shopeeP;
+        if(d.tiktokP) $('rtTiktokAloc').value   = d.tiktokP;
+        rtCalc();
+        rtScheduleSave(iYear, iMonth1-1);
+      } else {
+        // Bulan berbeda (misal import strategi bulan depan) → simpan langsung ke Firestore
+        // untuk bulan tersebut, tanpa mengubah tampilan target bulan berjalan
+        await rtPersistConfigFor(iYear, iMonth1-1, d);
+      }
+      toast(`✅ ${tasks.length} task berhasil diimport + Target & Budget untuk ${monthVal} diperbarui!${dupNote}`);
+    } else {
+      toast(`✅ ${tasks.length} task berhasil diimport ke Daily Task!${dupNote}`);
+    }
+
+    rtCloseImportModal();
+
+    // Pergi ke bulan yang diimport di kalender task
+    if(monthVal){
+      taskCalYear  = iYear;
+      taskCalMonth = iMonth1 - 1;
+      renderTaskCalendar();
+      renderTaskList();
+    }
+
+  }catch(e){
+    toast('Gagal import: '+e.message,'error');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '✅ Import ke Daily Task';
+  }
+}
+</script>
 
 </body>
 </html>
