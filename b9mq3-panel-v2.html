@@ -726,31 +726,63 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .rt-kpi.red .rt-kpi-val{color:var(--red)}
 .rt-warn{background:#fef2f2;border:1px solid rgba(220,38,38,.25);color:var(--red);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .rt-realisasi-breakdown{display:flex;gap:6px;font-size:9.5px;color:var(--t3);margin-top:2px}
-/* Weekly breakdown table */
-.rt-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
-.rt-table{width:100%;border-collapse:collapse;min-width:700px}
-.rt-table thead tr{background:var(--gray-lt)}
-.rt-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;border-bottom:1.5px solid var(--border)}
-.rt-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--t1);vertical-align:middle}
-.rt-table tbody tr:last-child td{border-bottom:none}
-.rt-table tbody tr:hover{background:var(--accent-lt)}
-.rt-week-label{font-weight:700;color:var(--t1)}
+/* Weekly breakdown — card grid */
+.rt-weeks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.rt-week-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .15s}
+.rt-week-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.rt-week-card.is-current{border-color:var(--accent);border-width:2px}
+.rt-week-card.is-past{opacity:.75}
+.rt-wcard-header{padding:11px 14px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.rt-wcard-header-left{display:flex;align-items:center;gap:8px}
+.rt-wcard-num{font-size:11px;font-weight:700;color:#fff;background:var(--t3);border-radius:20px;padding:2px 9px;line-height:1.5}
+.rt-week-card.is-current .rt-wcard-num{background:var(--accent)}
+.rt-wcard-period{font-size:11.5px;color:var(--t2);font-weight:500}
+.rt-wcard-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.rt-wcard-status.on-track{background:var(--green-lt);color:var(--green)}
+.rt-wcard-status.at-risk{background:var(--amber-lt);color:var(--amber)}
+.rt-wcard-status.behind{background:var(--red-lt);color:var(--red)}
+.rt-wcard-status.upcoming{background:var(--gray-lt);color:var(--t3)}
+.rt-wcard-body{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.rt-wcard-progress{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.rt-wcard-progress-fill{height:100%;border-radius:99px;transition:width .4s}
+.rt-wcard-progress-fill.on-track{background:var(--green)}
+.rt-wcard-progress-fill.at-risk{background:var(--amber)}
+.rt-wcard-progress-fill.behind{background:var(--red)}
+.rt-wcard-rev{display:flex;align-items:baseline;justify-content:space-between}
+.rt-wcard-rev-val{font-size:20px;font-weight:700;color:var(--t1);line-height:1}
+.rt-wcard-rev-target{font-size:11px;color:var(--t3)}
+.rt-wcard-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rt-wcard-metric{background:var(--gray-lt);border-radius:8px;padding:7px 10px}
+.rt-wcard-metric-val{font-size:13px;font-weight:700;color:var(--t1);line-height:1;margin-bottom:2px}
+.rt-wcard-metric-lbl{font-size:10px;color:var(--t3);font-weight:500}
+.rt-wcard-budget{display:flex;gap:5px}
+.rt-wcard-budget-item{flex:1;background:var(--gray-lt);border-radius:7px;padding:6px 9px}
+.rt-wcard-budget-val{font-size:12px;font-weight:700;line-height:1;margin-bottom:2px}
+.rt-wcard-budget-val.shopee{color:#d4380d}
+.rt-wcard-budget-val.tiktok{color:#531dab}
+.rt-wcard-budget-lbl{font-size:9.5px;color:var(--t3);font-weight:500}
+.rt-wcard-footer{padding:8px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.rt-wcard-task-prog{display:flex;align-items:center;gap:5px;flex:1}
+.rt-wcard-task-bar{flex:1;height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.rt-wcard-task-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .3s}
+.rt-wcard-note-inp{width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-size:11.5px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);transition:border-color .15s}
+.rt-wcard-note-inp:focus{border-color:var(--accent)}
+.rt-wcard-note-inp::placeholder{color:var(--t3)}
+.rt-wcard-edit-inp{padding:4px 7px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);width:100%;transition:border-color .15s}
+.rt-wcard-edit-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,115,232,.1)}
+/* keep rt-week-input for compat */
+.rt-week-input{padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.rt-week-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,115,232,.1)}
+.rt-week-input::placeholder{color:var(--t3)}
 .rt-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
 .rt-badge.shopee{background:#fff2e8;color:#d4380d}
 .rt-badge.tiktok{background:#f0f0fe;color:#531dab}
-.rt-progress-cell{display:flex;align-items:center;gap:6px}
 .rt-prog-bar{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;min-width:60px}
 .rt-prog-fill{height:100%;border-radius:99px;transition:width .4s}
 .rt-prog-fill.on-track{background:var(--green)}
 .rt-prog-fill.at-risk{background:var(--amber)}
 .rt-prog-fill.behind{background:var(--red)}
-/* Task pills di breakdown */
-.rt-task-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:0}
-.rt-task-pill{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--gray-lt);color:var(--t2);border:1px solid var(--border);cursor:pointer;transition:all .12s;white-space:nowrap}
-.rt-task-pill:hover{background:var(--accent-lt);color:var(--accent);border-color:var(--accent)}
-.rt-week-input{padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);transition:border-color .15s,box-shadow .15s}
-.rt-week-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,115,232,.1)}
-.rt-week-input::placeholder{color:var(--t3)}
+.rt-progress-cell{display:flex;align-items:center;gap:6px}
 
 .size-tag{
   display:inline-block;
@@ -1218,9 +1250,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           </div>
           <div class="rt-header-right">
             <div id="rtHeaderKpis" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"></div>
-            <button class="rt-toggle-btn" onclick="$('rtImportInput').click()" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35)">📥 Import Strategi</button>
-            <input type="file" id="rtImportInput" accept=".xlsx,.xls" style="display:none" onchange="rtImportExcel(this)">
-            <button class="rt-toggle-btn" onclick="rtToggleBody()" id="rtToggleBtn">▲ Sembunyikan</button>
+            <select id="rtMonthSelect" onchange="rtSwitchMonth()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);outline:none;min-width:140px"></select>
           </div>
         </div>
         <div id="rtBody" class="rt-body">
@@ -1230,26 +1260,26 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
               <div class="rt-input-label">🎯 Target Omset Bulanan</div>
               <div class="rt-input-wrap">
                 <span class="rt-prefix">Rp</span>
-                <input class="rt-input" type="number" id="rtTargetOmset" min="0" step="500000" value="8000000" oninput="rtCalc()" onchange="rtScheduleSave()">
+                <input class="rt-input" type="number" id="rtTargetOmset" min="0" step="500000" value="8000000" oninput="rtCalc()" onchange="rtScheduleSaveFromDropdown()">
               </div>
             </div>
             <div class="rt-input-group">
               <div class="rt-input-label">💰 Total Budget Ads/Bulan</div>
               <div class="rt-input-wrap">
                 <span class="rt-prefix">Rp</span>
-                <input class="rt-input" type="number" id="rtBudgetTotal" min="0" step="100000" value="1000000" oninput="rtCalc()" onchange="rtScheduleSave()">
+                <input class="rt-input" type="number" id="rtBudgetTotal" min="0" step="100000" value="1000000" oninput="rtCalc()" onchange="rtScheduleSaveFromDropdown()">
               </div>
             </div>
             <div class="rt-input-group">
               <div class="rt-input-label">🛍️ Alokasi Shopee (%)</div>
               <div class="rt-input-wrap">
-                <input class="rt-input no-prefix" type="number" id="rtShopeeAloc" min="0" max="100" step="5" value="60" oninput="rtCalc()" onchange="rtScheduleSave()">
+                <input class="rt-input no-prefix" type="number" id="rtShopeeAloc" min="0" max="100" step="5" value="60" oninput="rtCalc()" onchange="rtScheduleSaveFromDropdown()">
               </div>
             </div>
             <div class="rt-input-group">
               <div class="rt-input-label">🎵 Alokasi TikTok (%)</div>
               <div class="rt-input-wrap">
-                <input class="rt-input no-prefix" type="number" id="rtTiktokAloc" min="0" max="100" step="5" value="40" oninput="rtCalc()" onchange="rtScheduleSave()">
+                <input class="rt-input no-prefix" type="number" id="rtTiktokAloc" min="0" max="100" step="5" value="40" oninput="rtCalc()" onchange="rtScheduleSaveFromDropdown()">
               </div>
             </div>
           </div>
@@ -1259,26 +1289,8 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="rt-kpis" id="rtKpis">
             <!-- filled by JS -->
           </div>
-          <!-- WEEKLY BREAKDOWN TABLE -->
-          <div class="rt-table-wrap">
-            <table class="rt-table">
-              <thead>
-                <tr>
-                  <th>Minggu</th>
-                  <th>Periode</th>
-                  <th>Target Omset ✏️</th>
-                  <th>Budget Shopee 🛍️ ✏️</th>
-                  <th>Budget TikTok 🎵 ✏️</th>
-                  <th>Min. Order</th>
-                  <th>ROAS Target</th>
-                  <th>Realisasi</th>
-                  <th>Task</th>
-                  <th>Catatan ✏️</th>
-                </tr>
-              </thead>
-              <tbody id="rtTableBody"></tbody>
-            </table>
-          </div>
+          <!-- WEEKLY BREAKDOWN CARDS -->
+          <div class="rt-weeks-grid" id="rtTableBody"></div>
           <div style="margin-top:10px;font-size:11px;color:var(--t3)">
             💡 Klik <strong>Minggu N</strong> atau kolom Task untuk filter task list. Kolom ✏️ bisa diedit langsung — tersimpan otomatis. Realisasi 🔄 = auto dari order, ✏️ = input manual.
           </div>
@@ -1863,9 +1875,16 @@ async function cmsDel(id){
           <div class="ferr" id="oBuyerE"></div>
         </div>
       </div>
-      <div class="fg">
-        <label>No. Pesanan / Resi <small style="color:var(--t3);font-weight:400">(opsional)</small></label>
-        <input type="text" id="oOrderNo" placeholder="INV-001 / No. Resi" maxlength="100">
+      <div class="fg-row">
+        <div class="fg">
+          <label>No. Pesanan / Resi <small style="color:var(--t3);font-weight:400">(opsional)</small></label>
+          <input type="text" id="oOrderNo" placeholder="INV-001 / No. Resi" maxlength="100">
+        </div>
+        <div class="fg">
+          <label>Tanggal Pemesanan</label>
+          <input type="date" id="oOrderDate">
+          <div class="ferr" id="oOrderDateE"></div>
+        </div>
       </div>
       <div class="item-builder">
         <div class="item-builder-title">📦 Item dalam Order</div>
@@ -2639,13 +2658,8 @@ async function quickToggleTask(id,currentStatus){
 /* ══════════════════════════════════════════
    REVENUE TARGET & BUDGET BREAKDOWN
 ══════════════════════════════════════════ */
-let rtBodyVisible = true;
 
-function rtToggleBody(){
-  rtBodyVisible = !rtBodyVisible;
-  $('rtBody').style.display = rtBodyVisible ? 'block' : 'none';
-  $('rtToggleBtn').textContent = rtBodyVisible ? '▲ Sembunyikan' : '▼ Tampilkan';
-}
+
 
 function rtRp(n){
   if(n>=1000000) return 'Rp'+(n/1000000).toFixed(1).replace(/\.0$/,'')+'jt';
@@ -2691,8 +2705,11 @@ function rtCalc(){
   const shopeeP  = parseFloat($('rtShopeeAloc').value)   || 0;
   const tiktokP  = parseFloat($('rtTiktokAloc').value)   || 0;
   const now      = new Date();
-  const year     = now.getFullYear();
-  const month    = now.getMonth();
+  const selMonth = $("rtMonthSelect")?.value || "";
+  const selDate  = selMonth ? new Date(selMonth + "-01") : now;
+  const year     = selDate.getFullYear();
+  const month    = selDate.getMonth();
+  const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth());
 
   const shopeeB  = budget * (shopeeP/100);
   const tiktokB  = budget * (tiktokP/100);
@@ -2714,8 +2731,8 @@ function rtCalc(){
   const totalRev     = monthOrders.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
   const avgOrder     = monthOrders.length ? totalRev/monthOrders.length : 90000;
   const daysInMonth  = new Date(year, month+1, 0).getDate();
-  const todayDate    = now.getDate();
-  const daysLeft     = daysInMonth - todayDate;
+  const todayDate    = isCurrentMonth ? now.getDate() : daysInMonth;
+  const daysLeft     = isCurrentMonth ? (daysInMonth - now.getDate()) : 0;
 
   // Realisasi per platform (bulan ini)
   const monthByChannel = {shopee:0, tiktok:0, instagram:0};
@@ -2771,7 +2788,7 @@ function rtCalc(){
       <span style="font-weight:400;opacity:.8">(${shopeeP}% Shopee / ${tiktokP}% TikTok)</span>
     </div>
   `;
-  $('rtHeaderSub').textContent = `${now.toLocaleDateString('id-ID',{month:'long',year:'numeric'})} · ${daysLeft} hari lagi`;
+  $('rtHeaderSub').textContent = `${selDate.toLocaleDateString('id-ID',{month:'long',year:'numeric'})} · ${isCurrentMonth ? daysLeft+' hari lagi' : 'bulan mendatang'}`;
   rtUpdateSyncStatus();
 
   // ── Weekly data: load saved overrides (Firestore cache → localStorage fallback) ──
@@ -2801,6 +2818,14 @@ function rtCalc(){
   }
 
   // Hitung task per minggu dari taskItems
+  function weekSpendAuto(wStart, wEnd){
+    const ws = wStart.toISOString().split('T')[0];
+    const we = wEnd.toISOString().split('T')[0];
+    return (keuangan||[])
+      .filter(k=>k.type==='expense' && k.cat==='marketing' && k.date>=ws && k.date<=we)
+      .reduce((s,k)=>s+(k.amount||0),0);
+  }
+
   function weekTaskCount(wStart, wEnd){
     const ws = wStart.toISOString().split('T')[0];
     const we = wEnd.toISOString().split('T')[0];
@@ -2834,95 +2859,127 @@ function rtCalc(){
     // Breakdown realisasi per platform (selalu dari data order, walau total pakai manual)
     const breakdownTxt = `🛍️ ${rtRp(autoBreak.shopee)} · 🎵 ${rtRp(autoBreak.tiktok)}`;
 
-    return `<tr style="${rowBg}" id="rt-row-${i}">
-      <!-- Minggu label — klik untuk filter task -->
-      <td style="white-space:nowrap">
-        <span class="rt-week-label" style="cursor:pointer;text-decoration:underline dotted" onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')" title="Filter task minggu ini">
-          ${isCur?'▶ ':''}Minggu ${w.num}
-        </span>
-      </td>
-      <!-- Periode -->
-      <td style="font-size:11.5px;color:var(--t2);white-space:nowrap">${w.label}</td>
-      <!-- Target — editable -->
-      <td>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="font-size:11px;color:var(--t3)">Rp</span>
-          <input class="rt-week-input" style="width:78px" type="number" min="0" step="100000"
-            value="${Math.round(wTarget)}"
-            onchange="rtSaveWeekField(${i},'target',this.value,${year},${month})"
-            title="Edit target minggu ini">
+    // Spend iklan aktual dari keuangan kategori marketing
+    const wSpend    = weekSpendAuto(w.start, w.end);
+    const wRoasAkt  = wSpend > 0 ? (rev / wSpend).toFixed(1) : '—';
+    const roasCls   = wSpend > 0 ? (parseFloat(wRoasAkt) >= parseFloat(wRoas) ? 'color:var(--green)' : 'color:var(--red)') : 'color:var(--t3)';
+
+    // Status label
+    const isPast = now > w.end && !isCur;
+    const isFuture = now < w.start;
+    const statusCls = isFuture ? 'upcoming' : cls;
+    const statusLbl = isFuture ? 'Mendatang' : cls==='on-track' ? 'On Track' : cls==='at-risk' ? 'At Risk' : 'Behind';
+
+    // ROAS color
+    const roasGood = wSpend>0 && parseFloat(wRoasAkt) >= parseFloat(wRoas);
+
+    return `<div class="rt-week-card${isCur?' is-current':''}${isPast?' is-past':''}" id="rt-row-${i}">
+      <!-- HEADER -->
+      <div class="rt-wcard-header">
+        <div class="rt-wcard-header-left">
+          <span class="rt-wcard-num">M${w.num}</span>
+          <span class="rt-wcard-period">${w.label}</span>
         </div>
-      </td>
-      <!-- Budget Shopee — editable -->
-      <td>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span class="rt-badge shopee" style="cursor:pointer" onclick="this.nextElementSibling.style.display='flex';this.style.display='none'">
-            ${rtRp(wShopeeB)}
-          </span>
-          <div style="display:none;align-items:center;gap:3px">
-            <span style="font-size:11px;color:var(--t3)">Rp</span>
-            <input class="rt-week-input" style="width:68px" type="number" min="0" step="50000"
+        <span class="rt-wcard-status ${statusCls}">${isCur ? '▶ Berjalan' : statusLbl}</span>
+      </div>
+
+      <!-- BODY -->
+      <div class="rt-wcard-body">
+
+        <!-- Realisasi vs Target -->
+        <div>
+          <div class="rt-wcard-rev">
+            <div>
+              <div style="font-size:10px;color:var(--t3);font-weight:500;margin-bottom:3px">REALISASI ${revSrc}</div>
+              <div class="rt-wcard-rev-val">${rtRp(rev)}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px;color:var(--t3);font-weight:500;margin-bottom:3px">TARGET</div>
+              <div style="font-size:13px;font-weight:600;color:var(--t2)">
+                <input class="rt-wcard-edit-inp" style="width:90px;text-align:right;font-weight:600" type="number" min="0" step="100000"
+                  value="${Math.round(wTarget)}"
+                  onchange="rtSaveWeekField(${i},'target',this.value,${year},${month})"
+                  title="Edit target minggu ini">
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:7px">
+            <div class="rt-wcard-progress">
+              <div class="rt-wcard-progress-fill ${isFuture?'':''+cls}" style="width:${isFuture?0:pct.toFixed(0)}%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px">
+              <span style="font-size:10px;color:var(--t3)">${breakdownTxt}</span>
+              <span style="font-size:10px;font-weight:700;color:var(--t2)">${isFuture?'—':Math.round(pct)+'%'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics row: Spend + ROAS + Min Order -->
+        <div class="rt-wcard-metrics">
+          <div class="rt-wcard-metric">
+            <div class="rt-wcard-metric-val" style="${wSpend>0?'color:var(--t1)':'color:var(--t3)'}">
+              ${wSpend>0 ? rtRp(wSpend) : '—'}
+            </div>
+            <div class="rt-wcard-metric-lbl">Spend Iklan</div>
+          </div>
+          <div class="rt-wcard-metric">
+            <div class="rt-wcard-metric-val" style="${wSpend>0?(roasGood?'color:var(--green)':'color:var(--red)'):'color:var(--t3)'}">
+              ${wRoasAkt !== '—' ? wRoasAkt+'×' : '—'}
+            </div>
+            <div class="rt-wcard-metric-lbl">ROAS Aktual</div>
+          </div>
+          <div class="rt-wcard-metric">
+            <div class="rt-wcard-metric-val">${wMinOrd}x</div>
+            <div class="rt-wcard-metric-lbl">Min. Order</div>
+          </div>
+          <div class="rt-wcard-metric">
+            <div class="rt-wcard-metric-val" style="font-size:11px">
+              ${manualRev!==null
+                ? `<input class="rt-wcard-edit-inp" style="width:80px;font-size:11px" type="number" min="0" step="100000"
+                    value="${Math.round(manualRev)}"
+                    onchange="rtSaveWeekField(${i},'rev',this.value||null,${year},${month})">
+                   <span style="cursor:pointer;color:var(--t3);font-size:10px" onclick="rtResetWeekRev(${i},${year},${month})" title="Reset ke auto">↺</span>`
+                : `<span style="color:var(--t3);font-size:11px;cursor:pointer" onclick="this.parentElement.innerHTML='<input class=rt-wcard-edit-inp style=width:80px;font-size:11px type=number min=0 step=100000 placeholder=Rp... onchange=rtSaveWeekField(${i},\'rev\',this.value||null,${year},${month})>'" title="Override manual">auto ✏️</span>`
+              }
+            </div>
+            <div class="rt-wcard-metric-lbl">Override Realisasi</div>
+          </div>
+        </div>
+
+        <!-- Budget Shopee + TikTok -->
+        <div class="rt-wcard-budget">
+          <div class="rt-wcard-budget-item">
+            <div style="font-size:9.5px;color:var(--t3);font-weight:500;margin-bottom:3px">SHOPEE 🛍️</div>
+            <input class="rt-wcard-edit-inp" style="font-size:12px;font-weight:700;color:#d4380d" type="number" min="0" step="50000"
               value="${Math.round(wShopeeB)}"
-              onchange="rtSaveWeekField(${i},'shopeeB',this.value,${year},${month})"
-              title="Edit budget Shopee minggu ini">
+              onchange="rtSaveWeekField(${i},'shopeeB',this.value,${year},${month})">
           </div>
-        </div>
-      </td>
-      <!-- Budget TikTok — editable -->
-      <td>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span class="rt-badge tiktok" style="cursor:pointer" onclick="this.nextElementSibling.style.display='flex';this.style.display='none'">
-            ${rtRp(wTiktokB)}
-          </span>
-          <div style="display:none;align-items:center;gap:3px">
-            <span style="font-size:11px;color:var(--t3)">Rp</span>
-            <input class="rt-week-input" style="width:68px" type="number" min="0" step="50000"
+          <div class="rt-wcard-budget-item">
+            <div style="font-size:9.5px;color:var(--t3);font-weight:500;margin-bottom:3px">TIKTOK 🎵</div>
+            <input class="rt-wcard-edit-inp" style="font-size:12px;font-weight:700;color:#531dab" type="number" min="0" step="50000"
               value="${Math.round(wTiktokB)}"
-              onchange="rtSaveWeekField(${i},'tiktokB',this.value,${year},${month})"
-              title="Edit budget TikTok minggu ini">
+              onchange="rtSaveWeekField(${i},'tiktokB',this.value,${year},${month})">
           </div>
         </div>
-      </td>
-      <!-- Min Order -->
-      <td style="font-weight:600">${wMinOrd}x</td>
-      <!-- ROAS -->
-      <td style="font-weight:700;color:var(--accent)">${wRoas}×</td>
-      <!-- Realisasi — manual input + auto, dipecah per platform -->
-      <td style="min-width:150px">
-        <div class="rt-progress-cell" style="margin-bottom:3px">
-          <div class="rt-prog-bar"><div class="rt-prog-fill ${cls}" style="width:${pct.toFixed(0)}%"></div></div>
-          <span style="font-size:11px;font-weight:700;color:var(--t2);min-width:36px">${rtRp(rev)}</span>
-          <span style="font-size:10px;color:var(--t3)" title="${manualRev!==null?'Input manual — klik ↺ untuk reset ke auto':'Auto dari order'}">${revSrc}</span>
+
+      </div>
+
+      <!-- FOOTER: task + catatan -->
+      <div class="rt-wcard-footer" style="flex-direction:column;align-items:stretch;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer"
+          onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')"
+          title="Klik untuk lihat task minggu ini">
+          <span style="font-size:10px;color:var(--t3);white-space:nowrap">Task ${tDone}/${tAll}</span>
+          <div class="rt-wcard-task-bar"><div class="rt-wcard-task-fill" style="width:${tPct}%"></div></div>
+          <span style="font-size:10px;font-weight:700;color:var(--t2);white-space:nowrap">${tAll?tPct+'%':'—'}</span>
         </div>
-        <div style="font-size:9.5px;color:var(--t3);margin-bottom:4px">${breakdownTxt}</div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="font-size:10px;color:var(--t3)">Manual:</span>
-          <input class="rt-week-input" style="width:78px;font-size:11px" type="number" min="0" step="100000"
-            placeholder="Rp..."
-            value="${manualRev!==null?Math.round(manualRev):''}"
-            onchange="rtSaveWeekField(${i},'rev',this.value||null,${year},${month})"
-            title="Input realisasi manual (kosongkan untuk pakai data order otomatis)">
-          ${manualRev!==null?`<span style="font-size:10px;color:var(--t3);cursor:pointer" onclick="rtResetWeekRev(${i},${year},${month})" title="Reset ke auto">↺</span>`:''}
-        </div>
-      </td>
-      <!-- Task progress — klik untuk filter -->
-      <td style="min-width:120px">
-        <div onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')"
-          style="cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:5px" title="Klik untuk lihat task minggu ini">
-          <div class="rt-prog-bar"><div class="rt-prog-fill ${tPct>=80?'on-track':tPct>=50?'at-risk':'behind'}" style="width:${tPct}%"></div></div>
-          <span style="font-size:11px;font-weight:700;color:var(--t2)">${tDone}/${tAll}</span>
-        </div>
-        <div style="font-size:10px;color:var(--t3)">${tAll?tPct+'% selesai':'Belum ada task'}</div>
-      </td>
-      <!-- Catatan — editable inline -->
-      <td style="min-width:150px">
-        <input class="rt-week-input" style="width:100%;font-size:11px" type="text"
-          placeholder="Catatan minggu ini..."
+        <input class="rt-wcard-note-inp" type="text"
+          placeholder="Catatan strategi minggu ini..."
           value="${esc(wNote)}"
           onchange="rtSaveWeekField(${i},'note',this.value,${year},${month})"
           maxlength="120">
-      </td>
-    </tr>`;
+      </div>
+    </div>`;
   }).join('');
 
   // Persist settings (fallback cache, instant)
@@ -2940,6 +2997,13 @@ function rtUpdateSyncStatus(){
   if(window._rtSaving)         el.textContent = '· 🔄 menyimpan...';
   else if(window._rtConfigLoaded) el.textContent = '· ☁️ tersinkron';
   else                          el.textContent = '· 📴 lokal (belum sync)';
+}
+
+function rtScheduleSaveFromDropdown(){
+  const sel = $('rtMonthSelect');
+  const [y, m] = (sel?.value || '').split('-').map(Number);
+  if(y && m) rtScheduleSave(y, m - 1);
+  else rtScheduleSave();
 }
 
 function rtScheduleSave(targetYear, targetMonth){
@@ -3114,7 +3178,44 @@ function rtFilterByTask(keyword){
   },3000);
 }
 
+function rtInitMonthPicker(){
+  const sel = $('rtMonthSelect');
+  if(!sel || sel.options.length > 0) return;
+  const now = new Date();
+  for(let i = -2; i <= 3; i++){
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const lbl = d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = lbl;
+    if(i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function rtSwitchMonth(){
+  const sel = $('rtMonthSelect');
+  if(!sel) return;
+  const [y, m] = sel.value.split('-').map(Number);
+  const key = rtMonthKey(y, m - 1);
+  let cfg = (window.rtConfigCache && window.rtConfigCache[key]) || null;
+  if(!cfg){ try{ cfg = JSON.parse(localStorage.getItem(`rt_settings_${key}`)||'null'); }catch(e){} }
+  if(cfg){
+    if(cfg.target!=null)  $('rtTargetOmset').value = cfg.target;
+    if(cfg.budget!=null)  $('rtBudgetTotal').value  = cfg.budget;
+    if(cfg.shopeeP!=null) $('rtShopeeAloc').value   = cfg.shopeeP;
+    if(cfg.tiktokP!=null) $('rtTiktokAloc').value   = cfg.tiktokP;
+  } else {
+    $('rtTargetOmset').value = 8000000;
+    $('rtBudgetTotal').value  = 1000000;
+    $('rtShopeeAloc').value   = 60;
+    $('rtTiktokAloc').value   = 40;
+  }
+  rtCalc();
+}
+
 function rtInit(){
+  rtInitMonthPicker();
   const now = new Date();
   const key = rtMonthKey(now.getFullYear(), now.getMonth());
   let cfg = (window.rtConfigCache && window.rtConfigCache[key]) || null;
@@ -3122,7 +3223,6 @@ function rtInit(){
     try{ cfg = JSON.parse(localStorage.getItem(`rt_settings_${key}`)||'null'); }catch(e){}
   }
   if(!cfg){
-    // backward-compat: cek key lama tanpa bulan
     try{ cfg = JSON.parse(localStorage.getItem('rt_settings')||'null'); }catch(e){}
   }
   if(cfg){
@@ -3460,6 +3560,7 @@ $('fOrder').addEventListener('submit',async function(e){
   const channel=$('oChannel').value,buyer=san($('oBuyer').value);
   const orderNo=san($('oOrderNo').value),note=san($('oNote').value);
   const total=parseInt($('oTotal').value,10)||0;
+  const orderDate=$('oOrderDate').value||new Date().toISOString().split('T')[0];
   let ok=true;
   if(!CHANNELS.has(channel)){ferr('oChannelE','Pilih channel.');ok=false;}
   if(buyer.length<2){ferr('oBuyerE','Nama pembeli minimal 2 karakter.');ok=false;}
@@ -3488,7 +3589,7 @@ $('fOrder').addEventListener('submit',async function(e){
         const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
         if(!frame||frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} tidak cukup!`);btn.textContent=orig;btn.disabled=false;return;}
       }
-      const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],updatedAt:new Date().toISOString()};
+      const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],createdAt:orderDate+'T'+(old.createdAt||new Date().toISOString()).slice(11),updatedAt:new Date().toISOString()};
       await fsSet('orders',updated);
       for(const it of pendingItems){
         const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
@@ -3509,7 +3610,7 @@ $('fOrder').addEventListener('submit',async function(e){
       if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} habis!`);btn.textContent=orig;btn.disabled=false;return;}
     }
     const id=`order_${Date.now()}`;
-    const item={id,channel,buyer,orderNo,note,total,finalTotal:null,items:[...pendingItems],status:'proses',createdAt:new Date().toISOString()};
+    const item={id,channel,buyer,orderNo,note,total,finalTotal:null,items:[...pendingItems],status:'proses',createdAt:orderDate+'T'+new Date().toTimeString().slice(0,8)+'.000Z'};
     try{
       await fsSet('orders',item);
       for(const it of pendingItems){
@@ -3544,6 +3645,7 @@ function openEditOrder(id){
   $('oOrderNo').value=o.orderNo||'';
   $('oNote').value=o.note||'';
   $('oTotal').value=o.total||'';
+  if($('oOrderDate')) $('oOrderDate').value=(o.createdAt||'').slice(0,10)||new Date().toISOString().split('T')[0];
   pendingItems=[...(o.items||[])];
   renderItemList();
   $('orderModal').classList.add('active');
