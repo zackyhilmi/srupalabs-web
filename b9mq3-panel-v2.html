@@ -68,14 +68,18 @@ window.DRIVE_API_KEY   = "AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE";
 /* ─── RESET ─── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#F0F2F5;--surface:#fff;--border:#E4E8EE;
-  --t1:#111827;--t2:#6B7280;--t3:#9CA3AF;
-  --accent:#1A73E8;--accent-lt:#EBF3FD;
+  --bg:#F0F2F5;--surface:#fff;--border:#E8EBF0;
+  --t1:#0F1729;--t2:#5C6880;--t3:#9CA3AF;
+  --accent:#1A73E8;--accent-lt:#EBF3FD;--accent-dk:#1558C0;
   --green:#16A34A;--green-lt:#DCFCE7;
   --amber:#D97706;--amber-lt:#FEF3C7;
   --red:#DC2626;--red-lt:#FEE2E2;
-  --gray-lt:#F3F4F6;
-  --nav:240px;--nav-mini:60px;--hdr:60px;--r:12px;
+  --purple:#7C3AED;--purple-lt:#EDE9FE;
+  --gray-lt:#F4F5F8;--gray-md:#E9ECF2;
+  --nav:240px;--nav-mini:60px;--hdr:60px;--r:14px;
+  --shadow-sm:0 1px 3px rgba(15,23,41,.07),0 1px 2px rgba(15,23,41,.04);
+  --shadow-md:0 4px 12px rgba(15,23,41,.08),0 2px 6px rgba(15,23,41,.05);
+  --shadow-lg:0 12px 32px rgba(15,23,41,.12),0 4px 12px rgba(15,23,41,.06);
   --font:'DM Sans',sans-serif;
 }
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
@@ -180,9 +184,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sname{font-size:15px;font-weight:700}.ssub{font-size:11px;color:var(--t2)}
 .nsec{padding:12px 10px 5px}
 .nseclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:0 8px;margin-bottom:4px}
-.nitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:1px;min-height:44px;touch-action:manipulation}
-.nitem:hover{background:var(--gray-lt);color:var(--t1)}
-.nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:600}
+.nitem{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px;min-height:44px;touch-action:manipulation}
+.nitem:hover{background:var(--gray-lt);color:var(--t1);padding-left:14px}
+.nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:700}
 .nico{font-size:16px;width:20px;text-align:center;flex-shrink:0;line-height:1;display:flex;align-items:center;justify-content:center}
 .nbadge{margin-left:auto;font-size:11px;font-weight:700;background:var(--red-lt);color:var(--red);padding:2px 7px;border-radius:20px}
 .sfooter{margin-top:auto;padding:12px 10px;border-top:1px solid var(--border)}
@@ -197,7 +201,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 /* ─── TOPBAR ─── */
 .main{margin-left:var(--nav);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
 .sidebar.collapsed~.main{margin-left:var(--nav-mini)}
-.topbar{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
+.topbar{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 1px 0 var(--border)}
 .topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--t2);font-size:20px;flex-shrink:0}
 .hamburger:hover{background:var(--gray-lt)}
@@ -212,24 +216,52 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
 /* ─── PAGES ─── */
-.page{padding:18px 20px;display:none}
+.page{padding:20px 24px;display:none}
 .page.active{display:block}
 
 /* ─── STATS ROW ─── */
-.srow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px}
-.sico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
-.sico.blue{background:var(--accent-lt)}.sico.green{background:var(--green-lt)}.sico.amber{background:var(--amber-lt)}.sico.red{background:var(--red-lt)}.sico.purple{background:#EDE9FE}
-.sval{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+.srow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.scard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s,transform .2s;
+}
+.scard:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.sico{
+  width:44px;height:44px;border-radius:12px;
+  display:grid;place-items:center;font-size:20px;flex-shrink:0;
+}
+.sico.blue{background:#dbeafe}.sico.green{background:#dcfce7}
+.sico.amber{background:#fef3c7}.sico.red{background:#fee2e2}
+.sico.purple{background:#ede9fe}
+.sval{font-size:22px;font-weight:700;line-height:1.1;margin-bottom:3px;letter-spacing:-.02em}
 .slbl{font-size:11.5px;color:var(--t2);font-weight:500}
 
 /* ─── CARD ─── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+  box-shadow:var(--shadow-sm);
+}
 .card:last-child{margin-bottom:0}
-.chd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ctitle{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px}
-.ctitle::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;flex-shrink:0}
-.cbody{padding:16px}
+.chd{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--surface);
+}
+.ctitle{
+  font-size:13.5px;font-weight:700;
+  display:flex;align-items:center;gap:9px;
+  color:var(--t1);
+}
+.ctitle::before{
+  content:'';width:3px;height:15px;
+  background:linear-gradient(180deg,var(--accent),#60a5fa);
+  border-radius:3px;flex-shrink:0;
+}
+.cbody{padding:16px 18px}
 
 /* ─── TWO COL GRID ─── */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
@@ -240,9 +272,21 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .igrid .card:first-child{position:relative;top:auto}
 
 /* ─── INNER TABS ─── */
-.itabs{display:flex;gap:3px;background:var(--gray-lt);padding:4px;border-radius:10px;width:fit-content;margin-bottom:16px}
-.itab{padding:7px 16px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);color:var(--t2);background:none;transition:all .15s;white-space:nowrap}
-.itab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.itabs{
+  display:flex;gap:3px;
+  background:var(--gray-md);
+  padding:4px;border-radius:11px;width:fit-content;margin-bottom:18px;
+}
+.itab{
+  padding:7px 18px;border:none;border-radius:8px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);
+  color:var(--t2);background:none;transition:all .18s;white-space:nowrap;
+}
+.itab.active{
+  background:var(--surface);color:var(--accent);
+  box-shadow:0 2px 8px rgba(26,115,232,.12);
+}
+.itab:not(.active):hover{background:rgba(255,255,255,.6);color:var(--t1)}
 
 /* ─── FORM ─── */
 .fg{margin-bottom:12px}
@@ -271,37 +315,71 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .add-item-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
 
 /* ─── BUTTONS ─── */
-.pbtn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .2s;margin-top:3px;min-height:40px;touch-action:manipulation}
-.pbtn:hover:not(:disabled){background:#1558b8}
-.pbtn:disabled{opacity:.65;cursor:not-allowed}
-.pbtn.green{background:var(--green)}.pbtn.green:hover:not(:disabled){background:#15803d}
-.pbtn.outline{background:none;border:1.5px solid var(--border);color:var(--t1)}.pbtn.outline:hover:not(:disabled){background:var(--gray-lt)}
+.pbtn{
+  width:100%;padding:9px 16px;
+  background:var(--accent);color:#fff;border:none;
+  border-radius:9px;font-size:13.5px;font-weight:600;
+  cursor:pointer;font-family:var(--font);
+  transition:background .18s,box-shadow .18s,transform .1s;
+  margin-top:3px;min-height:38px;touch-action:manipulation;
+  box-shadow:0 1px 3px rgba(26,115,232,.25);
+}
+.pbtn:hover:not(:disabled){background:var(--accent-dk);box-shadow:0 4px 12px rgba(26,115,232,.3)}
+.pbtn:active:not(:disabled){transform:scale(.98)}
+.pbtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.pbtn.green{background:var(--green);box-shadow:0 1px 3px rgba(22,163,74,.25)}
+.pbtn.green:hover:not(:disabled){background:#15803d;box-shadow:0 4px 12px rgba(22,163,74,.3)}
+.pbtn.outline{
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--t1);box-shadow:none;
+}
+.pbtn.outline:hover:not(:disabled){background:var(--gray-lt);border-color:var(--t3)}
 
 /* ─── FILTER BAR ─── */
-.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .fbar select,.fbar input[type=month],.fbar input[type=text]{
-  padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;
-  font-size:13px;font-family:var(--font);outline:none;background:var(--surface);
-  transition:border-color .2s;
+  padding:7px 12px;border:1.5px solid var(--border);border-radius:9px;
+  font-size:13px;font-family:var(--font);outline:none;
+  background:var(--surface);color:var(--t1);
+  transition:border-color .2s,box-shadow .2s;
+  box-shadow:var(--shadow-sm);
 }
-.fbar select:focus,.fbar input:focus{border-color:var(--accent)}
+.fbar select:focus,.fbar input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(26,115,232,.1);
+}
 
 /* ─── SEARCH ─── */
-.srchwrap{position:relative;margin-bottom:12px}
-.srchwrap input{width:100%;padding:8px 32px 8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;font-family:var(--font);outline:none;transition:border-color .2s,box-shadow .2s}
+.srchwrap{position:relative;margin-bottom:14px}
+.srchwrap input{
+  width:100%;padding:9px 36px 9px 13px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-size:13.5px;font-family:var(--font);outline:none;
+  background:var(--surface);
+  transition:border-color .2s,box-shadow .2s;
+  box-shadow:var(--shadow-sm);
+}
 .srchwrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
-.srchico{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.srchico{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;font-size:15px}
 
 /* ─── TABLE ─── */
-.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border)}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;border:1px solid var(--border)}
 .twrap table{border:none}
 table{width:100%;border-collapse:collapse;min-width:520px}
 thead tr{background:var(--gray-lt);position:sticky;top:0;z-index:2}
-th{padding:9px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;border-bottom:1.5px solid var(--border)}
-td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:top}
+th{
+  padding:10px 14px;text-align:left;
+  font-size:10.5px;font-weight:700;color:var(--t2);
+  text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;
+  border-bottom:1.5px solid var(--border);
+}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:top}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:var(--accent-lt)}
-.erow td{text-align:center;padding:36px 20px;color:var(--t3);font-size:13px;min-width:auto;vertical-align:middle}
+tbody tr:hover{background:#f0f6ff}
+.erow td{
+  text-align:center;padding:44px 20px;
+  color:var(--t3);font-size:13px;min-width:auto;vertical-align:middle;
+}
 
 /* item chips di tabel transaksi */
 .item-chips{display:flex;flex-direction:column;gap:3px}
@@ -324,7 +402,7 @@ tbody tr:hover{background:var(--accent-lt)}
 .col-num{text-align:right;font-variant-numeric:tabular-nums}
 
 /* ─── BADGES ─── */
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
 .badge.high{background:var(--green-lt);color:var(--green)}
 .badge.medium{background:var(--amber-lt);color:var(--amber)}
 .badge.low{background:var(--red-lt);color:var(--red)}
@@ -340,7 +418,7 @@ tbody tr:hover{background:var(--accent-lt)}
 
 /* ─── ACTIONS ─── */
 .acell{display:flex;gap:4px;flex-wrap:wrap}
-.bsm{padding:5px 9px;border:none;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
+.bsm{padding:5px 11px;border:none;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap}
 .bedit{background:var(--accent-lt);color:var(--accent)}.bedit:hover{background:#cce0fc}
 .bdel{background:var(--red-lt);color:var(--red)}.bdel:hover{background:#fecaca}
 .bgreen{background:var(--green-lt);color:var(--green)}.bgreen:hover{background:#bbf7d0}
@@ -350,12 +428,18 @@ tbody tr:hover{background:var(--accent-lt)}
 .cdot.hitam{background:#111}.cdot.putih{background:#f5f5f5}.cdot.kayu{background:linear-gradient(135deg,#8b6f47,#c19a6b)}.cdot.chrome{background:linear-gradient(135deg,#bbb,#eee,#aaa)}
 
 /* ─── SUMMARY CARDS ─── */
-.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px}
-.sum-label{font-size:12px;color:var(--t2);font-weight:500;margin-bottom:5px}
-.sum-val{font-size:20px;font-weight:700}
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.sum-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s,transform .2s;
+}
+.sum-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.sum-label{font-size:11.5px;color:var(--t2);font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}
+.sum-val{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
 .sum-val.green{color:var(--green)}.sum-val.red{color:var(--red)}.sum-val.accent{color:var(--accent)}
-.sum-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.sum-sub{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500}
 
 /* ─── INLINE EDIT ─── */
 .inline-edit-wrap{display:flex;align-items:center;gap:4px}
@@ -364,15 +448,33 @@ tbody tr:hover{background:var(--accent-lt)}
 
 /* ─── MODAL ─── */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
-.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.moverlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(10,18,40,.5);backdrop-filter:blur(2px);
+  z-index:500;align-items:center;justify-content:center;
+  padding:16px;animation:fadeIn .18s ease;
+}
 #itemModal{z-index:600}
 .moverlay.active{display:flex}
-.mbox{background:var(--surface);border-radius:16px;width:100%;max-width:480px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:slideUp .2s ease;max-height:90vh;overflow-y:auto}
-.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.mhd h3{font-size:16px;font-weight:700}
-.mclose{background:var(--gray-lt);border:none;width:30px;height:30px;border-radius:50%;font-size:17px;cursor:pointer;color:var(--t2);display:grid;place-items:center;flex-shrink:0}
-.mclose:hover{background:var(--border)}
+.mbox{
+  background:var(--surface);border-radius:18px;
+  width:100%;max-width:480px;padding:24px;
+  box-shadow:var(--shadow-lg);
+  animation:slideUp .2s cubic-bezier(.22,1,.36,1);
+  max-height:90vh;overflow-y:auto;
+  border:1px solid var(--border);
+}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.mhd h3{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.mclose{
+  background:var(--gray-lt);border:none;
+  width:32px;height:32px;border-radius:50%;
+  font-size:16px;cursor:pointer;color:var(--t2);
+  display:grid;place-items:center;flex-shrink:0;
+  transition:all .15s;
+}
+.mclose:hover{background:var(--red-lt);color:var(--red)}
 
 /* ─── TOAST ─── */
 .toast{position:fixed;bottom:20px;right:20px;padding:11px 15px;border-radius:10px;font-size:13.5px;font-weight:600;color:#fff;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s ease;pointer-events:none;max-width:280px}
@@ -481,35 +583,249 @@ tbody tr:hover{background:var(--accent-lt)}
 .drive-breadcrumb .bcrumb:hover{text-decoration:underline}
 @media(max-width:900px){.drive-wrap{grid-template-columns:1fr}}
 /* ─── KANBAN PACKING ─── */
-.kanban-board{display:flex;gap:10px;overflow-x:auto;padding-bottom:16px;align-items:flex-start;-webkit-overflow-scrolling:touch}
-.kanban-col{flex:0 0 220px;background:var(--gray-lt);border-radius:12px;padding:10px;min-height:200px}
-.kanban-col-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;padding:0 2px}
-.kanban-col-hd .kcnt{background:var(--border);color:var(--t2);font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px}
-.kanban-cards{display:flex;flex-direction:column;gap:7px;min-height:60px}
-.kanban-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .18s;user-select:none}
-.kanban-card:hover{border-color:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.08);transform:translateY(-1px)}
-.kanban-card.dragging{opacity:.4;transform:scale(.97)}
-.kanban-card-buyer{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px}
-.kanban-card-meta{font-size:11px;color:var(--t2);line-height:1.5}
-.kanban-card-total{font-size:12px;font-weight:700;color:var(--accent);margin-top:4px}
-.kanban-card-actions{display:flex;gap:4px;margin-top:7px;border-top:1px solid var(--border);padding-top:7px}
-.kanban-card-btn{flex:1;padding:4px 0;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;font-size:11px;font-family:var(--font);color:var(--t2);transition:all .15s}
-.kanban-card-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-.kanban-card-btn.next{background:var(--accent);color:#fff;border-color:var(--accent)}
-.kanban-card-btn.next:hover{background:var(--accent-dk,#1a0fb5)}
-.kanban-empty{text-align:center;padding:24px 8px;color:var(--t3);font-size:12px}
-.kanban-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-.kanban-search{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:var(--surface);width:200px}
+.kanban-board{display:flex;gap:12px;overflow-x:auto;padding-bottom:20px;align-items:flex-start;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.kanban-col{
+  flex:0 0 260px;border-radius:14px;padding:0;min-height:240px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  scroll-snap-align:start;
+}
+.kanban-col-hd{
+  padding:10px 14px 9px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.kanban-col-hd-left{display:flex;align-items:center;gap:8px;min-width:0}
+.kanban-col-hd-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.kanban-col-hd-text{min-width:0}
+.kanban-col-hd-label{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
+.kanban-col-hd-sub{font-size:10px;font-weight:500;opacity:.7;margin-top:1px}
+.kanban-col-hd .kcnt{
+  min-width:24px;height:24px;padding:0 7px;
+  border-radius:20px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kanban-cards{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px;min-height:80px;overflow-y:auto;max-height:calc(100vh - 220px)}
+.kanban-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:11px;padding:11px 13px;
+  cursor:grab;transition:all .18s;user-select:none;
+  position:relative;
+}
+.kanban-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;border-radius:3px 0 0 3px;
+}
+.kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);transform:translateY(-2px);border-color:transparent}
+.kanban-card:active{cursor:grabbing}
+.kanban-card.dragging{opacity:.35;transform:scale(.96)}
+.kanban-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:6px}
+.kanban-card-buyer{font-size:13px;font-weight:700;color:var(--t1);line-height:1.3;flex:1;min-width:0}
+.kanban-card-total{font-size:12.5px;font-weight:700;color:var(--accent);flex-shrink:0;white-space:nowrap}
+.kanban-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.kanban-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.kanban-card-items{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.kanban-card-resi{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--t3);background:var(--gray-lt);border-radius:6px;padding:3px 7px;margin-bottom:7px;width:fit-content}
+.kanban-card-actions{display:flex;gap:5px;border-top:1px solid var(--border);padding-top:8px;margin-top:2px}
+.kanban-card-btn{
+  flex:1;padding:6px 4px;border:none;border-radius:7px;
+  cursor:pointer;font-size:11px;font-weight:600;
+  font-family:var(--font);transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:3px;
+}
+.kanban-card-btn.detail{background:var(--gray-lt);color:var(--t2)}
+.kanban-card-btn.detail:hover{background:var(--border);color:var(--t1)}
+.kanban-card-btn.move-next{background:var(--accent-lt);color:var(--accent)}
+.kanban-card-btn.move-next:hover{background:var(--accent);color:#fff}
+.kanban-card-btn.move-next.is-done{background:var(--green-lt);color:var(--green)}
+.kanban-card-btn.move-next.is-done:hover{background:var(--green);color:#fff}
+.kanban-empty{
+  text-align:center;padding:28px 12px;color:var(--t3);font-size:12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.kanban-empty-ico{font-size:22px;opacity:.4}
+.kanban-final-wrap{margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
+.kanban-final-row{display:flex;gap:5px;align-items:center}
+.kanban-final-row input{
+  flex:1;font-size:12px;padding:5px 8px;
+  border:1.5px solid var(--border);border-radius:7px;
+  background:var(--surface);color:var(--t1);min-width:0;
+  font-family:var(--font);outline:none;transition:border-color .2s;
+}
+.kanban-final-row input:focus{border-color:var(--accent)}
+.kanban-final-row button{
+  font-size:11px;padding:5px 10px;background:var(--green);
+  color:#fff;border:none;border-radius:7px;font-weight:600;
+  cursor:pointer;white-space:nowrap;font-family:var(--font);
+  transition:background .15s;
+}
+.kanban-final-row button:hover{background:#15803d}
+.kanban-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.kanban-search{
+  padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;
+  font-size:13px;font-family:var(--font);background:var(--surface);width:220px;
+  outline:none;transition:border-color .2s;
+}
+.kanban-search:focus{border-color:var(--accent)}
 
-/* Status colors per kolom */
-.kcol-baru .kanban-col-hd{color:#1d4ed8}
-.kcol-cetak_menunggu .kanban-col-hd{color:#7c3aed}
-.kcol-cetak_proses .kanban-col-hd{color:#9333ea}
-.kcol-framing .kanban-col-hd{color:#b45309}
-.kcol-packing .kanban-col-hd{color:#0369a1}
-.kcol-ready .kanban-col-hd{color:#047857}
-.kcol-dikirim .kanban-col-hd{color:#0891b2}
-.kcol-selesai .kanban-col-hd{color:#16a34a}
+/* ── Per-kolom color theming ── */
+.kcol-baru{background:#f0f4ff}
+.kcol-baru .kanban-col-hd{background:#e8eeff}
+.kcol-baru .kanban-col-hd-label{color:#1d4ed8}
+.kcol-baru .kanban-col-hd-icon{background:#dbeafe;color:#1d4ed8}
+.kcol-baru .kcnt{background:#1d4ed8;color:#fff}
+.kcol-baru .kanban-card::before{background:#1d4ed8}
+
+.kcol-cetak_menunggu{background:#faf5ff}
+.kcol-cetak_menunggu .kanban-col-hd{background:#f3e8ff}
+.kcol-cetak_menunggu .kanban-col-hd-label{color:#7c3aed}
+.kcol-cetak_menunggu .kanban-col-hd-icon{background:#ede9fe;color:#7c3aed}
+.kcol-cetak_menunggu .kcnt{background:#7c3aed;color:#fff}
+.kcol-cetak_menunggu .kanban-card::before{background:#7c3aed}
+
+.kcol-cetak_proses{background:#fdf4ff}
+.kcol-cetak_proses .kanban-col-hd{background:#fae8ff}
+.kcol-cetak_proses .kanban-col-hd-label{color:#9333ea}
+.kcol-cetak_proses .kanban-col-hd-icon{background:#f3e8ff;color:#9333ea}
+.kcol-cetak_proses .kcnt{background:#9333ea;color:#fff}
+.kcol-cetak_proses .kanban-card::before{background:#9333ea}
+
+.kcol-framing{background:#fffbeb}
+.kcol-framing .kanban-col-hd{background:#fef3c7}
+.kcol-framing .kanban-col-hd-label{color:#b45309}
+.kcol-framing .kanban-col-hd-icon{background:#fde68a;color:#b45309}
+.kcol-framing .kcnt{background:#b45309;color:#fff}
+.kcol-framing .kanban-card::before{background:#b45309}
+
+.kcol-packing{background:#eff6ff}
+.kcol-packing .kanban-col-hd{background:#dbeafe}
+.kcol-packing .kanban-col-hd-label{color:#0369a1}
+.kcol-packing .kanban-col-hd-icon{background:#bfdbfe;color:#0369a1}
+.kcol-packing .kcnt{background:#0369a1;color:#fff}
+.kcol-packing .kanban-card::before{background:#0369a1}
+
+.kcol-ready{background:#f0fdf4}
+.kcol-ready .kanban-col-hd{background:#dcfce7}
+.kcol-ready .kanban-col-hd-label{color:#047857}
+.kcol-ready .kanban-col-hd-icon{background:#bbf7d0;color:#047857}
+.kcol-ready .kcnt{background:#047857;color:#fff}
+.kcol-ready .kanban-card::before{background:#047857}
+
+.kcol-dikirim{background:#ecfeff}
+.kcol-dikirim .kanban-col-hd{background:#cffafe}
+.kcol-dikirim .kanban-col-hd-label{color:#0891b2}
+.kcol-dikirim .kanban-col-hd-icon{background:#a5f3fc;color:#0891b2}
+.kcol-dikirim .kcnt{background:#0891b2;color:#fff}
+.kcol-dikirim .kanban-card::before{background:#0891b2}
+
+.kcol-selesai{background:#f0fdf4}
+.kcol-selesai .kanban-col-hd{background:#bbf7d0}
+.kcol-selesai .kanban-col-hd-label{color:#16a34a}
+.kcol-selesai .kanban-col-hd-icon{background:#86efac;color:#16a34a}
+.kcol-selesai .kcnt{background:#16a34a;color:#fff}
+.kcol-selesai .kanban-card::before{background:#16a34a}
+
+/* ─── PAGE SECTION HEADERS ─── */
+.page-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.page-section-header h2{
+  font-size:18px;font-weight:700;color:var(--t1);letter-spacing:-.02em;
+}
+.page-section-header p{font-size:13px;color:var(--t2);margin-top:2px;font-weight:400}
+
+/* ─── DRIVE ─── enhanced */
+.drive-auth-banner{
+  background:linear-gradient(135deg,#f0f4ff,#e8f0fe);
+  border:1.5px solid #bfdbfe;border-radius:16px;
+  padding:36px 24px;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+
+/* ─── CHART WRAP ─── */
+.chart-wrap{position:relative;height:220px}
+
+/* ─── TWO COL ─── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+/* ─── FORM labels ─── */
+.fg label{display:block;font-size:11.5px;font-weight:700;margin-bottom:5px;color:var(--t2);text-transform:uppercase;letter-spacing:.04em}
+.fg input,.fg select,.fg textarea{border-radius:9px;transition:border-color .2s,box-shadow .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+
+/* ─── TOPBAR TITLE ─── */
+.ttitle{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.tsub{font-size:11px;color:var(--t3);white-space:nowrap;font-weight:500}
+
+/* ─── SIDEBAR LOGO ─── */
+.sname{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.ssub{font-size:11px;color:var(--t2);font-weight:500}
+
+/* ─── TASK PROGRESS ─── */
+.task-progress-bar{
+  height:6px;background:var(--gray-md);border-radius:99px;overflow:hidden;flex:1;min-width:80px;
+}
+.task-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:99px;transition:width .4s ease}
+
+/* ─── CALENDAR ─── */
+.cal-nav-btn{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:9px;width:34px;height:34px;cursor:pointer;
+  font-size:16px;color:var(--t2);display:grid;place-items:center;
+  transition:all .15s;box-shadow:var(--shadow-sm);
+}
+.cal-nav-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cal-month{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.cal-cell{
+  min-height:80px;border:1.5px solid var(--border);border-radius:10px;
+  padding:5px 7px;background:var(--surface);cursor:pointer;
+  transition:all .15s;position:relative;overflow:hidden;
+}
+.cal-cell:hover{border-color:var(--accent);background:var(--accent-lt);box-shadow:0 2px 8px rgba(26,115,232,.1)}
+.cal-cell.today{border-color:var(--accent);border-width:2px;background:#f0f6ff}
+
+/* ─── IDEA CARD ─── */
+.idea-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:12px;padding:13px 15px;
+  transition:box-shadow .18s,border-color .18s;
+}
+.idea-card:hover{box-shadow:var(--shadow-md);border-color:var(--border)}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:12px 18px;
+  border-radius:12px;font-size:13.5px;font-weight:600;color:#fff;
+  z-index:9999;transform:translateY(60px);opacity:0;
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;max-width:300px;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+
+/* ─── INLINE EDIT ─── */
+.inline-edit-wrap{display:flex;align-items:center;gap:5px}
+.inline-edit-input{
+  padding:5px 9px;border:1.5px solid var(--accent);
+  border-radius:7px;font-size:12px;font-family:var(--font);
+  width:120px;outline:none;box-shadow:0 0 0 3px rgba(26,115,232,.1);
+}
+.inline-edit-save{
+  padding:5px 10px;background:var(--accent);color:#fff;
+  border:none;border-radius:7px;font-size:11px;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:background .15s;
+}
+
+/* ─── SECTION DIVIDER ─── */
+.sdiv{
+  font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--t3);margin:18px 0 12px;
+  padding-bottom:7px;border-bottom:1.5px solid var(--border);
+}
 
 /* ─── MARGIN & PROFIT ─── */
 .hpp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
@@ -920,16 +1236,16 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <!-- ═══ DASHBOARD ═══ -->
     <div class="page active" id="page-dashboard">
       <!-- Filter bulan dashboard -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px">
-          <span style="font-size:13px">📅</span>
-          <select id="dashMonth" onchange="updateDashboard()" style="border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:110px"></select>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 13px;box-shadow:var(--shadow-sm)">
+          <span style="font-size:14px">📅</span>
+          <select id="dashMonth" onchange="updateDashboard()" style="border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:120px"></select>
         </div>
-        <div id="dashMonthLabel" style="font-size:12px;color:var(--t2)"></div>
+        <div id="dashMonthLabel" style="font-size:12px;color:var(--t2);font-weight:500"></div>
       </div>
       <!-- 5 stat cards: poster, frame, omzet, order, stok menipis -->
       <div class="srow">
-        <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval" id="sPoster">0</div><div class="slbl">Item Poster</div></div></div>
+        <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval" id="sPoster">0</div><div class="slbl">Total Poster</div></div></div>
         <div class="scard"><div class="sico purple">🪟</div><div><div class="sval" id="sFrame">0</div><div class="slbl">Item Frame</div></div></div>
         <div class="scard"><div class="sico green">💰</div><div><div class="sval" id="sOmzet">Rp 0</div><div class="slbl" id="sOmzetLbl">Omzet Bulan Ini</div></div></div>
         <div class="scard"><div class="sico amber">🛒</div><div><div class="sval" id="sOrders">0</div><div class="slbl" id="sOrdersLbl">Order Bulan Ini</div></div></div>
@@ -978,7 +1294,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="chd">
             <div class="ctitle">📋 Daftar Order</div>
-            <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
+            <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
           </div>
           <div class="cbody" style="padding:12px 14px 0">
             <div class="fbar">
@@ -1022,9 +1338,12 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <div class="page" id="page-keuangan">
       <div class="igrid">
         <div>
-          <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px">
-            <button class="pbtn outline" style="width:auto;padding:6px 16px;font-size:13px" onclick="syncOrdersToKeuangan()" id="btnSync">🔄 Sync Order Lama</button>
-            <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openKeuModal()">➕ Catat Keuangan</button>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+            <div style="font-size:13px;color:var(--t2);font-weight:500">Catat dan pantau arus kas bisnis Anda</div>
+            <div style="display:flex;gap:8px">
+              <button class="pbtn outline" style="width:auto;padding:7px 16px;font-size:13px" onclick="syncOrdersToKeuangan()" id="btnSync">🔄 Sync Order</button>
+              <button class="pbtn" style="width:auto;padding:7px 16px;font-size:13px" onclick="openKeuModal()">➕ Catat Pengeluaran</button>
+            </div>
           </div>
           <div class="sum-grid">
             <div class="sum-card"><div class="sum-label">💚 Pemasukan Bulan Ini</div><div class="sum-val green" id="kTotalIn">Rp 0</div></div>
@@ -1057,14 +1376,17 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
     <!-- ═══ LAPORAN ═══ -->
     <div class="page" id="page-laporan">
-      <div class="fbar" style="margin-bottom:16px">
-        <label style="font-weight:600;font-size:13px">Periode:</label>
-        <select id="lPeriode" onchange="renderLaporan()">
-          <option value="month">Bulan Ini</option>
-          <option value="last3">3 Bulan Terakhir</option>
-          <option value="last6">6 Bulan Terakhir</option>
-          <option value="year">Tahun Ini</option>
-        </select>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 13px;box-shadow:var(--shadow-sm)">
+          <span style="font-size:14px">📆</span>
+          <select id="lPeriode" onchange="renderLaporan()" style="border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:160px">
+            <option value="month">Bulan Ini</option>
+            <option value="last3">3 Bulan Terakhir</option>
+            <option value="last6">6 Bulan Terakhir</option>
+            <option value="year">Tahun Ini</option>
+          </select>
+        </div>
+        <div style="font-size:12px;color:var(--t2);font-weight:500">Rekap performa bisnis Anda</div>
       </div>
       <div class="sum-grid">
         <div class="sum-card"><div class="sum-label">💰 Total Omzet</div><div class="sum-val accent" id="lOmzet">Rp 0</div><div class="sum-sub" id="lOmzetSub">0 order</div></div>
@@ -1113,7 +1435,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             <div class="chd"><div class="ctitle">Tambah Poster</div></div>
             <div class="cbody" style="padding:10px 14px">
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openPosterModal()">➕ Tambah Poster</button>
+                <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openPosterModal()">➕ Tambah Poster</button>
                 <input type="file" id="bulkUpload" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleBulkUpload(event)">
                 <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;background:var(--blue)" onclick="$('bulkUpload').click()">📁 Import CSV/Excel</button>
               </div>
@@ -1148,7 +1470,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="card">
             <div class="chd"><div class="ctitle">Tambah Frame</div></div>
             <div class="cbody" style="padding:10px 14px">
-              <button class="pbtn" style="width:auto;padding:6px 16px;font-size:13px" onclick="openFrameModal()">➕ Tambah Frame</button>
+              <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openFrameModal()">➕ Tambah Frame</button>
             </div>
           </div>
           <div class="card">
@@ -1168,10 +1490,9 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <!-- ═══ CMS POSTER ═══ -->
     <div class="page" id="page-cms">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px" id="cmsStatWrap"></div>
-      <div class="card" style="margin-bottom:12px;background:#eff6ff;border-color:#bfdbfe">
-        <div class="cbody" style="padding:10px 14px;font-size:12px;color:#1e40af;line-height:1.7">
-          💡 Data di sini langsung tampil di katalog website setelah disimpan. Upload foto ke folder <code>images/</code> di GitHub, lalu isi path-nya di form.
-        </div>
+      <div style="background:linear-gradient(135deg,#eff6ff,#e0effe);border:1.5px solid #bfdbfe;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:#1e40af;line-height:1.7;box-shadow:0 1px 3px rgba(26,115,232,.08)">
+        <span style="font-size:20px;flex-shrink:0">💡</span>
+        <span>Data di sini langsung tampil di katalog website setelah disimpan. Upload foto ke folder <code style="background:#dbeafe;padding:1px 5px;border-radius:3px">images/</code> di GitHub, lalu isi path-nya di form.</span>
       </div>
       <div class="card">
         <div class="chd">
@@ -1453,14 +1774,14 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <div class="page" id="page-kanban">
 
       <div class="kanban-filter">
-        <input class="kanban-search" id="kanbanSearch" placeholder="🔍 Cari pembeli / no. resi..." oninput="renderKanban()">
-        <select id="kanbanChannel" onchange="renderKanban()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);background:var(--surface)">
+        <input class="kanban-search" id="kanbanSearch" placeholder="🔍 Cari nama / no. resi..." oninput="renderKanban()">
+        <select id="kanbanChannel" onchange="renderKanban()" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surface);outline:none;transition:border-color .2s">
           <option value="">Semua Channel</option>
-          <option value="shopee">Shopee</option>
-          <option value="tiktok">TikTok</option>
-          <option value="instagram">Instagram/WA</option>
+          <option value="shopee">🛍️ Shopee</option>
+          <option value="tiktok">🎵 TikTok</option>
+          <option value="instagram">📸 Instagram/WA</option>
         </select>
-        <span style="font-size:12px;color:var(--t3)" id="kanbanCount"></span>
+        <span style="font-size:12px;color:var(--t3);margin-left:2px" id="kanbanCount"></span>
       </div>
 
       <div class="kanban-board" id="kanbanBoard"></div>
@@ -5493,14 +5814,14 @@ async function importContentExcel(input){
    KANBAN PACKING
 ══════════════════════════════════════ */
 const KANBAN_COLS = [
-  {id:'baru',           label:'📥 Order Masuk',       short:'Masuk'},
-  {id:'cetak_menunggu', label:'⏳ Menunggu Cetak',     short:'Antri Cetak'},
-  {id:'cetak_proses',   label:'🖨️ Sedang Dicetak',    short:'Dicetak'},
-  {id:'framing',        label:'🪟 Siap Framing',       short:'Framing'},
-  {id:'packing',        label:'📦 Packing',            short:'Packing'},
-  {id:'ready',          label:'✅ Ready Pickup/Kirim', short:'Ready'},
-  {id:'dikirim',        label:'🚚 Dikirim',            short:'Dikirim'},
-  {id:'selesai',        label:'🎉 Selesai',            short:'Selesai'},
+  {id:'baru',           label:'Order Masuk',       short:'Masuk',       icon:'📥', sub:'Baru diterima'},
+  {id:'cetak_menunggu', label:'Antri Cetak',        short:'Antri Cetak', icon:'⏳', sub:'Menunggu giliran'},
+  {id:'cetak_proses',   label:'Sedang Dicetak',     short:'Dicetak',     icon:'🖨️', sub:'Proses cetak'},
+  {id:'framing',        label:'Siap Framing',       short:'Framing',     icon:'🪟', sub:'Siap dipasang frame'},
+  {id:'packing',        label:'Packing',            short:'Packing',     icon:'📦', sub:'Sedang dikemas'},
+  {id:'ready',          label:'Ready Kirim',        short:'Ready',       icon:'✅', sub:'Menunggu pickup'},
+  {id:'dikirim',        label:'Dikirim',            short:'Dikirim',     icon:'🚚', sub:'Dalam pengiriman'},
+  {id:'selesai',        label:'Selesai',            short:'Selesai',     icon:'🎉', sub:'Order tuntas'},
 ];
 
 function getKanbanStatus(order){
@@ -5536,12 +5857,21 @@ function renderKanban(){
       ondragover="event.preventDefault()"
       ondrop="dropKanban(event,'${col.id}')">
       <div class="kanban-col-hd">
-        <span>${col.label}</span>
+        <div class="kanban-col-hd-left">
+          <div class="kanban-col-hd-icon">${col.icon}</div>
+          <div class="kanban-col-hd-text">
+            <div class="kanban-col-hd-label">${col.label}</div>
+            <div class="kanban-col-hd-sub">${col.sub}</div>
+          </div>
+        </div>
         <span class="kcnt">${cards.length}</span>
       </div>
       <div class="kanban-cards" id="kcards-${col.id}">
         ${cards.length ? cards.map(o => kanbanCard(o, col, nextCol)).join('') :
-          '<div class="kanban-empty">Kosong</div>'}
+          `<div class="kanban-empty">
+            <div class="kanban-empty-ico">${col.icon}</div>
+            <div>Belum ada order</div>
+          </div>`}
       </div>
     </div>`;
   }).join('');
@@ -5549,34 +5879,65 @@ function renderKanban(){
 
 function kanbanCard(o, col, nextCol){
   const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : '';
-  const items = (o.items||[]).map(i=>`${i.posterName||''} ${i.posterSize||''}`).join(', ');
-  // Tampilkan input harga final di kolom packing (kolom sebelum selesai)
-  const isPackingCol = nextCol && nextCol.id === 'selesai';
-  const hasFinal = o.finalTotal != null;
-  const finalPriceHtml = isPackingCol ? `
-    <div style="margin-top:8px;display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
-      <input type="number" id="kfin_${esc(o.id)}"
-        placeholder="Harga final (Rp)"
-        value="${hasFinal ? o.finalTotal : ''}"
-        style="flex:1;font-size:12px;padding:5px 7px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--t1);min-width:0">
-      <button onclick="saveKanbanFinalPrice('${esc(o.id)}')"
-        style="font-size:11px;padding:5px 8px;background:var(--green);color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;white-space:nowrap">✔ Set</button>
+  const items = (o.items||[]);
+  const itemsSummary = items.map(i=>`${i.posterName||''} ${i.posterSize||''}`).join(', ');
+  const itemCount = items.reduce((s,i)=>s+(i.qty||1),0);
+
+  // Channel tag
+  const chColor = {shopee:'background:#fff1eb;color:#d4380d', tiktok:'background:#f0e6ff;color:#531dab', instagram:'background:#fce7f3;color:#9d174d'};
+  const chLabel = {shopee:'🛍️ Shopee', tiktok:'🎵 TikTok', instagram:'📸 IG/WA'};
+  const chStyle = chColor[o.channel] || 'background:var(--gray-lt);color:var(--t2)';
+  const chLbl   = chLabel[o.channel] || (o.channel||'Lainnya');
+
+  // Harga final or estimasi
+  const displayTotal = o.finalTotal != null ? o.finalTotal : (o.total || 0);
+  const isFinalSet   = o.finalTotal != null;
+
+  // Final price input (hanya di kolom sebelum selesai)
+  const isPreSelesai = nextCol && nextCol.id === 'selesai';
+  const finalPriceHtml = isPreSelesai ? `
+    <div class="kanban-final-wrap" onclick="event.stopPropagation()">
+      <div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">
+        ${isFinalSet ? '✅ Harga final' : '⚠️ Set harga final sebelum kirim'}
+      </div>
+      <div class="kanban-final-row">
+        <input type="number" id="kfin_${esc(o.id)}"
+          placeholder="Nominal harga final..."
+          value="${isFinalSet ? o.finalTotal : ''}">
+        <button onclick="saveKanbanFinalPrice('${esc(o.id)}')">Simpan</button>
+      </div>
     </div>` : '';
+
+  // Next button
+  const isLast = !nextCol;
+  const nextBtnClass = isLast ? '' : (nextCol.id==='selesai' ? 'move-next is-done' : 'move-next');
+  const nextBtnLabel = isLast ? '' : (nextCol.id==='dikirim' ? '🚚 Kirim' : nextCol.id==='selesai' ? '🎉 Selesai' : `→ ${nextCol.short}`);
 
   return `<div class="kanban-card" draggable="true"
     ondragstart="dragKanban(event,'${esc(o.id)}')"
     onclick="openKanbanDetail('${esc(o.id)}')">
-    <div class="kanban-card-buyer">${esc(o.buyer||'—')}</div>
-    <div class="kanban-card-meta">
-      ${chBadge(o.channel)}
-      ${date ? `· ${date}` : ''}
-      ${o.resi ? `<br>📦 ${esc(o.resi)}` : ''}
-      ${items ? `<br><span style="color:var(--t3)">${esc(items.slice(0,40))}${items.length>40?'…':''}</span>` : ''}
+
+    <div class="kanban-card-top">
+      <div class="kanban-card-buyer">${esc(o.buyer||'—')}</div>
+      <div class="kanban-card-total">${rp(displayTotal)}</div>
     </div>
-    <div class="kanban-card-total">${rp(o.finalTotal!=null?o.finalTotal:o.total||0)}</div>
+
+    <div class="kanban-card-tags">
+      <span class="kanban-tag" style="${chStyle}">${chLbl}</span>
+      ${date ? `<span class="kanban-tag" style="background:var(--gray-lt);color:var(--t3)">${date}</span>` : ''}
+      ${itemCount>0 ? `<span class="kanban-tag" style="background:var(--gray-lt);color:var(--t2)">${itemCount} item</span>` : ''}
+      ${!isFinalSet ? `<span class="kanban-tag" style="background:#fef3c7;color:#b45309">Est.</span>` : ''}
+    </div>
+
+    ${itemsSummary ? `<div class="kanban-card-items">${esc(itemsSummary.slice(0,50))}${itemsSummary.length>50?'…':''}</div>` : ''}
+    ${o.resi ? `<div class="kanban-card-resi">📦 ${esc(o.resi)}</div>` : ''}
+    ${o.orderNo ? `<div style="font-size:10px;color:var(--t3);margin-bottom:6px"># ${esc(o.orderNo)}</div>` : ''}
+
     ${finalPriceHtml}
+
     <div class="kanban-card-actions" onclick="event.stopPropagation()">
-      <button class="kanban-card-btn" onclick="openKanbanDetail('${esc(o.id)}')">Detail</button>
+      <button class="kanban-card-btn detail" onclick="openKanbanDetail('${esc(o.id)}')">Detail</button>
+      ${nextCol ? `<button class="kanban-card-btn ${nextBtnClass}" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')">${nextBtnLabel}</button>` : ''}
     </div>
   </div>`;
 }
