@@ -6274,7 +6274,13 @@ async function saveMaster(){
     await setDoc(doc(collection(db,'master_biaya'),'prodpack'), ppObj);
 
     // Save frame per model
-    const frameInputs = document.querySelectorAll('[data-key]');
+    // ⚠️ FIX BUG: selector di-scope ke #frameMasterFields saja.
+    // Sebelumnya pakai document.querySelectorAll('[data-key]') tanpa scope,
+    // sehingga ikut menarik input "Harga Jual" di tabel Kalkulator (#tbKalkulator)
+    // yang juga punya data-key dengan format key sama (Model|Ukuran).
+    // Akibatnya nilai HPP frame yang baru diupdate ke-overwrite oleh nilai
+    // Harga Jual dari Kalkulator sebelum tersimpan ke Firestore.
+    const frameInputs = document.querySelectorAll('#frameMasterFields [data-key]');
     let frameSaveCount = 0;
     for(const inp of frameInputs){
       const key = inp.dataset.key;
@@ -6301,7 +6307,9 @@ async function saveMaster(){
     toast('✅ Data master berhasil diperbarui! Semua kalkulasi sudah refresh.', 'success');
     
     // ✅ Reset visual feedback (remove yellow highlight)
-    document.querySelectorAll('[data-key], [id^="mpp-"]').forEach(inp => {
+    // ⚠️ FIX: scope ke #frameMasterFields agar tidak ikut menimpa style
+    // inline pada input Harga Jual Kalkulator (yang punya data-key sama).
+    document.querySelectorAll('#frameMasterFields [data-key], [id^="mpp-"]').forEach(inp => {
       inp.style.background = 'var(--gray-lt)';
     });
   }catch(e){ 
