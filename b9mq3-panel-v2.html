@@ -6158,7 +6158,8 @@ function renderMasterFields(){
             value="${val}" min="0" step="500"
             style="width:90px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:var(--font);text-align:right;color:var(--t2);background:var(--gray-lt);outline:none"
             onfocus="this.style.background='var(--surface)';this.style.color='var(--t1)';this.style.borderColor='var(--accent)'"
-            onblur="this.style.background='var(--gray-lt)';this.style.color='var(--t2)';this.style.borderColor='var(--border)'">
+            onblur="this.style.background='var(--gray-lt)';this.style.color='var(--t2)';this.style.borderColor='var(--border)'"
+            oninput="onFramePriceChange(this)">
         </div>`;
       }).join('');
       return `<div style="margin-bottom:10px">
@@ -6178,7 +6179,8 @@ function renderMasterFields(){
         <input type="number" id="mpp-${sz}" value="${val}" min="0" step="500"
           style="width:90px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:var(--font);text-align:right;color:var(--t2);background:var(--gray-lt);outline:none"
           onfocus="this.style.background='var(--surface)';this.style.color='var(--t1)';this.style.borderColor='var(--accent)'"
-          onblur="this.style.background='var(--gray-lt)';this.style.color='var(--t2)';this.style.borderColor='var(--border)'">
+          onblur="this.style.background='var(--gray-lt)';this.style.color='var(--t2)';this.style.borderColor='var(--border)'"
+          oninput="onProdPackChange(this)">
       </div>`;
     }).join('');
   }
@@ -6207,9 +6209,39 @@ function previewCetak(){
   }).join('');
 }
 
+// ✅ NEW: Live preview saat edit harga frame - real-time visual feedback
+function onFramePriceChange(input){
+  const key = input.dataset.key;
+  const val = parseFloat(input.value) || 0;
+  // Update masterData in-memory (belum disimpan ke DB)
+  masterData.frame[key] = val;
+  // Visual feedback: highlight field untuk indicate perubahan belum disimpan
+  input.style.background = val !== (input.defaultValue * 1) ? '#fff3cd' : 'var(--gray-lt)';
+}
+
+// ✅ NEW: Live preview saat edit harga prodpack
+function onProdPackChange(input){
+  const id = input.id; // format: mpp-20x30
+  const sz = id.replace('mpp-','');
+  const val = parseFloat(input.value) || 0;
+  // Update masterData in-memory
+  masterData.prodpack[sz] = val;
+  // Visual feedback
+  input.style.background = val !== (input.defaultValue * 1) ? '#fff3cd' : 'var(--gray-lt)';
+}
+
 async function saveMaster(){
   const{db,collection,doc,setDoc}=getDB();
+  const btnSave = document.querySelector('[onclick="saveMaster()"]');
+  const origText = btnSave?.textContent;
+  
   try{
+    // Visual feedback: disable button & show loading state
+    if(btnSave){
+      btnSave.disabled = true;
+      btnSave.textContent = '⏳ Menyimpan...';
+    }
+    
     const sheetPrice = parseFloat($('master-sheet')?.value) || 87500;
     masterData.sheetPrice = sheetPrice;
 
@@ -6234,12 +6266,33 @@ async function saveMaster(){
       await setDoc(doc(collection(db,'master_biaya'), docId), { harga: val, key });
     }
 
+    // ✅ FIX: Sync master data ke KAL_FRAMES & kalSavedPrices
     syncMasterToKal();
-    toast('✅ Data master disimpan!');
+    
+    // ✅ FIX: ALWAYS render kalkulator, tidak peduli tab mana yang tampil
+    // Ini penting agar Kalkulator selalu punya data terbaru
+    renderKalkulator();
+    
+    // Refresh semua view yang terkait dengan master data
+    renderMasterFields();
     renderMarginTable();
     renderMarginSummary();
-    if(document.getElementById('msec-kalkulator')?.style.display !== 'none') renderKalkulator();
-  }catch(e){ toast('Gagal: '+e.message,'error'); }
+    
+    toast('✅ Data master berhasil diperbarui! Semua kalkulasi sudah refresh.', 'success');
+    
+    // ✅ Reset visual feedback (remove yellow highlight)
+    document.querySelectorAll('[data-key], [id^="mpp-"]').forEach(inp => {
+      inp.style.background = 'var(--gray-lt)';
+    });
+  }catch(e){ 
+    toast('❌ Gagal menyimpan: '+e.message,'error'); 
+  }finally{
+    // Restore button state
+    if(btnSave){
+      btnSave.disabled = false;
+      btnSave.textContent = origText || '💾 Simpan';
+    }
+  }
 }
 
 function calcOrderHPP(order){
@@ -6332,7 +6385,12 @@ function goMarginTab(tab) {
     document.getElementById('msec-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('mtab-'+t).classList.toggle('active', t===tab);
   });
-  if (tab === 'kalkulator') renderKalkulator();
+  // ✅ FIX: Selalu render kalkulator saat switch ke tab kalkulator
+  // Ini memastikan data terbaru dari Master selalu ditampilkan
+  if (tab === 'kalkulator') {
+    syncMasterToKal();
+    renderKalkulator();
+  }
 }
 
 /* ══════════════════════════════════════
