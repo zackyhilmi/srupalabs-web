@@ -6100,6 +6100,8 @@ const SIZE_DIMS = {
 
 let masterData = {
   sheetPrice: 87500,   // Rp per 100x100 cm
+  waste: 10,           // % overhead cetak (Kalkulator)
+  komisi: 21,          // % komisi platform (Kalkulator)
   prodpack: { '20x30':4000,'30x40':5000,'40x60':6000,'50x70':8000,'60x80':10000 },
   frame: {}            // key: "Model|ukuran" → harga
 };
@@ -6119,7 +6121,13 @@ async function loadMaster(){
     let loadedCount = 0;
     snap.forEach(d=>{
       const dat = d.data();
-      if(d.id === 'cetak')      { masterData.sheetPrice = dat.sheetPrice || 87500; loadedCount++; }
+      if(d.id === 'cetak')      {
+        masterData.sheetPrice = dat.sheetPrice || 87500;
+        // ✅ FIX: load Overhead Cetak & Komisi Platform supaya tidak reset ke default saat refresh
+        masterData.waste  = dat.waste  != null ? dat.waste  : masterData.waste;
+        masterData.komisi = dat.komisi != null ? dat.komisi : masterData.komisi;
+        loadedCount++;
+      }
       else if(d.id === 'prodpack') { masterData.prodpack = { ...masterData.prodpack, ...dat }; loadedCount++; }
       else if(d.id.startsWith('frame_')) {
         const key = d.id.slice(6).replace(/__/g,'|').replace(/xx/g,'×');
@@ -6153,6 +6161,14 @@ function syncMasterToKal(){
 }
 
 function renderMasterFields(){
+  // ✅ FIX: sync value input dari masterData yang sudah di-load (Firestore)
+  // SEBELUM previewCetak()/renderKalkulator() membaca dari DOM — kalau tidak,
+  // input akan tetap menampilkan value HTML default (87500 / 10 / 21) dan
+  // menimpa balik masterData yang baru saja berhasil di-load saat refresh.
+  if($('master-sheet')) $('master-sheet').value = masterData.sheetPrice;
+  if($('kal-waste'))    $('kal-waste').value    = masterData.waste;
+  if($('kal-komisi'))   $('kal-komisi').value   = masterData.komisi;
+
   // --- Cetak preview ---
   previewCetak();
 
@@ -6263,7 +6279,9 @@ async function saveMaster(){
     masterData.sheetPrice = sheetPrice;
 
     // Save cetak / sheet price
-    await setDoc(doc(collection(db,'master_biaya'),'cetak'), { sheetPrice });
+    // ✅ FIX: pakai merge:true agar tidak menimpa field waste/komisi
+    // yang disimpan dari tombol "Simpan Semua" di tab Kalkulator.
+    await setDoc(doc(collection(db,'master_biaya'),'cetak'), { sheetPrice }, { merge: true });
 
     // Save prod+pack
     const ppObj = {};
@@ -6582,12 +6600,22 @@ function onKalPriceInput(input) {
 
 async function saveAllKalkulatorPrices() {
   const inputs = document.querySelectorAll('.kal-price-input');
-  if (!inputs.length) return;
   const btn = document.querySelector('[onclick="saveAllKalkulatorPrices()"]');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
   try {
     const { db, doc, setDoc } = getDB();
     const { collection } = getDB();
+
+    // ✅ FIX: simpan juga Overhead Cetak & Komisi Platform.
+    // Sebelumnya dua field ini tidak pernah disimpan ke Firestore sama sekali,
+    // jadi selalu balik ke value default HTML (10% / 21%) setiap refresh.
+    const waste  = parseFloat($('kal-waste')?.value)  || 0;
+    const komisi = parseFloat($('kal-komisi')?.value) || 0;
+    masterData.waste  = waste;
+    masterData.komisi = komisi;
+    await setDoc(doc(collection(db,'master_biaya'),'cetak'),
+      { sheetPrice: masterData.sheetPrice, waste, komisi }, { merge: true });
+
     for (const inp of inputs) {
       const key = inp.dataset.key;
       const val = parseInt(inp.value, 10);
@@ -6601,7 +6629,7 @@ async function saveAllKalkulatorPrices() {
       inp.classList.remove('modified');
       inp.classList.add('saved');
     }
-    toast('✅ Harga jual berhasil disimpan!');
+    toast('✅ Harga jual, overhead, & komisi berhasil disimpan!');
   } catch(e) {
     toast('Gagal simpan: ' + e.message, 'error');
   } finally {
