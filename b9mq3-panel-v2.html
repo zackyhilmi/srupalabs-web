@@ -6419,15 +6419,30 @@ function goMarginTab(tab) {
 const KAL_SHEET_AREA = 10000;
 
 const KAL_FRAMES = [
+  // 1. Blok 2,5 cm (5 size options)
   { model: 'Blok 2,5 cm',     ukuran: '20×30', w: 20, h: 30, hppFrame: 10000, status: 'aktif' },
   { model: 'Blok 2,5 cm',     ukuran: '30×40', w: 30, h: 40, hppFrame: 14000, status: 'aktif' },
   { model: 'Blok 2,5 cm',     ukuran: '40×60', w: 40, h: 60, hppFrame: 24000, status: 'aktif' },
-  { model: 'Blok 3 cm',       ukuran: '50×70', w: 50, h: 70, hppFrame: 30000, status: 'aktif' },
-  { model: 'Blok 3 cm',       ukuran: '60×80', w: 60, h: 80, hppFrame: 40000, status: 'aktif' },
-  { model: 'Minimalist 2×2',  ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'baru'  },
-  { model: 'Minimalist 2×2',  ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'baru'  },
-  { model: 'Minimalist 2×2',  ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'baru'  },
-  { model: 'Minimalist 2×2',  ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'baru'  },
+  { model: 'Blok 2,5 cm',     ukuran: '50×70', w: 50, h: 70, hppFrame: 30000, status: 'aktif' },
+  { model: 'Blok 2,5 cm',     ukuran: '60×80', w: 60, h: 80, hppFrame: 40000, status: 'aktif' },
+
+  // 2. Blok 2,8 cm (4 size options)
+  { model: 'Blok 2,8 cm',     ukuran: '30×40', w: 30, h: 40, hppFrame: 16000, status: 'aktif' },
+  { model: 'Blok 2,8 cm',     ukuran: '40×60', w: 40, h: 60, hppFrame: 30000, status: 'aktif' },
+  { model: 'Blok 2,8 cm',     ukuran: '50×70', w: 50, h: 70, hppFrame: 35500, status: 'aktif' },
+  { model: 'Blok 2,8 cm',     ukuran: '60×80', w: 60, h: 80, hppFrame: 42500, status: 'aktif' },
+
+  // 3. Blok 3 cm (4 size options)
+  { model: 'Blok 3 cm',       ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'aktif' },
+
+  // 4. Minimalist 2×2 (4 size options)
+  { model: 'Minimalist 2×2',  ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'aktif' },
+  { model: 'Minimalist 2×2',  ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'aktif' },
+  { model: 'Minimalist 2×2',  ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'aktif' },
+  { model: 'Minimalist 2×2',  ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'aktif' },
 ];
 
 const KAL_PROD_PACK = {
