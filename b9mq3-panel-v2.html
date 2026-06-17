@@ -47,7 +47,24 @@ window.DRIVE_API_KEY   = "AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE";
         app2.style.display  = 'flex';
         document.getElementById('uEmail').textContent  = user.email;
         document.getElementById('uAvatar').textContent = user.email[0].toUpperCase();
-        if (!window._listening) { window._listening = true; window._startListeners(); }
+        if (!window._listening) {
+          window._listening = true;
+          window._startListeners();
+          // Pulihkan halaman terakhir yang dibuka, biar refresh gak balik ke Dashboard
+          try {
+            const lastPage = localStorage.getItem('lastPage');
+            if (lastPage && lastPage !== 'dashboard' && document.getElementById('page-'+lastPage)) {
+              const btn = document.querySelector(`.nitem[onclick*="goPage('${lastPage}'"]`);
+              goPage(lastPage, btn);
+              if (lastPage === 'inventory') {
+                goTab(localStorage.getItem('lastInvTab') || 'posters');
+              }
+              if (lastPage === 'margin') {
+                goMarginTab(localStorage.getItem('lastMarginTab') || 'analisis');
+              }
+            }
+          } catch(e) { console.error('Gagal memulihkan halaman terakhir:', e); }
+        }
       } else {
         login.style.display = 'flex';
         app2.style.display  = 'none';
@@ -3691,6 +3708,7 @@ function goPage(name,el){
   $('page-'+name).classList.add('active');
   if(el)el.classList.add('active');
   $('topTitle').textContent=pageTitles[name]||name;
+  try{localStorage.setItem('lastPage', name);}catch(e){}
   if(name==='laporan')renderLaporan();
   if(name==='planner'){
     setTimeout(()=>{
@@ -3733,6 +3751,7 @@ function goTab(name){
   ['posters','frames'].forEach(n=>{$('tsec-'+n).style.display=n===name?'block':'none';});
   $('itabP').classList.toggle('active',name==='posters');
   $('itabF').classList.toggle('active',name==='frames');
+  try{localStorage.setItem('lastInvTab', name);}catch(e){}
 }
 
 /* ── DASHBOARD ── */
@@ -6467,6 +6486,7 @@ function goMarginTab(tab) {
     document.getElementById('msec-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('mtab-'+t).classList.toggle('active', t===tab);
   });
+  try{localStorage.setItem('lastMarginTab', tab);}catch(e){}
   // ✅ FIX: Selalu render kalkulator saat switch ke tab kalkulator
   // Ini memastikan data terbaru dari Master selalu ditampilkan
   if (tab === 'kalkulator') {
