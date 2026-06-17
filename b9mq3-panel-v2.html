@@ -6078,17 +6078,18 @@ function openKanbanDetail(id){
 /* ══════════════════════════════════════
    MARGIN & PROFIT — DATA MASTER
 ══════════════════════════════════════ */
-const HPP_SIZES = ['20x30','30x40','40x60','50x70','60x80'];
+const HPP_SIZES = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80'];
 
 // Dimensi tiap ukuran untuk kalkulasi cetak
 const SIZE_DIMS = {
-  '20x30':{w:20,h:30}, '30x40':{w:30,h:40}, '40x60':{w:40,h:60},
+  '20x20':{w:20,h:20}, '20x30':{w:20,h:30}, '30x30':{w:30,h:30},
+  '30x40':{w:30,h:40}, '40x60':{w:40,h:60},
   '50x70':{w:50,h:70}, '60x80':{w:60,h:80}
 };
 
 let masterData = {
   sheetPrice: 87500,   // Rp per 100x100 cm
-  prodpack: { '20x30':4000,'30x40':5000,'40x60':6000,'50x70':8000,'60x80':10000 },
+  prodpack: { '20x20':4000,'20x30':4000,'30x30':5000,'30x40':5000,'40x60':6000,'50x70':8000,'60x80':10000 },
   frame: {}            // key: "Model|ukuran" → harga
 };
 
@@ -6272,13 +6273,16 @@ function renderMarginTable(){
     const pct    = omzet>0 ? Math.round((profit/omzet)*100) : 0;
 
     // HPP breakdown per item untuk tooltip
+    const _waste = parseFloat($('kal-waste')?.value) || 10;
     const breakdown = (o.items||[]).map(item=>{
       const raw      = (item.posterSize||item.frameSize||'').replace('×','x').replace(/\s*cm$/i,'').trim();
-      const d        = hppData[raw]||{};
       const qty      = item.qty||1;
-      const pp       = d.prodpack!=null ? d.prodpack : (HPP_DEFAULT_PP[raw]||0);
-      const itemHpp  = ((d.cetak||0)+(d.frame||0)+pp)*qty;
-      return `${esc(raw)} ×${qty}: cetak ${rp(d.cetak||0)} + frame ${rp(d.frame||0)} + pp ${rp(pp)} = ${rp(itemHpp)}`;
+      const cetak    = calcCetak(raw, masterData.sheetPrice, _waste);
+      const pp       = masterData.prodpack[raw] ?? 0;
+      const matchFrame = KAL_FRAMES.find(f => f.ukuran === raw.replace('x','×'));
+      const frameHpp = matchFrame ? matchFrame.hppFrame : 0;
+      const itemHpp  = (cetak + frameHpp + pp) * qty;
+      return `${esc(raw)} ×${qty}: cetak ${rp(Math.round(cetak))} + frame ${rp(frameHpp)} + pp ${rp(pp)} = ${rp(Math.round(itemHpp))}`;
     }).join('&#10;');
 
     return {o, omzet, hpp, profit, pct, breakdown};
