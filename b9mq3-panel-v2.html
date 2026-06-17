@@ -6344,8 +6344,8 @@ const KAL_FRAMES = [
   { model: 'Blok 2,5 cm',     ukuran: '20×30', w: 20, h: 30, hppFrame: 10000, status: 'aktif' },
   { model: 'Blok 2,5 cm',     ukuran: '30×40', w: 30, h: 40, hppFrame: 14000, status: 'aktif' },
   { model: 'Blok 2,5 cm',     ukuran: '40×60', w: 40, h: 60, hppFrame: 24000, status: 'aktif' },
-  { model: 'Blok 3 cm',       ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'aktif' },
-  { model: 'Blok 3 cm',       ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '50×70', w: 50, h: 70, hppFrame: 30000, status: 'aktif' },
+  { model: 'Blok 3 cm',       ukuran: '60×80', w: 60, h: 80, hppFrame: 40000, status: 'aktif' },
   { model: 'Minimalist 2×2',  ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'baru'  },
   { model: 'Minimalist 2×2',  ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'baru'  },
   { model: 'Minimalist 2×2',  ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'baru'  },
@@ -6415,10 +6415,12 @@ function renderKalkulator() {
       lastModel = f.model;
       html += `<tr class="kal-group-row"><td colspan="10">${esc(f.model)}</td></tr>`;
     }
-    const area     = f.w * f.h;
-    const hppCetak = area * pricePerCm2 * (1 + waste / 100);
-    const hppPP    = KAL_PROD_PACK[f.ukuran] || 5000;
-    const hppTotal = hppCetak + f.hppFrame + hppPP;
+    const area       = f.w * f.h;
+    const hppCetak   = area * pricePerCm2 * (1 + waste / 100);
+    const hppPP      = KAL_PROD_PACK[f.ukuran] || 5000;
+    const frameKey   = f.model + '|' + f.ukuran;
+    const frameHpp   = masterData.frame[frameKey] != null ? masterData.frame[frameKey] : f.hppFrame;
+    const hppTotal   = hppCetak + frameHpp + hppPP;
     const margin   = KAL_TARGET_MARGIN[f.ukuran] || 0.25;
     const rawJual  = hppTotal / (1 - (komisi / 100) - margin);
     const rekJual  = kalPsychPrice(rawJual);
@@ -6436,7 +6438,7 @@ function renderKalkulator() {
       <td style="font-size:12px;color:var(--t2)">${esc(f.model)}${newBadge}</td>
       <td style="font-weight:600">${esc(f.ukuran)}</td>
       <td style="font-size:12px;color:var(--t2)">${rp(hppCetak)}</td>
-      <td style="font-size:12px;color:var(--t2)">${rp(f.hppFrame)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(frameHpp)}</td>
       <td style="font-size:12px;color:var(--t2)">${rp(hppPP)}</td>
       <td><span class="kal-badge-hpp">${rp(hppTotal)}</span></td>
       <td><span class="kal-badge-jual">${rp(rekJual)}</span></td>
