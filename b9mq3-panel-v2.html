@@ -873,6 +873,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .kal-badge-margin-ok{background:var(--amber-lt);color:var(--amber);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
 .kal-badge-margin-bad{background:var(--red-lt);color:var(--red);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
 .kal-badge-new{background:var(--amber-lt);color:var(--amber);font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px}
+.kal-badge-min{background:var(--purple-lt);color:var(--purple);font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px;white-space:nowrap}
 
 /* ─── MODAL BUKTI PACKING ─── */
 .packing-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -1943,6 +1944,41 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           </div>
           <div style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);background:var(--gray-lt)">
             💡 Rekomendasi dihitung otomatis dari HPP + komisi + target margin. Harga Jual bisa kamu edit manual — klik Simpan Semua untuk menyimpan ke database.
+          </div>
+        </div>
+
+        <!-- Kalkulator Frame Only (tanpa cetak poster) -->
+        <div class="card" style="margin-top:16px">
+          <div class="chd">
+            <div class="ctitle">🖼️ Frame Only (Tanpa Poster)</div>
+            <span style="font-size:11.5px;color:var(--t2)">Min. pembelian <strong>5 pcs</strong>/transaksi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--purple-lt);border-bottom:1px solid var(--border);flex-wrap:wrap">
+            <span style="font-size:16px">📦</span>
+            <div style="flex:1;min-width:200px;font-size:11.5px;color:var(--purple);line-height:1.5">
+              Frame kosong tanpa cetak poster, dijual minimal <strong>5 pcs</strong> per pembelian. Harga sengaja dijaga tidak terlalu murah supaya paket Frame + Poster tetap terlihat lebih worth it.
+            </div>
+          </div>
+          <div class="twrap">
+            <table id="kalTableFrameOnly">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Ukuran</th>
+                  <th>Frame</th>
+                  <th>Packing</th>
+                  <th>Total HPP</th>
+                  <th>Rekomendasi</th>
+                  <th>Harga Jual</th>
+                  <th>Margin</th>
+                  <th>Profit/pcs</th>
+                </tr>
+              </thead>
+              <tbody id="tbKalkulatorFrameOnly"><tr class="erow"><td colspan="9">Memuat...</td></tr></tbody>
+            </table>
+          </div>
+          <div style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);background:var(--gray-lt)">
+            💡 HPP dihitung dari biaya Frame (mengikuti Data Master di atas) + biaya packing frame kosong (tanpa cetak). Margin dijaga lebih tinggi dari paket biasa. Edit "Harga Jual" lalu klik <strong>Simpan Semua</strong> di tabel atas untuk menyimpan.
           </div>
         </div>
       </div>
@@ -6467,6 +6503,29 @@ const KAL_TARGET_MARGIN = {
   '20×30': 0.30, '30×40': 0.28, '40×60': 0.25, '50×70': 0.22, '60×80': 0.20,
 };
 
+// ─── FRAME ONLY (jual frame kosong, tanpa cetak poster) ───
+// Min. pembelian 5 pcs per transaksi. Margin dijaga lebih tinggi (gak murah)
+// supaya paket Frame + Poster tetap kelihatan lebih worth it.
+const KAL_FRAME_ONLY_PACKING  = 3000;  // flat, lebih murah krn cuma bungkus frame kosong (gak ada cetak)
+const KAL_FRAME_ONLY_MARGIN   = 0.32;  // margin flat semua ukuran, lebih tinggi dari tabel biasa (20-30%)
+const KAL_FRAME_ONLY_MINORDER = 5;
+
+const KAL_FRAME_ONLY = [
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '20×30' },
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '30×40' },
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '40×60' },
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '50×70' },
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '60×80' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '30×40' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '40×60' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '50×70' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '60×80' },
+];
+
+// Fallback HPP frame (kalau masterData.frame belum punya override) — diambil dari KAL_FRAMES
+const KAL_FRAME_DEFAULTS = {};
+KAL_FRAMES.forEach(f => { KAL_FRAME_DEFAULTS[f.model + '|' + f.ukuran] = f.hppFrame; });
+
 // Saved prices from Firestore: { 'Frame Blok|20×30': 69000, ... }
 let kalSavedPrices = {};
 
@@ -6574,11 +6633,62 @@ function renderKalkulator() {
   });
 
   tb.innerHTML = html;
+  renderKalkulatorFrameOnly(komisi);
 }
 
-function onKalPriceInput(input) {
-  // Update margin & profit live
-  const key     = input.dataset.key;
+function renderKalkulatorFrameOnly(komisi) {
+  komisi = komisi != null ? komisi : (parseFloat(document.getElementById('kal-komisi')?.value) || 0);
+  const tb = document.getElementById('tbKalkulatorFrameOnly');
+  if (!tb) return;
+
+  let html = '';
+  let lastModel = '';
+
+  KAL_FRAME_ONLY.forEach(f => {
+    if (f.model !== lastModel) {
+      lastModel = f.model;
+      html += `<tr class="kal-group-row"><td colspan="9">${esc(f.label)}</td></tr>`;
+    }
+    const frameKey  = f.baseModel + '|' + f.ukuran;
+    const frameHpp  = masterData.frame[frameKey] != null ? masterData.frame[frameKey] : (KAL_FRAME_DEFAULTS[frameKey] || 0);
+    const hppPP     = KAL_FRAME_ONLY_PACKING;
+    const hppTotal  = frameHpp + hppPP;
+    const rawJual   = hppTotal / (1 - (komisi / 100) - KAL_FRAME_ONLY_MARGIN);
+    const rekJual   = kalPsychPrice(rawJual);
+    const key       = kalKey(f.model, f.ukuran);
+    const savedVal  = kalSavedPrices[key] || rekJual;
+
+    const komisiNom = savedVal * (komisi / 100);
+    const profit    = savedVal - hppTotal - komisiNom;
+    const marginPct = savedVal > 0 ? Math.round((profit / savedVal) * 100) : 0;
+    const marginBadgeCls = marginPct >= 20 ? 'kal-badge-margin-ok' : 'kal-badge-margin-bad';
+
+    html += `<tr>
+      <td style="font-size:12px;color:var(--t2)">${esc(f.label)}<span class="kal-badge-min">Min. 5 pcs</span></td>
+      <td style="font-weight:600">${esc(f.ukuran)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(frameHpp)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(hppPP)}</td>
+      <td><span class="kal-badge-hpp">${rp(hppTotal)}</span></td>
+      <td><span class="kal-badge-jual">${rp(rekJual)}</span></td>
+      <td>
+        <input
+          class="kal-price-input${kalSavedPrices[key] ? ' saved' : ''}"
+          id="kal-input-${esc(key.replace(/[|×]/g,'-'))}"
+          data-key="${esc(key)}"
+          data-hpp="${Math.round(hppTotal)}"
+          data-komisi="${komisi}"
+          type="number" min="0" step="1000"
+          value="${savedVal}"
+          oninput="onKalPriceInput(this)">
+      </td>
+      <td><span class="${marginBadgeCls}" id="kal-margin-${esc(key.replace(/[|×]/g,'-'))}">${marginPct}%</span></td>
+      <td style="font-weight:600;font-size:13px" id="kal-profit-${esc(key.replace(/[|×]/g,'-'))}">${rp(profit)}</td>
+    </tr>`;
+  });
+
+  tb.innerHTML = html;
+}
+
   const hpp     = parseFloat(input.dataset.hpp) || 0;
   const komisi  = parseFloat(input.dataset.komisi) || 0;
   const hj      = parseFloat(input.value) || 0;
