@@ -6689,6 +6689,9 @@ function renderKalkulatorFrameOnly(komisi) {
   tb.innerHTML = html;
 }
 
+function onKalPriceInput(input) {
+  // Update margin & profit live
+  const key     = input.dataset.key;
   const hpp     = parseFloat(input.dataset.hpp) || 0;
   const komisi  = parseFloat(input.dataset.komisi) || 0;
   const hj      = parseFloat(input.value) || 0;
