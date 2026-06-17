@@ -3664,7 +3664,18 @@ function goPage(name,el){
   }
   if(name==='tasks'){setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
-  if(name==='margin'){loadMaster();loadKalkulatorPrices();}
+  if(name==='margin'){
+    // Delay loading to ensure Firebase is ready
+    setTimeout(async () => {
+      try {
+        await loadMaster();
+        await loadKalkulatorPrices();
+      } catch(e) {
+        console.error('Error loading margin data:', e);
+        toast('⚠️ Warning: Margin data gagal dimuat. Refresh halaman jika harga tidak muncul.', 'error');
+      }
+    }, 100);
+  }
   if(name==='drive'){
     if(!window._driveAPILoaded){
       window._driveAPILoaded=true;
@@ -6105,16 +6116,22 @@ async function loadMaster(){
     const{db,collection}=getDB();
     const{getDocs}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const snap = await getDocs(collection(db,'master_biaya'));
+    let loadedCount = 0;
     snap.forEach(d=>{
       const dat = d.data();
-      if(d.id === 'cetak')      masterData.sheetPrice = dat.sheetPrice || 87500;
-      else if(d.id === 'prodpack') masterData.prodpack = { ...masterData.prodpack, ...dat };
+      if(d.id === 'cetak')      { masterData.sheetPrice = dat.sheetPrice || 87500; loadedCount++; }
+      else if(d.id === 'prodpack') { masterData.prodpack = { ...masterData.prodpack, ...dat }; loadedCount++; }
       else if(d.id.startsWith('frame_')) {
         const key = d.id.slice(6).replace(/__/g,'|').replace(/xx/g,'×');
         masterData.frame[key] = dat.harga || 0;
+        loadedCount++;
       }
     });
-  }catch(e){}
+    console.log(`✅ loadMaster: Loaded ${loadedCount} master data items`);
+  }catch(e){
+    console.error('❌ loadMaster ERROR:', e.message);
+    // Don't crash, use defaults
+  }
   // sync KAL_FRAMES & KAL_PROD_PACK from master
   syncMasterToKal();
   renderMasterFields();
@@ -6258,13 +6275,16 @@ async function saveMaster(){
 
     // Save frame per model
     const frameInputs = document.querySelectorAll('[data-key]');
+    let frameSaveCount = 0;
     for(const inp of frameInputs){
       const key = inp.dataset.key;
       const val = parseFloat(inp.value) || 0;
       masterData.frame[key] = val;
       const docId = 'frame_' + key.replace(/\|/g,'__').replace(/×/g,'xx');
       await setDoc(doc(collection(db,'master_biaya'), docId), { harga: val, key });
+      frameSaveCount++;
     }
+    console.log(`✅ Saved ${frameSaveCount} frame prices to Firebase`);
 
     // ✅ FIX: Sync master data ke KAL_FRAMES & kalSavedPrices
     syncMasterToKal();
@@ -6428,8 +6448,16 @@ async function loadKalkulatorPrices() {
     const { db, collection } = getDB();
     const { getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const snap = await getDocs(collection(db, 'harga_jual'));
-    snap.forEach(d => { kalSavedPrices[d.id.replace(/__/g,'|').replace(/x/g,'×')] = d.data().hargaJual || 0; });
-  } catch(e) {}
+    let loadedCount = 0;
+    snap.forEach(d => { 
+      kalSavedPrices[d.id.replace(/__/g,'|').replace(/x/g,'×')] = d.data().hargaJual || 0;
+      loadedCount++;
+    });
+    console.log(`✅ loadKalkulatorPrices: Loaded ${loadedCount} saved prices`);
+  } catch(e) {
+    console.error('❌ loadKalkulatorPrices ERROR:', e.message);
+    // Don't crash, use defaults
+  }
   // render after master is loaded (master loaded via loadMaster in _startListeners)
   renderKalkulator();
 }
