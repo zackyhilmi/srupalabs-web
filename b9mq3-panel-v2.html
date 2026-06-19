@@ -54,7 +54,7 @@ window.DRIVE_API_KEY   = "AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE";
           try {
             const lastPage = localStorage.getItem('lastPage');
             if (lastPage && lastPage !== 'dashboard' && document.getElementById('page-'+lastPage)) {
-              const btn = document.querySelector(`.nitem[onclick*="goPage('${lastPage}'"]`);
+              const btn = document.querySelector(`.nitem[onclick*="goPage('${lastPage}'"]`) || document.querySelector(`.nitem[data-label="${(pageTitles[lastPage]||lastPage)}"]`);
               goPage(lastPage, btn);
               if (lastPage === 'inventory') {
                 goTab(localStorage.getItem('lastInvTab') || 'posters');
@@ -559,29 +559,6 @@ tbody tr:hover{background:#f0f6ff}
 .stab.active.posted{background:var(--green-lt);border-color:var(--green);color:var(--green)}
 
 @media(max-width:1024px){.planner-wrap{grid-template-columns:1fr}}
-/* ─── SRUPA DRIVE ─── */
-.drive-wrap{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start}
-.drive-tree{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px}
-.drive-folder{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--t1);transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
-.drive-folder:hover{background:var(--gray-lt)}
-.drive-folder.active{background:var(--accent-lt);color:var(--accent)}
-.drive-folder-ico{font-size:16px;flex-shrink:0}
-.drive-main{display:flex;flex-direction:column;gap:12px}
-.drive-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.drive-search{flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:var(--surface);color:var(--t1)}
-.drive-search:focus{outline:none;border-color:var(--accent)}
-.drive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.drive-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:box-shadow .15s,border-color .15s;text-align:center;text-decoration:none;display:block}
-.drive-item:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(0,0,0,.07);transform:translateY(-1px)}
-.drive-item-ico{font-size:32px;margin-bottom:6px}
-.drive-item-name{font-size:11.5px;font-weight:500;color:var(--t1);word-break:break-word;line-height:1.4}
-.drive-item-meta{font-size:10.5px;color:var(--t3);margin-top:3px}
-.drive-empty{text-align:center;padding:48px 0;color:var(--t3);font-size:13px}
-.drive-empty-ico{font-size:40px;margin-bottom:8px}
-.drive-breadcrumb{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t3);flex-wrap:wrap}
-.drive-breadcrumb span{cursor:pointer;color:var(--accent)}
-.drive-breadcrumb span:hover{text-decoration:underline}
-
 /* ─── SRUPA DRIVE (Google Drive API) ─── */
 .drive-wrap{display:grid;grid-template-columns:210px 1fr;gap:16px;align-items:start}
 .drive-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px}
@@ -1178,7 +1155,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         </svg>
       </div>
       <div style="flex:1;min-width:0"><div class="sname">Srupa Labs</div><div class="ssub">Business Suite</div></div>
-      <button class="stoggle-btn" id="sidebarToggle" onclick="toggleSidebar()" title="Minimize sidebar">‹</button>
+      <button class="stoggle-btn" id="sidebarToggle" onclick="toggleSidebar()" aria-label="Minimize sidebar" title="Minimize sidebar">‹</button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Operasional</div>
@@ -1194,13 +1171,9 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="18"/><rect x="10" y="3" width="5" height="12"/><rect x="17" y="3" width="5" height="8"/></svg></span>
         <span class="nitem-label">Kanban Packing</span>
       </button>
-      <button class="nitem" data-label="Stok Poster" onclick="goPage('inventory',this);goTab('posters')">
+      <button class="nitem" data-label="Inventaris" onclick="goPage('inventory',this)">
         <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
-        <span class="nitem-label">Stok Poster</span>
-      </button>
-      <button class="nitem" data-label="Stok Frame" onclick="goPage('inventory',this);goTab('frames')">
-        <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><rect x="6" y="6" width="12" height="12" rx="1"/></svg></span>
-        <span class="nitem-label">Stok Frame</span><span class="nbadge" id="navBadge" style="display:none">!</span>
+        <span class="nitem-label">Inventaris</span><span class="nbadge" id="navBadge" style="display:none">!</span>
       </button>
     </div>
     <div class="nsec">
@@ -1244,7 +1217,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <div class="urow">
         <div class="uavatar" id="uAvatar">A</div>
         <div class="uinfo"><div class="uemail" id="uEmail">—</div><div class="urole">Admin</div></div>
-        <button class="logoutbtn" onclick="doLogout()" title="Keluar">⏏</button>
+        <button class="logoutbtn" onclick="doLogout()" aria-label="Keluar dari sistem" title="Keluar">⏏</button>
       </div>
     </div>
   </aside>
@@ -1253,7 +1226,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
   <div class="main">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <button class="hamburger" onclick="openSidebar()" aria-label="Buka navigasi">☰</button>
         <div><div class="ttitle" id="topTitle">Dashboard</div><div class="tsub">Srupa Labs</div></div>
       </div>
       <div class="fbstat connecting" id="fbStat"><span class="fdot pulse"></span><span id="fbTxt">Menghubungkan</span></div>
@@ -1303,7 +1276,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="chd">
             <div class="ctitle">⚠️ Stok Habis / Menipis</div>
-            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=poster]'));goTab('posters')" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Kelola stok →</button>
+            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=inventory]'));goTab('posters')" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Kelola stok →</button>
           </div>
           <div class="twrap" style="max-height:260px;overflow-y:auto"><table>
             <thead><tr><th>Item</th><th>Stok</th><th>Status</th></tr></thead>
@@ -1353,7 +1326,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
                   <th>Aksi</th>
                 </tr>
               </thead>
-              <tbody id="tbOrders"><tr class="erow"><td colspan="8">Belum ada order</td></tr></tbody>
+              <tbody id="tbOrders"><tr class="erow"><td colspan="8"><div style="padding:32px 0;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="font-size:28px">🛒</span><strong style="color:var(--t2)">Belum ada order</strong><span style="font-size:12px;color:var(--t3)">Tambah order pertama untuk memulai</span><button class="pbtn" style="width:auto;padding:6px 16px;font-size:12px;margin-top:4px" onclick="openOrderModal()">➕ Buat Order</button></div></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -1393,7 +1366,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             </div>
             <div class="twrap" style="max-height:calc(100vh - 320px);overflow-y:auto"><table>
               <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th class="col-num">Jumlah</th><th>Aksi</th></tr></thead>
-              <tbody id="tbKeu"><tr class="erow"><td colspan="6">Belum ada catatan</td></tr></tbody>
+              <tbody id="tbKeu"><tr class="erow"><td colspan="6"><div style="padding:32px 0;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="font-size:28px">💸</span><strong style="color:var(--t2)">Belum ada catatan keuangan</strong><span style="font-size:12px;color:var(--t3)">Catat pemasukan atau pengeluaran bisnis Anda</span><button class="pbtn" style="width:auto;padding:6px 16px;font-size:12px;margin-top:4px" onclick="openKeuModal()">➕ Catat Pengeluaran</button></div></td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -1484,7 +1457,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
                 <th>Total Stok</th>
                 <th>Aksi</th>
               </tr></thead>
-              <tbody id="tbPoster"><tr class="erow"><td colspan="5">Memuat data...</td></tr></tbody>
+              <tbody id="tbPoster"><tr class="erow"><td colspan="5"><div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;color:var(--t3)"><span style="animation:pulse 1.2s ease infinite;display:inline-block">⏳</span> Memuat data poster...</div></td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -2126,7 +2099,7 @@ async function cmsDel(id){
 <!-- MODAL: CMS Poster -->
 <div class="moverlay" id="cmsModal" onclick="if(event.target===this)cmsClose()">
   <div class="mbox" style="max-width:500px;width:95vw;max-height:92vh;overflow-y:auto">
-    <div class="mhd"><h3 id="cmsMTitle">➕ Tambah Poster CMS</h3><button class="mclose" onclick="cmsClose()">×</button></div>
+    <div class="mhd"><h3 id="cmsMTitle">➕ Tambah Poster CMS</h3><button class="mclose" onclick="cmsClose()" aria-label="Tutup modal">×</button></div>
     <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:4px">
       <div class="fg"><label>Judul Poster *</label><input type="text" id="cmsFTitle" placeholder="cth: Minimal Series 01" maxlength="100"/></div>
       <div class="fg"><label>Deskripsi</label><textarea id="cmsFDesc" placeholder="Deskripsi singkat untuk katalog..." style="resize:vertical;min-height:64px" maxlength="300"></textarea></div>
@@ -2178,7 +2151,7 @@ async function cmsDel(id){
 <!-- MODAL: Add Item ke Order -->
 <div class="moverlay" id="itemModal">
   <div class="mbox">
-    <div class="mhd"><h3>➕ Tambah Item</h3><button class="mclose" onclick="closeItemModal()">×</button></div>
+    <div class="mhd"><h3>➕ Tambah Item</h3><button class="mclose" onclick="closeItemModal()" aria-label="Tutup modal">×</button></div>
     <div class="sdiv">Poster</div>
     <div class="fg">
       <label>Pilih Poster dari Stok</label>
@@ -2237,7 +2210,7 @@ async function cmsDel(id){
 <!-- MODAL: Order Baru -->
 <div class="moverlay" id="orderModal">
   <div class="mbox" style="max-width:520px">
-    <div class="mhd"><h3 id="orderModalTitle">➕ Order Baru</h3><button class="mclose" onclick="closeOrderModal()">×</button></div>
+    <div class="mhd"><h3 id="orderModalTitle">➕ Order Baru</h3><button class="mclose" onclick="closeOrderModal()" aria-label="Tutup modal">×</button></div>
     <form id="fOrder" novalidate>
       <input type="hidden" id="editingOrderId" value="">
       <div class="fg-row">
@@ -2277,7 +2250,7 @@ async function cmsDel(id){
       <div class="fg-row">
         <div class="fg">
           <label>Total Harga Order (Rp)</label>
-          <input type="number" id="oTotal" placeholder="0" min="0">
+          <input type="number" id="oTotal" placeholder="0" min="0" oninput="if(this.value<0)this.value=0">
           <div class="ferr" id="oTotalE"></div>
         </div>
         <div class="fg">
@@ -2293,7 +2266,7 @@ async function cmsDel(id){
 <!-- MODAL: Catat Keuangan -->
 <div class="moverlay" id="keuModal">
   <div class="mbox" style="max-width:480px">
-    <div class="mhd"><h3>➕ Catat Pengeluaran</h3><button class="mclose" onclick="closeKeuModal()">×</button></div>
+    <div class="mhd"><h3>➕ Catat Pengeluaran</h3><button class="mclose" onclick="closeKeuModal()" aria-label="Tutup modal">×</button></div>
     <form id="fKeu" novalidate>
       <!-- Jenis selalu expense, hidden -->
       <input type="hidden" id="kType" value="expense">
@@ -2392,7 +2365,7 @@ async function cmsDel(id){
       <div class="fg-row">
         <div class="fg">
           <label>Total Harga (Rp)</label>
-          <input type="number" id="kAmount" placeholder="0" min="0">
+          <input type="number" id="kAmount" placeholder="0" min="0" oninput="if(this.value<0)this.value=0">
           <div class="ferr" id="kAmountE"></div>
         </div>
       </div>
@@ -2409,7 +2382,7 @@ async function cmsDel(id){
 <!-- MODAL: Tambah Poster -->
 <div class="moverlay" id="posterModal">
   <div class="mbox" style="max-width:440px">
-    <div class="mhd"><h3>🖼️ Tambah Poster</h3><button class="mclose" onclick="closePosterModal()">×</button></div>
+    <div class="mhd"><h3>🖼️ Tambah Poster</h3><button class="mclose" onclick="closePosterModal()" aria-label="Tutup modal">×</button></div>
     <form id="fPoster" novalidate>
       <div class="fg">
         <label>Nama Poster</label>
@@ -2442,7 +2415,7 @@ async function cmsDel(id){
 <!-- MODAL: Tambah Frame -->
 <div class="moverlay" id="frameModal">
   <div class="mbox" style="max-width:440px">
-    <div class="mhd"><h3>🪟 Tambah Frame</h3><button class="mclose" onclick="closeFrameModal()">×</button></div>
+    <div class="mhd"><h3>🪟 Tambah Frame</h3><button class="mclose" onclick="closeFrameModal()" aria-label="Tutup modal">×</button></div>
     <form id="fFrame" novalidate>
       <div class="fg-row">
         <div class="fg">
@@ -2479,7 +2452,7 @@ async function cmsDel(id){
 <!-- MODAL: Edit Inventory -->
 <div class="moverlay" id="editModal">
   <div class="mbox">
-    <div class="mhd"><h3 id="mTitle">Edit Item</h3><button class="mclose" onclick="closeEdit()">×</button></div>
+    <div class="mhd"><h3 id="mTitle">Edit Item</h3><button class="mclose" onclick="closeEdit()" aria-label="Tutup modal">×</button></div>
     <form id="fEdit" novalidate>
       <div class="fg"><label id="mLabel">Item</label><input type="text" id="mItem" readonly style="background:var(--gray-lt)"></div>
       <div class="fg"><label>Stok Baru</label><input type="number" id="mStock" min="0" max="99999"><div class="ferr" id="mStockE"></div></div>
@@ -2497,7 +2470,7 @@ async function cmsDel(id){
   <div class="mbox" style="max-width:500px">
     <div class="mhd">
       <h3 id="uploadModalTitle">☁️ Upload File</h3>
-      <button class="mclose" onclick="closePackingModal()">×</button>
+      <button class="mclose" onclick="closePackingModal()" aria-label="Tutup modal">×</button>
     </div>
 
     <!-- Info folder aktif -->
@@ -2538,7 +2511,7 @@ async function cmsDel(id){
 <!-- MODAL: Tambah/Edit Konten -->
 <div class="moverlay" id="contentModal">
   <div class="mbox mbox-wide">
-    <div class="mhd"><h3 id="contentModalTitle">Tambah Konten</h3><button class="mclose" onclick="closeContentModal()">×</button></div>
+    <div class="mhd"><h3 id="contentModalTitle">Tambah Konten</h3><button class="mclose" onclick="closeContentModal()" aria-label="Tutup modal">×</button></div>
     <div class="fg">
       <label>Judul / Ide Konten</label>
       <input type="text" id="cTitle" placeholder="Contoh: Unboxing poster Stussy series" maxlength="120">
@@ -2584,7 +2557,7 @@ async function cmsDel(id){
 <!-- MODAL: Pilih Ukuran Poster untuk Edit -->
 <div class="moverlay" id="sizePickModal">
   <div class="mbox" style="max-width:380px">
-    <div class="mhd"><h3 id="spTitle">Pilih Ukuran</h3><button class="mclose" onclick="closeSizePick()">×</button></div>
+    <div class="mhd"><h3 id="spTitle">Pilih Ukuran</h3><button class="mclose" onclick="closeSizePick()" aria-label="Tutup modal">×</button></div>
     <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Poster <strong id="spPosterName"></strong> tersedia dalam beberapa ukuran. Pilih ukuran yang stoknya ingin diubah.</p>
     <div id="spSizeList" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
@@ -2593,7 +2566,7 @@ async function cmsDel(id){
 <!-- MODAL: Tambah/Edit Task -->
 <div class="moverlay" id="taskModal">
   <div class="mbox mbox-wide">
-    <div class="mhd"><h3 id="taskModalTitle">➕ Tambah Task</h3><button class="mclose" onclick="closeTaskModal()">×</button></div>
+    <div class="mhd"><h3 id="taskModalTitle">➕ Tambah Task</h3><button class="mclose" onclick="closeTaskModal()" aria-label="Tutup modal">×</button></div>
     <div class="fg">
       <label>Nama Task</label>
       <input type="text" id="tTitle" placeholder="Contoh: Update foto produk Shopee" maxlength="200">
@@ -2816,6 +2789,42 @@ function toast(msg,type='success'){const el=$('toast');el.textContent=msg;el.cla
 function ferr(id,msg){const el=$(id);if(!el)return;el.textContent=msg;el.style.display=msg?'block':'none';const inp=el.previousElementSibling;if(inp&&inp.tagName!=='DIV')inp.classList.toggle('err',!!msg);}
 function clerr(...ids){ids.forEach(id=>ferr(id,''));}
 
+/* ── DEBOUNCE UTILITY ── */
+function debounce(fn,ms=280){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms);};}
+
+/* ── FOCUS TRAP untuk modal ── */
+function trapFocus(modalEl){
+  const focusable=modalEl.querySelectorAll('button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])');
+  const first=focusable[0],last=focusable[focusable.length-1];
+  if(!first)return;
+  first.focus();
+  modalEl._trapHandler=(e)=>{
+    if(e.key!=='Tab')return;
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+  };
+  modalEl.addEventListener('keydown',modalEl._trapHandler);
+}
+function releaseFocus(modalEl){
+  if(modalEl._trapHandler){modalEl.removeEventListener('keydown',modalEl._trapHandler);modalEl._trapHandler=null;}
+}
+
+// Patch openModal / closeModal untuk auto-trap focus
+const _origClassAdd = DOMTokenList.prototype.add;
+// Instead, patch individual open/close functions after they're defined
+function _openModal(id){
+  const el=$(id);
+  if(!el)return;
+  el.classList.add('active');
+  requestAnimationFrame(()=>trapFocus(el));
+}
+function _closeModal(id){
+  const el=$(id);
+  if(!el)return;
+  el.classList.remove('active');
+  releaseFocus(el);
+}
+
 /* ── DAILY TASK ── */
 function updateTaskBadge(){
   const today=new Date().toISOString().slice(0,10);
@@ -2986,6 +2995,7 @@ function openTaskModal(dateStr){
   clerr('tTitleE','tDateE');
   $('btnDeleteTask').style.display='none';
   $('taskModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('taskModal')));
 }
 
 function editTask(t){
@@ -3001,9 +3011,10 @@ function editTask(t){
   clerr('tTitleE','tDateE');
   $('btnDeleteTask').style.display='block';
   $('taskModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('taskModal')));
 }
 
-function closeTaskModal(){$('taskModal').classList.remove('active');}
+function closeTaskModal(){$('taskModal').classList.remove('active'); releaseFocus($('taskModal'));}
 
 async function saveTask(){
   const title=$('tTitle').value.trim();
@@ -3659,28 +3670,107 @@ async function fsSet(col,item){if(!rl.ok())throw new Error('Terlalu banyak opera
 async function fsDel(col,id){if(!rl.ok())throw new Error('Terlalu banyak operasi.');const{db,doc,deleteDoc}=getDB();await deleteDoc(doc(db,col,id));}
 
 /* ── LISTENERS ── */
+// Track which listeners are already started
+window._listenersStarted = new Set();
+
 window._startListeners=function(){
   if(window.firebaseInitError){fbStat('error','Koneksi gagal');return;}
   fbStat('connecting','Menghubungkan');
   const{db,collection,onSnapshot}=getDB();
-  let fl={p:false,f:false,o:false,k:false};
-  const chk=()=>{if(Object.values(fl).every(Boolean))fbStat('connected','Terhubung');};
-  onSnapshot(collection(db,'inventory_posters'),s=>{inv.posters=s.docs.map(d=>d.data());renderPosters($('pSearch').value);updateDashboard();fl.p=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'inventory_frames'),s=>{inv.frames=s.docs.map(d=>d.data());renderFrames($('fSearch').value);updateDashboard();fl.f=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'orders'),s=>{orders=s.docs.map(d=>d.data());renderOrders();renderDashboardOrders();updateDashboard();renderLaporan();if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}if(document.getElementById('page-tasks').classList.contains('active'))rtCalc();fl.o=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'keuangan'),s=>{keuangan=s.docs.map(d=>d.data());renderKeuangan();updateKeuanganSummary();renderLaporan();fl.k=true;chk();},()=>fbStat('error','Terputus'));
-  onSnapshot(collection(db,'cms_posters'),s=>{cmsPosters=s.docs.map(d=>d.data()).sort((a,b)=>(a.order||99)-(b.order||99));renderCMSTable();renderCMSStats();},()=>{});
-  onSnapshot(collection(db,'daily_tasks'),s=>{taskItems=s.docs.map(d=>d.data());if(document.getElementById('page-tasks').classList.contains('active')){renderTaskCalendar();renderTaskList();}updateTaskBadge();},()=>{});
-  onSnapshot(collection(db,'rt_config'),s=>{
-    window.rtConfigCache=window.rtConfigCache||{};
-    s.docs.forEach(d=>{window.rtConfigCache[d.id]=d.data();});
-    const firstLoad = !window._rtConfigLoaded;
-    window._rtConfigLoaded=true;
-    if(document.getElementById('page-tasks').classList.contains('active')){
-      if(firstLoad) rtInit(); else rtCalc();
-    }
-  },()=>{});
+
+  // ── EAGER listeners: data kritis yang dibutuhkan cross-page ──
+  // Posters & frames: dibutuhkan di Dashboard, Order, Margin, dll
+  if(!window._listenersStarted.has('inventory_posters')){
+    window._listenersStarted.add('inventory_posters');
+    onSnapshot(collection(db,'inventory_posters'),s=>{
+      inv.posters=s.docs.map(d=>d.data());
+      renderPosters($('pSearch').value);
+      updateDashboard();
+      if(!window._eagerReady) _checkEagerReady();
+    },()=>fbStat('error','Terputus'));
+  }
+  if(!window._listenersStarted.has('inventory_frames')){
+    window._listenersStarted.add('inventory_frames');
+    onSnapshot(collection(db,'inventory_frames'),s=>{
+      inv.frames=s.docs.map(d=>d.data());
+      renderFrames($('fSearch').value);
+      updateDashboard();
+      if(!window._eagerReady) _checkEagerReady();
+    },()=>fbStat('error','Terputus'));
+  }
+  if(!window._listenersStarted.has('orders')){
+    window._listenersStarted.add('orders');
+    onSnapshot(collection(db,'orders'),s=>{
+      orders=s.docs.map(d=>d.data());
+      renderOrders();renderDashboardOrders();updateDashboard();
+      if(document.getElementById('page-laporan').classList.contains('active'))renderLaporan();
+      if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();
+      if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}
+      if(document.getElementById('page-tasks').classList.contains('active'))rtCalc();
+      if(!window._eagerReady) _checkEagerReady();
+    },()=>fbStat('error','Terputus'));
+  }
+  if(!window._listenersStarted.has('keuangan')){
+    window._listenersStarted.add('keuangan');
+    onSnapshot(collection(db,'keuangan'),s=>{
+      keuangan=s.docs.map(d=>d.data());
+      renderKeuangan();updateKeuanganSummary();
+      if(document.getElementById('page-laporan').classList.contains('active'))renderLaporan();
+      if(!window._eagerReady) _checkEagerReady();
+    },()=>fbStat('error','Terputus'));
+  }
+
+  // ── LAZY listeners: dimulai saat halaman pertama kali dibuka ──
+  // daily_tasks & rt_config: hanya dibutuhkan di halaman Tasks
+  // cms_posters: hanya dibutuhkan di halaman CMS
+  // Listener ini di-setup via startLazyListener() yang dipanggil dari goPage
 };
+
+// Check semua eager listeners sudah terhubung
+let _eagerCount = 0;
+function _checkEagerReady(){
+  _eagerCount++;
+  if(_eagerCount >= 4){ window._eagerReady = true; fbStat('connected','Terhubung'); }
+}
+
+// Start lazy listener untuk page tertentu (dipanggil dari goPage)
+function startLazyListener(pageName){
+  if(!window._fb?.db) return;
+  const{db,collection,onSnapshot}=getDB();
+
+  if(pageName==='tasks' && !window._listenersStarted.has('daily_tasks')){
+    window._listenersStarted.add('daily_tasks');
+    onSnapshot(collection(db,'daily_tasks'),s=>{
+      taskItems=s.docs.map(d=>d.data());
+      if(document.getElementById('page-tasks').classList.contains('active')){
+        renderTaskCalendar();renderTaskList();
+      }
+      updateTaskBadge();
+    },()=>{});
+    onSnapshot(collection(db,'rt_config'),s=>{
+      window.rtConfigCache=window.rtConfigCache||{};
+      s.docs.forEach(d=>{window.rtConfigCache[d.id]=d.data();});
+      const firstLoad=!window._rtConfigLoaded;
+      window._rtConfigLoaded=true;
+      if(document.getElementById('page-tasks').classList.contains('active')){
+        if(firstLoad) rtInit(); else rtCalc();
+      }
+    },()=>{});
+  }
+
+  if(pageName==='cms' && !window._listenersStarted.has('cms_posters')){
+    window._listenersStarted.add('cms_posters');
+    onSnapshot(collection(db,'cms_posters'),s=>{
+      cmsPosters=s.docs.map(d=>d.data()).sort((a,b)=>(a.order||99)-(b.order||99));
+      renderCMSTable();renderCMSStats();
+    },()=>{});
+  }
+
+  if(pageName==='planner' && !window._listenersStarted.has('content_planner')){
+    window._listenersStarted.add('content_planner');
+    if(typeof window._startPlannerListener === 'function') window._startPlannerListener();
+  }
+}
 
 /* ── AUTH ── */
 $('lBtn').onclick=async()=>{
@@ -3707,16 +3797,21 @@ function goPage(name,el){
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
   $('page-'+name).classList.add('active');
   if(el)el.classList.add('active');
-  $('topTitle').textContent=pageTitles[name]||name;
-  try{localStorage.setItem('lastPage', name);}catch(e){}
+  // Update topbar title
+  const titleEl = $('topTitle');
+  if(titleEl) titleEl.textContent = pageTitles[name] || name;
+  // Save last page
+  try{localStorage.setItem('lastPage',name);}catch(e){}
   if(name==='laporan')renderLaporan();
   if(name==='planner'){
+    startLazyListener('planner');
     setTimeout(()=>{
       renderCalendar();
       renderIdeaList();
     },100);
   }
-  if(name==='tasks'){setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
+  if(name==='tasks'){startLazyListener('tasks');setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
+  if(name==='cms'){startLazyListener('cms');}
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
   if(name==='margin'){
     // Delay loading to ensure Firebase is ready
@@ -3871,6 +3966,7 @@ function openItemModal(){
   });
   
   $('itemModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('itemModal')));
   setTimeout(()=>$('iPosterSelect').focus(),100);
 }
 
@@ -3903,7 +3999,7 @@ function syncFrameSize(){
   $('iFrameSize').value=posterSize?posterSize+' cm':'';
 }
 
-function closeItemModal(){$('itemModal').classList.remove('active');}
+function closeItemModal(){$('itemModal').classList.remove('active');releaseFocus($('itemModal'));}
 
 function addItemToOrder(){
   clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
@@ -4091,7 +4187,16 @@ function renderOrders(){
   if(ch)list=list.filter(o=>o.channel===ch);
   if(st)list=list.filter(o=>o.status===st);
   if(mo)list=list.filter(o=>o.createdAt?.startsWith(mo));
-  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="8">Tidak ada order</td></tr>';return;}
+  if(!list.length){
+    const hasFilter = ch||st||(mo&&mo!==thisMonth());
+    tb.innerHTML=`<tr class="erow"><td colspan="8"><div style="padding:24px 0;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <span style="font-size:26px">${hasFilter?'🔍':'🛒'}</span>
+      <strong style="color:var(--t2)">${hasFilter?'Tidak ada order yang cocok':'Belum ada order'}</strong>
+      <span style="font-size:12px;color:var(--t3)">${hasFilter?'Coba ubah filter di atas':'Tambah order pertama untuk memulai'}</span>
+      ${!hasFilter?`<button class="pbtn" style="width:auto;padding:5px 14px;font-size:12px;margin-top:4px" onclick="openOrderModal()">➕ Buat Order</button>`:''}
+    </div></td></tr>`;
+    return;
+  }
 
   tb.innerHTML=list.map(o=>{
     // Item chips — satu baris per item
@@ -4484,7 +4589,7 @@ function renderKeuangan(){
   if(ft)list=list.filter(k=>k.type===ft);
   if(fc)list=list.filter(k=>k.cat===fc);
   if(fm)list=list.filter(k=>k.date?.startsWith(fm));
-  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada catatan</td></tr>';return;}
+  if(!list.length){const hf=ft||fc||fm;tb.innerHTML=`<tr class="erow"><td colspan="6"><div style="padding:24px 0;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:26px">${hf?'🔍':'💸'}</span><strong style="color:var(--t2)">${hf?'Tidak ada catatan yang cocok':'Belum ada catatan keuangan'}</strong><span style="font-size:12px;color:var(--t3)">${hf?'Coba ubah filter':'Catat pemasukan atau pengeluaran bisnis'}</span>${!hf?`<button class="pbtn" style="width:auto;padding:5px 14px;font-size:12px;margin-top:4px" onclick="openKeuModal()">➕ Catat Pengeluaran</button>`:''}</div></td></tr>`;return;}
   const catLbl={penjualan:'Penjualan',restock:'Restock',cetak:'Cetak',ongkir:'Ongkir',marketing:'Marketing',gaji:'Gaji',lainnya:'Lainnya'};
   tb.innerHTML=list.map(k=>{
     let descSub='';
@@ -4655,7 +4760,15 @@ function renderPosters(q=''){
     }
   });
   const groupNames = Object.keys(grouped);
-  if(!groupNames.length){tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data poster</td></tr>';return;}
+  if(!groupNames.length){
+    tb.innerHTML=`<tr class="erow"><td colspan="5"><div style="padding:24px 0;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <span style="font-size:26px">${ql?'🔍':'🖼️'}</span>
+      <strong style="color:var(--t2)">${ql?`Tidak ada poster "${q}"`:inv.posters.length?'Semua poster tersembunyi filter':'Belum ada poster di stok'}</strong>
+      <span style="font-size:12px;color:var(--t3)">${ql?'Coba kata kunci lain':'Tambahkan poster pertama ke inventaris'}</span>
+      ${!ql?`<button class="pbtn" style="width:auto;padding:5px 14px;font-size:12px;margin-top:4px" onclick="openPosterModal()">➕ Tambah Poster</button>`:''}
+    </div></td></tr>`;
+    return;
+  }
   tb.innerHTML = groupNames.map(name => {
     const posters = grouped[name];
     const totalStock = posters.reduce((sum, p) => sum + p.stock, 0);
@@ -4842,9 +4955,11 @@ function openEdit(col,id){
   $('mLabel').textContent=col==='posters'?'Poster':'Frame';
   $('mItem').value=col==='posters'?`${item.name} (${item.size} cm)`:`${item.color} — ${item.size} cm`;
   $('mStock').value=item.stock;
-  $('editModal').classList.add('active');$('mStock').focus();
+  $('editModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('editModal')));
+  $('mStock').focus();
 }
-function closeEdit(){$('editModal').classList.remove('active');editType=null;editId=null;}
+function closeEdit(){$('editModal').classList.remove('active');releaseFocus($('editModal'));editType=null;editId=null;}
 $('fEdit').addEventListener('submit',async function(e){
   e.preventDefault();clerr('mStockE');
   const newStk=parseInt($('mStock').value,10);
@@ -4863,15 +4978,31 @@ async function delItem(col,id){
   catch(err){toast('Gagal: '+err.message,'error');}
 }
 
-$('pSearch').addEventListener('input',e=>renderPosterTable());
-$('fSearch').addEventListener('input',e=>renderFrames(e.target.value));
+$('pSearch').addEventListener('input',debounce(e=>renderPosterTable(),280));
+$('fSearch').addEventListener('input',debounce(e=>renderFrames(e.target.value),280));
 
 // Modal close on overlay click or ESC
 [  'editModal','itemModal','sizePickModal','contentModal','addFileModal'].forEach(id=>{
   if(!$(id)) return;
   $(id).addEventListener('click',e=>{if(e.target.id===id){if(id==='editModal')closeEdit();else if(id==='sizePickModal')closeSizePick();else if(id==='contentModal')closeContentModal();else if(id==='addFileModal')closeAddFileModal();else closeItemModal();}});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEdit();closeItemModal();closeSizePick();closeContentModal();closeAddFileModal();closePackingModal();closeOrderModal();closeKeuModal();closePosterModal();closeFrameModal();closeResiModal();}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    // Close all modals and release focus traps
+    ['editModal','itemModal','sizePickModal','contentModal','addFileModal',
+     'orderModal','keuModal','posterModal','frameModal','resiModal',
+     'packingModal','taskModal','rtImportModal'].forEach(id=>{
+      const el=$(id);
+      if(el&&el.classList.contains('active')){
+        releaseFocus(el);
+        el.classList.remove('active');
+      }
+    });
+    closeEdit();closeItemModal();
+    if(typeof closeSizePick==='function')closeSizePick();
+    if(typeof closeAddFileModal==='function')closeAddFileModal();
+  }
+});
 
 // Init item list empty state
 renderItemList();
@@ -4977,8 +5108,9 @@ async function handleBulkUpload(e){
    SOCIAL PLANNER
 ══════════════════════════════════════ */
 
-// Firestore listener
+// Firestore listener untuk Content Planner (lazy - dimulai saat buka halaman planner)
 window._startPlannerListener = function(){
+  if(window._listenersStarted?.has('content_planner')) return; // sudah jalan
   const{db,collection,onSnapshot}=getDB();
   onSnapshot(collection(db,'content_planner'),s=>{
     contentItems=s.docs.map(d=>d.data()).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
@@ -5088,6 +5220,7 @@ function openContentModal(dateStr){
   $('cId').value='';
   setStatusTab('draft');
   $('contentModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('contentModal')));
   $('cTitle').focus();
 }
 
@@ -5104,9 +5237,10 @@ function editContent(id){
   $('cId').value=c.id;
   setStatusTab(c.status||'draft');
   $('contentModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('contentModal')));
 }
 
-function closeContentModal(){$('contentModal').classList.remove('active');editContentId=null;}
+function closeContentModal(){$('contentModal').classList.remove('active');releaseFocus($('contentModal'));editContentId=null;}
 
 function setStatusTab(status, btn){
   $('cStatus').value=status;
@@ -5601,6 +5735,7 @@ function openUploadModal(folderName){
   }
 
   $('packingModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('packingModal')));
 }
 
 function _injectPackingSuggestions(){
@@ -5671,7 +5806,7 @@ function _esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 // Alias untuk backward compat
 function openPackingModal(){ openUploadModal('Bukti Packing'); }
-function closePackingModal(){ $('packingModal').classList.remove('active'); pkFiles=[]; }
+function closePackingModal(){ $('packingModal').classList.remove('active'); releaseFocus($('packingModal')); pkFiles=[]; }
 
 function addPackingFiles(files){
   Array.from(files).forEach(file => pkFiles.push({file, url:URL.createObjectURL(file)}));
@@ -6039,10 +6174,12 @@ function openResiModal(orderId){
   if(inp){ inp.value = order.resi||''; inp.focus(); }
   $('resiModalErr') && ($('resiModalErr').textContent='');
   $('resiModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('resiModal')));
 }
 
 function closeResiModal(){
   $('resiModal').classList.remove('active');
+  releaseFocus($('resiModal'));
   _pendingResiOrderId = null;
 }
 
@@ -6779,9 +6916,10 @@ function openOrderModal(){
   pendingItems=[];renderItemList();
   $('fOrder').reset();
   $('orderModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('orderModal')));
   setTimeout(()=>$('oChannel')?.focus(),50);
 }
-function closeOrderModal(){ $('orderModal').classList.remove('active'); }
+function closeOrderModal(){ $('orderModal').classList.remove('active'); releaseFocus($('orderModal')); }
 
 function openKeuModal(){
   $('keuModal').classList.add('active');
@@ -6793,26 +6931,30 @@ function openKeuModal(){
   const gtEl = $('restockGrandTotal');
   if(gtEl) gtEl.style.display = 'none';
   toggleKeuFields();
+  requestAnimationFrame(()=>trapFocus($('keuModal')));
   setTimeout(()=>$('kType')?.focus(),50);
 }
 function closeKeuModal(){
   $('keuModal').classList.remove('active');
+  releaseFocus($('keuModal'));
   restockItems = [];
 }
 
 function openPosterModal(){
   $('posterModal').classList.add('active');
   $('pName').value='';$('pStock').value='';$('pSize').value='';
+  requestAnimationFrame(()=>trapFocus($('posterModal')));
   setTimeout(()=>$('pName')?.focus(),50);
 }
-function closePosterModal(){ $('posterModal').classList.remove('active'); }
+function closePosterModal(){ $('posterModal').classList.remove('active'); releaseFocus($('posterModal')); }
 
 function openFrameModal(){
   $('frameModal').classList.add('active');
   $('fColor').value='';$('fSize').value='';$('fStock').value='';
+  requestAnimationFrame(()=>trapFocus($('frameModal')));
   setTimeout(()=>$('fColor')?.focus(),50);
 }
-function closeFrameModal(){ $('frameModal').classList.remove('active'); }
+function closeFrameModal(){ $('frameModal').classList.remove('active'); releaseFocus($('frameModal')); }
 
 </script>
 <!-- MODAL: Input No. Resi (intercept pindah ke Dikirim) -->
@@ -6820,7 +6962,7 @@ function closeFrameModal(){ $('frameModal').classList.remove('active'); }
   <div class="mbox" style="max-width:420px">
     <div class="mhd">
       <h3>🚚 Input No. Resi</h3>
-      <button class="mclose" onclick="closeResiModal()">×</button>
+      <button class="mclose" onclick="closeResiModal()" aria-label="Tutup modal">×</button>
     </div>
     <div style="font-size:13px;color:var(--t2);margin-bottom:14px">
       Masukkan nomor resi sebelum order dipindah ke <strong>Dikirim</strong>.
@@ -6848,7 +6990,7 @@ function closeFrameModal(){ $('frameModal').classList.remove('active'); }
   <div class="mbox" style="max-width:780px;width:95vw">
     <div class="mhd">
       <h3 id="rtImportModalTitle">📥 Import Strategi Bulanan</h3>
-      <button class="mclose" onclick="rtCloseImportModal()">×</button>
+      <button class="mclose" onclick="rtCloseImportModal()" aria-label="Tutup modal">×</button>
     </div>
 
     <!-- Step 1: Info file + pilih bulan target -->
