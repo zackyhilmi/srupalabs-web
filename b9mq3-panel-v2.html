@@ -1478,8 +1478,8 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
               <div class="srchwrap"><input type="text" id="fSearch" placeholder="Cari frame..." maxlength="100"><span class="srchico">🔍</span></div>
             </div>
             <div class="twrap"><table>
-              <thead><tr><th>Warna</th><th>Ukuran</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead>
-              <tbody id="tbFrame"><tr class="erow"><td colspan="5">Memuat data...</td></tr></tbody>
+              <thead><tr><th>Jenis</th><th>Warna</th><th>Ukuran</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="tbFrame"><tr class="erow"><td colspan="6">Memuat data...</td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -2182,13 +2182,17 @@ async function cmsDel(id){
     </div>
     <div class="sdiv">Frame</div>
     <div class="fg">
+      <label>Jenis Frame</label>
+      <select id="iFrameJenis" onchange="onOrderFrameJenisChange()">
+        <option value="">Pilih Jenis</option>
+        <option value="Block">Frame Block</option>
+        <option value="Minimalis">Frame Minimalis</option>
+      </select>
+    </div>
+    <div class="fg">
       <label>Warna Frame</label>
       <select id="iFrameColor">
         <option value="">Pilih Warna</option>
-        <option value="Hitam">Hitam</option>
-        <option value="Putih">Putih</option>
-        <option value="Kayu">Kayu</option>
-        <option value="Chrome">Chrome</option>
       </select>
       <div class="ferr" id="iFrameColorE"></div>
     </div>
@@ -2299,22 +2303,24 @@ async function cmsDel(id){
           <span style="font-size:14px;font-weight:700;color:var(--accent)" id="restockGrandTotalVal">Rp 0</span>
         </div>
         <div style="background:var(--gray-lt);border-radius:10px;padding:10px;display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+          <div class="fg" style="flex:1;min-width:110px;margin:0">
+            <label style="font-size:11px">Jenis</label>
+            <select id="kFrameJenis" style="font-size:13px;padding:7px 8px" onchange="onRestockJenisChange()">
+              <option value="">Pilih Jenis</option>
+              <option value="Block">Block</option>
+              <option value="Minimalis">Minimalis</option>
+            </select>
+          </div>
           <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Warna</label>
             <select id="kFrameColor" style="font-size:13px;padding:7px 8px">
-              <option value="">Pilih</option>
-              <option value="Hitam">Hitam</option><option value="Putih">Putih</option>
-              <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
+              <option value="">Pilih Warna</option>
             </select>
           </div>
           <div class="fg" style="flex:1;min-width:90px;margin:0">
             <label style="font-size:11px">Ukuran</label>
             <select id="kFrameSize" style="font-size:13px;padding:7px 8px" onchange="onRestockSizeChange()">
-              <option value="">Pilih</option>
-              <option value="20x20">20×20</option><option value="20x30">20×30</option>
-              <option value="30x30">30×30</option><option value="30x40">30×40</option>
-              <option value="40x60">40×60</option><option value="50x70">50×70</option>
-              <option value="60x80">60×80</option>
+              <option value="">Pilih Ukuran</option>
             </select>
           </div>
           <div class="fg" style="flex:0 0 66px;margin:0">
@@ -2414,16 +2420,23 @@ async function cmsDel(id){
 
 <!-- MODAL: Tambah Frame -->
 <div class="moverlay" id="frameModal">
-  <div class="mbox" style="max-width:440px">
+  <div class="mbox" style="max-width:480px">
     <div class="mhd"><h3>🪟 Tambah Frame</h3><button class="mclose" onclick="closeFrameModal()" aria-label="Tutup modal">×</button></div>
     <form id="fFrame" novalidate>
+      <div class="fg">
+        <label>Jenis Frame</label>
+        <select id="fJenis" onchange="onFrameJenisChange()">
+          <option value="">Pilih Jenis</option>
+          <option value="Block">Frame Block</option>
+          <option value="Minimalis">Frame Minimalis</option>
+        </select>
+        <div class="ferr" id="fJenisE"></div>
+      </div>
       <div class="fg-row">
         <div class="fg">
           <label>Warna Frame</label>
           <select id="fColor">
             <option value="">Pilih Warna</option>
-            <option value="Hitam">Hitam</option><option value="Putih">Putih</option>
-            <option value="Kayu">Kayu</option><option value="Chrome">Chrome</option>
           </select>
           <div class="ferr" id="fColorE"></div>
         </div>
@@ -2431,10 +2444,6 @@ async function cmsDel(id){
           <label>Ukuran Frame</label>
           <select id="fSize">
             <option value="">Pilih Ukuran</option>
-            <option value="20x20">20×20 cm</option><option value="20x30">20×30 cm</option>
-            <option value="30x30">30×30 cm</option><option value="30x40">30×40 cm</option>
-            <option value="40x60">40×60 cm</option><option value="50x70">50×70 cm</option>
-            <option value="60x80">60×80 cm</option>
           </select>
           <div class="ferr" id="fSizeE"></div>
         </div>
@@ -2762,6 +2771,27 @@ let pickerInited      = false;
 
 const OK_SIZES=new Set(['20x20','20x30','30x30','30x40','40x60','50x70','60x80']);
 const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
+const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
+const FRAME_COLORS_MINIMALIS = ['Hitam','Putih']; // Minimalis: tidak ada Kayu & Chrome
+const FRAME_SIZES_BLOCK      = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80'];
+const FRAME_SIZES_MINIMALIS  = ['30x30','30x40','40x60','50x70','60x80']; // Minimalis: tidak ada 20x30
+
+function getFrameColors(jenis){ return jenis==='Minimalis'?FRAME_COLORS_MINIMALIS:FRAME_COLORS_BLOCK; }
+function getFrameSizes(jenis){ return jenis==='Minimalis'?FRAME_SIZES_MINIMALIS:FRAME_SIZES_BLOCK; }
+function populateFrameColorSelect(selId, jenis){
+  const sel=$(selId); if(!sel) return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Pilih Warna</option>';
+  getFrameColors(jenis).forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  if(getFrameColors(jenis).includes(prev)) sel.value=prev;
+}
+function populateFrameSizeSelect(selId, jenis, labelSuffix){
+  const sel=$(selId); if(!sel) return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Pilih Ukuran</option>';
+  getFrameSizes(jenis).forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s.replace('x','×')+(labelSuffix?' cm':''); sel.appendChild(o); });
+  if(getFrameSizes(jenis).includes(prev)) sel.value=prev;
+}
 const CHANNELS=new Set(['shopee','tiktok','instagram']);
 const MAX_STK=99999;
 const rl={ts:[],ok(){const n=Date.now();this.ts=this.ts.filter(t=>n-t<60000);if(this.ts.length>=30)return false;this.ts.push(n);return true;}};
@@ -3940,7 +3970,7 @@ function renderItemList(){
     <div class="item-row">
       <div class="item-row-info">
         <div class="item-row-name">🖼️ ${esc(it.posterName)} <span style="font-size:11px;color:var(--t2)">(${esc(it.posterSize)})</span></div>
-        <div class="item-row-sub"><span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>Frame ${esc(it.frameColor)} ${esc(it.frameSize)}${it.note?` · ${esc(it.note)}`:''}</div>
+        <div class="item-row-sub"><span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>Frame ${esc(it.frameJenis||'')} ${esc(it.frameColor)} ${esc(it.frameSize)}${it.note?` · ${esc(it.note)}`:''}</div>
       </div>
       <button class="item-row-del" onclick="removeItem(${i})">✕</button>
     </div>`).join('');
@@ -3950,7 +3980,8 @@ function removeItem(i){pendingItems.splice(i,1);renderItemList();}
 
 function openItemModal(){
   clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
-  $('iPosterSelect').value='';$('iPosterCustomName').value='';$('iPosterSize').value='';$('iFrameColor').value='';$('iFrameSize').value='';$('iNote').value='';
+  $('iPosterSelect').value='';$('iPosterCustomName').value='';$('iPosterSize').value='';
+  $('iFrameJenis').value='';$('iFrameColor').innerHTML='<option value="">Pilih Warna</option>';$('iFrameSize').value='';$('iNote').value='';
   $('customPosterNameGroup').style.display='none';
   
   // Populate poster dropdown from inventory
@@ -4006,6 +4037,7 @@ function addItemToOrder(){
   const posterSelect=$('iPosterSelect').value;
   const posterCustomName=san($('iPosterCustomName').value);
   const posterSize=$('iPosterSize').value;
+  const frameJenis=$('iFrameJenis').value;
   const frameColor=$('iFrameColor').value;
   const frameSize=posterSize; // Auto sama dengan ukuran poster
   const note=san($('iNote').value);
@@ -4032,17 +4064,19 @@ function addItemToOrder(){
   }
   
   if(!OK_SIZES.has(posterSize)){ferr('iPosterSizeE','Pilih ukuran poster.');ok=false;}
-  if(!OK_FCOLORS.has(frameColor)){ferr('iFrameColorE','Pilih warna frame.');ok=false;}
+  if(!frameJenis){ferr('iFrameColorE','Pilih jenis frame terlebih dahulu.');ok=false;}
+  else if(!OK_FCOLORS.has(frameColor)){ferr('iFrameColorE','Pilih warna frame.');ok=false;}
   if(!ok)return;
 
-  // Cek stok frame
-  const frame=inv.frames.find(f=>f.color===frameColor&&f.size===frameSize);
+  // Cek stok frame (cocokkan jenis + warna + ukuran)
+  const frame=inv.frames.find(f=>f.jenis===frameJenis&&f.color===frameColor&&f.size===frameSize)
+    || inv.frames.find(f=>f.color===frameColor&&f.size===frameSize); // fallback untuk data lama tanpa jenis
   if(!frame){
-    ferr('iFrameSizeE',`Frame ${frameColor} ${frameSize} tidak ada di stok. Silakan tambah dulu di menu Inventaris.`);
+    ferr('iFrameSizeE',`Frame ${frameJenis} ${frameColor} ${frameSize} tidak ada di stok. Silakan tambah dulu di menu Inventaris.`);
     return;
   }
   if(frame.stock<1){
-    ferr('iFrameColorE',`Stok Frame ${frameColor} ${frameSize} habis!`);
+    ferr('iFrameColorE',`Stok Frame ${frameJenis} ${frameColor} ${frameSize} habis!`);
     return;
   }
 
@@ -4051,6 +4085,7 @@ function addItemToOrder(){
     posterId,
     isCustomPoster,
     posterSize,
+    frameJenis,
     frameColor,
     frameSize,
     note
@@ -4087,7 +4122,8 @@ $('fOrder').addEventListener('submit',async function(e){
     try{
       // Kembalikan stok lama dulu
       for(const it of (old.items||[])){
-        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
         if(frame){frame.stock+=1;await fsSet('inventory_frames',frame);}
         if(!it.isCustomPoster&&it.posterId){
           const poster=inv.posters.find(p=>p.id===it.posterId);
@@ -4096,13 +4132,15 @@ $('fOrder').addEventListener('submit',async function(e){
       }
       // Validasi & kurangi stok baru
       for(const it of pendingItems){
-        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-        if(!frame||frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} tidak cukup!`);btn.textContent=orig;btn.disabled=false;return;}
+        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(!frame||frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} tidak cukup!`);btn.textContent=orig;btn.disabled=false;return;}
       }
       const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],createdAt:orderDate+'T'+(old.createdAt||new Date().toISOString()).slice(11),updatedAt:new Date().toISOString()};
       await fsSet('orders',updated);
       for(const it of pendingItems){
-        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
         if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
         if(!it.isCustomPoster&&it.posterId){
           const poster=inv.posters.find(p=>p.id===it.posterId);
@@ -4115,16 +4153,18 @@ $('fOrder').addEventListener('submit',async function(e){
     // ── MODE BARU ────────────────────────────────────────────────
     // Validasi stok frame
     for(const it of pendingItems){
-      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-      if(!frame){ferr('oItemsE',`Frame ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);btn.textContent=orig;btn.disabled=false;return;}
-      if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameColor} ${it.frameSize} habis!`);btn.textContent=orig;btn.disabled=false;return;}
+      const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+        ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+      if(!frame){ferr('oItemsE',`Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);btn.textContent=orig;btn.disabled=false;return;}
+      if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} habis!`);btn.textContent=orig;btn.disabled=false;return;}
     }
     const id=`order_${Date.now()}`;
     const item={id,channel,buyer,orderNo,note,total,finalTotal:null,items:[...pendingItems],status:'proses',createdAt:orderDate+'T'+new Date().toTimeString().slice(0,8)+'.000Z'};
     try{
       await fsSet('orders',item);
       for(const it of pendingItems){
-        const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
         if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
         if(!it.isCustomPoster&&it.posterId){
           const poster=inv.posters.find(p=>p.id===it.posterId);
@@ -4204,7 +4244,7 @@ function renderOrders(){
       <div class="item-chip">
         <span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>
         <span class="item-chip-poster" title="${esc(it.posterName)}">${esc(it.posterName)}</span>
-        <span class="item-chip-frame">${esc(it.posterSize)} · ${esc(it.frameColor)}</span>
+        <span class="item-chip-frame">${esc(it.posterSize)} · ${it.frameJenis?esc(it.frameJenis)+' ':''} ${esc(it.frameColor)}</span>
       </div>`).join('');
     const hasFinal=o.finalTotal!=null;
     const finalCell=o.status==='proses'
@@ -4294,7 +4334,8 @@ async function batalOrder(id){
     // Kembalikan stok frame DAN poster
     for(const it of (o.items||[])){
       // Kembalikan frame
-      const frame=inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+      const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+        ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
       if(frame){frame.stock+=1;await fsSet('inventory_frames',frame);}
       
       // Kembalikan poster (hanya jika bukan custom)
@@ -4315,7 +4356,7 @@ async function delOrder(id){
 
 /* ── KEUANGAN ── */
 // ── RESTOCK MULTI-ITEM ──────────────────────────────────────────────
-let restockItems = []; // [{color, size, qty}]
+let restockItems = []; // [{jenis, color, size, qty, unitPrice}]
 
 function toggleKeuFields(){
   const cat = $('kCat').value;
@@ -4393,23 +4434,25 @@ function onRestockQtyInput(){
 }
 
 function addRestockItem(){
+  const jenis = $('kFrameJenis').value;
   const color = $('kFrameColor').value;
   const size  = $('kFrameSize').value;
   const qty   = parseInt($('kRestockQty').value, 10);
   $('kRestockItemsE').textContent = '';
+  if(!jenis){ $('kRestockItemsE').textContent = 'Pilih jenis frame.'; return; }
   if(!color || !size){ $('kRestockItemsE').textContent = 'Pilih warna & ukuran frame.'; return; }
   if(!qty || qty < 1){ $('kRestockItemsE').textContent = 'Qty minimal 1.'; return; }
-  const unitPrice = getRestockFramePrice(size); // null jika tidak ada di master
-  const existing = restockItems.find(i => i.color === color && i.size === size);
+  const unitPrice = getRestockFramePrice(size);
+  const existing = restockItems.find(i => i.jenis === jenis && i.color === color && i.size === size);
   if(existing){
     existing.qty += qty;
-    // update unitPrice kalau sebelumnya null
     if(existing.unitPrice == null && unitPrice != null) existing.unitPrice = unitPrice;
   } else {
-    restockItems.push({ color, size, qty, unitPrice });
+    restockItems.push({ jenis, color, size, qty, unitPrice });
   }
-  $('kFrameColor').value = '';
-  $('kFrameSize').value  = '';
+  $('kFrameJenis').value = '';
+  $('kFrameColor').innerHTML='<option value="">Pilih Warna</option>';
+  $('kFrameSize').innerHTML='<option value="">Pilih Ukuran</option>';
   $('kRestockQty').value = '';
   // Reset hint
   const hint = $('kRestockPriceHint');
@@ -4442,7 +4485,7 @@ function renderRestockItemList(){
     return `
     <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px">
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600;color:var(--t1)">🖼️ ${esc(it.color)} — ${esc(it.size)}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t1)">🖼️ ${esc(it.jenis||'')} · ${esc(it.color)} — ${esc(it.size)}</div>
         ${hasPrice
           ? `<div style="font-size:11.5px;color:var(--t2);margin-top:2px">${rp(it.unitPrice)}/pcs × ${it.qty} pcs</div>`
           : `<div style="font-size:11px;color:var(--t3);margin-top:2px">Harga tidak tersedia di master</div>`}
@@ -4889,11 +4932,15 @@ function closeSizePick(){ $('sizePickModal').classList.remove('active'); }
 
 function renderFrames(q=''){
   const tb=$('tbFrame'),ql=q.toLowerCase();
-  const list=inv.frames.filter(f=>f.color.toLowerCase().includes(ql)||f.size.includes(ql));
-  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="5">Tidak ada data frame</td></tr>';return;}
+  const list=inv.frames.filter(f=>(f.color.toLowerCase().includes(ql)||f.size.includes(ql)||(f.jenis||'').toLowerCase().includes(ql)));
+  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada data frame</td></tr>';return;}
   tb.innerHTML=list.map(f=>{
     const b=stockBadge(f.stock);
+    const jenisBadge=f.jenis==='Minimalis'
+      ?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--purple-lt);color:var(--purple)">Minimalis</span>`
+      :`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--accent-lt);color:var(--accent)">Block</span>`;
     return`<tr>
+      <td style="vertical-align:middle">${jenisBadge}</td>
       <td style="vertical-align:middle">
         <div style="display:flex;align-items:center;gap:7px">
           <span class="cdot ${esc(f.color.toLowerCase())}"></span>
@@ -4931,18 +4978,19 @@ $('fPoster').addEventListener('submit',async function(e){
 });
 
 $('fFrame').addEventListener('submit',async function(e){
-  e.preventDefault();clerr('fColorE','fSizeE','fStockE');
+  e.preventDefault();clerr('fJenisE','fColorE','fSizeE','fStockE');
   const btn=this.querySelector('.pbtn');
-  const color=$('fColor').value,size=$('fSize').value,stock=parseInt($('fStock').value,10);
+  const jenis=$('fJenis').value,color=$('fColor').value,size=$('fSize').value,stock=parseInt($('fStock').value,10);
   let ok=true;
+  if(!jenis){ferr('fJenisE','Pilih jenis frame.');ok=false;}
   if(!OK_FCOLORS.has(color)){ferr('fColorE','Pilih warna.');ok=false;}
   if(!OK_SIZES.has(size)){ferr('fSizeE','Pilih ukuran.');ok=false;}
   if(isNaN(stock)||stock<0||stock>MAX_STK){ferr('fStockE','Stok harus 0–99999.');ok=false;}
   if(!ok)return;
-  if(inv.frames.find(f=>f.color===color&&f.size===size)){ferr('fColorE','Sudah ada.');return;}
+  if(inv.frames.find(f=>f.jenis===jenis&&f.color===color&&f.size===size)){ferr('fColorE','Sudah ada.');return;}
   const orig=btn.textContent;btn.textContent='⏳...';btn.disabled=true;
-  const item={id:`frame_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_-]/g,''),color,size,stock,createdAt:new Date().toISOString()};
-  try{await fsSet('inventory_frames',item);this.reset();btn.textContent=orig;toast('✅ Frame ditambahkan!');}
+  const item={id:`frame_${jenis}_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_-]/g,''),jenis,color,size,stock,createdAt:new Date().toISOString()};
+  try{await fsSet('inventory_frames',item);this.reset();$('fColor').innerHTML='<option value="">Pilih Warna</option>';$('fSize').innerHTML='<option value="">Pilih Ukuran</option>';btn.textContent=orig;toast('✅ Frame ditambahkan!');}
   catch(err){btn.textContent=orig;toast('Gagal: '+err.message,'error');}
   finally{btn.disabled=false;}
 });
@@ -6950,11 +6998,36 @@ function closePosterModal(){ $('posterModal').classList.remove('active'); releas
 
 function openFrameModal(){
   $('frameModal').classList.add('active');
-  $('fColor').value='';$('fSize').value='';$('fStock').value='';
+  $('fJenis').value='';
+  $('fColor').innerHTML='<option value="">Pilih Warna</option>';
+  $('fSize').innerHTML='<option value="">Pilih Ukuran</option>';
+  $('fStock').value='';
   requestAnimationFrame(()=>trapFocus($('frameModal')));
-  setTimeout(()=>$('fColor')?.focus(),50);
+  setTimeout(()=>$('fJenis')?.focus(),50);
 }
 function closeFrameModal(){ $('frameModal').classList.remove('active'); releaseFocus($('frameModal')); }
+
+// Handler perubahan jenis frame di modal Tambah Frame
+function onFrameJenisChange(){
+  const jenis=$('fJenis').value;
+  populateFrameColorSelect('fColor', jenis);
+  populateFrameSizeSelect('fSize', jenis, true);
+}
+
+// Handler perubahan jenis frame di Restock
+function onRestockJenisChange(){
+  const jenis=$('kFrameJenis').value;
+  populateFrameColorSelect('kFrameColor', jenis);
+  populateFrameSizeSelect('kFrameSize', jenis, false);
+  const hint=$('kRestockPriceHint');
+  if(hint) hint.style.display='none';
+}
+
+// Handler perubahan jenis frame di form Order
+function onOrderFrameJenisChange(){
+  const jenis=$('iFrameJenis').value;
+  populateFrameColorSelect('iFrameColor', jenis);
+}
 
 </script>
 <!-- MODAL: Input No. Resi (intercept pindah ke Dikirim) -->
