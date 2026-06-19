@@ -4380,43 +4380,38 @@ function toggleKeuFields(){
 }
 
 // ── Ambil harga frame dari master_biaya untuk ukuran tertentu ──────────
-function getRestockFramePrice(size) {
+function getRestockFramePrice(size, jenis) {
   // size format: "30x40", perlu match ke masterData.frame keys format "Model|30×40"
-  // Ambil harga terendah dari semua model yang ada ukuran ini, tapi preferensikan Frame Blok
   const normSize = size.replace('x','×'); // "30×40"
-  let found = null;
-  // Prioritas: cek KAL_FRAMES yang bukan Frame Minimalis
-  for(const f of KAL_FRAMES){
-    if(f.ukuran === normSize && !f.model.toLowerCase().includes('minimalis')){
-      const key = f.model + '|' + f.ukuran;
-      const masterVal = masterData && masterData.frame && masterData.frame[key] != null
-        ? masterData.frame[key] : f.hppFrame;
-      if(found === null || masterVal < found) found = masterVal;
-    }
+  // Tentukan model name dari jenis
+  const modelName = jenis === 'Minimalis' ? 'Frame Minimalis' : 'Frame Blok';
+  // Cari di KAL_FRAMES sesuai model + ukuran
+  const match = KAL_FRAMES.find(f => f.model === modelName && f.ukuran === normSize);
+  if(match){
+    const key = match.model + '|' + match.ukuran;
+    return masterData && masterData.frame && masterData.frame[key] != null
+      ? masterData.frame[key] : match.hppFrame;
   }
-  // Fallback: cek semua KAL_FRAMES
-  if(found === null){
-    for(const f of KAL_FRAMES){
-      if(f.ukuran === normSize){
-        const key = f.model + '|' + f.ukuran;
-        const masterVal = masterData && masterData.frame && masterData.frame[key] != null
-          ? masterData.frame[key] : f.hppFrame;
-        if(found === null || masterVal < found) found = masterVal;
-      }
-    }
+  // Fallback: cari ukuran saja (untuk data lama tanpa jenis)
+  const fallback = KAL_FRAMES.find(f => f.ukuran === normSize);
+  if(fallback){
+    const key = fallback.model + '|' + fallback.ukuran;
+    return masterData && masterData.frame && masterData.frame[key] != null
+      ? masterData.frame[key] : fallback.hppFrame;
   }
-  return found; // null jika tidak ada di master
+  return null;
 }
 
 function onRestockSizeChange(){
-  const size = $('kFrameSize').value;
-  const qty  = parseInt($('kRestockQty').value, 10) || 0;
-  const hint = $('kRestockPriceHint');
+  const size   = $('kFrameSize').value;
+  const jenis  = $('kFrameJenis').value;
+  const qty    = parseInt($('kRestockQty').value, 10) || 0;
+  const hint   = $('kRestockPriceHint');
   const unitEl = $('kRestockUnitPrice');
   const subEl  = $('kRestockSubtotal');
   if(!hint || !unitEl) return;
   if(!size){ hint.style.display='none'; return; }
-  const price = getRestockFramePrice(size);
+  const price = getRestockFramePrice(size, jenis);
   if(price == null || price === 0){ hint.style.display='none'; return; }
   unitEl.textContent = rp(price) + ' / pcs';
   subEl.textContent  = qty > 0 ? `Subtotal: ${rp(price * qty)}` : '';
@@ -4425,10 +4420,11 @@ function onRestockSizeChange(){
 
 function onRestockQtyInput(){
   const size  = $('kFrameSize').value;
+  const jenis = $('kFrameJenis').value;
   const qty   = parseInt($('kRestockQty').value, 10) || 0;
   const subEl = $('kRestockSubtotal');
   if(!subEl || !size) return;
-  const price = getRestockFramePrice(size);
+  const price = getRestockFramePrice(size, jenis);
   if(price == null || price === 0){ subEl.textContent=''; return; }
   subEl.textContent = qty > 0 ? `Subtotal: ${rp(price * qty)}` : '';
 }
@@ -4442,7 +4438,7 @@ function addRestockItem(){
   if(!jenis){ $('kRestockItemsE').textContent = 'Pilih jenis frame.'; return; }
   if(!color || !size){ $('kRestockItemsE').textContent = 'Pilih warna & ukuran frame.'; return; }
   if(!qty || qty < 1){ $('kRestockItemsE').textContent = 'Qty minimal 1.'; return; }
-  const unitPrice = getRestockFramePrice(size);
+  const unitPrice = getRestockFramePrice(size, jenis);
   const existing = restockItems.find(i => i.jenis === jenis && i.color === color && i.size === size);
   if(existing){
     existing.qty += qty;
