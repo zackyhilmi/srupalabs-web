@@ -123,10 +123,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 
 /* ─── SIDEBAR ─── */
 .sidebar{
-  width:var(--nav);background:var(--surface);border-right:1px solid var(--border);
+  width:var(--nav);background:#fff;border-right:1px solid var(--border);
   display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;
   z-index:200;overflow-y:auto;overflow-x:hidden;
   transition:width .22s cubic-bezier(.4,0,.2,1),transform .25s ease;
+  box-shadow:2px 0 16px rgba(15,23,41,.04);
 }
 /* collapsed / minimized state */
 .sidebar.collapsed{width:var(--nav-mini)}
@@ -203,7 +204,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .nseclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:0 8px;margin-bottom:4px}
 .nitem{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--t2);transition:background .15s,color .15s,padding-left .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px;min-height:44px;touch-action:manipulation}
 .nitem:hover{background:var(--gray-lt);color:var(--t1);padding-left:14px}
-.nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:700}
+.nitem.active{background:var(--accent-lt);color:var(--accent);font-weight:700;border-radius:10px}
 .nico{font-size:16px;width:20px;text-align:center;flex-shrink:0;line-height:1;display:flex;align-items:center;justify-content:center}
 .nbadge{margin-left:auto;font-size:11px;font-weight:700;background:var(--red-lt);color:var(--red);padding:2px 7px;border-radius:20px}
 .sfooter{margin-top:auto;padding:12px 10px;border-top:1px solid var(--border)}
@@ -218,7 +219,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 /* ─── TOPBAR ─── */
 .main{margin-left:var(--nav);flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
 .sidebar.collapsed~.main{margin-left:var(--nav-mini)}
-.topbar{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 1px 0 var(--border)}
+.topbar{height:var(--hdr);background:rgba(255,255,255,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px}
 .topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--t2);font-size:20px;flex-shrink:0}
 .hamburger:hover{background:var(--gray-lt)}
@@ -233,7 +234,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
 /* ─── PAGES ─── */
-.page{padding:20px 24px;display:none}
+.page{padding:24px 28px;display:none}
 .page.active{display:block}
 
 /* ─── STATS ROW ─── */
@@ -259,7 +260,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 /* ─── CARD ─── */
 .card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+  border-radius:16px;overflow:hidden;margin-bottom:16px;
   box-shadow:var(--shadow-sm);
 }
 .card:last-child{margin-bottom:0}
@@ -508,6 +509,150 @@ tbody tr:hover{background:#f0f6ff}
 
 /* ─── SECTION DIVIDER ─── */
 .sdiv{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* ══ DASHBOARD V4 – Ofspace-inspired ══ */
+
+/* top row */
+.db-toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.db-greeting{font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--t1);line-height:1.2}
+.db-subline{font-size:12.5px;color:var(--t3);margin-top:2px;font-weight:500}
+.db-month-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 13px;box-shadow:var(--shadow-sm);flex-shrink:0}
+.db-month-sel{border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:115px}
+
+/* ── KPI CARDS GRID (4 pastel cards, referensi Ofspace) ── */
+.db-kpi-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-bottom:16px;
+}
+@media(max-width:900px){.db-kpi-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.db-kpi-row{grid-template-columns:1fr 1fr}}
+.db-kpi{
+  background:var(--surface);border-radius:16px;
+  padding:20px 20px 16px;
+  border:1.5px solid transparent;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:transform .15s,box-shadow .15s;
+}
+.db-kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.db-kpi-arrow{
+  position:absolute;top:16px;right:16px;
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(0,0,0,.06);
+  display:grid;place-items:center;
+  color:var(--t2);font-size:13px;
+}
+/* pastel variants */
+.db-kpi.kpi-blue{background:#EBF4FF;border-color:#D0E7FF}
+.db-kpi.kpi-green{background:#EDFAF3;border-color:#C3EFD8}
+.db-kpi.kpi-amber{background:#FFF8EC;border-color:#FDEAC8}
+.db-kpi.kpi-purple{background:#F3F0FF;border-color:#DDD6FE}
+.db-kpi.kpi-blue .db-kpi-arrow{background:rgba(26,115,232,.12);color:var(--accent)}
+.db-kpi.kpi-green .db-kpi-arrow{background:rgba(22,163,74,.12);color:var(--green)}
+.db-kpi.kpi-amber .db-kpi-arrow{background:rgba(217,119,6,.12);color:var(--amber)}
+.db-kpi.kpi-purple .db-kpi-arrow{background:rgba(124,58,237,.12);color:var(--purple)}
+.db-kpi-divider{display:none}
+.db-kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:10px}
+.db-kpi-val{font-size:24px;font-weight:700;letter-spacing:-.03em;color:var(--t1);line-height:1;margin-bottom:5px}
+.db-kpi-val-alert{color:var(--red)}
+.db-kpi-trend{font-size:11.5px;font-weight:600;min-height:16px}
+.db-kpi-trend .up{color:var(--green)}
+.db-kpi-trend .down{color:var(--red)}
+.db-kpi-trend .flat{color:var(--t3)}
+
+/* ── ACTION HERO (quick actions di bawah KPI) ── */
+.db-action-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:1100px){.db-action-hero{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.db-action-hero{grid-template-columns:1fr}}
+.db-action-card{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 15px;border-radius:13px;
+  border:1.5px solid transparent;
+  cursor:pointer;font-family:var(--font);text-align:left;
+  transition:transform .15s,box-shadow .15s,border-color .15s,background .15s;
+}
+.db-action-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.db-action-card:active{transform:scale(.98)}
+.db-action-primary{background:#0f1729;border-color:#1e2d4a;color:#fff}
+.db-action-primary:hover{background:#1a2744;box-shadow:0 6px 20px rgba(15,23,41,.3)}
+.db-action-secondary{background:var(--surface);border-color:var(--border);color:var(--t1)}
+.db-action-secondary:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(26,115,232,.12)}
+.db-action-ghost{background:var(--surface);border-color:var(--border);color:var(--t1)}
+.db-action-ghost:hover{border-color:var(--t3);background:var(--gray-lt)}
+.db-action-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.db-action-primary .db-action-icon{background:rgba(255,255,255,.12);color:#fff}
+.db-action-secondary .db-action-icon{background:var(--accent-lt);color:var(--accent)}
+.db-action-ghost .db-action-icon{background:var(--gray-lt);color:var(--t2)}
+.db-action-label{font-size:13px;font-weight:700;line-height:1.2;margin-bottom:2px}
+.db-action-primary .db-action-label{color:#fff}
+.db-action-sub{font-size:11px;font-weight:500;line-height:1}
+.db-action-primary .db-action-sub{color:rgba(255,255,255,.45)}
+.db-action-ghost .db-action-sub,.db-action-secondary .db-action-sub{color:var(--t3)}
+.db-action-arrow{margin-left:auto;flex-shrink:0;opacity:.3;transition:opacity .15s,transform .15s}
+.db-action-card:hover .db-action-arrow{opacity:.7;transform:translateX(2px)}
+.db-action-primary .db-action-arrow{color:#fff}
+
+/* ── TARGET BAR ── */
+.db-target-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.db-target-bar-header{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+.db-target-bar-label{font-size:12.5px;font-weight:600;color:var(--t1);flex:1}
+.db-target-bar-pct{font-size:13px;font-weight:700;color:var(--accent)}
+.db-target-edit-btn{font-size:11.5px;color:var(--t3);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;transition:color .15s}
+.db-target-edit-btn:hover{color:var(--accent)}
+.db-target-track{width:100%;height:8px;background:var(--gray-md);border-radius:99px;overflow:hidden}
+.db-target-fill{height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:99px;transition:width .7s cubic-bezier(.22,1,.36,1)}
+.db-target-sub{font-size:11px;color:var(--t3);margin-top:7px;font-weight:500}
+.db-target-nudge{display:flex;align-items:center;gap:10px;padding:10px 16px;margin-bottom:16px}
+.db-target-nudge-btn{font-size:12px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;transition:opacity .15s}
+.db-target-nudge-btn:hover{opacity:.7}
+
+/* ── MAIN ROW: Chart + Feed ── */
+.db-main-row{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-bottom:14px}
+@media(max-width:1050px){.db-main-row{grid-template-columns:1fr}}
+.db-card-chart{}
+.db-card-feed{display:flex;flex-direction:column}
+
+/* order feed */
+.db-order-feed{flex:1;overflow-y:auto;max-height:300px;padding:4px 0}
+.db-order-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px;
+  border-bottom:1px solid var(--border);
+  transition:background .12s;cursor:default;
+}
+.db-order-item:last-child{border-bottom:none}
+.db-order-item:hover{background:var(--gray-lt)}
+.db-order-ch{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.db-order-ch.shopee{background:#ff6000}
+.db-order-ch.tiktok{background:#111}
+.db-order-ch.instagram{background:#e1306c}
+.db-order-buyer{flex:1;min-width:0}
+.db-order-name{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-order-meta{font-size:11px;color:var(--t3);margin-top:1px}
+.db-order-right{text-align:right;flex-shrink:0}
+.db-order-amount{font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap}
+.db-order-status{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;margin-top:2px;display:inline-block}
+.db-order-status.proses{background:var(--amber-lt);color:var(--amber)}
+.db-order-status.selesai{background:var(--green-lt);color:var(--green)}
+.db-order-status.batal{background:var(--gray-lt);color:var(--t3)}
+.db-feed-empty{padding:32px 18px;text-align:center;color:var(--t3);font-size:13px}
+
+.db-link-btn{font-size:11.5px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;transition:opacity .15s}
+.db-link-btn:hover{opacity:.7}
+
+/* bottom row */
+.db-bottom-row{display:grid;grid-template-columns:280px 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.db-bottom-row{grid-template-columns:1fr}}
+
+/* channel stats */
+.ch-stat-row{display:flex;align-items:center;gap:8px}
+.ch-stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ch-stat-name{font-size:12px;font-weight:600;flex:0 0 70px;color:var(--t1)}
+.ch-stat-bar-bg{flex:1;height:4px;background:var(--gray-md);border-radius:99px;overflow:hidden}
+.ch-stat-bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.ch-stat-cnt{font-size:12px;color:var(--t2);font-weight:600;white-space:nowrap;min-width:24px;text-align:right}
+
+/* ══ END DASHBOARD V3 ══ */
 
 
 /* ─── SOCIAL PLANNER ─── */
@@ -1117,6 +1262,17 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .size-tag.low{background:#f8d7da;color:#721c24}
 .size-tag.out{background:#e8e9ea;color:#999}
 
+
+/* ── DASHBOARD POLISH ── */
+.nseclbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:14px 14px 5px;margin:0}
+.db-bottom-row{display:grid;grid-template-columns:260px 1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:1100px){.db-bottom-row{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.db-bottom-row{grid-template-columns:1fr}}
+.db-link-btn{font-size:12px;font-weight:600;color:var(--t3);background:none;border:none;cursor:pointer;font-family:var(--font);padding:4px 8px;border-radius:7px;transition:background .15s,color .15s}
+.db-link-btn:hover{background:var(--gray-lt);color:var(--accent)}
+.chd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface)}
+.ctitle{font-size:13px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px}
+.ctitle::before{content:'';width:3px;height:14px;background:linear-gradient(180deg,var(--accent),#60a5fa);border-radius:3px;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -1234,54 +1390,187 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 
     <!-- ═══ DASHBOARD ═══ -->
     <div class="page active" id="page-dashboard">
-      <!-- Filter bulan dashboard -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 13px;box-shadow:var(--shadow-sm)">
-          <span style="font-size:14px">📅</span>
-          <select id="dashMonth" onchange="updateDashboard()" style="border:none;font-size:13px;font-weight:600;font-family:var(--font);background:transparent;color:var(--t1);outline:none;cursor:pointer;padding:0;min-width:120px"></select>
-        </div>
-        <div id="dashMonthLabel" style="font-size:12px;color:var(--t2);font-weight:500"></div>
-      </div>
-      <!-- 5 stat cards: poster, frame, omzet, order, stok menipis -->
-      <div class="srow">
-        <div class="scard"><div class="sico blue">🖼️</div><div><div class="sval" id="sPoster">0</div><div class="slbl">Total Poster</div></div></div>
-        <div class="scard"><div class="sico purple">🪟</div><div><div class="sval" id="sFrame">0</div><div class="slbl">Item Frame</div></div></div>
-        <div class="scard"><div class="sico green">💰</div><div><div class="sval" id="sOmzet">Rp 0</div><div class="slbl" id="sOmzetLbl">Omzet Bulan Ini</div></div></div>
-        <div class="scard"><div class="sico amber">🛒</div><div><div class="sval" id="sOrders">0</div><div class="slbl" id="sOrdersLbl">Order Bulan Ini</div></div></div>
-        <div class="scard"><div class="sico red">⚠️</div><div><div class="sval" id="sLow">0</div><div class="slbl">Stok Habis</div></div></div>
-      </div>
 
-      <div class="two-col">
-        <div class="card">
-          <div class="chd"><div class="ctitle">📈 Omzet 6 Bulan</div></div>
-          <div class="cbody"><div class="chart-wrap"><canvas id="chartOmzet"></canvas></div></div>
+      <!-- ── ROW 1: Greeting + month picker ── -->
+      <div class="db-toprow">
+        <div>
+          <div class="db-greeting" id="dashGreeting">Selamat pagi, Zacky 👋</div>
+          <div class="db-subline" id="dashDateStr">Welcome to dashboard</div>
         </div>
-        <div class="card">
-          <div class="chd"><div class="ctitle">🛒 Order per Channel</div></div>
-          <div class="cbody"><div class="chart-wrap"><canvas id="chartChannel"></canvas></div></div>
+        <div class="db-month-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t3);flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <select id="dashMonth" onchange="updateDashboard()" class="db-month-sel"></select>
         </div>
       </div>
 
-      <div class="two-col">
+      <!-- ── ROW 2: Action Hero ── -->
+      <div class="db-action-hero">
+        <button class="db-action-card db-action-primary" onclick="openOrderModal()">
+          <div class="db-action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
+          <div>
+            <div class="db-action-label">Catat Order Baru</div>
+            <div class="db-action-sub">Shopee · TikTok · Instagram</div>
+          </div>
+          <svg class="db-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="db-action-card db-action-secondary" onclick="openKeuModal()">
+          <div class="db-action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <div class="db-action-label">Catat Pengeluaran</div>
+            <div class="db-action-sub">Restock · Ongkir · Marketing</div>
+          </div>
+          <svg class="db-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="db-action-card db-action-ghost" onclick="goPage('transaksi',document.querySelector('.nitem[onclick*=transaksi]'))">
+          <div class="db-action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div>
+            <div class="db-action-label">Lihat Semua Order</div>
+            <div class="db-action-sub" id="dbOrderPending">— order pending</div>
+          </div>
+          <svg class="db-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="db-action-card db-action-ghost" onclick="goPage('inventory',document.querySelector('.nitem[onclick*=inventory]'));goTab('frames')">
+          <div class="db-action-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div>
+            <div class="db-action-label">Cek Stok Frame</div>
+            <div class="db-action-sub" id="dbStokAlert">Cek ketersediaan</div>
+          </div>
+          <svg class="db-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- ── ROW 3: 4 KPI Cards (pastel) ── -->
+      <div class="db-kpi-row">
+        <div class="db-kpi kpi-blue">
+          <div class="db-kpi-arrow">↗</div>
+          <div class="db-kpi-label">Omzet bulan ini</div>
+          <div class="db-kpi-val" id="sOmzet">Rp 0</div>
+          <div class="db-kpi-trend" id="trendOmzet"></div>
+        </div>
+        <div class="db-kpi kpi-green">
+          <div class="db-kpi-arrow">↗</div>
+          <div class="db-kpi-label">Order masuk</div>
+          <div class="db-kpi-val" id="sOrders">0</div>
+          <div class="db-kpi-trend" id="trendOrders"></div>
+        </div>
+        <div class="db-kpi kpi-amber">
+          <div class="db-kpi-arrow">↗</div>
+          <div class="db-kpi-label">Order batal/retur</div>
+          <div class="db-kpi-val" id="sBatal">0</div>
+          <div class="db-kpi-trend" id="sBatalSub"></div>
+        </div>
+        <div class="db-kpi kpi-purple">
+          <div class="db-kpi-arrow">↗</div>
+          <div class="db-kpi-label">Top produk</div>
+          <div class="db-kpi-val" id="sTopProd" style="font-size:16px;line-height:1.25">—</div>
+          <div class="db-kpi-trend" id="sTopProdSub"></div>
+        </div>
+      </div>
+
+      <!-- ── ROW 4: Target bar (visible only when set) ── -->
+      <div class="db-target-bar-wrap" id="dbTargetWrap" style="display:none">
+        <div class="db-target-bar-header">
+          <span class="db-target-bar-label">🎯 Target <span id="dbTargetMonth"></span></span>
+          <span class="db-target-bar-pct" id="dbTargetPct">0%</span>
+          <button class="db-target-edit-btn" onclick="openTargetModal()">Edit target</button>
+        </div>
+        <div class="db-target-track">
+          <div class="db-target-fill" id="dbTargetFill" style="width:0%"></div>
+        </div>
+        <div class="db-target-sub" id="dbTargetSub"></div>
+      </div>
+      <!-- target not set nudge -->
+      <div class="db-target-nudge" id="dbTargetNudge" style="display:none">
+        <span style="color:var(--t3);font-size:12.5px">Belum ada target omzet bulan ini.</span>
+        <button class="db-target-nudge-btn" onclick="openTargetModal()">Set target →</button>
+      </div>
+
+      <!-- ── ROW 5: Chart + Recent Orders side by side ── -->
+      <div class="db-main-row">
+        <!-- Chart omzet -->
+        <div class="card db-card-chart">
+          <div class="chd">
+            <div class="ctitle">Omzet 6 bulan</div>
+            <div id="dbChartLabel" style="font-size:11px;color:var(--t3);font-weight:600"></div>
+          </div>
+          <div class="cbody" style="padding:14px 18px 18px">
+            <div style="position:relative;height:210px"><canvas id="chartOmzet"></canvas></div>
+          </div>
+        </div>
+        <!-- Recent orders feed -->
+        <div class="card db-card-feed">
+          <div class="chd">
+            <div class="ctitle">Order terbaru</div>
+            <button onclick="goPage('transaksi',document.querySelector('.nitem[onclick*=transaksi]'))" class="db-link-btn">Semua →</button>
+          </div>
+          <div id="dbOrderFeed" class="db-order-feed"></div>
+        </div>
+      </div>
+
+      <!-- ── ROW 6: Channel split + Stok kritis ── -->
+      <div class="db-bottom-row">
+        <div class="card">
+          <div class="chd"><div class="ctitle">Channel</div></div>
+          <div class="cbody" style="padding:12px 16px">
+            <div style="position:relative;height:140px"><canvas id="chartChannel"></canvas></div>
+            <div id="channelStats" style="margin-top:12px;display:flex;flex-direction:column;gap:7px"></div>
+          </div>
+        </div>
         <div class="card">
           <div class="chd">
-            <div class="ctitle">🕐 Order Terbaru</div>
-            <button onclick="goPage('transaksi',document.querySelector('.nitem[onclick*=transaksi]'))" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Lihat semua →</button>
+            <div class="ctitle">Stok Frame Ready</div>
+            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=inventory]'));goTab('frames')" class="db-link-btn">Kelola →</button>
           </div>
-          <div class="twrap" style="max-height:260px;overflow-y:auto"><table>
-            <thead><tr><th>Pembeli</th><th>Channel</th><th>Total</th><th>Status</th></tr></thead>
-            <tbody id="tbRecentOrders"><tr class="erow"><td colspan="4">Belum ada order</td></tr></tbody>
+          <div class="twrap" style="max-height:240px;overflow-y:auto"><table>
+            <thead><tr><th>Frame</th><th>Ukuran</th><th>Stok</th></tr></thead>
+            <tbody id="tbFrameReady"><tr class="erow"><td colspan="3">Belum ada data</td></tr></tbody>
           </table></div>
         </div>
         <div class="card">
           <div class="chd">
-            <div class="ctitle">⚠️ Stok Habis / Menipis</div>
-            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=inventory]'));goTab('posters')" style="font-size:11.5px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0">Kelola stok →</button>
+            <div class="ctitle">Stok Poster Ready</div>
+            <button onclick="goPage('inventory',document.querySelector('.nitem[onclick*=inventory]'));goTab('posters')" class="db-link-btn">Kelola →</button>
           </div>
-          <div class="twrap" style="max-height:260px;overflow-y:auto"><table>
-            <thead><tr><th>Item</th><th>Stok</th><th>Status</th></tr></thead>
-            <tbody id="tbLow"><tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr></tbody>
+          <div class="twrap" style="max-height:240px;overflow-y:auto"><table>
+            <thead><tr><th>Poster</th><th>Ukuran</th><th>Stok</th></tr></thead>
+            <tbody id="tbPosterReady"><tr class="erow"><td colspan="3">Belum ada data</td></tr></tbody>
           </table></div>
+        </div>
+      </div>
+
+      <!-- compat hidden -->
+      <span id="sFrame" style="display:none">0</span>
+      <span id="dashMonthLabel" style="display:none"></span>
+      <span id="sOmzetLbl" style="display:none"></span>
+      <span id="sOrdersLbl" style="display:none"></span>
+      <span id="sPoster" style="display:none">0</span>
+    </div>
+
+    <!-- ── TARGET MODAL ── -->
+    <div class="moverlay" id="targetModal">
+      <div class="mbox" style="max-width:380px">
+        <div class="mhd">
+          <h3>🎯 Target Omzet</h3>
+          <button class="mclose" onclick="closeTargetModal()">✕</button>
+        </div>
+        <div id="targetModalMonthLabel" style="font-size:12px;color:var(--t2);margin-bottom:14px;font-weight:500"></div>
+        <div class="fg">
+          <label>Target Omzet (Rp)</label>
+          <input type="number" id="targetInput" placeholder="contoh: 5000000" min="0" step="100000"
+            onkeydown="if(event.key==='Enter')saveTarget()">
+        </div>
+        <div id="targetHint" style="font-size:12px;color:var(--t3);margin-bottom:16px"></div>
+        <div style="display:flex;gap:8px">
+          <button class="pbtn" style="flex:1" onclick="saveTarget()">Simpan</button>
+          <button class="pbtn outline" style="width:auto;padding:9px 16px" onclick="clearTarget()">Hapus</button>
         </div>
       </div>
     </div>
@@ -3708,7 +3997,15 @@ window._startListeners=function(){
   fbStat('connecting','Menghubungkan');
   const{db,collection,onSnapshot}=getDB();
 
-  // ── EAGER listeners: data kritis yang dibutuhkan cross-page ──
+  // ── Live clock: refresh today strip setiap 60 detik ──
+  if(!window._dashClock){
+    window._dashClock=setInterval(()=>{
+      if(document.getElementById('page-dashboard').classList.contains('active')){
+        updateDashboard();
+      }
+    },60000);
+  }
+
   // Posters & frames: dibutuhkan di Dashboard, Order, Margin, dll
   if(!window._listenersStarted.has('inventory_posters')){
     window._listenersStarted.add('inventory_posters');
@@ -3896,70 +4193,401 @@ function initDashMonthPicker(){
   }
 }
 
-function updateDashboard(){
-  initDashMonthPicker();
-  const sel=$('dashMonth');
-  const m=sel?.value||thisMonth();
-  const isCurrentMonth=m===thisMonth();
-  const mo=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal');
-  const omzet=mo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
-  $('sPoster').textContent=inv.posters.length;
-  $('sFrame').textContent=inv.frames.length;
-  $('sOmzet').textContent=rp(omzet);
-  $('sOrders').textContent=mo.length;
-  // update label dinamis
+/* ── DASHBOARD GREETING ── */
+function initDashGreeting(){
+  const h=new Date().getHours();
+  const g=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam';
+  if($('dashGreeting'))$('dashGreeting').textContent=g+', Zacky 👋';
+  if($('dashDateStr')){
+    const opts={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+    $('dashDateStr').textContent=new Date().toLocaleDateString('id-ID',opts);
+  }
+}
+
+/* ── TARGET MODAL ── */
+function openTargetModal(){
+  const m=($('dashMonth')?.value)||thisMonth();
   const d=new Date(m+'-01');
   const lbl=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-  if($('sOmzetLbl')) $('sOmzetLbl').textContent='Omzet '+lbl;
-  if($('sOrdersLbl')) $('sOrdersLbl').textContent='Order '+lbl;
-  if($('dashMonthLabel')){
-    const orderCount=mo.length;
-    $('dashMonthLabel').textContent=orderCount>0?`${orderCount} order · ${rp(omzet)}`:' ';
+  if($('targetModalMonthLabel'))$('targetModalMonthLabel').textContent='Target untuk '+lbl;
+  const existing=getTarget();
+  if($('targetInput'))$('targetInput').value=existing>0?existing:'';
+  if($('targetHint'))$('targetHint').textContent=existing>0?'Target saat ini: '+rp(existing):'';
+  $('targetModal').classList.add('active');
+  setTimeout(()=>$('targetInput')?.focus(),120);
+}
+function closeTargetModal(){$('targetModal').classList.remove('active');}
+
+/* ── Helpers: resolve bulan dashboard ke rtMonthKey format ── */
+function dashMonthToRtKey(){
+  const m=($('dashMonth')?.value)||thisMonth();
+  const [year,month]=m.split('-').map(Number);
+  return {key:rtMonthKey(year,month-1), year, month:month-1};
+}
+
+/* ── Baca target dari rt_config (Firestore cache → localStorage rt_settings_*) ── */
+function getTarget(){
+  const {key}=dashMonthToRtKey();
+  // 1. Firestore cache (diisi oleh listener rt_config di halaman Tasks)
+  if(window.rtConfigCache && window.rtConfigCache[key]?.target){
+    return window.rtConfigCache[key].target;
   }
-  const all=[...inv.posters,...inv.frames];
-  $('sLow').textContent=all.filter(i=>i.stock===0).length;
+  // 2. localStorage fallback (ditulis oleh rtPersistConfig)
+  try{
+    const cfg=JSON.parse(localStorage.getItem(`rt_settings_${key}`)||'null');
+    if(cfg?.target) return cfg.target;
+  }catch(e){}
+  return 0;
+}
+
+/* ── Simpan target ke rt_config — update cache + Firestore + localStorage ── */
+async function saveTarget(){
+  const v=parseFloat($('targetInput')?.value||'0');
+  if(v<=0){toast('Masukkan angka yang valid','error');return;}
+  const {key,year,month}=dashMonthToRtKey();
+  // Merge dengan data yang sudah ada agar budget/alokasi tidak terhapus
+  window.rtConfigCache=window.rtConfigCache||{};
+  const prev=window.rtConfigCache[key]||{};
+  const merged={...prev, target:v};
+  window.rtConfigCache[key]=merged;
+  // Simpan ke localStorage sebagai fallback instan
+  try{localStorage.setItem(`rt_settings_${key}`,JSON.stringify(merged));}catch(e){}
+  // Simpan ke Firestore (non-blocking)
+  try{
+    const {db,doc,setDoc}=getDB();
+    await setDoc(doc(db,'rt_config',key),{...merged,updatedAt:new Date().toISOString()});
+  }catch(e){console.warn('Gagal sync target ke Firestore:',e);}
+  closeTargetModal();
+  toast('Target tersimpan','success');
+  updateDashboard();
+  // Sinkronkan ke input di halaman Tasks jika sedang aktif
+  if($('rtTargetOmset')) $('rtTargetOmset').value=v;
+}
+
+/* ── Hapus target dari rt_config ── */
+async function clearTarget(){
+  const {key}=dashMonthToRtKey();
+  window.rtConfigCache=window.rtConfigCache||{};
+  const prev=window.rtConfigCache[key]||{};
+  const merged={...prev, target:0};
+  window.rtConfigCache[key]=merged;
+  try{localStorage.setItem(`rt_settings_${key}`,JSON.stringify(merged));}catch(e){}
+  try{
+    const {db,doc,setDoc}=getDB();
+    await setDoc(doc(db,'rt_config',key),{...merged,updatedAt:new Date().toISOString()});
+  }catch(e){console.warn('Gagal hapus target di Firestore:',e);}
+  if($('targetInput'))$('targetInput').value='';
+  if($('targetHint'))$('targetHint').textContent='';
+  closeTargetModal();
+  updateDashboard();
+  toast('Target dihapus','success');
+  if($('rtTargetOmset')) $('rtTargetOmset').value=8000000;
+}
+
+/* ── TREND HELPER ── */
+function getPrevMonth(m){const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
+function trendHTML(curr,prev){
+  if(!prev||prev===0)return'<span class="flat">—</span>';
+  const pct=(curr-prev)/prev*100;
+  const abs=Math.abs(pct).toFixed(0);
+  if(pct>1)return`<span class="up">↑ ${abs}% vs bulan lalu</span>`;
+  if(pct<-1)return`<span class="down">↓ ${abs}% vs bulan lalu</span>`;
+  return`<span class="flat">Sama seperti bulan lalu</span>`;
+}
+
+/* ── MAIN UPDATE ── */
+function updateDashboard(){
+  initDashMonthPicker();
+  initDashGreeting();
+  // Pastikan rtConfigCache terisi meski halaman Tasks belum pernah dibuka
+  if(!window._rtConfigLoaded && !window._rtConfigLoading){
+    window._rtConfigLoading=true;
+    try{
+      const {db}=getDB();
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js').then(({getDocs,collection:col})=>{
+        getDocs(col(db,'rt_config')).then(s=>{
+          window.rtConfigCache=window.rtConfigCache||{};
+          s.docs.forEach(d=>{window.rtConfigCache[d.id]=d.data();});
+          window._rtConfigLoaded=true;
+          window._rtConfigLoading=false;
+          updateDashboard();
+        }).catch(()=>{window._rtConfigLoading=false;});
+      }).catch(()=>{window._rtConfigLoading=false;});
+    }catch(e){window._rtConfigLoading=false;}
+    return;
+  }
+  const m=($('dashMonth')?.value)||thisMonth();
+  const isNow=m===thisMonth();
+  const d=new Date(m+'-01');
+  const lbl=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  const pm=getPrevMonth(m);
+
+  // data bulan ini vs bulan lalu
+  const mo=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal');
+  const pmo=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status!=='batal');
+  const omzet=mo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  const pomzet=pmo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
+  const aov=mo.length?Math.round(omzet/mo.length):0;
+  const paov=pmo.length?Math.round(pomzet/pmo.length):0;
+  const prosesCount=orders.filter(o=>o.status==='proses').length;
+
+  // ── KPI strip
+  if($('sOmzet'))$('sOmzet').textContent=rp(omzet);
+  if($('sOrders'))$('sOrders').textContent=mo.length;
+  // ── Order batal/retur bulan ini
+  const batalCount=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status==='batal').length;
+  const pbatalCount=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status==='batal').length;
+  if($('sBatal'))$('sBatal').textContent=batalCount;
+  if($('sBatalSub')){
+    if(batalCount===0)$('sBatalSub').innerHTML='<span class="flat">Tidak ada batal</span>';
+    else $('sBatalSub').innerHTML=batalCount>pbatalCount
+      ?`<span class="down">↑ ${batalCount-pbatalCount} vs bulan lalu</span>`
+      :`<span class="flat">${batalCount>0?batalCount+' order':'Sama seperti bulan lalu'}</span>`;
+  }
+  if($('trendOmzet'))$('trendOmzet').innerHTML=trendHTML(omzet,pomzet);
+  if($('trendOrders'))$('trendOrders').innerHTML=trendHTML(mo.length,pmo.length);
+
+  // ── Top produk bulan ini (berdasarkan frekuensi item di order)
+  const prodFreq={};
+  mo.forEach(o=>(o.items||[]).forEach(it=>{
+    const k=`${it.posterSize||'?'} cm`;
+    prodFreq[k]=(prodFreq[k]||0)+1;
+  }));
+  const topEntries=Object.entries(prodFreq).sort((a,b)=>b[1]-a[1]);
+  if($('sTopProd')){
+    if(topEntries.length===0){
+      $('sTopProd').textContent='Belum ada data';
+    } else {
+      const [topKey,topQty]=topEntries[0];
+      $('sTopProd').textContent=topKey;
+      $('sTopProdSub').innerHTML=`<span class="flat">${topQty}x dipesan bulan ini</span>`;
+    }
+  }
+
+  // ── Action sub labels
+  if($('dbOrderPending'))$('dbOrderPending').textContent=prosesCount?`${prosesCount} order perlu diproses`:'Semua order diproses';
+  if($('dbStokAlert'))$('dbStokAlert').textContent=batalCount?`${batalCount} order batal bulan ini`:'Tidak ada order batal';
+
+  // ── Target bar
+  const target=getTarget();
+  const monthLabel=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  if(target>0){
+    if($('dbTargetWrap'))$('dbTargetWrap').style.display='block';
+    if($('dbTargetNudge'))$('dbTargetNudge').style.display='none';
+    const pct=Math.min(Math.round(omzet/target*100),100);
+    if($('dbTargetFill'))$('dbTargetFill').style.width=pct+'%';
+    if($('dbTargetFill'))$('dbTargetFill').style.background=pct>=100?'linear-gradient(90deg,var(--green),#4ade80)':'linear-gradient(90deg,var(--accent),#60a5fa)';
+    if($('dbTargetPct'))$('dbTargetPct').textContent=pct+'%';
+    if($('dbTargetMonth'))$('dbTargetMonth').textContent=monthLabel;
+    if($('dbTargetSub')){
+      const rem=target-omzet;
+      $('dbTargetSub').textContent=rem>0?`Sisa ${rp(rem)} untuk capai target ${rp(target)}`:`🎉 Target ${rp(target)} tercapai!`;
+      $('dbTargetSub').style.color=pct>=100?'var(--green)':'var(--t3)';
+    }
+  } else {
+    if($('dbTargetWrap'))$('dbTargetWrap').style.display='none';
+    if($('dbTargetNudge'))$('dbTargetNudge').style.display=isNow?'flex':'none';
+  }
+
+  // compat
+  if($('sOmzetLbl'))$('sOmzetLbl').textContent='Omzet '+lbl;
+  if($('sOrdersLbl'))$('sOrdersLbl').textContent='Order '+lbl;
+  if($('sPoster'))$('sPoster').textContent=inv.posters.length;
+  if($('sFrame'))$('sFrame').textContent=inv.frames.length;
+  if($('dashMonthLabel'))$('dashMonthLabel').textContent='';
   $('navBadge').style.display=inv.frames.filter(f=>f.stock===0).length?'inline-block':'none';
-  $('navProses').style.display=orders.filter(o=>o.status==='proses').length?'inline-block':'none';
-  renderLow();buildChartOmzet();buildChartChannel();
+  $('navProses').style.display=prosesCount?'inline-block':'none';
+
+  renderDashboardOrders();renderLow();buildChartOmzet();buildChartChannel();
 }
 
 function renderLow(){
-  const tb=$('tbLow');
-  // Tampilkan habis + menipis (stok <= 3), urutkan dari yang paling sedikit
-  const items=[
-    ...inv.posters.filter(p=>p.stock<=3).map(p=>({lbl:p.name,sz:p.size,stk:p.stock,type:'Poster'})),
-    ...inv.frames.filter(f=>f.stock<=3).map(f=>({lbl:f.color+' '+f.size,sz:f.size,stk:f.stock,type:'Frame'}))
-  ].sort((a,b)=>a.stk-b.stk).slice(0,10);
-  if(!items.length){tb.innerHTML='<tr class="erow"><td colspan="3">Semua stok aman ✅</td></tr>';return;}
-  tb.innerHTML=items.map(i=>{
-    const b=stockBadge(i.stk);
-    return`<tr><td><strong>${esc(i.lbl)}</strong> <small style="color:var(--t2)">${esc(i.sz)} · ${i.type}</small></td><td><strong>${i.stk}</strong></td><td><span class="badge ${b.c}">${b.l}</span></td></tr>`;
-  }).join('');
+  // ── Stok Frame Ready ──
+  const tbFrame=$('tbFrameReady');
+  if(tbFrame){
+    const frames=[...inv.frames].sort((a,b)=>(b.stock||0)-(a.stock||0));
+    if(!frames.length){
+      tbFrame.innerHTML='<tr class="erow"><td colspan="3">Belum ada data frame</td></tr>';
+    } else {
+      tbFrame.innerHTML=frames.map(f=>{
+        const stk=f.stock||0;
+        const cls=stk===0?'red':stk<=2?'medium':'high';
+        const jenis=f.jenis?`<small style="color:var(--t2)">${esc(f.jenis)}</small> `:'';
+        return`<tr>
+          <td><span class="cdot ${esc((f.color||'').toLowerCase())}"></span><strong>${esc(f.color||'—')}</strong></td>
+          <td>${jenis}${esc(f.size||'—')}</td>
+          <td><strong style="color:var(--${stk===0?'red':stk<=2?'amber':'green'})">${stk}</strong></td>
+        </tr>`;
+      }).join('');
+    }
+  }
+  // ── Stok Poster Ready ──
+  const tbPoster=$('tbPosterReady');
+  if(tbPoster){
+    const posters=[...inv.posters].sort((a,b)=>(b.stock||0)-(a.stock||0));
+    if(!posters.length){
+      tbPoster.innerHTML='<tr class="erow"><td colspan="3">Belum ada data poster</td></tr>';
+    } else {
+      tbPoster.innerHTML=posters.map(p=>{
+        const stk=p.stock||0;
+        return`<tr>
+          <td><strong>${esc(p.name||'—')}</strong></td>
+          <td>${esc(p.size||'—')}</td>
+          <td><strong style="color:var(--${stk===0?'red':stk<=2?'amber':'green'})">${stk}</strong></td>
+        </tr>`;
+      }).join('');
+    }
+  }
 }
 
 function renderDashboardOrders(){
+  const feed=$('dbOrderFeed');
+  // keep compat with old tbRecentOrders if present
   const tb=$('tbRecentOrders');
-  const recent=[...orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,5);
-  if(!recent.length){tb.innerHTML='<tr class="erow"><td colspan="4">Belum ada order</td></tr>';return;}
-  tb.innerHTML=recent.map(o=>`<tr><td><strong>${esc(o.buyer)}</strong></td><td>${chBadge(o.channel)}</td><td><strong>${rp(o.finalTotal!=null?o.finalTotal:o.total)}</strong></td><td>${stBadge(o.status)}</td></tr>`).join('');
+  const recent=[...orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,8);
+
+  if(feed){
+    if(!recent.length){feed.innerHTML=`<div class="db-feed-empty">Belum ada order</div>`;return;}
+    const chName={shopee:'Shopee',tiktok:'TikTok',instagram:'Instagram/WA'};
+    feed.innerHTML=recent.map(o=>{
+      const total=o.finalTotal!=null?o.finalTotal:o.total||0;
+      const date=o.createdAt?o.createdAt.slice(0,10).split('-').reverse().join('/'):'—';
+      const ch=o.channel||'';
+      const st=o.status||'';
+      return`<div class="db-order-item">
+        <div class="db-order-ch ${esc(ch)}"></div>
+        <div class="db-order-buyer">
+          <div class="db-order-name">${esc(o.buyer||'—')}</div>
+          <div class="db-order-meta">${chName[ch]||esc(ch)} · ${date}</div>
+        </div>
+        <div class="db-order-right">
+          <div class="db-order-amount">${rp(total)}</div>
+          <div class="db-order-status ${esc(st)}">${st==='proses'?'Proses':st==='selesai'?'Selesai':st==='batal'?'Batal':esc(st)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if(tb){
+    if(!recent.length){tb.innerHTML='<tr class="erow"><td colspan="4">Belum ada order</td></tr>';return;}
+    tb.innerHTML=recent.map(o=>`<tr><td><strong>${esc(o.buyer)}</strong></td><td>${chBadge(o.channel)}</td><td><strong>${rp(o.finalTotal!=null?o.finalTotal:o.total)}</strong></td><td>${stBadge(o.status)}</td></tr>`).join('');
+  }
 }
 
 function getLast6Months(){const months=[];const now=new Date();for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);}return months;}
 
 function buildChartOmzet(){
   const months=getLast6Months();
-  const data=months.map(m=>orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal').reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0));
-  const labels=months.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('id-ID',{month:'short'});});
-  const ctx=$('chartOmzet').getContext('2d');
+  const allData=months.map(m=>orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal').reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0));
+  const allLabels=months.map(m=>{const[y,mo]=m.split('-');return new Date(y,mo-1).toLocaleDateString('id-ID',{month:'short'});});
+
+  // Filter hanya bulan yang ada data, min 2 titik agar line terlihat
+  let labels=allLabels, data=allData;
+  const hasAny=data.some(v=>v>0);
+  if(hasAny){
+    // Cari index pertama dan terakhir yang ada data, ambil rentang itu
+    let first=data.findIndex(v=>v>0);
+    let last=data.length-1-[...data].reverse().findIndex(v=>v>0);
+    // Minimal tampilkan 3 bulan (padding 1 bulan sebelum & sesudah jika ada)
+    first=Math.max(0,first-1);
+    labels=allLabels.slice(first,last+1);
+    data=allData.slice(first,last+1);
+  }
+
+  const total=allData.reduce((s,v)=>s+v,0);
+  if($('dbChartLabel'))$('dbChartLabel').textContent=total>0?rp(total)+' total':'';
+
+  const ctx=$('chartOmzet')?.getContext('2d');if(!ctx)return;
   if(chartOmzet)chartOmzet.destroy();
-  chartOmzet=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Omzet',data,backgroundColor:'rgba(26,115,232,.7)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v>=1000000?'Rp'+(v/1000000).toFixed(1)+'jt':v>=1000?'Rp'+(v/1000).toFixed(0)+'rb':'Rp'+v}}}}});
+
+  // Area gradient
+  const gradient=ctx.createLinearGradient(0,0,0,200);
+  gradient.addColorStop(0,'rgba(26,115,232,.18)');
+  gradient.addColorStop(1,'rgba(26,115,232,0)');
+
+  chartOmzet=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Omzet',
+        data,
+        fill:true,
+        backgroundColor:gradient,
+        borderColor:'rgba(26,115,232,.85)',
+        borderWidth:2.5,
+        pointBackgroundColor:'#fff',
+        pointBorderColor:'rgba(26,115,232,.9)',
+        pointBorderWidth:2,
+        pointRadius:5,
+        pointHoverRadius:7,
+        pointHoverBackgroundColor:'rgba(26,115,232,.9)',
+        tension:0.4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:c=>'  '+rp(c.raw),
+            title:t=>t[0].label
+          },
+          padding:12,cornerRadius:10,
+          backgroundColor:'rgba(15,23,41,.88)',
+          titleColor:'#fff',bodyColor:'#cbd5e1',
+          borderWidth:0,
+          displayColors:false,
+        }
+      },
+      scales:{
+        y:{
+          border:{display:false},
+          grid:{color:'rgba(0,0,0,.045)',drawTicks:false},
+          ticks:{
+            callback:v=>v>=1000000?(v/1000000).toFixed(1)+'jt':v>=1000?(v/1000).toFixed(0)+'rb':''+v,
+            font:{size:10.5},color:'#9ca3af',padding:6,maxTicksLimit:5
+          }
+        },
+        x:{
+          border:{display:false},
+          grid:{display:false},
+          ticks:{font:{size:10.5},color:'#9ca3af',padding:4}
+        }
+      }
+    }
+  });
 }
+
 function buildChartChannel(){
   const chs=['shopee','tiktok','instagram'];
+  const labels=['Shopee','TikTok','Instagram'];
+  const colors=['#ff6000','#1a1a2e','#e1306c'];
   const data=chs.map(ch=>orders.filter(o=>o.channel===ch&&o.status!=='batal').length);
-  const ctx=$('chartChannel').getContext('2d');
+  const total=data.reduce((s,v)=>s+v,0);
+  const ctx=$('chartChannel')?.getContext('2d');if(!ctx)return;
   if(chartChannel)chartChannel.destroy();
-  chartChannel=new Chart(ctx,{type:'doughnut',data:{labels:['Shopee','TikTok','Instagram/WA'],datasets:[{data,backgroundColor:['#ff6000','#111827','#e1306c'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  chartChannel=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:3,borderColor:'#fff',hoverOffset:5}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'70%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} order`},padding:8,cornerRadius:8}}
+    }
+  });
+  const cs=$('channelStats');
+  if(cs){
+    cs.innerHTML=chs.map((ch,i)=>{
+      const pct=total>0?Math.round(data[i]/total*100):0;
+      return`<div class="ch-stat-row">
+        <div class="ch-stat-dot" style="background:${colors[i]}"></div>
+        <div class="ch-stat-name">${labels[i]}</div>
+        <div class="ch-stat-bar-bg"><div class="ch-stat-bar-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
+        <div class="ch-stat-cnt">${data[i]}</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 /* ── ITEM BUILDER ── */
