@@ -381,65 +381,67 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .srchico{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;font-size:15px}
 
 /* ─── TABLE ─── */
-.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;border:1px solid var(--border)}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;border:1px solid var(--border);background:var(--surface)}
 .twrap table{border:none}
 table{width:100%;border-collapse:collapse;min-width:520px}
-thead tr{background:var(--gray-lt);position:sticky;top:0;z-index:2}
+thead tr{background:var(--surface);position:sticky;top:0;z-index:2}
 th{
-  padding:10px 14px;text-align:left;
-  font-size:10.5px;font-weight:700;color:var(--t2);
-  text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;
-  border-bottom:1.5px solid var(--border);
+  padding:11px 14px;text-align:left;
+  font-size:12px;font-weight:500;color:var(--t3);
+  text-transform:none;letter-spacing:0;white-space:nowrap;
+  border-bottom:1px solid var(--border);
 }
-td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:top}
+td{padding:14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:top}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:#f0f6ff}
+tbody tr{transition:background .12s ease}
+tbody tr:hover{background:var(--gray-lt)}
 .erow td{
   text-align:center;padding:44px 20px;
   color:var(--t3);font-size:13px;min-width:auto;vertical-align:middle;
 }
 
 /* item chips di tabel transaksi */
-.item-chips{display:flex;flex-direction:column;gap:3px}
+.item-chips{display:flex;flex-direction:column;gap:3px;max-height:88px;overflow-y:auto;padding-right:2px}
 .item-chip{display:inline-flex;align-items:center;gap:5px;background:var(--gray-lt);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:11.5px;line-height:1.4;white-space:nowrap;max-width:220px}
 .item-chip-poster{font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
 .item-chip-frame{color:var(--t2);flex-shrink:0}
 
 /* keterangan multi-line di keuangan */
-.desc-cell{max-width:260px}
-.desc-main{font-size:12.5px;color:var(--t1);line-height:1.5;word-break:break-word}
-.desc-sub{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.4}
+.desc-cell{max-width:260px;width:260px}
+.desc-scroll{max-height:84px;overflow-y:auto;padding-right:4px}
+.desc-main{font-size:12.5px;color:var(--t1);line-height:1.5;word-break:break-word;overflow-wrap:anywhere}
+.desc-sub{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.6;word-break:break-word}
 
 /* amount cell */
 .amt-cell{white-space:nowrap;font-variant-numeric:tabular-nums}
 
 /* col widths via class */
-.col-date{width:80px;white-space:nowrap;color:var(--t2);font-size:12px}
+.col-date{width:90px;white-space:nowrap;color:var(--t3);font-size:12.5px}
 .col-badge{width:90px}
 .col-action{width:1%;white-space:nowrap}
 .col-num{text-align:right;font-variant-numeric:tabular-nums}
 
 /* ─── BADGES ─── */
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
-.badge.high{background:var(--green-lt);color:var(--green)}
-.badge.medium{background:var(--amber-lt);color:var(--amber)}
-.badge.low{background:var(--red-lt);color:var(--red)}
-.badge.out{background:var(--gray-lt);color:var(--t3)}
-.badge.shopee{background:#ff6000;color:#fff}
-.badge.tiktok{background:#111;color:#fff}
-.badge.instagram{background:linear-gradient(135deg,#833ab4,#fd1d1d);color:#fff}
-.badge.income{background:var(--green-lt);color:var(--green)}
-.badge.expense{background:var(--red-lt);color:var(--red)}
-.badge.proses{background:var(--amber-lt);color:var(--amber)}
-.badge.selesai{background:var(--green-lt);color:var(--green)}
-.badge.batal{background:var(--gray-lt);color:var(--t3)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.01em;border:1px solid transparent;line-height:1.5}
+.badge.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.badge.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.badge.out{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
+.badge.shopee{background:#fff1e8;color:#d4530a;border-color:#fdd9bf}
+.badge.tiktok{background:#f1f1f3;color:#111;border-color:#dcdce0}
+.badge.instagram{background:#fce8f3;color:#a8246b;border-color:#f6c8e2}
+.badge.income{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.expense{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.badge.proses{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.badge.selesai{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.batal{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
 
 /* ─── ACTIONS ─── */
 .acell{display:flex;gap:4px;flex-wrap:wrap}
-.bsm{padding:5px 11px;border:none;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s,color .15s;white-space:nowrap}
-.bedit{background:var(--accent-lt);color:var(--accent)}.bedit:hover{background:#cce0fc}
-.bdel{background:var(--red-lt);color:var(--red)}.bdel:hover{background:#fecaca}
-.bgreen{background:var(--green-lt);color:var(--green)}.bgreen:hover{background:#bbf7d0}
+.bsm{padding:5px 11px;border:1px solid transparent;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+.bedit{background:var(--accent-lt);color:var(--accent)}.bedit:hover{background:#dce9fc}
+.bdel{background:var(--red-lt);color:var(--red)}.bdel:hover{background:#fbd5d5}
+.bgreen{background:var(--green-lt);color:var(--green)}.bgreen:hover{background:#c8f3da}
 
 /* ─── COLOR DOT ─── */
 .cdot{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0}
@@ -1006,13 +1008,13 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .kal-price-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
 .kal-price-input.modified{border-color:var(--amber);background:var(--amber-lt)}
 .kal-price-input.saved{border-color:var(--green);background:var(--green-lt)}
-.kal-group-row td{background:var(--gray-lt)!important;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;padding:6px 12px!important}
-.kal-badge-hpp{background:var(--accent-lt);color:var(--accent);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
-.kal-badge-jual{background:var(--green-lt);color:var(--green);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
-.kal-badge-margin-ok{background:var(--amber-lt);color:var(--amber);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
-.kal-badge-margin-bad{background:var(--red-lt);color:var(--red);display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700}
-.kal-badge-new{background:var(--amber-lt);color:var(--amber);font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px}
-.kal-badge-min{background:var(--purple-lt);color:var(--purple);font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px;white-space:nowrap}
+.kal-group-row td{background:var(--gray-lt)!important;font-size:12px;font-weight:600;color:var(--t2);text-transform:none;letter-spacing:0;padding:8px 14px!important}
+.kal-badge-hpp{background:var(--accent-lt);color:var(--accent);border:1px solid #bfdbfe;display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.kal-badge-jual{background:var(--green-lt);color:var(--green);border:1px solid #bbf0d2;display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.kal-badge-margin-ok{background:var(--amber-lt);color:var(--amber);border:1px solid #fce3ad;display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.kal-badge-margin-bad{background:var(--red-lt);color:var(--red);border:1px solid #fac9c9;display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.kal-badge-new{background:var(--amber-lt);color:var(--amber);border:1px solid #fce3ad;font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;margin-left:4px}
+.kal-badge-min{background:var(--purple-lt);color:var(--purple);border:1px solid #ddd2fb;font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;margin-left:4px;white-space:nowrap}
 
 /* ─── MODAL BUKTI PACKING ─── */
 .packing-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -1136,14 +1138,14 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .task-card-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px;line-height:1.4}
 .task-card.done-card .task-card-title{text-decoration:line-through;color:var(--t3)}
 .task-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
-.task-priority{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
-.task-priority.high{background:#fee2e2;color:#b91c1c}
-.task-priority.med{background:#fef3c7;color:#92400e}
-.task-priority.low{background:#dcfce7;color:#15803d}
-.task-status-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px}
-.task-status-badge.todo{background:#eff6ff;color:#1d4ed8}
-.task-status-badge.inprogress{background:#fef3c7;color:#b45309}
-.task-status-badge.done{background:#dcfce7;color:#15803d}
+.task-priority{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid transparent}
+.task-priority.high{background:#fee2e2;color:#b91c1c;border-color:#fac9c9}
+.task-priority.med{background:#fef3c7;color:#92400e;border-color:#fce3ad}
+.task-priority.low{background:#dcfce7;color:#15803d;border-color:#bbf0d2}
+.task-status-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid transparent}
+.task-status-badge.todo{background:#eff6ff;color:#1d4ed8;border-color:#c7dcfb}
+.task-status-badge.inprogress{background:#fef3c7;color:#b45309;border-color:#fce3ad}
+.task-status-badge.done{background:#dcfce7;color:#15803d;border-color:#bbf0d2}
 .task-date-lbl{font-size:10.5px;color:var(--t3)}
 .task-card-note{font-size:11.5px;color:var(--t2);line-height:1.5;margin-top:6px;border-top:1px solid var(--border);padding-top:5px}
 .task-filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
@@ -1238,9 +1240,9 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .rt-week-input{padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font);color:var(--t1);outline:none;background:var(--surface);transition:border-color .15s,box-shadow .15s}
 .rt-week-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,115,232,.1)}
 .rt-week-input::placeholder{color:var(--t3)}
-.rt-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.rt-badge.shopee{background:#fff2e8;color:#d4380d}
-.rt-badge.tiktok{background:#f0f0fe;color:#531dab}
+.rt-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid transparent}
+.rt-badge.shopee{background:#fff2e8;color:#d4380d;border-color:#fdd9bf}
+.rt-badge.tiktok{background:#f0f0fe;color:#531dab;border-color:#dcd6fb}
 .rt-prog-bar{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;min-width:60px}
 .rt-prog-fill{height:100%;border-radius:99px;transition:width .4s}
 .rt-prog-fill.on-track{background:var(--green)}
@@ -1249,18 +1251,20 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .rt-progress-cell{display:flex;align-items:center;gap:6px}
 
 .size-tag{
-  display:inline-block;
-  padding:4px 10px;
+  display:inline-flex;
+  align-items:center;
+  padding:3px 9px;
   margin:2px 4px 2px 0;
-  border-radius:6px;
-  font-size:12px;
+  border-radius:20px;
+  font-size:11.5px;
   font-weight:600;
   white-space:nowrap;
+  border:1px solid transparent;
 }
-.size-tag.high{background:#d4edda;color:#155724}
-.size-tag.medium{background:#fff3cd;color:#856404}
-.size-tag.low{background:#f8d7da;color:#721c24}
-.size-tag.out{background:#e8e9ea;color:#999}
+.size-tag.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.size-tag.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.size-tag.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.size-tag.out{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
 
 
 /* ── DASHBOARD POLISH ── */
@@ -2293,8 +2297,8 @@ function renderCMSTable(){
       <td><div style="width:44px;height:52px;border-radius:4px;overflow:hidden;background:${esc(p.bg||'#f5f2e9')};border:1px solid var(--border);display:flex;align-items:center;justify-content:center">
         ${p.img?`<img src="${esc(p.img)}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:9px;color:rgba(0,0,0,.25);font-weight:700">${esc((p.label||p.title||'?').substring(0,3).toUpperCase())}</span>`}
       </div></td>
-      <td><strong>${esc(p.title||'')}</strong><div style="font-size:11px;color:var(--t2);margin-top:2px">${esc((p.desc||'').substring(0,50))}${(p.desc||'').length>50?'...':''}</div></td>
-      <td><span style="font-size:11px;background:var(--gray-lt);padding:2px 7px;border-radius:4px">${esc((p.tags||[]).join(', '))}</span></td>
+      <td style="max-width:220px"><strong style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.title||'')}</strong><div style="font-size:11px;color:var(--t2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((p.desc||'').substring(0,50))}${(p.desc||'').length>50?'...':''}</div></td>
+      <td style="max-width:160px"><span class="badge out" style="display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom">${esc((p.tags||[]).join(', '))||'—'}</span></td>
       <td>${p.badge?`<span class="badge ${p.badge==='hot'?'selesai':p.badge==='new'?'proses':'batal'}">${p.badge==='hot'?'Terlaris':p.badge==='new'?'Baru':'Limited'}</span>`:`<span style="color:var(--t3)">—</span>`}</td>
       <td style="font-size:11px;line-height:1.8">${p.shopeeUrl?`<a href="${esc(p.shopeeUrl)}" target="_blank" style="color:var(--accent)">Shopee ↗</a><br>`:''}${p.tiktokUrl?`<a href="${esc(p.tiktokUrl)}" target="_blank" style="color:var(--accent)">TikTok ↗</a>`:''}</td>
       <td style="font-size:12px;color:var(--t2)">${p.order||'—'}</td>
@@ -4887,11 +4891,11 @@ function renderOrders(){
 
     return`<tr>
       <td class="col-date" style="vertical-align:middle">${fmtDate(o.createdAt)}</td>
-      <td style="vertical-align:middle">
-        <div style="font-weight:600;font-size:13px">${esc(o.buyer)}</div>
-        ${o.orderNo?`<div style="font-size:11px;color:var(--t2);margin-top:2px">${esc(o.orderNo)}</div>`:''}
+      <td style="vertical-align:middle;max-width:140px">
+        <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(o.buyer)}">${esc(o.buyer)}</div>
+        ${o.orderNo?`<div style="font-size:11px;color:var(--t2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.orderNo)}</div>`:''}
       </td>
-      <td><div class="item-chips">${itemChips||'—'}</div></td>
+      <td style="max-width:240px"><div class="item-chips">${itemChips||'—'}</div></td>
       <td class="col-badge" style="vertical-align:middle">${chBadge(o.channel)}</td>
       <td class="col-num" style="vertical-align:middle;font-size:12.5px;color:var(--t2)">${rp(o.total)}</td>
       <td style="vertical-align:middle">${finalCell}</td>
@@ -5263,9 +5267,9 @@ function renderKeuangan(){
     if(k.restockItems?.length) descSub=k.restockItems.map(i=>{
       const priceInfo = (i.unitPrice && i.unitPrice > 0) ? ` · ${rp(i.unitPrice)}/pcs` : '';
       const subtotalInfo = (i.unitPrice && i.unitPrice > 0) ? ` = ${rp(i.unitPrice * i.qty)}` : '';
-      return `${esc(i.color)} ${esc(i.size)} ×${i.qty}pcs${priceInfo}${subtotalInfo}`;
-    }).join(' &nbsp;|&nbsp; ');
-    else if(k.cetakUkuran)    descSub=`📐 ${esc(k.cetakUkuran)} cm · ${esc(k.cetakBahan)}`;
+      return `<div>${esc(i.color)} ${esc(i.size)} ×${i.qty}pcs${priceInfo}${subtotalInfo}</div>`;
+    }).join('');
+    else if(k.cetakUkuran)    descSub=`<div>📐 ${esc(k.cetakUkuran)} cm · ${esc(k.cetakBahan)}</div>`;
     const autoTag=k.sourceOrderId?`<span style="font-size:10px;background:var(--accent-lt);color:var(--accent);padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px;vertical-align:middle">auto</span>`:'';
     return`<tr>
       <td class="col-date" style="vertical-align:middle">${esc(k.date||'—')}</td>
@@ -5276,8 +5280,10 @@ function renderKeuangan(){
         <span style="font-size:12px;font-weight:600">${esc(catLbl[k.cat]||k.cat)}</span>${autoTag}
       </td>
       <td class="desc-cell" style="vertical-align:middle">
-        <div class="desc-main">${esc(k.desc)}</div>
-        ${descSub?`<div class="desc-sub">${descSub}</div>`:''}
+        <div class="desc-scroll">
+          <div class="desc-main">${esc(k.desc)}</div>
+          ${descSub?`<div class="desc-sub">${descSub}</div>`:''}
+        </div>
       </td>
       <td class="col-num" style="vertical-align:middle">
         <strong style="color:${k.type==='income'?'var(--green)':'var(--red)'};">${rp(k.amount)}</strong>
@@ -5380,7 +5386,7 @@ function renderLaporan(){
     prodMap[k].total+=Math.round((o.finalTotal!=null?o.finalTotal:o.total||0)/(o.items?.length||1));
   }));
   const top=Object.entries(prodMap).sort((a,b)=>b[1].qty-a[1].qty).slice(0,5);
-  $('tbTopProduct').innerHTML=top.length?top.map(([n,d])=>`<tr><td>${esc(n)}</td><td><strong>${d.qty}</strong></td><td>${rp(d.total)}</td></tr>`).join(''):'<tr class="erow"><td colspan="3">Belum ada data</td></tr>';
+  $('tbTopProduct').innerHTML=top.length?top.map(([n,d])=>`<tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(n)}">${esc(n)}</td><td><strong>${d.qty}</strong></td><td>${rp(d.total)}</td></tr>`).join(''):'<tr class="erow"><td colspan="3">Belum ada data</td></tr>';
 
   // Channel
   const chData=['shopee','tiktok','instagram'].map(ch=>{
@@ -5449,7 +5455,7 @@ function renderPosters(q=''){
     return `<tr>
       <td style="vertical-align:middle;width:40px"><input type="checkbox" class="poster-check" data-ids="${posterIds}" ${isChecked?'checked':''} onchange="togglePosterSelect(this)"></td>
       <td style="vertical-align:middle"><strong style="font-size:13px">${esc(name)}</strong></td>
-      <td style="vertical-align:middle">${sizeDisplay}</td>
+      <td style="vertical-align:middle;max-width:280px"><div style="display:flex;flex-wrap:wrap;gap:0">${sizeDisplay}</div></td>
       <td style="vertical-align:middle"><span class="badge ${stockB.c}" style="font-size:12px;font-weight:700">${totalStock}</span></td>
       <td class="col-action" style="vertical-align:middle">
         <div style="display:flex;gap:4px">
@@ -7723,15 +7729,15 @@ function onOrderFrameJenisChange(){
         <span id="rtImportTaskCount">0 task ditemukan</span>
         <span style="font-weight:400;color:var(--t3)">Centang/hapus sebelum import</span>
       </div>
-      <div style="overflow-x:auto;max-height:340px;overflow-y:auto;border-radius:10px;border:1px solid var(--border)">
-        <table style="width:100%;border-collapse:collapse;min-width:560px">
-          <thead style="position:sticky;top:0;z-index:2">
-            <tr style="background:var(--gray-lt)">
-              <th style="padding:8px 10px;width:36px"><input type="checkbox" id="rtImportSelectAll" onchange="rtImportToggleAll(this)" checked></th>
-              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px">Nama Task</th>
-              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;white-space:nowrap">Tanggal</th>
-              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase">Prioritas</th>
-              <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase">Kategori</th>
+      <div class="twrap" style="max-height:340px;overflow-y:auto">
+        <table style="min-width:560px">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="rtImportSelectAll" onchange="rtImportToggleAll(this)" checked></th>
+              <th>Nama Task</th>
+              <th>Tanggal</th>
+              <th>Prioritas</th>
+              <th>Kategori</th>
             </tr>
           </thead>
           <tbody id="rtImportTableBody"></tbody>
@@ -7937,19 +7943,21 @@ function rtRenderImportPreview(){
   });
 
   const prioColor = {high:'var(--red)',med:'var(--amber)',low:'var(--green)'};
+  const prioTint  = {high:'var(--red-lt)',med:'var(--amber-lt)',low:'var(--green-lt)'};
+  const prioBorder= {high:'#fac9c9',med:'#fce3ad',low:'#bbf0d2'};
   const prioLbl   = {high:'Wajib',med:'Penting',low:'Nice'};
   const catIco    = {shopee:'🛍️',tiktok:'🎵',konten:'🎬',operasional:'⚙️',marketing:'📣',lainnya:'📌'};
 
   $('rtImportTaskCount').textContent = `${remapped.length} task ditemukan`;
   $('rtImportTableBody').innerHTML = remapped.map((t,i) => `
-    <tr style="${i%2===0?'':'background:var(--gray-lt)'}">
-      <td style="padding:8px 10px;text-align:center">
+    <tr>
+      <td style="text-align:center;vertical-align:middle">
         <input type="checkbox" class="rt-import-chk" data-idx="${i}" checked>
       </td>
-      <td style="padding:8px 10px;font-size:12.5px;font-weight:500;color:var(--t1)">${esc(t.title)}</td>
-      <td style="padding:8px 10px;font-size:12px;color:var(--t2);white-space:nowrap">${t.date||'—'}</td>
-      <td style="padding:8px 10px"><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${prioColor[t.priority]+'22'};color:${prioColor[t.priority]}">${prioLbl[t.priority]||t.priority}</span></td>
-      <td style="padding:8px 10px;font-size:12px">${catIco[t.category]||'📌'} ${t.category}</td>
+      <td style="font-weight:500;color:var(--t1);vertical-align:middle">${esc(t.title)}</td>
+      <td class="col-date" style="vertical-align:middle">${t.date||'—'}</td>
+      <td style="vertical-align:middle"><span class="badge" style="background:${prioTint[t.priority]};color:${prioColor[t.priority]};border-color:${prioBorder[t.priority]}">${prioLbl[t.priority]||t.priority}</span></td>
+      <td style="font-size:12.5px;vertical-align:middle">${catIco[t.category]||'📌'} ${t.category}</td>
     </tr>
   `).join('');
 
