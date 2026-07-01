@@ -3409,6 +3409,8 @@ const RT_WEEK_TASKS = [
   ['Flash Deal Round 2','Monitoring Omset Akhir Bulan','Closing Recap'],
 ];
 
+function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
 function rtGetWeeks(year, month){
   // month: 0-indexed. Always returns exactly 4 weeks per month.
   // Week 1: 1–7, Week 2: 8–14, Week 3: 15–21, Week 4: 22–last day
@@ -3423,7 +3425,9 @@ function rtGetWeeks(year, month){
   return boundaries.map(([ s, e ], i) => {
     const start = new Date(year, month, s);
     const end   = new Date(year, month, e);
-    return { num: i+1, start, end, label: `${fmt(start)} – ${fmt(end)}` };
+    // startStr/endStr: format YYYY-MM-DD berdasarkan tanggal LOKAL (bukan toISOString yang bisa geser ±1 hari
+    // karena dikonversi ke UTC dulu — krusial untuk WIB/WITA/WIT yang offsetnya +7/+8/+9 dari UTC).
+    return { num: i+1, start, end, startStr: ymd(start), endStr: ymd(end), label: `${fmt(start)} – ${fmt(end)}` };
   });
 }
 
@@ -3533,12 +3537,15 @@ function rtCalc(){
   const defWeekMinOrd  = Math.ceil(minOrders / wCount);
 
   // Realisasi per minggu dari orders (auto), dipecah per channel
-  function weekRevAuto(wStart, wEnd){
+  // ✅ FIX: pakai perbandingan STRING tanggal (YYYY-MM-DD) dari createdAt, bukan new Date() + Date compare.
+  // Sebelumnya order yang dicatat malam hari (WIB) bisa "geser" ke hari berikutnya saat di-parse sebagai UTC,
+  // menyebabkan order minggu lalu ikut kehitung di minggu pertama bulan berikutnya.
+  function weekRevAuto(wStartStr, wEndStr){
     const res = {shopee:0, tiktok:0, instagram:0, total:0};
     (orders||[]).forEach(o=>{
       if(o.status==='batal') return;
-      const d = new Date(o.createdAt||'');
-      if(isNaN(d) || d<wStart || d>wEnd) return;
+      const dateStr = (o.createdAt||'').slice(0,10);
+      if(!dateStr || dateStr<wStartStr || dateStr>wEndStr) return;
       const val = o.finalTotal!=null?o.finalTotal:(o.total||0);
       const ch  = o.channel||'instagram';
       res[ch] = (res[ch]||0) + val;
@@ -3548,11 +3555,9 @@ function rtCalc(){
   }
 
   // Hitung task per minggu dari taskItems
-  function weekSpendAuto(wStart, wEnd){
-    const ws = wStart.toISOString().split('T')[0];
-    const we = wEnd.toISOString().split('T')[0];
+  function weekSpendAuto(wStartStr, wEndStr){
     const entries = (keuangan||[])
-      .filter(k=>k.type==='expense' && k.cat==='marketing' && k.date>=ws && k.date<=we);
+      .filter(k=>k.type==='expense' && k.cat==='marketing' && k.date>=wStartStr && k.date<=wEndStr);
     const total   = entries.reduce((s,k)=>s+(k.amount||0),0);
     const shopee  = entries.filter(k=>k.adPlatform==='shopee').reduce((s,k)=>s+(k.amount||0),0);
     const tiktok  = entries.filter(k=>k.adPlatform==='tiktok').reduce((s,k)=>s+(k.amount||0),0);
@@ -3560,11 +3565,9 @@ function rtCalc(){
     return {total, shopee, tiktok, other};
   }
 
-  function weekTaskCount(wStart, wEnd){
-    const ws = wStart.toISOString().split('T')[0];
-    const we = wEnd.toISOString().split('T')[0];
-    const all  = taskItems.filter(t=>t.date>=ws&&t.date<=we).length;
-    const done = taskItems.filter(t=>t.date>=ws&&t.date<=we&&t.status==='done').length;
+  function weekTaskCount(wStartStr, wEndStr){
+    const all  = taskItems.filter(t=>t.date>=wStartStr&&t.date<=wEndStr).length;
+    const done = taskItems.filter(t=>t.date>=wStartStr&&t.date<=wEndStr&&t.status==='done').length;
     return {all, done};
   }
 
@@ -3577,7 +3580,7 @@ function rtCalc(){
     const wNote      = saved.note    || '';
     const wRoas      = (wShopeeB+wTiktokB)>0 ? (wTarget/(wShopeeB+wTiktokB)).toFixed(1) : '—';
 
-    const autoBreak  = weekRevAuto(w.start, w.end);
+    const autoBreak  = weekRevAuto(w.startStr, w.endStr);
     const manualRev  = saved.rev ?? null;
     const rev        = manualRev !== null ? manualRev : autoBreak.total;
     const revSrc     = manualRev !== null ? '✏️' : '🔄';
@@ -3587,14 +3590,14 @@ function rtCalc(){
     const isCur      = now>=w.start && now<=w.end;
     const rowBg      = isCur ? 'background:var(--accent-lt)' : '';
 
-    const {all:tAll, done:tDone} = weekTaskCount(w.start, w.end);
+    const {all:tAll, done:tDone} = weekTaskCount(w.startStr, w.endStr);
     const tPct = tAll>0 ? Math.round((tDone/tAll)*100) : 0;
 
     // Breakdown realisasi per platform (selalu dari data order, walau total pakai manual)
     const breakdownTxt = `🛍️ ${rtRp(autoBreak.shopee)} · 🎵 ${rtRp(autoBreak.tiktok)}`;
 
     // Spend iklan aktual dari keuangan kategori marketing
-    const wSpendObj = weekSpendAuto(w.start, w.end);
+    const wSpendObj = weekSpendAuto(w.startStr, w.endStr);
     const wSpend    = wSpendObj.total;
     const wSpendShopee = wSpendObj.shopee;
     const wSpendTiktok = wSpendObj.tiktok;
@@ -3708,7 +3711,7 @@ function rtCalc(){
       <!-- FOOTER: task + catatan -->
       <div class="rt-wcard-footer" style="flex-direction:column;align-items:stretch;gap:7px">
         <div style="display:flex;align-items:center;gap:8px;cursor:pointer"
-          onclick="rtFilterWeek('${w.start.toISOString().split('T')[0]}','${w.end.toISOString().split('T')[0]}','Minggu ${w.num}')"
+          onclick="rtFilterWeek('${w.startStr}','${w.endStr}','Minggu ${w.num}')"
           title="Klik untuk lihat task minggu ini">
           <span style="font-size:10px;color:var(--t3);white-space:nowrap">Task ${tDone}/${tAll}</span>
           <div class="rt-wcard-task-bar"><div class="rt-wcard-task-fill" style="width:${tPct}%"></div></div>
