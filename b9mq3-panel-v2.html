@@ -2476,7 +2476,7 @@ async function cmsDel(id){
     <div class="sdiv">Frame</div>
     <div class="fg">
       <label>Jenis Frame</label>
-      <select id="iFrameJenis" onchange="onOrderFrameJenisChange()">
+      <select id="iFrameJenis" onchange="onOrderFrameJenisChange();checkFrameStockUI()">
         <option value="">Pilih Jenis</option>
         <option value="Block">Frame Block</option>
         <option value="Minimalis">Frame Minimalis</option>
@@ -2484,7 +2484,7 @@ async function cmsDel(id){
     </div>
     <div class="fg">
       <label>Warna Frame</label>
-      <select id="iFrameColor">
+      <select id="iFrameColor" onchange="checkFrameStockUI()">
         <option value="">Pilih Warna</option>
       </select>
       <div class="ferr" id="iFrameColorE"></div>
@@ -2494,6 +2494,12 @@ async function cmsDel(id){
       <input type="text" id="iFrameSize" readonly style="background:var(--gray-lt)">
       <div class="ferr" id="iFrameSizeE"></div>
     </div>
+    <div class="fg">
+      <label>Jumlah (Qty)</label>
+      <input type="number" id="iQty" min="1" max="999" value="1" oninput="if(this.value<1)this.value=1;checkFrameStockUI()">
+      <small style="color:var(--t3)">Contoh: pesanan 5 poster sama → isi 5, tidak perlu ulangi form.</small>
+    </div>
+    <div id="iStockStatus" style="display:none;margin-bottom:12px"></div>
     <div class="fg">
       <label>Catatan Item (opsional)</label>
       <input type="text" id="iNote" placeholder="Misal: cetak glossy, sudut rounded..." maxlength="200">
@@ -4598,22 +4604,71 @@ function buildChartChannel(){
 function renderItemList(){
   const el=$('itemList');
   if(!pendingItems.length){el.innerHTML='<div style="text-align:center;color:var(--t3);font-size:13px;padding:8px">Belum ada item</div>';return;}
-  el.innerHTML=pendingItems.map((it,i)=>`
+  const groups=groupOrderItems(pendingItems);
+  el.innerHTML=groups.map((it,gi)=>`
     <div class="item-row">
       <div class="item-row-info">
         <div class="item-row-name">🖼️ ${esc(it.posterName)} <span style="font-size:11px;color:var(--t2)">(${esc(it.posterSize)})</span></div>
         <div class="item-row-sub"><span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>Frame ${esc(it.frameJenis||'')} ${esc(it.frameColor)} ${esc(it.frameSize)}${it.note?` · ${esc(it.note)}`:''}</div>
       </div>
-      <button class="item-row-del" onclick="removeItem(${i})">✕</button>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:2px;background:var(--gray-lt);border-radius:7px;padding:2px">
+          <button type="button" onclick="adjustItemQty(${gi},-1)" style="width:24px;height:24px;border:none;background:var(--surface);border-radius:5px;font-weight:700;cursor:pointer;color:var(--t1);font-family:var(--font)">−</button>
+          <span style="min-width:22px;text-align:center;font-size:13px;font-weight:700">${it.qty}</span>
+          <button type="button" onclick="adjustItemQty(${gi},1)" style="width:24px;height:24px;border:none;background:var(--surface);border-radius:5px;font-weight:700;cursor:pointer;color:var(--t1);font-family:var(--font)">+</button>
+        </div>
+        <button class="item-row-del" onclick="removeItemGroup(${gi})">✕</button>
+      </div>
     </div>`).join('');
 }
 
-function removeItem(i){pendingItems.splice(i,1);renderItemList();}
+// ── Kelompokkan item identik (poster+frame+catatan sama) supaya tampil ringkas dengan qty ──
+function orderItemKey(it){
+  return [it.posterName,it.posterSize,it.isCustomPoster?1:0,it.posterId||'',it.frameJenis||'',it.frameColor,it.frameSize,it.note||''].join('␟');
+}
+function groupOrderItems(items){
+  const map=new Map();
+  const order=[];
+  (items||[]).forEach(it=>{
+    const key=orderItemKey(it);
+    if(!map.has(key)){map.set(key,{...it,qty:0});order.push(key);}
+    map.get(key).qty++;
+  });
+  return order.map(k=>map.get(k));
+}
+
+function adjustItemQty(groupIdx,delta){
+  const groups=groupOrderItems(pendingItems);
+  const g=groups[groupIdx];
+  if(!g)return;
+  if(delta>0){
+    const frame=findFrame(g.frameJenis,g.frameColor,g.frameSize);
+    const available=frame?frame.stock-g.qty:0;
+    if(!frame||available<=0){
+      toast(`Stok Frame ${g.frameJenis||''} ${g.frameColor} ${g.frameSize} tidak cukup untuk ditambah. Buka "Tambah Item" untuk beli stok dulu.`,'error');
+      return;
+    }
+    pendingItems.push({posterName:g.posterName,posterId:g.posterId,isCustomPoster:g.isCustomPoster,posterSize:g.posterSize,frameJenis:g.frameJenis,frameColor:g.frameColor,frameSize:g.frameSize,note:g.note});
+  }else{
+    const idx=pendingItems.findIndex(it=>orderItemKey(it)===orderItemKey(g));
+    if(idx>-1)pendingItems.splice(idx,1);
+  }
+  renderItemList();
+}
+
+function removeItemGroup(groupIdx){
+  const groups=groupOrderItems(pendingItems);
+  const g=groups[groupIdx];
+  if(!g)return;
+  pendingItems=pendingItems.filter(it=>orderItemKey(it)!==orderItemKey(g));
+  renderItemList();
+}
 
 function openItemModal(){
   clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
   $('iPosterSelect').value='';$('iPosterCustomName').value='';$('iPosterSize').value='';
   $('iFrameJenis').value='';$('iFrameColor').innerHTML='<option value="">Pilih Warna</option>';$('iFrameSize').value='';$('iNote').value='';
+  $('iQty').value='1';$('iStockStatus').style.display='none';$('iStockStatus').innerHTML='';
   $('customPosterNameGroup').style.display='none';
   
   // Populate poster dropdown from inventory
@@ -4660,6 +4715,95 @@ function onPosterChange(){
 function syncFrameSize(){
   const posterSize=$('iPosterSize').value;
   $('iFrameSize').value=posterSize?posterSize+' cm':'';
+  checkFrameStockUI();
+}
+
+function findFrame(jenis,color,size){
+  return inv.frames.find(f=>f.jenis===jenis&&f.color===color&&f.size===size)
+    || inv.frames.find(f=>f.color===color&&f.size===size); // fallback data lama tanpa jenis
+}
+
+// ── Cek ketersediaan stok frame secara live di form Tambah Item, + tombol beli cepat ──
+function checkFrameStockUI(){
+  const box=$('iStockStatus');
+  if(!box)return;
+  const jenis=$('iFrameJenis').value;
+  const color=$('iFrameColor').value;
+  const posterSize=$('iPosterSize').value;
+  const qty=Math.max(1,parseInt($('iQty').value,10)||1);
+  if(!jenis||!color||!posterSize){box.style.display='none';box.innerHTML='';return;}
+
+  const frame=findFrame(jenis,color,posterSize);
+  const stock=frame?frame.stock:0;
+  box.style.display='block';
+
+  if(stock>=qty){
+    box.innerHTML=`<div style="display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--green-lt);border-radius:8px;font-size:12.5px;color:var(--green);font-weight:600">✅ Stok cukup — tersedia ${stock} pcs</div>`;
+    return;
+  }
+
+  const shortfall=qty-stock;
+  const suggestedPrice=getRestockFramePrice(posterSize,jenis);
+  box.innerHTML=`
+    <div style="padding:10px 12px;background:var(--red-lt);border-radius:8px;border:1px solid #fecaca">
+      <div style="font-size:12.5px;color:var(--red);font-weight:600;margin-bottom:8px">⚠️ Stok Frame ${esc(jenis)} ${esc(color)} ${esc(posterSize)} tidak cukup (tersedia ${stock}, butuh ${qty})</div>
+      <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:64px">
+          <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:3px">Beli qty</label>
+          <input type="number" id="iBuyQty" min="1" value="${shortfall}" style="width:100%;font-size:13px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font)">
+        </div>
+        <div style="flex:1;min-width:90px">
+          <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:3px">Harga satuan (Rp)</label>
+          <input type="number" id="iBuyPrice" min="0" value="${suggestedPrice||''}" placeholder="0" style="width:100%;font-size:13px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font)">
+        </div>
+        <button type="button" onclick="quickBuyFrameForOrder(this)" style="height:33px;padding:0 12px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">🛒 Beli Sekarang</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--t3);margin-top:6px">Beli langsung tercatat sebagai pengeluaran Restock Frame & stok otomatis bertambah.</div>
+    </div>`;
+}
+
+// ── Beli frame langsung dari form Order tanpa pindah menu ──────────
+async function quickBuyFrameForOrder(btn){
+  const jenis=$('iFrameJenis').value;
+  const color=$('iFrameColor').value;
+  const size=$('iPosterSize').value;
+  const qty=parseInt(($('iBuyQty')||{}).value,10);
+  const unitPrice=parseInt(($('iBuyPrice')||{}).value,10);
+  if(!qty||qty<1){toast('Isi jumlah beli terlebih dahulu.','error');return;}
+  if(!unitPrice||unitPrice<=0){toast('Isi harga satuan terlebih dahulu.','error');return;}
+
+  const origTxt=btn?btn.textContent:null;
+  if(btn){btn.textContent='⏳...';btn.disabled=true;}
+
+  try{
+    const amount=unitPrice*qty;
+    const keuItem={
+      id:`keu_${Date.now()}`,
+      type:'expense',cat:'restock',amount,
+      date:new Date().toISOString().split('T')[0],
+      desc:`Restock: ${color} ${size} ${qty}pcs @${rp(unitPrice)} (via Catat Order)`,
+      restockItems:[{jenis,color,size,qty,unitPrice}],
+      createdAt:new Date().toISOString()
+    };
+    await fsSet('keuangan',keuItem);
+    keuangan.push(keuItem);
+
+    let frame=findFrame(jenis,color,size);
+    if(frame){
+      frame.stock+=qty;
+      await fsSet('inventory_frames',frame);
+    }else{
+      const newFrame={id:`frame_${jenis}_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_'),jenis,color,size,stock:qty,createdAt:new Date().toISOString()};
+      await fsSet('inventory_frames',newFrame);
+      inv.frames.push(newFrame);
+    }
+    toast(`✅ Stok Frame ${jenis} ${color} ${size} +${qty} pcs. Lanjutkan tambahkan item ke order.`);
+    checkFrameStockUI();
+  }catch(err){
+    toast('Gagal beli stok: '+err.message,'error');
+  }finally{
+    if(btn){btn.textContent=origTxt;btn.disabled=false;}
+  }
 }
 
 function closeItemModal(){$('itemModal').classList.remove('active');releaseFocus($('itemModal'));}
@@ -4673,6 +4817,7 @@ function addItemToOrder(){
   const frameColor=$('iFrameColor').value;
   const frameSize=posterSize; // Auto sama dengan ukuran poster
   const note=san($('iNote').value);
+  const qty=Math.max(1,parseInt($('iQty').value,10)||1);
   
   let ok=true;
   let posterName='';
@@ -4688,7 +4833,7 @@ function addItemToOrder(){
   }else{
     const poster=inv.posters.find(p=>p.id===posterSelect);
     if(!poster){ferr('iPosterSelectE','Poster tidak ditemukan.');ok=false;}
-    else if(poster.stock<1){ferr('iPosterSelectE','Stok poster habis!');ok=false;}
+    else if(poster.stock<qty){ferr('iPosterSelectE',`Stok poster hanya tersisa ${poster.stock}, butuh ${qty}.`);ok=false;}
     else{
       posterName=poster.name;
       posterId=poster.id;
@@ -4701,31 +4846,49 @@ function addItemToOrder(){
   if(!ok)return;
 
   // Cek stok frame (cocokkan jenis + warna + ukuran)
-  const frame=inv.frames.find(f=>f.jenis===frameJenis&&f.color===frameColor&&f.size===frameSize)
-    || inv.frames.find(f=>f.color===frameColor&&f.size===frameSize); // fallback untuk data lama tanpa jenis
+  const frame=findFrame(frameJenis,frameColor,frameSize);
   if(!frame){
-    ferr('iFrameSizeE',`Frame ${frameJenis} ${frameColor} ${frameSize} tidak ada di stok. Silakan tambah dulu di menu Inventaris.`);
+    ferr('iFrameSizeE',`Frame ${frameJenis} ${frameColor} ${frameSize} tidak ada di stok. Gunakan tombol "🛒 Beli Sekarang" di atas untuk restock langsung.`);
     return;
   }
-  if(frame.stock<1){
-    ferr('iFrameColorE',`Stok Frame ${frameJenis} ${frameColor} ${frameSize} habis!`);
+  if(frame.stock<qty){
+    ferr('iFrameColorE',`Stok Frame ${frameJenis} ${frameColor} ${frameSize} hanya tersisa ${frame.stock}, butuh ${qty}. Gunakan tombol "🛒 Beli Sekarang" di atas.`);
     return;
   }
 
-  pendingItems.push({
-    posterName,
-    posterId,
-    isCustomPoster,
-    posterSize,
-    frameJenis,
-    frameColor,
-    frameSize,
-    note
-  });
+  for(let i=0;i<qty;i++){
+    pendingItems.push({
+      posterName,
+      posterId,
+      isCustomPoster,
+      posterSize,
+      frameJenis,
+      frameColor,
+      frameSize,
+      note
+    });
+  }
   
   renderItemList();
   closeItemModal();
-  toast('✅ Item ditambahkan ke order');
+  toast(qty>1?`✅ ${qty} item ditambahkan ke order`:'✅ Item ditambahkan ke order');
+}
+
+// ── Jumlahkan total qty dibutuhkan per kombinasi frame / per poster, untuk validasi stok yang akurat ──
+function aggregateFrameNeeds(items){
+  const map=new Map();
+  (items||[]).forEach(it=>{
+    const key=[it.frameJenis||'',it.frameColor,it.frameSize].join('␟');
+    map.set(key,(map.get(key)||0)+1);
+  });
+  return map;
+}
+function aggregatePosterNeeds(items){
+  const map=new Map();
+  (items||[]).forEach(it=>{
+    if(!it.isCustomPoster&&it.posterId)map.set(it.posterId,(map.get(it.posterId)||0)+1);
+  });
+  return map;
 }
 
 /* ── SAVE / EDIT ORDER ── */
@@ -4762,11 +4925,19 @@ $('fOrder').addEventListener('submit',async function(e){
           if(poster){poster.stock+=1;await fsSet('inventory_posters',poster);}
         }
       }
-      // Validasi & kurangi stok baru
-      for(const it of pendingItems){
-        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
-          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-        if(!frame||frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} tidak cukup!`);btn.textContent=orig;btn.disabled=false;return;}
+      // Validasi & kurangi stok baru (teragregasi per kombinasi frame/poster, bukan 1 per item)
+      {
+        const frameNeeds=aggregateFrameNeeds(pendingItems);
+        for(const [key,needQty] of frameNeeds){
+          const [fj,fc,fs]=key.split('␟');
+          const frame=findFrame(fj,fc,fs);
+          if(!frame||frame.stock<needQty){ferr('oItemsE',`Stok Frame ${fj||''} ${fc} ${fs} tidak cukup (tersedia ${frame?frame.stock:0}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+        }
+        const posterNeeds=aggregatePosterNeeds(pendingItems);
+        for(const [pid,needQty] of posterNeeds){
+          const poster=inv.posters.find(p=>p.id===pid);
+          if(!poster||poster.stock<needQty){ferr('oItemsE',`Stok poster ${poster?poster.name:''} tidak cukup (tersedia ${poster?poster.stock:0}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+        }
       }
       const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],createdAt:orderDate+'T'+(old.createdAt||new Date().toISOString()).slice(11),updatedAt:new Date().toISOString()};
       await fsSet('orders',updated);
@@ -4783,12 +4954,20 @@ $('fOrder').addEventListener('submit',async function(e){
     }catch(err){toast('Gagal: '+err.message,'error');}
   } else {
     // ── MODE BARU ────────────────────────────────────────────────
-    // Validasi stok frame
-    for(const it of pendingItems){
-      const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
-        ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-      if(!frame){ferr('oItemsE',`Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} tidak ditemukan di stok.`);btn.textContent=orig;btn.disabled=false;return;}
-      if(frame.stock<1){ferr('oItemsE',`Stok Frame ${it.frameJenis||''} ${it.frameColor} ${it.frameSize} habis!`);btn.textContent=orig;btn.disabled=false;return;}
+    // Validasi stok frame & poster, teragregasi per kombinasi (bukan 1 per item)
+    {
+      const frameNeeds=aggregateFrameNeeds(pendingItems);
+      for(const [key,needQty] of frameNeeds){
+        const [fj,fc,fs]=key.split('␟');
+        const frame=findFrame(fj,fc,fs);
+        if(!frame){ferr('oItemsE',`Frame ${fj||''} ${fc} ${fs} tidak ditemukan di stok.`);btn.textContent=orig;btn.disabled=false;return;}
+        if(frame.stock<needQty){ferr('oItemsE',`Stok Frame ${fj||''} ${fc} ${fs} tidak cukup (tersedia ${frame.stock}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+      }
+      const posterNeeds=aggregatePosterNeeds(pendingItems);
+      for(const [pid,needQty] of posterNeeds){
+        const poster=inv.posters.find(p=>p.id===pid);
+        if(!poster||poster.stock<needQty){ferr('oItemsE',`Stok poster ${poster?poster.name:''} tidak cukup (tersedia ${poster?poster.stock:0}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+      }
     }
     const id=`order_${Date.now()}`;
     const item={id,channel,buyer,orderNo,note,total,finalTotal:null,items:[...pendingItems],status:'proses',createdAt:orderDate+'T'+new Date().toTimeString().slice(0,8)+'.000Z'};
@@ -4871,12 +5050,12 @@ function renderOrders(){
   }
 
   tb.innerHTML=list.map(o=>{
-    // Item chips — satu baris per item
-    const itemChips = (o.items||[]).map(it=>`
+    // Item chips — item identik dikelompokkan dengan badge ×qty
+    const itemChips = groupOrderItems(o.items||[]).map(it=>`
       <div class="item-chip">
         <span class="cdot ${esc((it.frameColor||'').toLowerCase())}"></span>
         <span class="item-chip-poster" title="${esc(it.posterName)}">${esc(it.posterName)}</span>
-        <span class="item-chip-frame">${esc(it.posterSize)} · ${it.frameJenis?esc(it.frameJenis)+' ':''} ${esc(it.frameColor)}</span>
+        <span class="item-chip-frame">${esc(it.posterSize)} · ${it.frameJenis?esc(it.frameJenis)+' ':''} ${esc(it.frameColor)}${it.qty>1?` ×${it.qty}`:''}</span>
       </div>`).join('');
     const hasFinal=o.finalTotal!=null;
     const finalCell=o.status==='proses'
