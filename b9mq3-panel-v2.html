@@ -2454,24 +2454,18 @@ async function cmsDel(id){
       </select>
       <div class="ferr" id="iPosterSelectE"></div>
     </div>
-    <div class="fg" id="customPosterNameGroup" style="display:none">
-      <label>Nama Custom Poster</label>
-      <input type="text" id="iPosterCustomName" placeholder="Masukkan nama poster custom..." maxlength="100">
-      <div class="ferr" id="iPosterCustomNameE"></div>
-    </div>
     <div class="fg">
       <label>Ukuran Poster</label>
       <select id="iPosterSize" onchange="syncFrameSize()">
         <option value="">Pilih Ukuran</option>
-        <option value="20x20">20 × 20 cm</option>
         <option value="20x30">20 × 30 cm</option>
-        <option value="30x30">30 × 30 cm</option>
         <option value="30x40">30 × 40 cm</option>
         <option value="40x60">40 × 60 cm</option>
         <option value="50x70">50 × 70 cm</option>
         <option value="60x80">60 × 80 cm</option>
       </select>
       <div class="ferr" id="iPosterSizeE"></div>
+      <small id="iPosterSizeNote" style="display:block;margin-top:3px;font-size:11.5px;color:var(--t2)"></small>
     </div>
     <div class="sdiv">Frame</div>
     <div class="fg">
@@ -2496,7 +2490,7 @@ async function cmsDel(id){
     </div>
     <div class="fg">
       <label>Jumlah (Qty)</label>
-      <input type="number" id="iQty" min="1" max="999" value="1" oninput="if(this.value<1)this.value=1;checkFrameStockUI()">
+      <input type="number" id="iQty" min="1" max="999" value="1" oninput="checkFrameStockUI()" onblur="if(!this.value||this.value<1)this.value=1;checkFrameStockUI()">
       <small style="color:var(--t3)">Contoh: pesanan 5 poster sama → isi 5, tidak perlu ulangi form.</small>
     </div>
     <div id="iStockStatus" style="display:none;margin-bottom:12px"></div>
@@ -2699,8 +2693,8 @@ async function cmsDel(id){
           <label>Ukuran</label>
           <select id="pSize">
             <option value="">Pilih Ukuran</option>
-            <option value="20x20">20×20 cm</option><option value="20x30">20×30 cm</option>
-            <option value="30x30">30×30 cm</option><option value="30x40">30×40 cm</option>
+            <option value="20x30">20×30 cm</option>
+            <option value="30x40">30×40 cm</option>
             <option value="40x60">40×60 cm</option><option value="50x70">50×70 cm</option>
             <option value="60x80">60×80 cm</option>
           </select>
@@ -3068,12 +3062,12 @@ let gapiInited        = false;
 let gisInited         = false;
 let pickerInited      = false;
 
-const OK_SIZES=new Set(['20x20','20x30','30x30','30x40','40x60','50x70','60x80']);
+const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80']);
 const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
 const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
 const FRAME_COLORS_MINIMALIS = ['Hitam','Putih']; // Minimalis: tidak ada Kayu & Chrome
-const FRAME_SIZES_BLOCK      = ['20x20','20x30','30x30','30x40','40x60','50x70','60x80'];
-const FRAME_SIZES_MINIMALIS  = ['30x30','30x40','40x60','50x70','60x80']; // Minimalis: tidak ada 20x30
+const FRAME_SIZES_BLOCK      = ['20x30','30x40','40x60','50x70','60x80'];
+const FRAME_SIZES_MINIMALIS  = ['30x40','40x60','50x70','60x80']; // Minimalis: tidak ada 20x30
 
 function getFrameColors(jenis){ return jenis==='Minimalis'?FRAME_COLORS_MINIMALIS:FRAME_COLORS_BLOCK; }
 function getFrameSizes(jenis){ return jenis==='Minimalis'?FRAME_SIZES_MINIMALIS:FRAME_SIZES_BLOCK; }
@@ -4668,21 +4662,24 @@ function removeItemGroup(groupIdx){
 }
 
 function openItemModal(){
-  clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
-  $('iPosterSelect').value='';$('iPosterCustomName').value='';$('iPosterSize').value='';
+  clerr('iPosterSelectE','iPosterSizeE','iFrameColorE','iFrameSizeE');
+  $('iPosterSelect').value='';$('iPosterSize').value='';
   $('iFrameJenis').value='';$('iFrameColor').innerHTML='<option value="">Pilih Warna</option>';$('iFrameSize').value='';$('iNote').value='';
   $('iQty').value='1';$('iStockStatus').style.display='none';$('iStockStatus').innerHTML='';
-  $('customPosterNameGroup').style.display='none';
+  if($('iPosterSizeNote'))$('iPosterSizeNote').textContent='';
   
-  // Populate poster dropdown from inventory
+  // Populate poster dropdown from inventory — dedup by nama, ukuran dipilih terpisah di field berikutnya
   const sel=$('iPosterSelect');
-  const existing=sel.innerHTML;
   sel.innerHTML='<option value="">-- Pilih Poster --</option><option value="custom">🎨 Custom (Tidak di Stok)</option>';
+  const seenNames=new Map(); // name -> total stock across all size variants
   inv.posters.forEach(p=>{
+    seenNames.set(p.name,(seenNames.get(p.name)||0)+(p.stock||0));
+  });
+  [...seenNames.keys()].sort((a,b)=>a.localeCompare(b)).forEach(name=>{
     const opt=document.createElement('option');
-    opt.value=p.id;
-    opt.textContent=`${p.name} ${p.size} — Stk:${p.stock}`;
-    if(p.stock<=0)opt.disabled=true;
+    opt.value=name;
+    const totalStock=seenNames.get(name);
+    opt.textContent=totalStock>0?`${name} — Stk:${totalStock}`:`${name} — perlu dicetak`;
     sel.appendChild(opt);
   });
   
@@ -4693,31 +4690,44 @@ function openItemModal(){
 
 function onPosterChange(){
   const val=$('iPosterSelect').value;
-  const customGroup=$('customPosterNameGroup');
   const sizeSelect=$('iPosterSize');
   
   if(val==='custom'){
-    customGroup.style.display='block';
     sizeSelect.value='';
     $('iFrameSize').value='';
   }else if(val){
-    customGroup.style.display='none';
-    // Auto-fill size dari poster yang dipilih
-    const poster=inv.posters.find(p=>p.id===val);
-    if(poster){
-      sizeSelect.value=poster.size;
-      syncFrameSize();
-    }
+    // Ukuran dipilih bebas oleh user — tidak lagi auto-lock ke satu ukuran
+    syncFrameSize();
   }else{
-    customGroup.style.display='none';
     sizeSelect.value='';
     $('iFrameSize').value='';
+  }
+  updatePosterSizeStockNote();
+}
+
+function updatePosterSizeStockNote(){
+  const noteEl=$('iPosterSizeNote');
+  if(!noteEl)return;
+  const posterName=$('iPosterSelect').value;
+  const posterSize=$('iPosterSize').value;
+  if(!posterName||posterName==='custom'||!posterSize){noteEl.textContent='';return;}
+  const match=inv.posters.find(p=>p.name===posterName&&p.size===posterSize);
+  if(!match){
+    noteEl.textContent='ℹ️ Belum ada stok tercatat untuk ukuran ini — tetap bisa dipesan, akan dicetak.';
+    noteEl.style.color='var(--t2)';
+  }else if(match.stock>0){
+    noteEl.textContent=`✅ Stok tersedia: ${match.stock} pcs`;
+    noteEl.style.color='var(--t2)';
+  }else{
+    noteEl.textContent='ℹ️ Stok habis — akan dicetak dulu.';
+    noteEl.style.color='var(--t2)';
   }
 }
 
 function syncFrameSize(){
   const posterSize=$('iPosterSize').value;
   $('iFrameSize').value=posterSize?posterSize+' cm':'';
+  updatePosterSizeStockNote();
   checkFrameStockUI();
 }
 
@@ -4812,9 +4822,8 @@ async function quickBuyFrameForOrder(btn){
 function closeItemModal(){$('itemModal').classList.remove('active');releaseFocus($('itemModal'));}
 
 function addItemToOrder(){
-  clerr('iPosterSelectE','iPosterCustomNameE','iPosterSizeE','iFrameColorE','iFrameSizeE');
+  clerr('iPosterSelectE','iPosterSizeE','iFrameColorE','iFrameSizeE');
   const posterSelect=$('iPosterSelect').value;
-  const posterCustomName=san($('iPosterCustomName').value);
   const posterSize=$('iPosterSize').value;
   const frameJenis=$('iFrameJenis').value;
   const frameColor=$('iFrameColor').value;
@@ -4831,16 +4840,11 @@ function addItemToOrder(){
   if(!posterSelect){ferr('iPosterSelectE','Pilih poster.');ok=false;}
   else if(posterSelect==='custom'){
     isCustomPoster=true;
-    if(posterCustomName.length<2){ferr('iPosterCustomNameE','Nama poster custom minimal 2 karakter.');ok=false;}
-    posterName=posterCustomName;
+    posterName='🎨 Custom'; // detail desain custom cukup ditulis di Catatan Item
   }else{
-    const poster=inv.posters.find(p=>p.id===posterSelect);
-    if(!poster){ferr('iPosterSelectE','Poster tidak ditemukan.');ok=false;}
-    else if(poster.stock<qty){ferr('iPosterSelectE',`Stok poster hanya tersisa ${poster.stock}, butuh ${qty}.`);ok=false;}
-    else{
-      posterName=poster.name;
-      posterId=poster.id;
-    }
+    const poster=inv.posters.find(p=>p.name===posterSelect&&p.size===posterSize);
+    posterName=posterSelect;
+    posterId=poster?poster.id:null; // boleh null: judul valid tapi belum ada data stok untuk ukuran ini, tetap bisa dipesan (cetak on-demand)
   }
   
   if(!OK_SIZES.has(posterSize)){ferr('iPosterSizeE','Pilih ukuran poster.');ok=false;}
@@ -4939,7 +4943,7 @@ $('fOrder').addEventListener('submit',async function(e){
         const posterNeeds=aggregatePosterNeeds(pendingItems);
         for(const [pid,needQty] of posterNeeds){
           const poster=inv.posters.find(p=>p.id===pid);
-          if(!poster||poster.stock<needQty){ferr('oItemsE',`Stok poster ${poster?poster.name:''} tidak cukup (tersedia ${poster?poster.stock:0}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+          if(!poster){ferr('oItemsE','Poster tidak ditemukan di data stok (mungkin sudah dihapus).');btn.textContent=orig;btn.disabled=false;return;}
         }
       }
       const updated={...old,channel,buyer,orderNo,note,total,items:[...pendingItems],createdAt:orderDate+'T'+(old.createdAt||new Date().toISOString()).slice(11),updatedAt:new Date().toISOString()};
@@ -4969,7 +4973,7 @@ $('fOrder').addEventListener('submit',async function(e){
       const posterNeeds=aggregatePosterNeeds(pendingItems);
       for(const [pid,needQty] of posterNeeds){
         const poster=inv.posters.find(p=>p.id===pid);
-        if(!poster||poster.stock<needQty){ferr('oItemsE',`Stok poster ${poster?poster.name:''} tidak cukup (tersedia ${poster?poster.stock:0}, butuh ${needQty})!`);btn.textContent=orig;btn.disabled=false;return;}
+        if(!poster){ferr('oItemsE','Poster tidak ditemukan di data stok (mungkin sudah dihapus).');btn.textContent=orig;btn.disabled=false;return;}
       }
     }
     const id=`order_${Date.now()}`;
