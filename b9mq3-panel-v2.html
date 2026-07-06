@@ -4293,13 +4293,14 @@ async function clearTarget(){
 
 /* ── TREND HELPER ── */
 function getPrevMonth(m){const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
-function trendHTML(curr,prev){
+function trendHTML(curr,prev,cutoffDay){
+  const suffix=cutoffDay?` (s.d. tgl ${cutoffDay})`:'';
   if(!prev||prev===0)return'<span class="flat">—</span>';
   const pct=(curr-prev)/prev*100;
   const abs=Math.abs(pct).toFixed(0);
-  if(pct>1)return`<span class="up">↑ ${abs}% vs bulan lalu</span>`;
-  if(pct<-1)return`<span class="down">↓ ${abs}% vs bulan lalu</span>`;
-  return`<span class="flat">Sama seperti bulan lalu</span>`;
+  if(pct>1)return`<span class="up">↑ ${abs}% vs bulan lalu${suffix}</span>`;
+  if(pct<-1)return`<span class="down">↓ ${abs}% vs bulan lalu${suffix}</span>`;
+  return`<span class="flat">Sama seperti bulan lalu${suffix}</span>`;
 }
 
 /* ── MAIN UPDATE ── */
@@ -4329,9 +4330,15 @@ function updateDashboard(){
   const lbl=d.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
   const pm=getPrevMonth(m);
 
-  // data bulan ini vs bulan lalu
+  // data bulan ini vs bulan lalu — dipotong per tanggal yang sama kalau bulan ini masih berjalan,
+  // supaya adil (misal tgl 6, bulan lalu juga cuma dihitung tgl 1-6, bukan 1 bulan penuh)
+  const [pmY,pmM]=pm.split('-').map(Number);
+  const daysInPm=new Date(pmY,pmM,0).getDate(); // jumlah hari di bulan lalu
+  const cutoffDay=isNow?Math.min(new Date().getDate(),daysInPm):daysInPm;
+  const dayOf=(iso)=>parseInt((iso||'').slice(8,10),10);
+
   const mo=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status!=='batal');
-  const pmo=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status!=='batal');
+  const pmo=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status!=='batal'&&dayOf(o.createdAt)<=cutoffDay);
   const omzet=mo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
   const pomzet=pmo.reduce((s,o)=>s+(o.finalTotal!=null?o.finalTotal:o.total||0),0);
   const aov=mo.length?Math.round(omzet/mo.length):0;
@@ -4343,7 +4350,7 @@ function updateDashboard(){
   if($('sOrders'))$('sOrders').textContent=mo.length;
   // ── Order batal/retur bulan ini
   const batalCount=orders.filter(o=>o.createdAt?.startsWith(m)&&o.status==='batal').length;
-  const pbatalCount=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status==='batal').length;
+  const pbatalCount=orders.filter(o=>o.createdAt?.startsWith(pm)&&o.status==='batal'&&dayOf(o.createdAt)<=cutoffDay).length;
   if($('sBatal'))$('sBatal').textContent=batalCount;
   if($('sBatalSub')){
     if(batalCount===0)$('sBatalSub').innerHTML='<span class="flat">Tidak ada batal</span>';
@@ -4351,8 +4358,8 @@ function updateDashboard(){
       ?`<span class="down">↑ ${batalCount-pbatalCount} vs bulan lalu</span>`
       :`<span class="flat">${batalCount>0?batalCount+' order':'Sama seperti bulan lalu'}</span>`;
   }
-  if($('trendOmzet'))$('trendOmzet').innerHTML=trendHTML(omzet,pomzet);
-  if($('trendOrders'))$('trendOrders').innerHTML=trendHTML(mo.length,pmo.length);
+  if($('trendOmzet'))$('trendOmzet').innerHTML=trendHTML(omzet,pomzet,isNow?cutoffDay:null);
+  if($('trendOrders'))$('trendOrders').innerHTML=trendHTML(mo.length,pmo.length,isNow?cutoffDay:null);
 
   // ── Top produk bulan ini (berdasarkan frekuensi item di order)
   const prodFreq={};
