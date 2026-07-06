@@ -8,9 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-  
-<!-- trigger redeploy -->
-  
+
 <script>
 window.FB_CFG = {
   apiKey:            "AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",
@@ -460,7 +458,7 @@ tbody tr:hover{background:var(--gray-lt)}
 .sum-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .sum-label{font-size:11.5px;color:var(--t2);font-weight:600;margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}
 .sum-val{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
-.sum-val.green{color:var(--green)}.sum-val.red{color:var(--red)}.sum-val.accent{color:var(--accent)}
+.sum-val.green{color:var(--green)}.sum-val.red{color:var(--red)}.sum-val.accent{color:var(--accent)}.sum-val.amber{color:var(--amber)}
 .sum-sub{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500}
 
 /* ─── INLINE EDIT ─── */
@@ -1640,9 +1638,12 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
             </div>
           </div>
           <div class="sum-grid">
-            <div class="sum-card"><div class="sum-label">💚 Pemasukan Bulan Ini</div><div class="sum-val green" id="kTotalIn">Rp 0</div></div>
+            <div class="sum-card"><div class="sum-label">💚 Pemasukan Diterima</div><div class="sum-val green" id="kTotalIn">Rp 0</div></div>
+            <div class="sum-card"><div class="sum-label">⏳ Pemasukan Pending</div><div class="sum-val amber" id="kTotalPending">Rp 0</div><div class="sum-sub" id="kPendingSub">0 order proses</div></div>
+            <div class="sum-card"><div class="sum-label">📊 Proyeksi Total Masuk</div><div class="sum-val" id="kTotalProjected">Rp 0</div><div class="sum-sub">total order bulan ini (diterima + pending)</div></div>
             <div class="sum-card"><div class="sum-label">❤️ Pengeluaran Bulan Ini</div><div class="sum-val red" id="kTotalOut">Rp 0</div></div>
             <div class="sum-card"><div class="sum-label">💰 Profit Bersih</div><div class="sum-val accent" id="kProfit">Rp 0</div></div>
+            <div class="sum-card"><div class="sum-label">📦 Order Diproses</div><div class="sum-val" id="kProsesCount">0</div></div>
           </div>
           <div class="card">
             <div class="chd"><div class="ctitle">📒 Riwayat Keuangan</div></div>
@@ -4038,7 +4039,7 @@ window._startListeners=function(){
     window._listenersStarted.add('orders');
     onSnapshot(collection(db,'orders'),s=>{
       orders=s.docs.map(d=>d.data());
-      renderOrders();renderDashboardOrders();updateDashboard();
+      renderOrders();renderDashboardOrders();updateDashboard();updateKeuanganSummary();
       if(document.getElementById('page-laporan').classList.contains('active'))renderLaporan();
       if(document.getElementById('page-kanban').classList.contains('active'))renderKanban();
       if(document.getElementById('page-margin').classList.contains('active')){renderMarginTable();renderMarginSummary();}
@@ -5130,7 +5131,7 @@ async function saveFinalPrice(id){
         type: 'income',
         cat: 'penjualan',
         amount: finalTotal,
-        date: new Date().toISOString().split('T')[0],
+        date: (o.createdAt||'').slice(0,10) || new Date().toISOString().split('T')[0],
         desc: `Penjualan${o.buyer?` — ${o.buyer}`:''}${o.orderNo?` (${o.orderNo})`:''} | ${itemDesc}`,
         sourceOrderId: id,          // referensi ke order, untuk cegah duplikat
         channel: o.channel || '',
@@ -5446,6 +5447,16 @@ function updateKeuanganSummary(){
   const pr=totalIn-totalOut;
   $('kProfit').textContent=rp(pr);
   $('kProfit').style.color=pr>=0?'var(--green)':'var(--red)';
+
+  // Order yang DIBUAT bulan ini tapi belum selesai = pending bulan ini
+  // (basis waktu disamakan dengan Pemasukan Diterima, yaitu bulan order dibuat,
+  // supaya Diterima + Pending = total order yang dibuat bulan ini, gak nyampur bulan lain)
+  const prosesOrders=(orders||[]).filter(o=>o.status==='proses'&&o.createdAt?.startsWith(m));
+  const totalPending=prosesOrders.reduce((s,o)=>s+(o.finalTotal??o.total??0),0);
+  $('kTotalPending').textContent=rp(totalPending);
+  $('kPendingSub').textContent=`${prosesOrders.length} order proses bulan ini`;
+  $('kTotalProjected').textContent=rp(totalIn+totalPending);
+  $('kProsesCount').textContent=prosesOrders.length;
 }
 
 function renderKeuangan(){
@@ -5528,8 +5539,8 @@ async function syncOrdersToKeuangan(){
       const itemDesc = (o.items||[])
         .map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`)
         .join(', ');
-      // Gunakan tanggal order asli (bukan hari ini)
-      const tgl = (o.updatedAt || o.createdAt || new Date().toISOString()).split('T')[0];
+      // Gunakan tanggal order dibuat (bulan order asli), bukan tanggal diselesaikan
+      const tgl = (o.createdAt || o.updatedAt || new Date().toISOString()).split('T')[0];
       const keuEntry = {
         id: `order_income_${o.id}`,
         type: 'income',
@@ -7107,7 +7118,7 @@ async function moveKanban(orderId, newStatus, resiValue){
             type: 'income',
             cat: 'penjualan',
             amount,
-            date: new Date().toISOString().split('T')[0],
+            date: (order.createdAt||'').slice(0,10) || new Date().toISOString().split('T')[0],
             desc: `Penjualan${order.buyer?` — ${order.buyer}`:''}${order.orderNo?` (${order.orderNo})`:''} | ${itemDesc}`,
             sourceOrderId: orderId,
             channel: order.channel || '',
