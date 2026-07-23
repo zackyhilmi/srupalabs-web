@@ -2090,6 +2090,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <div class="itabs" style="margin-bottom:16px">
         <button class="itab active" id="mtab-analisis" onclick="goMarginTab('analisis')">📊 Analisis Order</button>
         <button class="itab" id="mtab-kalkulator" onclick="goMarginTab('kalkulator')">🧮 Kalkulator Harga Jual</button>
+        <button class="itab" id="mtab-customsize" onclick="goMarginTab('customsize')">🎯 Custom Ukuran</button>
       </div>
 
       <!-- ─── TAB: ANALISIS ORDER ─── -->
@@ -2263,14 +2264,95 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
               <tbody id="tbKalkulatorFrameOnly"><tr class="erow"><td colspan="9">Memuat...</td></tr></tbody>
             </table>
           </div>
-          <div style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--border);background:var(--gray-lt)">
-            💡 HPP dihitung dari biaya Frame (mengikuti Data Master di atas) + biaya packing frame kosong (tanpa cetak). Margin dijaga lebih tinggi dari paket biasa. Edit "Harga Jual" lalu klik <strong>Simpan Semua</strong> di tabel atas untuk menyimpan.
+        </div>
+
+      </div>
+
+      <!-- ─── TAB: CUSTOM UKURAN ─── -->
+      <div id="msec-customsize" style="display:none">
+
+        <!-- Kalkulator Custom Ukuran -->
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">🎯 Kalkulator Custom Ukuran</div>
+            <span style="font-size:11.5px;color:var(--t2)">Untuk pesanan ukuran di luar 5 ukuran standar</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--amber-lt);border-bottom:1px solid var(--border);flex-wrap:wrap">
+            <span style="font-size:16px">📐</span>
+            <div style="flex:1;min-width:200px;font-size:11.5px;color:var(--amber);line-height:1.5">
+              Batas ukuran custom yang dilayani: <strong>maks. 90 cm per sisi</strong>. HPP Frame &amp; Prod+Pack dihitung dari data yang sama dengan tabel di Kalkulator Harga Jual — kalau ukurannya belum ada datanya, sistem otomatis estimasi dari tren harga model tersebut.
+            </div>
+          </div>
+
+          <div class="cbody" style="padding:16px">
+            <div class="kal-params-row" style="display:flex;align-items:stretch;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+              <div class="margin-stat" style="text-align:left;padding:12px 14px;flex:1;min-width:150px">
+                <div class="margin-stat-lbl" style="margin-bottom:6px">Model Frame</div>
+                <select id="kalCustom-model" onchange="kalCustomReset()"
+                  style="width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none;background:var(--surface)">
+                  <option value="Frame Blok">Frame Blok</option>
+                  <option value="Frame Minimalis">Frame Minimalis</option>
+                </select>
+              </div>
+              <div class="margin-stat" style="text-align:left;padding:12px 14px;flex:1;min-width:100px">
+                <div class="margin-stat-lbl" style="margin-bottom:6px">Panjang</div>
+                <div style="display:flex;align-items:center;gap:5px">
+                  <input type="number" id="kalCustom-p" value="60" min="1" max="90"
+                    style="width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                    oninput="kalCustomReset()">
+                  <span style="font-size:12px;color:var(--t2)">cm</span>
+                </div>
+              </div>
+              <div class="margin-stat" style="text-align:left;padding:12px 14px;flex:1;min-width:100px">
+                <div class="margin-stat-lbl" style="margin-bottom:6px">Lebar</div>
+                <div style="display:flex;align-items:center;gap:5px">
+                  <input type="number" id="kalCustom-l" value="90" min="1" max="90"
+                    style="width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                    oninput="kalCustomReset()">
+                  <span style="font-size:12px;color:var(--t2)">cm</span>
+                </div>
+              </div>
+              <div class="margin-stat" style="text-align:left;padding:12px 14px;flex:1;min-width:110px">
+                <div class="margin-stat-lbl" style="margin-bottom:6px">Target Margin</div>
+                <div style="display:flex;align-items:center;gap:5px">
+                  <input type="number" id="kalCustom-margin" value="20" min="0" max="60" step="1"
+                    style="width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+                    oninput="kalCustomReset()">
+                  <span style="font-size:12px;color:var(--t2)">%</span>
+                </div>
+              </div>
+            </div>
+
+            <p id="kalCustom-warn" style="display:none;font-size:12px;color:var(--red);background:var(--red-lt);padding:8px 12px;border-radius:8px;margin-bottom:12px">
+              ⚠️ Ukuran melebihi batas custom (maks. 90 cm) — konfirmasi dulu ke vendor.
+            </p>
+
+            <div class="twrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Biaya Cetak</th>
+                    <th>Frame</th>
+                    <th>Prod+Pack</th>
+                    <th>Total HPP</th>
+                    <th>Rekomendasi</th>
+                    <th>Harga Jual</th>
+                    <th>Margin</th>
+                    <th>Profit/pcs</th>
+                  </tr>
+                </thead>
+                <tbody id="tbKalCustom"><tr class="erow"><td colspan="8">Memuat...</td></tr></tbody>
+              </table>
+            </div>
+            <p id="kalCustom-note" style="font-size:11px;color:var(--t2);margin-top:8px;padding:0 2px"></p>
           </div>
         </div>
+
       </div>
 
     </div>
 
+<!-- ═══ END MARGIN & PROFIT ═══ -->
   </div><!-- /main -->
 </div><!-- /appShell -->
 
@@ -7392,6 +7474,7 @@ async function saveMaster(){
     // ✅ FIX: ALWAYS render kalkulator, tidak peduli tab mana yang tampil
     // Ini penting agar Kalkulator selalu punya data terbaru
     renderKalkulator();
+    renderKalCustom();
     
     // Refresh semua view yang terkait dengan master data
     renderMasterFields();
@@ -7503,7 +7586,7 @@ function renderMarginSummary(){
    MARGIN TABS
 ══════════════════════════════════════ */
 function goMarginTab(tab) {
-  ['analisis','kalkulator'].forEach(t => {
+  ['analisis','kalkulator','customsize'].forEach(t => {
     document.getElementById('msec-'+t).style.display = t===tab ? '' : 'none';
     document.getElementById('mtab-'+t).classList.toggle('active', t===tab);
   });
@@ -7513,6 +7596,10 @@ function goMarginTab(tab) {
   if (tab === 'kalkulator') {
     syncMasterToKal();
     renderKalkulator();
+  }
+  if (tab === 'customsize') {
+    syncMasterToKal();
+    renderKalCustom();
   }
 }
 
@@ -7527,7 +7614,7 @@ const KAL_FRAMES = [
   { model: 'Frame Blok',      ukuran: '30×40', w: 30, h: 40, hppFrame: 14000, status: 'aktif' },
   { model: 'Frame Blok',      ukuran: '40×60', w: 40, h: 60, hppFrame: 24000, status: 'aktif' },
   { model: 'Frame Blok',      ukuran: '50×70', w: 50, h: 70, hppFrame: 30000, status: 'aktif' },
-  { model: 'Frame Blok',      ukuran: '60×80', w: 60, h: 80, hppFrame: 40000, status: 'aktif' },
+  { model: 'Frame Blok',      ukuran: '60×80', w: 60, h: 80, hppFrame: 42500, status: 'aktif' },
 
   // 2. Frame Minimalis (4 size options)
   { model: 'Frame Minimalis', ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'aktif' },
@@ -7589,6 +7676,7 @@ async function loadKalkulatorPrices() {
   }
   // render after master is loaded (master loaded via loadMaster in _startListeners)
   renderKalkulator();
+  renderKalCustom();
 }
 
 function kalPsychPrice(raw) {
@@ -7728,6 +7816,130 @@ function renderKalkulatorFrameOnly(komisi) {
   });
 
   tb.innerHTML = html;
+}
+
+/* ══════════════════════════════════════
+   KALKULATOR CUSTOM UKURAN
+   Pakai data yang sama dengan KAL_FRAMES / masterData.frame / KAL_PROD_PACK.
+   Kalau ukuran belum ada datanya, estimasi dari rate per-cm-keliling
+   model tsb (dari 2 ukuran terbesar yang tersedia).
+══════════════════════════════════════ */
+let kalCustomSavedPrice = null;
+let kalCustomLastHpp = 0;
+
+function kalKeliling(p, l) { return 2 * (p + l); }
+
+function kalCustomFrameLookup(model, p, l) {
+  const ukuran = `${p}×${l}`;
+  const exact = KAL_FRAMES.find(f => f.model === model && f.ukuran === ukuran);
+  if (exact) {
+    const key = model + '|' + ukuran;
+    const val = masterData.frame[key] != null ? masterData.frame[key] : exact.hppFrame;
+    return { price: val, exact: true };
+  }
+  // Ambil 2 ukuran terbesar dari model ini utk hitung rate per cm keliling
+  const sizes = KAL_FRAMES.filter(f => f.model === model)
+    .map(f => {
+      const key = f.model + '|' + f.ukuran;
+      const hpp = masterData.frame[key] != null ? masterData.frame[key] : f.hppFrame;
+      return { ukuran: f.ukuran, w: f.w, h: f.h, hpp };
+    })
+    .sort((a, b) => (a.w * a.h) - (b.w * b.h));
+  if (!sizes.length) return { price: 0, exact: false };
+  const largest = sizes[sizes.length - 1];
+  const second  = sizes[sizes.length - 2] || largest;
+  const kelDiff = kalKeliling(largest.w, largest.h) - kalKeliling(second.w, second.h);
+  const rate = kelDiff > 0 ? (largest.hpp - second.hpp) / kelDiff : 0;
+  const diff = kalKeliling(p, l) - kalKeliling(largest.w, largest.h);
+  const price = largest.hpp + diff * rate;
+  return { price: Math.max(price, largest.hpp), exact: false, base: largest.ukuran };
+}
+
+function kalCustomProdPack(p, l) {
+  const ukuran = `${p}×${l}`;
+  if (KAL_PROD_PACK[ukuran] != null) return { price: KAL_PROD_PACK[ukuran], exact: true };
+  // fallback: pakai nilai ukuran terbesar yang ada (60×80)
+  return { price: KAL_PROD_PACK['60×80'] || 10000, exact: false };
+}
+
+function kalCustomReset() {
+  kalCustomSavedPrice = null;
+  renderKalCustom();
+}
+
+function renderKalCustom() {
+  const model  = $('kalCustom-model')?.value || 'Frame Blok';
+  const p      = parseFloat($('kalCustom-p')?.value) || 0;
+  const l      = parseFloat($('kalCustom-l')?.value) || 0;
+  const margin = parseFloat($('kalCustom-margin')?.value) || 0;
+  const sheetPrice = masterData?.sheetPrice || parseFloat($('master-sheet')?.value) || 87500;
+  const waste  = parseFloat($('kal-waste')?.value)  || 0;
+  const komisi = parseFloat($('kal-komisi')?.value) || 0;
+  const pricePerCm2 = sheetPrice / KAL_SHEET_AREA;
+
+  const warnEl = $('kalCustom-warn');
+  if (warnEl) warnEl.style.display = (p > 90 || l > 90) ? 'block' : 'none';
+
+  const hppCetak = p * l * pricePerCm2 * (1 + waste / 100);
+  const frameRes = kalCustomFrameLookup(model, p, l);
+  const ppRes    = kalCustomProdPack(p, l);
+  const hppTotal = hppCetak + frameRes.price + ppRes.price;
+  kalCustomLastHpp = hppTotal;
+
+  const rawJual = hppTotal / (1 - (komisi / 100) - (margin / 100));
+  const rekJual = kalPsychPrice(Math.max(rawJual, 0));
+  const savedVal = kalCustomSavedPrice != null ? kalCustomSavedPrice : rekJual;
+
+  const komisiNom = savedVal * (komisi / 100);
+  const profit    = savedVal - hppTotal - komisiNom;
+  const marginPct = savedVal > 0 ? Math.round((profit / savedVal) * 100) : 0;
+  const marginBadgeCls = marginPct >= 20 ? 'kal-badge-margin-ok' : 'kal-badge-margin-bad';
+
+  const tb = $('tbKalCustom');
+  if (tb) {
+    tb.innerHTML = `<tr>
+      <td style="font-size:12px;color:var(--t2)">${rp(hppCetak)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(frameRes.price)}</td>
+      <td style="font-size:12px;color:var(--t2)">${rp(ppRes.price)}</td>
+      <td><span class="kal-badge-hpp">${rp(hppTotal)}</span></td>
+      <td><span class="kal-badge-jual">${rp(rekJual)}</span></td>
+      <td>
+        <input class="kal-price-input" id="kalCustom-input" type="number" min="0" step="1000"
+          value="${savedVal}" oninput="onKalCustomPriceInput(this)">
+      </td>
+      <td><span class="${marginBadgeCls}" id="kalCustom-marginBadge">${marginPct}%</span></td>
+      <td style="font-weight:600;font-size:13px" id="kalCustom-profit">${rp(profit)}</td>
+    </tr>`;
+  }
+
+  const noteEl = $('kalCustom-note');
+  if (noteEl) {
+    const parts = [];
+    parts.push(frameRes.exact
+      ? `✓ Harga frame ${model} ${p}×${l} sesuai data master`
+      : `~ Harga frame diestimasi dari tren ${model} (basis ${frameRes.base || '60×80'})`);
+    parts.push(ppRes.exact
+      ? `Prod+Pack sesuai data master`
+      : `Prod+Pack diestimasi dari ukuran 60×80 (belum ada data spesifik)`);
+    noteEl.textContent = parts.join(' · ');
+  }
+}
+
+function onKalCustomPriceInput(input) {
+  kalCustomSavedPrice = parseFloat(input.value) || 0;
+  const komisi = parseFloat($('kal-komisi')?.value) || 0;
+  const hj = kalCustomSavedPrice;
+  const komisiNom = hj * (komisi / 100);
+  const profit = hj - kalCustomLastHpp - komisiNom;
+  const marginPct = hj > 0 ? Math.round((profit / hj) * 100) : 0;
+
+  const marginEl = $('kalCustom-marginBadge');
+  const profitEl = $('kalCustom-profit');
+  if (marginEl) {
+    marginEl.textContent = marginPct + '%';
+    marginEl.className = marginPct >= 20 ? 'kal-badge-margin-ok' : 'kal-badge-margin-bad';
+  }
+  if (profitEl) profitEl.textContent = rp(profit);
 }
 
 function onKalPriceInput(input) {
