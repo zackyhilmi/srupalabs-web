@@ -1586,7 +1586,10 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <div class="card">
           <div class="chd">
             <div class="ctitle">📋 Daftar Order</div>
-            <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
+            <div style="display:flex;gap:8px">
+              <button class="pbtn" style="width:auto;padding:7px 14px;font-size:13px;background:var(--t2)" onclick="openBulkOrderModal()">📦 Bulk Import</button>
+              <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
+            </div>
           </div>
           <div class="cbody" style="padding:12px 14px 0">
             <div class="fbar">
@@ -2652,6 +2655,22 @@ async function cmsDel(id){
   </div>
 </div>
 
+<!-- MODAL: Bulk Import Order -->
+<div class="moverlay" id="bulkOrderModal">
+  <div class="mbox" style="max-width:640px">
+    <div class="mhd"><h3>📦 Bulk Import Order</h3><button class="mclose" onclick="closeBulkOrderModal()" aria-label="Tutup modal">×</button></div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6">
+      Tempel/ketik <strong>banyak order sekaligus</strong>. Tiap order dipisah <strong>baris kosong</strong>.<br>
+      Format tiap order sama kayak Format Cepat: baris 1 = <code>channel_namaPembeli_tanggal_total</code>, baris berikutnya per item = <code>poster_ukuran_warna_qty</code>.
+    </div>
+    <button type="button" class="pbtn" style="width:auto;padding:7px 14px;font-size:12.5px;background:var(--surface);color:var(--t1);border:1.5px solid var(--border);margin-bottom:10px" onclick="$('shopeeExcelInput').click()">📤 Upload Excel Shopee (Order.all)</button>
+    <input type="file" id="shopeeExcelInput" accept=".xlsx,.xls" style="display:none" onchange="importShopeeExcel(this)">
+    <textarea id="bulkOrdersInput" rows="10" placeholder="shopee_Budi Santoso_27/07/2026_200000&#10;custom_40x60_Hitam_3&#10;&#10;tiktok_Siti Aminah_27/07/2026_150000&#10;custom_30x40_Putih_2&#10;custom_20x30_Kayu_1&#10;&#10;shopee_Andi_28/07/2026_300000&#10;custom_50x70_Chrome_1" style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);resize:vertical"></textarea>
+    <button type="button" class="pbtn green" id="bulkProcessBtn" style="margin-top:10px" onclick="processBulkOrders()">🚀 Proses Semua</button>
+    <div id="bulkResultsBox" style="margin-top:12px;max-height:260px;overflow-y:auto"></div>
+  </div>
+</div>
+
 <!-- MODAL: Catat Keuangan -->
 <div class="moverlay" id="keuModal">
   <div class="mbox" style="max-width:480px">
@@ -3154,7 +3173,7 @@ let gapiInited        = false;
 let gisInited         = false;
 let pickerInited      = false;
 
-const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80']);
+const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80','20x40','60x90']); // 20x40 & 60x90: ukuran custom by-request
 const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
 const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
 const FRAME_COLORS_MINIMALIS = ['Hitam','Putih']; // Minimalis: tidak ada Kayu & Chrome
@@ -4934,17 +4953,51 @@ function closeItemModal(){$('itemModal').classList.remove('active');releaseFocus
 // ── Format cepat manual (ketik sendiri, bukan copy dari resi kurir) ──
 // channel_namaPembeli_poster_ukuran_warna_qty_tanggal_total[_noPesanan][_catatan]
 // Contoh: shopee_Budi Santoso_custom_40x60_Hitam_3_27/07/2026_200000
+// ── Parser murni format cepat (dipakai bareng oleh mode single-order & bulk import) ──
+const CHAN_MAP={shopee:'shopee',shp:'shopee',tiktok:'tiktok',ttk:'tiktok',tt:'tiktok',instagram:'instagram',ig:'instagram',wa:'instagram'};
+
+function parseTemplateHeader(headerLine){
+  const p=(headerLine||'').split('_').map(s=>s.trim());
+  const[chRaw,buyer,dateRaw,totalRaw,orderNoRaw,noteRaw]=p;
+  const channel=CHAN_MAP[(chRaw||'').toLowerCase()];
+  const dm=(dateRaw||'').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  const total=parseInt((totalRaw||'').replace(/\D/g,''),10)||0;
+  if(!channel||!buyer||buyer.length<2||!dm||!total)return null;
+  const[,dd,mm,yyyy]=dm;
+  return{channel,buyer,dateISO:`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`,total,orderNo:orderNoRaw||'',note:noteRaw||''};
+}
+
+// Return {base,qty} dgn base = shape item siap masuk pendingItems (tanpa qty di-expand)
+function parseTemplateItemLine(line){
+  const p=(line||'').split('_').map(s=>s.trim());
+  const[posterRaw,sizeRaw,colorRaw,qtyRaw]=p;
+  const size=(sizeRaw||'').toLowerCase().replace(/\s+/g,'');
+  const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===(colorRaw||'').toLowerCase());
+  const qty=Math.max(1,parseInt(qtyRaw,10)||0);
+  if(p.length<4||!posterRaw||!OK_SIZES.has(size)||!matchedColor||!qty)return null;
+
+  const isCustom=/^custom$/i.test(posterRaw);
+  let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
+  if(!isCustom){
+    const match=inv.posters.find(p2=>p2.name.toLowerCase()===posterRaw.toLowerCase());
+    if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
+    else posterName=posterRaw; // gak ketemu di stok poster → tetap dicatat sbg custom
+  }
+  const frame=findFrame('',matchedColor,size);
+  const base={posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame?frame.jenis||'':'',frameColor:matchedColor,frameSize:size,note:''};
+  return{base,qty,frame,productName:posterRaw,size,color:matchedColor};
+}
+
 function parseQuickTemplate(raw){
   const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
   if(!lines.length)return 'invalid_header';
 
-  const headerParts=lines[0].split('_').map(s=>s.trim());
-  const[chRaw,buyer,dateRaw,totalRaw,orderNoRaw,noteRaw]=headerParts;
-  const chanMap={shopee:'shopee',shp:'shopee',tiktok:'tiktok',ttk:'tiktok',tt:'tiktok',instagram:'instagram',ig:'instagram',wa:'instagram'};
-  const channel=chanMap[(chRaw||'').toLowerCase()];
-  const dm=(dateRaw||'').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-  const total=parseInt((totalRaw||'').replace(/\D/g,''),10)||0;
-  if(!channel||!buyer||!dm||!total)return 'invalid_header';
+  const header=parseTemplateHeader(lines[0]);
+  if(!header)return 'invalid_header';
+
+  if(header.orderNo&&orders.some(o=>o.orderNo&&o.orderNo.trim()===header.orderNo.trim())){
+    return `duplicate:${header.orderNo}`;
+  }
 
   const itemLines=lines.slice(1);
   if(!itemLines.length)return 'invalid_header'; // minimal 1 baris item
@@ -4952,41 +5005,26 @@ function parseQuickTemplate(raw){
   resiSkippedItems=[];
   let itemsAdded=0;const badLines=[];
   itemLines.forEach((line,li)=>{
-    const p=line.split('_').map(s=>s.trim());
-    const[posterRaw,sizeRaw,colorRaw,qtyRaw]=p;
-    const size=(sizeRaw||'').toLowerCase().replace(/\s+/g,'');
-    const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===(colorRaw||'').toLowerCase());
-    const qty=Math.max(1,parseInt(qtyRaw,10)||0);
-    if(p.length<4||!posterRaw||!OK_SIZES.has(size)||!matchedColor||!qty){badLines.push(li+2);return;} // li+2 = nomor baris di textarea (baris 1 = header)
-
-    const isCustom=/^custom$/i.test(posterRaw);
-    let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
-    if(!isCustom){
-      const match=inv.posters.find(p2=>p2.name.toLowerCase()===posterRaw.toLowerCase());
-      if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
-      else posterName=posterRaw; // gak ketemu di stok poster → tetap dicatat sbg custom
-    }
-    const frame=findFrame('',matchedColor,size);
+    const parsed=parseTemplateItemLine(line);
+    if(!parsed){badLines.push(li+2);return;} // li+2 = nomor baris di textarea (baris 1 = header)
+    const{base,qty,frame,productName,size,color}=parsed;
     const stock=frame?frame.stock:0;
     if(stock<qty){
-      resiSkippedItems.push({posterName,posterId,isCustomPoster,productName:posterRaw,size,color:matchedColor,jenis:frame?frame.jenis||'':'',qtyNeeded:qty-stock,qtyTotal:qty});
+      resiSkippedItems.push({posterName:base.posterName,posterId:base.posterId,isCustomPoster:base.isCustomPoster,productName,size,color,jenis:base.frameJenis,qtyNeeded:qty-stock,qtyTotal:qty});
     }else{
-      for(let i=0;i<qty;i++){
-        pendingItems.push({posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame.jenis||'',frameColor:matchedColor,frameSize:size,note:''});
-      }
+      for(let i=0;i<qty;i++)pendingItems.push({...base});
       itemsAdded+=qty;
     }
   });
 
   if(itemsAdded===0&&!resiSkippedItems.length)return 'invalid'; // semua baris item gagal, jangan isi apa-apa
 
-  $('oChannel').value=channel;
-  $('oBuyer').value=buyer;
-  const[,dd,mm,yyyy]=dm;
-  $('oOrderDate').value=`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
-  $('oTotal').value=total;
-  if(orderNoRaw)$('oOrderNo').value=orderNoRaw;
-  if(noteRaw)$('oNote').value=noteRaw;
+  $('oChannel').value=header.channel;
+  $('oBuyer').value=header.buyer;
+  $('oOrderDate').value=header.dateISO;
+  $('oTotal').value=header.total;
+  if(header.orderNo)$('oOrderNo').value=header.orderNo;
+  if(header.note)$('oNote').value=header.note;
 
   if(itemsAdded>0)renderItemList();
   renderResiBuyBox();
@@ -5007,6 +5045,10 @@ function parseResiPaste(){
     if(result==='ok'){toast('✅ Auto-isi dari format cepat berhasil. Cek dulu sebelum simpan ya!');return;}
     if(typeof result==='string'&&result.startsWith('ok_partial')){
       toast(`✅ Auto-isi sebagian berhasil, tapi baris ${result.split(':')[1]} di format cepat gak dikenali — cek/tambah manual.`);
+      return;
+    }
+    if(typeof result==='string'&&result.startsWith('duplicate:')){
+      ferr('oResiPasteE',`⚠️ No. Pesanan ${result.split(':')[1]} sudah ada di data — dilewati biar gak kecatet dobel. Kalau memang mau input ulang, hapus dulu order lamanya.`);
       return;
     }
     if(result==='invalid_header'){ferr('oResiPasteE','Header (baris 1) format cepat gak lengkap/valid. Formatnya: channel_namaPembeli_tanggal_total, lalu tiap baris berikutnya 1 item: poster_ukuran_warna_qty.');return;}
@@ -8254,6 +8296,205 @@ function openOrderModal(){
   setTimeout(()=>$('oChannel')?.focus(),50);
 }
 function closeOrderModal(){ $('orderModal').classList.remove('active'); releaseFocus($('orderModal')); }
+
+// ── Import file export Shopee "Order.all" (xlsx) → konversi ke Format Cepat, isi ke textarea Bulk Import ──
+// User tetap review/edit dulu sebelum klik "Proses Semua" — gak langsung commit ke database.
+async function importShopeeExcel(input){
+  const file=input.files[0];
+  if(!file)return;
+  input.value='';
+  toast('📥 Membaca file Excel Shopee...');
+
+  try{
+    if(!window.XLSX){
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        s.onload=res;s.onerror=rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+    if(!rows.length){toast('File kosong atau format tidak dikenali.','error');return;}
+
+    // Cari nama kolom fleksibel (jaga-jaga kalau header export Shopee dikit beda)
+    const cols=Object.keys(rows[0]);
+    const findCol=names=>cols.find(c=>names.includes(c.toLowerCase().replace(/\s+/g,' ').trim()));
+    const cOrderNo=findCol(['no. pesanan','no pesanan']);
+    const cStatus=findCol(['status pesanan']);
+    const cDate=findCol(['waktu pesanan dibuat']);
+    const cProduct=findCol(['nama produk']);
+    const cVariant=findCol(['nama variasi']);
+    const cQty=findCol(['jumlah']);
+    const cTotal=findCol(['total pembayaran']);
+    const cUser=findCol(['username (pembeli)']);
+    if(!cOrderNo||!cProduct||!cQty){toast('Kolom Excel tidak dikenali sbg format export Shopee (Order.all).','error');return;}
+
+    // Kelompokkan baris per No. Pesanan (1 order bisa punya beberapa baris/item)
+    const groups={};
+    rows.forEach(r=>{
+      const no=String(r[cOrderNo]||'').trim();
+      if(!no)return;
+      (groups[no]=groups[no]||[]).push(r);
+    });
+
+    const templateLines=[];
+    let orderCount=0,skippedCancel=0,skippedNoValidItem=0;const ambiguousNotes=[];
+
+    Object.entries(groups).forEach(([orderNo,itemRows])=>{
+      const status=String(itemRows[0][cStatus]||'').trim();
+      if(/batal/i.test(status)){skippedCancel++;return;}
+
+      const buyer=String(cUser?itemRows[0][cUser]:'').trim()||'Pembeli Shopee';
+      const rawDate=cDate?itemRows[0][cDate]:'';
+      let dateStr='';
+      if(rawDate instanceof Date){
+        dateStr=`${String(rawDate.getDate()).padStart(2,'0')}/${String(rawDate.getMonth()+1).padStart(2,'0')}/${rawDate.getFullYear()}`;
+      }else{
+        const m=String(rawDate||'').match(/(\d{4})-(\d{2})-(\d{2})/);
+        if(m)dateStr=`${m[3]}/${m[2]}/${m[1]}`;
+      }
+      const total=parseInt(String(cTotal?itemRows[0][cTotal]:'0').replace(/\D/g,''),10)||0;
+
+      const itemLines=[];
+      itemRows.forEach(r=>{
+        const produk=String(r[cProduct]||'');
+        if(/extra packing|bubble wrap|kardus|^frame only/i.test(produk))return; // add-on/bukan item frame, lewati diam-diam
+
+        const variasi=String(cVariant?r[cVariant]:'');
+        const qty=parseInt(r[cQty],10)||1;
+
+        // ukuran: cek dulu di kolom Variasi (utk listing 1 produk banyak pilihan ukuran), baru fallback ke Nama Produk
+        let size=null;
+        const vSize=variasi.match(/(\d{2}x\d{2,3})/i);
+        if(vSize)size=vSize[1].toLowerCase();
+        else{
+          const pSizes=[...produk.matchAll(/(\d{2}x\d{2,3})\s*(?:cm)?/gi)];
+          if(pSizes.length===1)size=pSizes[0][1].toLowerCase();
+        }
+        const color=[...OK_FCOLORS].find(c=>new RegExp('(^|[,\\s])'+c+'([,\\s]|$)','i').test(variasi))
+          ||(/MDF/i.test(produk)?'Hitam':null); // SKU "Poster Frame & MDF" gak ada opsi warna di variasinya, default Hitam
+
+        if(!OK_SIZES.has(size)||!color){
+          ambiguousNotes.push(`Order ${orderNo}: "${produk.slice(0,45)}" (variasi: "${variasi}") — ukuran/warna gak jelas.`);
+          return;
+        }
+        const posterField=/custom/i.test(produk)?'custom':produk.split('|')[0].trim().replace(/_/g,' ');
+        itemLines.push(`${posterField}_${size}_${color}_${qty}`);
+      });
+
+      if(!itemLines.length){skippedNoValidItem++;return;}
+
+      templateLines.push(`shopee_${buyer.replace(/_/g,' ')}_${dateStr||'01/01/2026'}_${total||1}_${orderNo}`);
+      templateLines.push(...itemLines);
+      templateLines.push('');
+      orderCount++;
+    });
+
+    $('bulkOrdersInput').value=templateLines.join('\n').trim();
+
+    let msg=`✅ ${orderCount} order dari Excel Shopee dikonversi ke Format Cepat — cek dulu sebelum Proses Semua.`;
+    if(skippedCancel)msg+=` ${skippedCancel} order berstatus Batal dilewati.`;
+    if(skippedNoValidItem)msg+=` ${skippedNoValidItem} order tanpa item frame yang valid dilewati.`;
+    toast(msg);
+
+    $('bulkResultsBox').innerHTML=ambiguousNotes.length
+      ?`<div style="font-weight:600;margin-bottom:4px;color:var(--red)">⚠️ ${ambiguousNotes.length} baris item gak jelas ukuran/warnanya — TIDAK ikut dikonversi, tambahkan manual kalau perlu:</div>`+
+        ambiguousNotes.map(n=>`<div style="padding:3px 0;font-size:12px;color:var(--t2)">${esc(n)}</div>`).join('')
+      :'';
+  }catch(err){
+    toast('Gagal baca Excel: '+err.message,'error');
+  }
+}
+
+function openBulkOrderModal(){
+  $('bulkOrdersInput').value='';
+  $('bulkResultsBox').innerHTML='';
+  $('bulkOrderModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('bulkOrderModal')));
+}
+function closeBulkOrderModal(){
+  $('bulkOrderModal').classList.remove('active');
+  releaseFocus($('bulkOrderModal'));
+}
+
+// ── Proses banyak order sekaligus, format cepat, tiap order dipisah baris kosong ──
+async function processBulkOrders(){
+  const raw=($('bulkOrdersInput').value||'').trim();
+  if(!raw){toast('Tempel data order dulu.','error');return;}
+  const blocks=raw.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
+  if(!blocks.length){toast('Gak ada blok order yang kebaca.','error');return;}
+
+  const btn=$('bulkProcessBtn');
+  const orig=btn.textContent;btn.textContent='⏳ Memproses...';btn.disabled=true;
+
+  let successCount=0;const results=[];
+  for(let bi=0;bi<blocks.length;bi++){
+    const lines=blocks[bi].split('\n').map(l=>l.trim()).filter(Boolean);
+    const header=parseTemplateHeader(lines[0]);
+    if(!header){results.push(`❌ Order #${bi+1}: baris pertama (header) gak valid — "${lines[0].slice(0,50)}"`);continue;}
+
+    // Cegah duplikat: kalau No. Pesanan ini udah ada di data (misal sudah diinput manual sebelumnya), lewati.
+    if(header.orderNo&&orders.some(o=>o.orderNo&&o.orderNo.trim()===header.orderNo.trim())){
+      results.push(`⏭️ Order #${bi+1} (${header.buyer}, No. Pesanan ${header.orderNo}): sudah ada di data, dilewati biar gak dobel.`);
+      continue;
+    }
+
+    const itemLines=lines.slice(1);
+    if(!itemLines.length){results.push(`❌ Order #${bi+1} (${header.buyer}): gak ada baris item.`);continue;}
+
+    const expandedItems=[];let itemErr=null;
+    for(const line of itemLines){
+      const parsed=parseTemplateItemLine(line);
+      if(!parsed){itemErr=`baris item gak valid — "${line}"`;break;}
+      for(let i=0;i<parsed.qty;i++)expandedItems.push({...parsed.base});
+    }
+    if(itemErr){results.push(`❌ Order #${bi+1} (${header.buyer}): ${itemErr}`);continue;}
+
+    // Cek stok teragregasi utk semua item di order ini — kalau kurang, seluruh order ini di-skip (gak ada yg simpan setengah-setengah)
+    const frameNeeds=aggregateFrameNeeds(expandedItems);
+    let stockErr=null;
+    for(const[key,needQty] of frameNeeds){
+      const[fj,fc,fs]=key.split('␟');
+      const frame=findFrame(fj,fc,fs);
+      if(!frame||frame.stock<needQty){stockErr=`Stok Frame ${fc} ${fs} kurang (tersedia ${frame?frame.stock:0}, butuh ${needQty})`;break;}
+    }
+    if(stockErr){results.push(`⚠️ Order #${bi+1} (${header.buyer}): ${stockErr} — restock dulu, lalu proses ulang blok ini.`);continue;}
+    const posterNeeds=aggregatePosterNeeds(expandedItems);
+    let posterErr=null;
+    for(const[pid] of posterNeeds){
+      if(!inv.posters.find(p=>p.id===pid)){posterErr='Poster tidak ditemukan di stok (mungkin sudah dihapus).';break;}
+    }
+    if(posterErr){results.push(`❌ Order #${bi+1} (${header.buyer}): ${posterErr}`);continue;}
+
+    try{
+      const id=`order_${Date.now()}_${bi}`;
+      const orderDoc={id,channel:header.channel,buyer:header.buyer,orderNo:header.orderNo,note:header.note,total:header.total,finalTotal:null,items:expandedItems,status:'proses',createdAt:header.dateISO+'T'+new Date().toTimeString().slice(0,8)+'.000Z'};
+      await fsSet('orders',orderDoc);
+      for(const it of expandedItems){
+        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
+          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
+        if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
+        if(!it.isCustomPoster&&it.posterId){
+          const poster=inv.posters.find(p=>p.id===it.posterId);
+          if(poster){poster.stock=Math.max(0,poster.stock-1);await fsSet('inventory_posters',poster);}
+        }
+      }
+      successCount++;
+      results.push(`✅ Order #${bi+1} (${header.buyer}) tersimpan — ${expandedItems.length} item.`);
+    }catch(err){
+      results.push(`❌ Order #${bi+1} (${header.buyer}): gagal simpan — ${err.message}`);
+    }
+  }
+
+  $('bulkResultsBox').innerHTML=results.map(r=>`<div style="padding:5px 0;font-size:12.5px;border-bottom:1px solid var(--border)">${esc(r)}</div>`).join('');
+  toast(`Selesai: ${successCount}/${blocks.length} order berhasil disimpan.`);
+  btn.textContent=orig;btn.disabled=false;
+}
 
 function openKeuModal(){
   $('keuModal').classList.add('active');
