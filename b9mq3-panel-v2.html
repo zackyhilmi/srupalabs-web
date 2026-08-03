@@ -2623,6 +2623,13 @@ async function cmsDel(id){
           <div class="ferr" id="oOrderDateE"></div>
         </div>
       </div>
+      <div class="fg" style="margin-bottom:14px">
+        <label>⚡ Tempel Resi / Format Cepat <small style="color:var(--t3);font-weight:400">(opsional — auto-isi form & item)</small></label>
+        <textarea id="oResiPaste" rows="4" placeholder="Paste teks resi kurir, ATAU ketik format cepat (baris 1 = info order, baris berikutnya = tiap item):&#10;channel_namaPembeli_tanggal_total&#10;poster_ukuran_warna_qty&#10;&#10;cth 2 item beda ukuran/warna:&#10;shopee_Budi Santoso_27/07/2026_500000&#10;custom_40x60_Hitam_2&#10;custom_30x40_Putih_1" style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);resize:vertical"></textarea>
+        <button type="button" class="add-item-btn" style="margin-top:6px" onclick="parseResiPaste()">⚡ Auto-Isi dari Resi</button>
+        <div class="ferr" id="oResiPasteE" style="margin-top:6px"></div>
+        <div id="oResiBuyBox"></div>
+      </div>
       <div class="item-builder">
         <div class="item-builder-title">📦 Item dalam Order</div>
         <div class="item-list" id="itemList"></div>
@@ -3178,6 +3185,7 @@ let inv={posters:[],frames:[]};
 let orders=[];
 let keuangan=[];
 let pendingItems=[];  // item builder untuk form order
+let resiSkippedItems=[]; // item hasil parse resi yang stok frame-nya belum cukup, nunggu di-restock
 let editType=null,editId=null;
 let chartOmzet=null,chartChannel=null,chartLapOmzet=null,chartLapKat=null;
 
@@ -4868,6 +4876,32 @@ function checkFrameStockUI(){
 }
 
 // ── Beli frame langsung dari form Order tanpa pindah menu ──────────
+// ── Helper bersama: catat pengeluaran restock + tambah stok frame ──
+async function restockFrameQty(jenis,color,size,qty,unitPrice,sourceLabel){
+  const amount=unitPrice*qty;
+  const keuItem={
+    id:`keu_${Date.now()}`,
+    type:'expense',cat:'restock',amount,
+    date:new Date().toISOString().split('T')[0],
+    desc:`Restock: ${color} ${size} ${qty}pcs @${rp(unitPrice)}${sourceLabel?` (${sourceLabel})`:''}`,
+    restockItems:[{jenis,color,size,qty,unitPrice}],
+    createdAt:new Date().toISOString()
+  };
+  await fsSet('keuangan',keuItem);
+  keuangan.push(keuItem);
+
+  let frame=findFrame(jenis,color,size);
+  if(frame){
+    frame.stock+=qty;
+    await fsSet('inventory_frames',frame);
+  }else{
+    frame={id:`frame_${jenis}_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_'),jenis,color,size,stock:qty,createdAt:new Date().toISOString()};
+    await fsSet('inventory_frames',frame);
+    inv.frames.push(frame);
+  }
+  return frame;
+}
+
 async function quickBuyFrameForOrder(btn){
   const jenis=$('iFrameJenis').value;
   const color=$('iFrameColor').value;
@@ -4881,27 +4915,7 @@ async function quickBuyFrameForOrder(btn){
   if(btn){btn.textContent='⏳...';btn.disabled=true;}
 
   try{
-    const amount=unitPrice*qty;
-    const keuItem={
-      id:`keu_${Date.now()}`,
-      type:'expense',cat:'restock',amount,
-      date:new Date().toISOString().split('T')[0],
-      desc:`Restock: ${color} ${size} ${qty}pcs @${rp(unitPrice)} (via Catat Order)`,
-      restockItems:[{jenis,color,size,qty,unitPrice}],
-      createdAt:new Date().toISOString()
-    };
-    await fsSet('keuangan',keuItem);
-    keuangan.push(keuItem);
-
-    let frame=findFrame(jenis,color,size);
-    if(frame){
-      frame.stock+=qty;
-      await fsSet('inventory_frames',frame);
-    }else{
-      const newFrame={id:`frame_${jenis}_${color}_${size}_${Date.now()}`.replace(/\s+/g,'_'),jenis,color,size,stock:qty,createdAt:new Date().toISOString()};
-      await fsSet('inventory_frames',newFrame);
-      inv.frames.push(newFrame);
-    }
+    await restockFrameQty(jenis,color,size,qty,unitPrice,'via Catat Order');
     toast(`✅ Stok Frame ${jenis} ${color} ${size} +${qty} pcs. Lanjutkan tambahkan item ke order.`);
     checkFrameStockUI();
   }catch(err){
@@ -4912,6 +4926,229 @@ async function quickBuyFrameForOrder(btn){
 }
 
 function closeItemModal(){$('itemModal').classList.remove('active');releaseFocus($('itemModal'));}
+
+// ── Auto-isi form Order dari teks resi Shopee/JNE yang di-paste ──────
+// Best-effort: field yang jelas polanya (No. Pesanan/Resi, Nama Pembeli,
+// baris item ukuran|warna|qty) diisi otomatis. Yang tidak yakin dikenali
+// dibiarkan kosong / ditandai warning, biar tidak salah catat diam-diam.
+// ── Format cepat manual (ketik sendiri, bukan copy dari resi kurir) ──
+// channel_namaPembeli_poster_ukuran_warna_qty_tanggal_total[_noPesanan][_catatan]
+// Contoh: shopee_Budi Santoso_custom_40x60_Hitam_3_27/07/2026_200000
+function parseQuickTemplate(raw){
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length)return 'invalid_header';
+
+  const headerParts=lines[0].split('_').map(s=>s.trim());
+  const[chRaw,buyer,dateRaw,totalRaw,orderNoRaw,noteRaw]=headerParts;
+  const chanMap={shopee:'shopee',shp:'shopee',tiktok:'tiktok',ttk:'tiktok',tt:'tiktok',instagram:'instagram',ig:'instagram',wa:'instagram'};
+  const channel=chanMap[(chRaw||'').toLowerCase()];
+  const dm=(dateRaw||'').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  const total=parseInt((totalRaw||'').replace(/\D/g,''),10)||0;
+  if(!channel||!buyer||!dm||!total)return 'invalid_header';
+
+  const itemLines=lines.slice(1);
+  if(!itemLines.length)return 'invalid_header'; // minimal 1 baris item
+
+  resiSkippedItems=[];
+  let itemsAdded=0;const badLines=[];
+  itemLines.forEach((line,li)=>{
+    const p=line.split('_').map(s=>s.trim());
+    const[posterRaw,sizeRaw,colorRaw,qtyRaw]=p;
+    const size=(sizeRaw||'').toLowerCase().replace(/\s+/g,'');
+    const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===(colorRaw||'').toLowerCase());
+    const qty=Math.max(1,parseInt(qtyRaw,10)||0);
+    if(p.length<4||!posterRaw||!OK_SIZES.has(size)||!matchedColor||!qty){badLines.push(li+2);return;} // li+2 = nomor baris di textarea (baris 1 = header)
+
+    const isCustom=/^custom$/i.test(posterRaw);
+    let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
+    if(!isCustom){
+      const match=inv.posters.find(p2=>p2.name.toLowerCase()===posterRaw.toLowerCase());
+      if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
+      else posterName=posterRaw; // gak ketemu di stok poster → tetap dicatat sbg custom
+    }
+    const frame=findFrame('',matchedColor,size);
+    const stock=frame?frame.stock:0;
+    if(stock<qty){
+      resiSkippedItems.push({posterName,posterId,isCustomPoster,productName:posterRaw,size,color:matchedColor,jenis:frame?frame.jenis||'':'',qtyNeeded:qty-stock,qtyTotal:qty});
+    }else{
+      for(let i=0;i<qty;i++){
+        pendingItems.push({posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame.jenis||'',frameColor:matchedColor,frameSize:size,note:''});
+      }
+      itemsAdded+=qty;
+    }
+  });
+
+  if(itemsAdded===0&&!resiSkippedItems.length)return 'invalid'; // semua baris item gagal, jangan isi apa-apa
+
+  $('oChannel').value=channel;
+  $('oBuyer').value=buyer;
+  const[,dd,mm,yyyy]=dm;
+  $('oOrderDate').value=`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+  $('oTotal').value=total;
+  if(orderNoRaw)$('oOrderNo').value=orderNoRaw;
+  if(noteRaw)$('oNote').value=noteRaw;
+
+  if(itemsAdded>0)renderItemList();
+  renderResiBuyBox();
+  return badLines.length?`ok_partial:${badLines.join(',')}`:'ok';
+}
+
+function parseResiPaste(){
+  clerr('oResiPasteE');
+  const raw=($('oResiPaste').value||'').trim();
+  if(!raw){ferr('oResiPasteE','Tempel teks resi atau format cepat dulu di kotak ini.');return;}
+
+  // Kalau teksnya bukan resi kurir (gak ada label "Penerima:"/"No. Resi") dan
+  // baris pertamanya polanya kayak header format cepat, coba parse sbg format cepat dulu.
+  const looksLikeCourierResi=/Penerima\s*:|No\.?\s*Resi/i.test(raw);
+  const firstLineParts=(raw.split('\n')[0]||'').split('_').length;
+  if(!looksLikeCourierResi&&firstLineParts>=4){
+    const result=parseQuickTemplate(raw);
+    if(result==='ok'){toast('✅ Auto-isi dari format cepat berhasil. Cek dulu sebelum simpan ya!');return;}
+    if(typeof result==='string'&&result.startsWith('ok_partial')){
+      toast(`✅ Auto-isi sebagian berhasil, tapi baris ${result.split(':')[1]} di format cepat gak dikenali — cek/tambah manual.`);
+      return;
+    }
+    if(result==='invalid_header'){ferr('oResiPasteE','Header (baris 1) format cepat gak lengkap/valid. Formatnya: channel_namaPembeli_tanggal_total, lalu tiap baris berikutnya 1 item: poster_ukuran_warna_qty.');return;}
+    if(result==='invalid'){ferr('oResiPasteE','Baris item format cepat gak ada yang valid. Cek lagi ejaan ukuran (20x30/30x40/40x60/50x70/60x80) & warna (Hitam/Putih/Kayu/Chrome).');return;}
+  }
+
+  const filled=[];
+
+  // No. Pesanan / No. Resi
+  const mPesanan=raw.match(/No\.?\s*Pesanan\s*:?\s*([A-Za-z0-9]+)/i);
+  const mResi=raw.match(/No\.?\s*Resi\s*:?\s*([A-Za-z0-9]+)/i);
+  if(mPesanan||mResi){
+    $('oOrderNo').value=[mPesanan?mPesanan[1]:'',mResi?`Resi:${mResi[1]}`:''].filter(Boolean).join(' / ');
+    filled.push('No. Pesanan/Resi');
+  }
+
+  // Nama pembeli — beda kurir beda urutan: kadang nama ada SEBELUM "Penerima:",
+  // kadang SESUDAHNYA (di baris berikutnya). Coba ambil teks tepat sesudah label dulu;
+  // kalau itu ternyata cuma nama toko sendiri (SrupaLabs, karena kolomnya kebalik),
+  // baru fallback ambil teks sebelum label.
+  const penerimaMatch=raw.match(/Penerima\s*:?\s*\n?\s*([\s\S]*?)(?:\n|Pengirim\s*:|\d{6,}|$)/i);
+  if(penerimaMatch){
+    let buyerName='';
+    const afterVal=penerimaMatch[1].trim();
+    const isShopName=/^srupa\s*labs$/i.test(afterVal);
+    if(afterVal&&!isShopName&&/[A-Za-zÀ-ÿ]/.test(afterVal)&&afterVal.length<60){
+      buyerName=afterVal;
+    }else{
+      const before=raw.slice(0,penerimaMatch.index).trim();
+      const nameMatch=before.match(/([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'.-]*(?:[ \n]+[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'.-]*){0,4})\s*$/);
+      if(nameMatch)buyerName=nameMatch[1].replace(/\s+/g,' ').trim();
+    }
+    if(buyerName){$('oBuyer').value=buyerName;filled.push('Nama pembeli');}
+  }
+
+  // Tanggal — resi biasanya cuma nampilin "Batas Kirim" (DD-MM-YYYY), dipakai sbg tanggal order
+  const mTanggal=raw.match(/Batas\s*Kirim\s*:?\s*(\d{2})-(\d{2})-(\d{4})/i);
+  if(mTanggal){
+    const[,dd,mm,yyyy]=mTanggal;
+    $('oOrderDate').value=`${yyyy}-${mm}-${dd}`;
+    filled.push('Tanggal (dari Batas Kirim)');
+  }
+
+  // Baris item tabel, pola umum: "{no} {nama produk} {ukuran}cm | {warna} {qty}"
+  const itemRegex=/(\d+)\s+([^\d|]+?)\s*(\d{2}x\d{2,3})\s*(?:cm)?\s*\|\s*([A-Za-zÀ-ÿ]+)\s+(\d{1,3})\b/gi;
+  let m,lastEnd=0,itemsAdded=0;const unrecognized=[];
+  resiSkippedItems=[]; // reset tiap kali parse ulang
+  while((m=itemRegex.exec(raw))){
+    const[full,,namePart,sizeRaw,colorRaw,qtyRaw]=m;
+    lastEnd=m.index+full.length;
+    const size=sizeRaw.replace(/\s+/g,'');
+    const qty=Math.max(1,parseInt(qtyRaw,10)||1);
+    const productName=namePart.trim();
+    if(!OK_SIZES.has(size)){unrecognized.push(`${productName} (ukuran "${size}" tak dikenal)`);continue;}
+    const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===colorRaw.trim().toLowerCase());
+    const color=matchedColor||colorRaw.trim();
+    const isCustom=/custom/i.test(productName);
+    let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
+    if(!isCustom){
+      const match=inv.posters.find(p=>p.name.toLowerCase()===productName.toLowerCase());
+      if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
+      else{posterName=productName;} // tak ketemu di stok poster → tetap dicatat sbg custom
+    }
+    const frame=findFrame('',color,size);
+    const stock=frame?frame.stock:0;
+    if(stock<qty){
+      // dikenali dengan jelas, cuma stok frame-nya belum cukup → tawarkan beli+tambah langsung
+      resiSkippedItems.push({posterName,posterId,isCustomPoster,productName,size,color,jenis:frame?frame.jenis||'':'',qtyNeeded:qty-stock,qtyTotal:qty});
+      continue;
+    }
+    for(let i=0;i<qty;i++){
+      pendingItems.push({posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame.jenis||'',frameColor:color,frameSize:size,note:''});
+    }
+    itemsAdded+=qty;
+  }
+  if(itemsAdded>0){renderItemList();filled.push(`${itemsAdded} item`);}
+  renderResiBuyBox();
+
+  if(filled.length)toast(`✅ Auto-isi: ${filled.join(', ')}. Tetap cek dulu sebelum simpan ya!`);
+  else if(!resiSkippedItems.length)ferr('oResiPasteE','Belum ada data yang cocok dikenali dari teks ini — isi manual saja.');
+
+  // Teks sisa (misal nama/kategori produk yang nyempil di belakang) sengaja diabaikan diam-diam.
+  // Cuma tampilin warning buat hal yang butuh aksi: ukuran gak dikenal / stok frame kurang.
+  const warn=unrecognized.filter(Boolean).join(' | ');
+  if(warn)ferr('oResiPasteE',`⚠️ Ada bagian yang tidak otomatis dikenali, cek manual: "${warn.slice(0,150)}"`);
+}
+
+// ── Render kartu "stok kurang, beli langsung" untuk tiap item hasil parse resi ──
+function renderResiBuyBox(){
+  const box=$('oResiBuyBox');
+  if(!box)return;
+  if(!resiSkippedItems.length){box.innerHTML='';return;}
+  box.innerHTML=resiSkippedItems.map((it,idx)=>`
+    <div style="padding:10px 12px;background:var(--red-lt);border-radius:8px;border:1px solid #fecaca;margin-top:8px">
+      <div style="font-size:12.5px;color:var(--red);font-weight:600;margin-bottom:8px">⚠️ ${esc(it.productName)} — Frame ${esc(it.color)} ${esc(it.size)} kurang ${it.qtyNeeded} pcs</div>
+      <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:64px">
+          <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:3px">Beli qty</label>
+          <input type="number" id="resiBuyQty_${idx}" min="1" value="${it.qtyNeeded}" style="width:100%;font-size:13px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font)">
+        </div>
+        <div style="flex:1;min-width:90px">
+          <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:3px">Harga satuan (Rp)</label>
+          <input type="number" id="resiBuyPrice_${idx}" min="0" value="${getRestockFramePrice(it.size,it.jenis)||''}" placeholder="0" style="width:100%;font-size:13px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font)">
+        </div>
+        <button type="button" onclick="resiQuickBuyAndAdd(${idx},this)" style="height:33px;padding:0 12px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">🛒 Beli & Tambahkan</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--t3);margin-top:6px">Beli langsung tercatat sebagai pengeluaran Restock Frame, stok bertambah, & item ini otomatis masuk ke order.</div>
+    </div>`).join('');
+}
+
+// ── Beli kekurangan stok frame untuk 1 item hasil parse resi, lalu langsung masukkan ke order ──
+async function resiQuickBuyAndAdd(idx,btn){
+  const it=resiSkippedItems[idx];
+  if(!it)return;
+  const qtyInput=$(`resiBuyQty_${idx}`),priceInput=$(`resiBuyPrice_${idx}`);
+  const buyQty=parseInt(qtyInput?.value,10);
+  const unitPrice=parseInt(priceInput?.value,10);
+  if(!buyQty||buyQty<1){toast('Isi jumlah beli terlebih dahulu.','error');return;}
+  if(!unitPrice||unitPrice<=0){toast('Isi harga satuan terlebih dahulu.','error');return;}
+
+  const origTxt=btn?btn.textContent:null;
+  if(btn){btn.textContent='⏳...';btn.disabled=true;}
+
+  try{
+    const frame=await restockFrameQty(it.jenis,it.color,it.size,buyQty,unitPrice,'via paste resi');
+    if(frame.stock<it.qtyTotal){
+      toast(`Stok masih kurang (${frame.stock}/${it.qtyTotal}). Tambah qty beli lagi kalau perlu.`,'error');
+      if(btn){btn.textContent=origTxt;btn.disabled=false;}
+      return;
+    }
+    for(let i=0;i<it.qtyTotal;i++){
+      pendingItems.push({posterName:it.posterName,posterId:it.posterId,isCustomPoster:it.isCustomPoster,posterSize:it.size,frameJenis:frame.jenis||'',frameColor:it.color,frameSize:it.size,note:''});
+    }
+    resiSkippedItems.splice(idx,1);
+    renderItemList();
+    renderResiBuyBox();
+    toast(`✅ Stok ditambah & ${it.qtyTotal} item "${it.productName}" masuk ke order.`);
+  }catch(err){
+    toast('Gagal beli stok: '+err.message,'error');
+    if(btn){btn.textContent=origTxt;btn.disabled=false;}
+  }
+}
 
 function addItemToOrder(){
   clerr('iPosterSelectE','iPosterSizeE','iFrameColorE','iFrameSizeE');
@@ -8010,6 +8247,7 @@ function openOrderModal(){
   $('orderModalTitle').textContent='➕ Order Baru';
   $('orderSubmitBtn').textContent='💾 Simpan Order';
   pendingItems=[];renderItemList();
+  resiSkippedItems=[];if($('oResiBuyBox'))$('oResiBuyBox').innerHTML='';
   $('fOrder').reset();
   $('orderModal').classList.add('active');
   requestAnimationFrame(()=>trapFocus($('orderModal')));
