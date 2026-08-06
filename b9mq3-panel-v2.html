@@ -976,6 +976,44 @@ tbody tr:hover{background:var(--gray-lt)}
   padding-bottom:7px;border-bottom:1.5px solid var(--border);
 }
 
+/* ─── NESTING / LAYOUT CETAK ─── */
+.nest-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:12px}
+.nest-fg{display:flex;flex-direction:column;gap:5px}
+.nest-fg label{font-size:11.5px;font-weight:600;color:var(--t2)}
+.nest-fg select,.nest-fg input{padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:var(--surface);outline:none}
+.nest-fg select:focus,.nest-fg input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.nest-chk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t1);cursor:pointer;user-select:none}
+.nest-layout{display:grid;grid-template-columns:280px 1fr;gap:12px;align-items:start}
+.nest-queue{max-height:640px;overflow-y:auto}
+.nest-qitem{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;background:var(--gray-lt)}
+.nest-qitem input[type=checkbox]{margin-top:3px;flex-shrink:0}
+.nest-qitem-info{flex:1;min-width:0}
+.nest-qitem-name{font-size:12.5px;font-weight:700;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nest-qitem-sub{font-size:11px;color:var(--t2);margin-top:1px}
+.nest-swatch{width:11px;height:11px;border-radius:3px;flex-shrink:0;margin-top:2px}
+.nest-empty{padding:28px 10px;text-align:center;color:var(--t3);font-size:12.5px}
+.nest-stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.nest-stat{background:var(--gray-lt);border-radius:10px;padding:9px 14px;flex:1;min-width:120px}
+.nest-stat-val{font-size:17px;font-weight:700;color:var(--t1);letter-spacing:-.01em}
+.nest-stat-lbl{font-size:11px;color:var(--t2);margin-top:1px}
+.nest-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.nest-legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--t2)}
+.nest-canvas-wrap{border:1.5px dashed var(--border);border-radius:12px;background:#EAECF0;padding:16px;max-height:720px;overflow:auto}
+.nest-frame-lbl{font-size:12.5px;font-weight:700;color:var(--t1);margin:14px 0 6px;display:flex;align-items:center;gap:8px}
+.nest-frame-lbl:first-child{margin-top:0}
+.nest-warn{background:var(--red-lt);color:var(--red);border-radius:9px;padding:9px 12px;font-size:12px;margin-bottom:12px}
+.nest-item{position:absolute;border-radius:4px;cursor:grab;display:flex;align-items:center;justify-content:center;transition:box-shadow .12s}
+.nest-item:hover{box-shadow:0 0 0 2px rgba(15,23,41,.25)}
+.nest-item.dragging{cursor:grabbing;box-shadow:0 6px 18px rgba(15,23,41,.3);opacity:.92}
+.nest-item.snapped{box-shadow:0 0 0 2px var(--accent)}
+.nest-item-label{font-size:11px;font-weight:600;color:#111827;text-align:center;padding:0 4px;pointer-events:none;line-height:1.25}
+.nest-item-size{position:absolute;left:5px;bottom:3px;font-size:9.5px;color:#374151;opacity:.75;pointer-events:none}
+.nest-item-rotate{position:absolute;top:2px;right:21px;width:16px;height:16px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:#111827;font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.nest-item-rotate:hover{background:#fff;transform:scale(1.08)}
+.nest-item-delete{position:absolute;top:2px;right:2px;width:16px;height:16px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:var(--red);font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.nest-item-delete:hover{background:var(--red);color:#fff;transform:scale(1.08)}
+@media(max-width:860px){.nest-layout{grid-template-columns:1fr}.nest-queue{max-height:280px}}
+
 /* ─── MARGIN & PROFIT ─── */
 .hpp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
 .hpp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:14px}
@@ -1335,6 +1373,10 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
         <span class="nitem-label">Inventaris</span><span class="nbadge" id="navBadge" style="display:none">!</span>
       </button>
+      <button class="nitem" data-label="Layout Cetak" onclick="goPage('nesting',this)">
+        <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4"/><rect x="3" y="10" width="8" height="11"/><rect x="13" y="10" width="8" height="6"/></svg></span>
+        <span class="nitem-label">Layout Cetak</span>
+      </button>
     </div>
     <div class="nsec">
       <div class="nseclbl">Keuangan</div>
@@ -1587,6 +1629,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <div class="chd">
             <div class="ctitle">📋 Daftar Order</div>
             <div style="display:flex;gap:8px">
+              <button class="pbtn" style="width:auto;padding:7px 14px;font-size:13px;background:var(--red)" onclick="openDupCheckModal()">🔍 Cari Duplikat</button>
               <button class="pbtn" style="width:auto;padding:7px 14px;font-size:13px;background:var(--t2)" onclick="openBulkOrderModal()">📦 Bulk Import</button>
               <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openOrderModal()">➕ Order Baru</button>
             </div>
@@ -2083,6 +2126,135 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       </div>
 
       <div class="kanban-board" id="kanbanBoard"></div>
+
+    </div>
+
+    <!-- ═══ LAYOUT CETAK (NESTING) ═══ -->
+    <div class="page" id="page-nesting">
+
+      <div class="card">
+        <div class="chd">
+          <div class="ctitle">⚙️ Pengaturan Layout</div>
+        </div>
+        <div class="cbody">
+          <div class="nest-toolbar">
+            <div class="nest-fg">
+              <label>Lebar Kertas / Roll</label>
+              <select id="nestRollWidth">
+                <option value="auto" selected>🪄 Otomatis (paling hemat)</option>
+                <option value="100">100 cm</option>
+                <option value="120">120 cm</option>
+                <option value="140">140 cm</option>
+              </select>
+            </div>
+            <div class="nest-fg">
+              <label>Jarak Antar Item (cm)</label>
+              <input type="number" id="nestGap" value="0" min="0" max="10" step="0.5" style="width:90px">
+            </div>
+            <div class="nest-fg">
+              <label>Maks. Panjang per Frame (cm)</label>
+              <input type="number" id="nestMaxLen" placeholder="Tanpa batas" min="50" step="10" style="width:130px">
+            </div>
+            <div class="nest-fg">
+              <label style="visibility:hidden">Rotasi</label>
+              <label class="nest-chk"><input type="checkbox" id="nestAllowRotate" checked>Izinkan rotasi per-item biar paling irit bahan</label>
+            </div>
+            <div class="nest-fg">
+              <label style="visibility:hidden">Generate</label>
+              <button class="pbtn" style="width:auto;padding:9px 20px" onclick="nestGenerate()">🧩 Generate Layout</button>
+            </div>
+          </div>
+          <div class="nest-toolbar" style="margin-bottom:0">
+            <label class="nest-chk"><input type="checkbox" id="nestIncMenunggu" checked onchange="nestRenderQueue()">⏳ Antri Cetak</label>
+            <label class="nest-chk"><input type="checkbox" id="nestIncProses" onchange="nestRenderQueue()">🖨️ Sedang Dicetak</label>
+            <input type="text" id="nestSearch" placeholder="🔍 Cari nama pembeli..." oninput="nestRenderQueue()" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);flex:1;min-width:160px">
+            <button class="pbtn outline" style="width:auto;padding:7px 14px;font-size:12px" onclick="nestToggleAll(true)">Pilih Semua</button>
+            <button class="pbtn outline" style="width:auto;padding:7px 14px;font-size:12px" onclick="nestToggleAll(false)">Kosongkan</button>
+          </div>
+          <div class="nest-toolbar" style="margin-bottom:0;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+            <div class="nest-fg" style="flex:1;min-width:180px">
+              <label>📂 Layout Tersimpan</label>
+              <select id="nestSavedSelect"><option value="">— pilih layout tersimpan —</option></select>
+            </div>
+            <button class="pbtn outline" style="width:auto;padding:7px 14px;font-size:12px" onclick="nestOpenSaved()">📂 Buka</button>
+            <button class="pbtn outline" style="width:auto;padding:7px 14px;font-size:12px;color:var(--red);border-color:var(--red)" onclick="nestDeleteSaved()">🗑️ Hapus Tersimpan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="nest-layout">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <div class="chd">
+              <div class="ctitle">📋 Antrian Cetak</div>
+              <span style="font-size:11.5px;color:var(--t2)" id="nestQueueCount"></span>
+            </div>
+            <div class="cbody nest-queue" id="nestQueueList"></div>
+          </div>
+
+          <div class="card">
+            <div class="chd">
+              <div class="ctitle">➕ Tambah Item Manual</div>
+            </div>
+            <div class="cbody">
+              <div class="fg">
+                <label>Nama / Label</label>
+                <input type="text" id="nestManualName" placeholder="cth. Testprint, Dekor kantor, dll">
+              </div>
+              <div class="fg-row">
+                <div class="fg">
+                  <label>Ukuran</label>
+                  <select id="nestManualSize" onchange="nestToggleManualCustomSize(this.value)">
+                    <option value="20x30">20×30</option>
+                    <option value="30x40">30×40</option>
+                    <option value="40x60" selected>40×60</option>
+                    <option value="50x70">50×70</option>
+                    <option value="60x80">60×80</option>
+                    <option value="20x40">20×40</option>
+                    <option value="60x90">60×90</option>
+                    <option value="custom">Custom...</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Qty</label>
+                  <input type="number" id="nestManualQty" value="1" min="1" max="50">
+                </div>
+              </div>
+              <div class="fg-row" id="nestManualCustomWrap" style="display:none">
+                <div class="fg">
+                  <label>Lebar (cm)</label>
+                  <input type="number" id="nestManualW" min="1" placeholder="cth. 45">
+                </div>
+                <div class="fg">
+                  <label>Tinggi (cm)</label>
+                  <input type="number" id="nestManualH" min="1" placeholder="cth. 65">
+                </div>
+              </div>
+              <div class="fg">
+                <label>Warna / Catatan (opsional)</label>
+                <input type="text" id="nestManualColor" placeholder="cth. Hitam, Kayu, dll">
+              </div>
+              <button class="pbtn" style="width:100%" onclick="nestAddManualItem()">➕ Tambah ke Layout</button>
+              <div id="nestManualList" style="margin-top:12px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">🧩 Hasil Layout</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+              <button class="pbtn outline" style="width:auto;padding:6px 14px;font-size:12px;display:none" onclick="nestSaveLayout()" id="nestSaveBtn">💾 Simpan</button>
+              <button class="pbtn outline" style="width:auto;padding:6px 14px;font-size:12px;display:none;color:var(--red);border-color:var(--red)" onclick="nestClearLayout()" id="nestClearBtn">🗑️ Hapus</button>
+              <button class="pbtn outline" style="width:auto;padding:6px 14px;font-size:12px;display:none" onclick="nestPrint()" id="nestPrintBtn">🖨️ Buka utk Print</button>
+              <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;display:none" onclick="nestMarkDone()" id="nestDoneBtn">✅ Sudah Dicetak → Framing</button>
+            </div>
+          </div>
+          <div class="cbody" id="nestResultBody">
+            <div class="nest-empty">Pilih item di kiri (atau tambah manual), atur lebar roll, lalu klik <strong>Generate Layout</strong>. Setelah muncul, item bisa digeser (drag) langsung buat atur ulang posisi.</div>
+          </div>
+        </div>
+      </div>
 
     </div>
 
@@ -2661,13 +2833,23 @@ async function cmsDel(id){
     <div class="mhd"><h3>📦 Bulk Import Order</h3><button class="mclose" onclick="closeBulkOrderModal()" aria-label="Tutup modal">×</button></div>
     <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6">
       Tempel/ketik <strong>banyak order sekaligus</strong>. Tiap order dipisah <strong>baris kosong</strong>.<br>
+      Kalau stok frame kurang, sistem <strong>otomatis beli kekurangannya</strong> (pakai harga acuan restock) & catat sbg transaksi — cocok utk order historis yg emang udah kejadian.<br>
       Format tiap order sama kayak Format Cepat: baris 1 = <code>channel_namaPembeli_tanggal_total</code>, baris berikutnya per item = <code>poster_ukuran_warna_qty</code>.
     </div>
     <button type="button" class="pbtn" style="width:auto;padding:7px 14px;font-size:12.5px;background:var(--surface);color:var(--t1);border:1.5px solid var(--border);margin-bottom:10px" onclick="$('shopeeExcelInput').click()">📤 Upload Excel Shopee (Order.all)</button>
     <input type="file" id="shopeeExcelInput" accept=".xlsx,.xls" style="display:none" onchange="importShopeeExcel(this)">
     <textarea id="bulkOrdersInput" rows="10" placeholder="shopee_Budi Santoso_27/07/2026_200000&#10;custom_40x60_Hitam_3&#10;&#10;tiktok_Siti Aminah_27/07/2026_150000&#10;custom_30x40_Putih_2&#10;custom_20x30_Kayu_1&#10;&#10;shopee_Andi_28/07/2026_300000&#10;custom_50x70_Chrome_1" style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:var(--font);resize:vertical"></textarea>
     <button type="button" class="pbtn green" id="bulkProcessBtn" style="margin-top:10px" onclick="processBulkOrders()">🚀 Proses Semua</button>
+    <div id="bulkProgress" style="margin-top:8px;font-size:12px;color:var(--t2);display:none"></div>
     <div id="bulkResultsBox" style="margin-top:12px;max-height:260px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- MODAL: Cari & Hapus Order Duplikat -->
+<div class="moverlay" id="dupCheckModal">
+  <div class="mbox" style="max-width:680px">
+    <div class="mhd"><h3>🔍 Order Duplikat</h3><button class="mclose" onclick="closeDupCheckModal()" aria-label="Tutup modal">×</button></div>
+    <div id="dupCheckBody" style="max-height:520px;overflow-y:auto"></div>
   </div>
 </div>
 
@@ -3173,7 +3355,8 @@ let gapiInited        = false;
 let gisInited         = false;
 let pickerInited      = false;
 
-const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80','20x40','60x90']); // 20x40 & 60x90: ukuran custom by-request
+const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80','20x40','60x90']); // ukuran standar yg stoknya di-track
+const CUSTOM_SIZE_PATTERN=/^\d{1,3}x\d{1,3}$/; // ukuran bebas sesuai request customer — diterima tapi gak motong stok frame
 const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
 const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
 const FRAME_COLORS_MINIMALIS = ['Hitam','Putih']; // Minimalis: tidak ada Kayu & Chrome
@@ -3199,6 +3382,14 @@ function populateFrameSizeSelect(selId, jenis, labelSuffix){
 const CHANNELS=new Set(['shopee','tiktok','instagram']);
 const MAX_STK=99999;
 const rl={ts:[],ok(){const n=Date.now();this.ts=this.ts.filter(t=>n-t<60000);if(this.ts.length>=30)return false;this.ts.push(n);return true;}};
+function sleep(ms){return new Promise(res=>setTimeout(res,ms));}
+// Dipakai proses berantai (mis. Bulk Import) yg nulis banyak sekaligus: nunggu sampai ada slot,
+// biar gak langsung gagal kena limit rl (30 operasi/60 detik) — bukan bypass, cuma antre.
+async function waitForRateSlot(need=1){
+  while(rl.ts.filter(t=>Date.now()-t<60000).length+need>30){
+    await sleep(1000);
+  }
+}
 
 let inv={posters:[],frames:[]};
 let orders=[];
@@ -4216,6 +4407,14 @@ function startLazyListener(pageName){
     window._listenersStarted.add('content_planner');
     if(typeof window._startPlannerListener === 'function') window._startPlannerListener();
   }
+
+  if(pageName==='nesting' && !window._listenersStarted.has('print_layouts')){
+    window._listenersStarted.add('print_layouts');
+    onSnapshot(collection(db,'print_layouts'),s=>{
+      savedLayouts = s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+      nestRenderSavedList();
+    },()=>{});
+  }
 }
 
 /* ── AUTH ── */
@@ -4237,7 +4436,7 @@ $('lBtn').onclick=async()=>{
 function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
 
 /* ── NAVIGATION ── */
-const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Website CMS',planner:'Content Planner',tasks:'Daily Task',drive:'File Manager',kanban:'Kanban Packing',margin:'Margin & Profit'};
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Website CMS',planner:'Content Planner',tasks:'Daily Task',drive:'File Manager',kanban:'Kanban Packing',margin:'Margin & Profit',nesting:'Layout Cetak'};
 function goPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
@@ -4259,6 +4458,7 @@ function goPage(name,el){
   if(name==='tasks'){startLazyListener('tasks');setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
   if(name==='cms'){startLazyListener('cms');}
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
+  if(name==='nesting'){startLazyListener('nesting');setTimeout(()=>{nestRenderQueue();nestRenderManualList();nestRenderSavedList();nestSetupResizeObserver();},50);}
   if(name==='margin'){
     // Delay loading to ensure Firebase is ready
     setTimeout(async () => {
@@ -4974,7 +5174,9 @@ function parseTemplateItemLine(line){
   const size=(sizeRaw||'').toLowerCase().replace(/\s+/g,'');
   const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===(colorRaw||'').toLowerCase());
   const qty=Math.max(1,parseInt(qtyRaw,10)||0);
-  if(p.length<4||!posterRaw||!OK_SIZES.has(size)||!matchedColor||!qty)return null;
+  if(p.length<4||!posterRaw||!CUSTOM_SIZE_PATTERN.test(size)||!matchedColor||!qty)return null;
+
+  const isCustomSize=!OK_SIZES.has(size); // ukuran di luar daftar standar → dicatat tapi gak potong stok frame
 
   const isCustom=/^custom$/i.test(posterRaw);
   let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
@@ -4983,9 +5185,30 @@ function parseTemplateItemLine(line){
     if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
     else posterName=posterRaw; // gak ketemu di stok poster → tetap dicatat sbg custom
   }
-  const frame=findFrame('',matchedColor,size);
-  const base={posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame?frame.jenis||'':'',frameColor:matchedColor,frameSize:size,note:''};
-  return{base,qty,frame,productName:posterRaw,size,color:matchedColor};
+  const frame=isCustomSize?null:findFrame('',matchedColor,size);
+  const base={posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame?frame.jenis||'':'',frameColor:matchedColor,frameSize:size,isCustomSize,note:isCustomSize?'Ukuran custom (gak potong stok frame)':''};
+  return{base,qty,frame,isCustomSize,productName:posterRaw,size,color:matchedColor};
+}
+
+// ── Deteksi order duplikat, 2 lapis ──
+// Lapis 1: No. Pesanan dicocokkan setelah dibersihkan (biar toleran walau formatnya beda,
+//          misal salah satu ada "INV-" atau digabung sama No. Resi).
+// Lapis 2 (fallback kalau No. Pesanan kosong/gak ketemu): nama pembeli + tanggal + total sama persis.
+function normOrderNo(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function isDuplicateOrder(header){
+  const newNo=normOrderNo(header.orderNo);
+  if(newNo&&newNo.length>=4){
+    const hit=orders.some(o=>{
+      const existNo=normOrderNo(o.orderNo);
+      return existNo&&existNo.length>=4&&(existNo.includes(newNo)||newNo.includes(existNo));
+    });
+    if(hit)return true;
+  }
+  return orders.some(o=>
+    (o.buyer||'').trim().toLowerCase()===header.buyer.trim().toLowerCase()&&
+    String(o.createdAt||'').slice(0,10)===header.dateISO&&
+    Number(o.total)===Number(header.total)
+  );
 }
 
 function parseQuickTemplate(raw){
@@ -4995,8 +5218,8 @@ function parseQuickTemplate(raw){
   const header=parseTemplateHeader(lines[0]);
   if(!header)return 'invalid_header';
 
-  if(header.orderNo&&orders.some(o=>o.orderNo&&o.orderNo.trim()===header.orderNo.trim())){
-    return `duplicate:${header.orderNo}`;
+  if(isDuplicateOrder(header)){
+    return `duplicate:${header.orderNo||header.buyer}`;
   }
 
   const itemLines=lines.slice(1);
@@ -5007,7 +5230,12 @@ function parseQuickTemplate(raw){
   itemLines.forEach((line,li)=>{
     const parsed=parseTemplateItemLine(line);
     if(!parsed){badLines.push(li+2);return;} // li+2 = nomor baris di textarea (baris 1 = header)
-    const{base,qty,frame,productName,size,color}=parsed;
+    const{base,qty,frame,isCustomSize,productName,size,color}=parsed;
+    if(isCustomSize){
+      for(let i=0;i<qty;i++)pendingItems.push({...base});
+      itemsAdded+=qty;
+      return;
+    }
     const stock=frame?frame.stock:0;
     if(stock<qty){
       resiSkippedItems.push({posterName:base.posterName,posterId:base.posterId,isCustomPoster:base.isCustomPoster,productName,size,color,jenis:base.frameJenis,qtyNeeded:qty-stock,qtyTotal:qty});
@@ -5535,6 +5763,86 @@ async function batalOrder(id){
     }
     toast('Order dibatalkan. Stok frame & poster dikembalikan.');
   }catch(err){toast('Gagal: '+err.message,'error');}
+}
+
+// ── Cari & Hapus Order Duplikat ──────────────────────────────────────
+function isSameOrderPair(a,b){
+  const na=normOrderNo(a.orderNo),nb=normOrderNo(b.orderNo);
+  if(na&&nb&&na.length>=4&&nb.length>=4&&(na.includes(nb)||nb.includes(na)))return true;
+  return(a.buyer||'').trim().toLowerCase()===(b.buyer||'').trim().toLowerCase()
+    &&String(a.createdAt||'').slice(0,10)===String(b.createdAt||'').slice(0,10)
+    &&Number(a.total||0)===Number(b.total||0);
+}
+function findDuplicateGroups(){
+  const visited=new Set();const groups=[];
+  for(let i=0;i<orders.length;i++){
+    if(visited.has(orders[i].id))continue;
+    const group=[orders[i]];visited.add(orders[i].id);
+    for(let j=i+1;j<orders.length;j++){
+      if(visited.has(orders[j].id))continue;
+      if(isSameOrderPair(orders[i],orders[j])){group.push(orders[j]);visited.add(orders[j].id);}
+    }
+    if(group.length>1)groups.push(group);
+  }
+  return groups;
+}
+function openDupCheckModal(){
+  renderDupCheck();
+  $('dupCheckModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('dupCheckModal')));
+}
+function closeDupCheckModal(){
+  $('dupCheckModal').classList.remove('active');
+  releaseFocus($('dupCheckModal'));
+}
+function renderDupCheck(){
+  const groups=findDuplicateGroups();
+  const body=$('dupCheckBody');
+  if(!groups.length){
+    body.innerHTML='<div style="padding:24px;text-align:center;color:var(--t2)">✅ Gak ketemu order duplikat di data kamu.</div>';
+    return;
+  }
+  body.innerHTML=`<div style="font-size:12px;color:var(--t2);margin-bottom:10px">Ditemukan ${groups.length} grup order yang kemungkinan duplikat. Cek detailnya dulu, baru hapus yang emang dobel (biasanya sisain 1 yang datanya paling lengkap).</div>`+
+    groups.map((g,gi)=>`
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:12.5px;margin-bottom:6px">Grup #${gi+1} — ${esc(g[0].buyer||'—')} (${g.length} order mirip)</div>
+        ${g.map(o=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px dashed var(--border);gap:8px;flex-wrap:wrap">
+            <div style="font-size:12px;color:var(--t2)">
+              <div><strong>${esc(o.channel||'-')}</strong> · No. Pesanan: ${esc(o.orderNo||'—')} · Total: ${rp(o.total||0)}</div>
+              <div>Tgl order: ${esc(String(o.createdAt||'').slice(0,10))} · ${(o.items||[]).length} item · dicatat: ${esc(String(o.createdAt||'').slice(0,19).replace('T',' '))}</div>
+            </div>
+            <button type="button" onclick="deleteDuplicateOrder('${o.id}')" style="padding:5px 10px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:11.5px;cursor:pointer;white-space:nowrap;flex-shrink:0">🗑️ Hapus</button>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
+}
+async function deleteDuplicateOrder(id){
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  if(!confirm(`Hapus order ini? Stok frame & poster yang dulu terpotong bakal dikembalikan.\n\nPembeli: ${o.buyer}\nNo. Pesanan: ${o.orderNo||'—'}\nTotal: ${rp(o.total||0)}`))return;
+  try{
+    const items=(o.items||[]).filter(it=>!it.isCustomSize); // custom size gak pernah motong stok, jadi gak usah dikembalikan
+    const frameNeeds=aggregateFrameNeeds(items);
+    for(const[key,qty] of frameNeeds){
+      const[fj,fc,fs]=key.split('␟');
+      const frame=inv.frames.find(f=>f.jenis===fj&&f.color===fc&&f.size===fs)||inv.frames.find(f=>f.color===fc&&f.size===fs);
+      if(frame){frame.stock+=qty;await waitForRateSlot();await fsSet('inventory_frames',frame);}
+    }
+    const posterNeeds=aggregatePosterNeeds(items);
+    for(const[pid,qty] of posterNeeds){
+      const poster=inv.posters.find(p=>p.id===pid);
+      if(poster){poster.stock+=qty;await waitForRateSlot();await fsSet('inventory_posters',poster);}
+    }
+    await waitForRateSlot();
+    await fsDel('orders',id);
+    orders=orders.filter(x=>x.id!==id); // update lokal biar list langsung ke-refresh, gak nunggu listener
+    toast('🗑️ Order duplikat dihapus, stok dikembalikan.');
+    renderDupCheck();
+  }catch(err){
+    toast('Gagal hapus: '+err.message,'error');
+  }
 }
 
 async function delOrder(id){
@@ -7287,6 +7595,693 @@ function getKanbanStatus(order){
   return s;
 }
 
+/* ══════════════════ LAYOUT CETAK (NESTING) ══════════════════ */
+const NEST_SIZE_COLORS = {
+  '20x30':'#DC2626','30x40':'#D97706','40x60':'#16A34A','50x70':'#1A73E8','60x80':'#7C3AED',
+  '20x40':'#DB2777','60x90':'#0D9488',
+};
+const NEST_FALLBACK_COLORS = ['#0D9488','#DB2777','#65A30D','#EA580C','#4F46E5','#059669'];
+function nestCanonSize(sizeKey){
+  const m = /^(\d+)x(\d+)$/i.exec(sizeKey||'');
+  if(!m) return sizeKey||'';
+  const a=+m[1], b=+m[2];
+  return a<=b ? `${a}x${b}` : `${b}x${a}`;
+}
+function nestColorFor(sizeKey){
+  const canon = nestCanonSize(sizeKey);
+  if(NEST_SIZE_COLORS[canon]) return NEST_SIZE_COLORS[canon];
+  let h=0; for(let i=0;i<canon.length;i++) h=(h*31+canon.charCodeAt(i))>>>0;
+  return NEST_FALLBACK_COLORS[h%NEST_FALLBACK_COLORS.length];
+}
+
+// Outline kotak = warna frame yang diinput (Hitam/Putih/Kayu/Chrome, atau custom),
+// beda dari fill-nya yang mengikuti ukuran — biar keliatan langsung frame-nya warna apa.
+const NEST_FRAME_OUTLINES = { hitam:'#111827', putih:'#9CA3AF', kayu:'#92400E', chrome:'#6B7280' };
+const NEST_OUTLINE_NEUTRALS = ['#111827','#6B7280','#92400E','#0F766E','#701A75','#1E3A8A'];
+function nestOutlineFor(colorStr, sizeKey){
+  const key = (colorStr||'').trim().toLowerCase();
+  if(!key) return nestColorFor(sizeKey); // gak ada warna frame → pakai warna ukuran spy tetep ada outline
+  if(NEST_FRAME_OUTLINES[key]) return NEST_FRAME_OUTLINES[key];
+  let h=0; for(let i=0;i<key.length;i++) h=(h*31+key.charCodeAt(i))>>>0;
+  return NEST_OUTLINE_NEUTRALS[h%NEST_OUTLINE_NEUTRALS.length];
+}
+
+function nestFmtRp(n){
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+
+let nestSelected = new Set(); // set of item ids yang dicentang
+let nestSeenIds  = new Set(); // item id yang pernah muncul, biar gak auto-recheck yang sengaja di-uncheck
+let nestLastQueueIds = [];
+
+function nestGetQueueItems(){
+  const incMenunggu = $('nestIncMenunggu')?.checked;
+  const incProses   = $('nestIncProses')?.checked;
+  const statuses = [];
+  if(incMenunggu) statuses.push('cetak_menunggu');
+  if(incProses)   statuses.push('cetak_proses');
+  const q = ($('nestSearch')?.value||'').toLowerCase().trim();
+  const list=[];
+  if(!statuses.length) return list;
+  orders.forEach(o=>{
+    if(o.status==='batal') return;
+    const st = getKanbanStatus(o);
+    if(!statuses.includes(st)) return;
+    if(q && !(o.buyer||'').toLowerCase().includes(q)) return;
+    (o.items||[]).forEach((it,idx)=>{
+      const sizeStr = (it.posterSize || it.frameSize || '').trim();
+      const m = /^(\d+)\s*[x×]\s*(\d+)$/i.exec(sizeStr);
+      if(!m) return; // ukuran custom non-numerik dilewati, gak bisa dihitung luasnya
+      const w=+m[1], h=+m[2];
+      const qty = it.qty || 1;
+      for(let i=0;i<qty;i++){
+        const id = `${o.id}_${idx}_${i}`;
+        list.push({
+          id, orderId:o.id, buyer:o.buyer||'—',
+          size:`${w}x${h}`, w, h,
+          color:it.frameColor||'', channel:o.channel||'',
+        });
+      }
+    });
+  });
+  return list;
+}
+
+function nestRenderQueue(){
+  const box = $('nestQueueList');
+  if(!box) return;
+  const items = nestGetQueueItems();
+  nestLastQueueIds = items.map(i=>i.id);
+  // Buang seleksi lama yang udah gak ada di antrian, tambahin item baru sebagai default tercentang
+  const idSet = new Set(nestLastQueueIds);
+  nestSelected.forEach(id=>{ if(!idSet.has(id)) nestSelected.delete(id); });
+  items.forEach(it=>{ if(!nestSeenIds.has(it.id)){ nestSeenIds.add(it.id); nestSelected.add(it.id); } });
+
+  $('nestQueueCount').textContent = `${items.length} item · ${nestSelected.size} dipilih`;
+
+  if(!items.length){
+    box.innerHTML = `<div class="nest-empty">📭 Gak ada item nunggu cetak. Centang kolom status di atas, atau semua order udah tuntas.</div>`;
+    return;
+  }
+
+  box.innerHTML = items.map(it=>{
+    const checked = nestSelected.has(it.id) ? 'checked' : '';
+    const swatch = nestColorFor(it.size);
+    return `<label class="nest-qitem">
+      <input type="checkbox" ${checked} onchange="nestToggleItem('${it.id}',this.checked)">
+      <span class="nest-swatch" style="background:${swatch}"></span>
+      <span class="nest-qitem-info">
+        <div class="nest-qitem-name">${esc(it.buyer)}</div>
+        <div class="nest-qitem-sub">${esc(it.size)} cm${it.color?' · '+esc(it.color):''}</div>
+      </span>
+    </label>`;
+  }).join('');
+}
+
+function nestToggleItem(id,checked){
+  if(checked) nestSelected.add(id); else nestSelected.delete(id);
+  $('nestQueueCount').textContent = `${nestLastQueueIds.length} item · ${nestSelected.size} dipilih`;
+}
+
+function nestToggleAll(state){
+  if(state) nestLastQueueIds.forEach(id=>nestSelected.add(id));
+  else nestSelected.clear();
+  nestRenderQueue();
+}
+
+// ── Algoritma shelf-packing sederhana: susun item ke dalam lebar roll tetap ──
+// Pilih orientasi terbaik buat satu item, sesuai sisa ruang di shelf saat ini.
+// Prioritas: (1) muat & gak nambah tinggi shelf, paling pas ngisi sisa lebar,
+// (2) kalau kepaksa nambah tinggi shelf, pilih yang nambahnya paling sedikit,
+// (3) shelf baru → pilih orientasi setinggi mungkin sependek mungkin (landscape) biar roll gak kepanjangan.
+function nestChooseOrientation(it, rollWidth, shelf, gap){
+  const remaining = shelf ? (rollWidth - shelf.usedWidth - (shelf.cells.length?gap:0)) : rollWidth;
+  const opts = [];
+  if(it.origW<=remaining) opts.push({w:it.origW,h:it.origH});
+  if(it.canRotate && it.origH!==it.origW && it.origH<=remaining) opts.push({w:it.origH,h:it.origW});
+  if(!opts.length){
+    // Gak ada orientasi yang muat di sisa shelf ini → kembalikan salah satu yang valid utk lebar penuh roll,
+    // biar caller bikin shelf baru dan taruh di sana.
+    if(it.canRotate && it.origW<=rollWidth && it.origH<=rollWidth){
+      return it.origH<it.origW ? {w:it.origH,h:it.origW} : {w:it.origW,h:it.origH};
+    }
+    return {w:it.origW,h:it.origH};
+  }
+  if(shelf){
+    const noGrow = opts.filter(o=>o.h<=shelf.height);
+    const pool = noGrow.length ? noGrow : opts;
+    pool.sort((a,b)=> (remaining-a.w)-(remaining-b.w) || a.h-b.h);
+    return pool[0];
+  }
+  opts.sort((a,b)=>a.h-b.h); // shelf baru: makin pendek tingginya makin hemat panjang roll
+  return opts[0];
+}
+
+function nestPackItems(items, rollWidth, gap, allowRotate){
+  const warnings=[];
+  const fitted = [];
+  items.forEach(it=>{
+    const fitsAsIs   = it.w<=rollWidth;
+    const fitsRotate = allowRotate && it.h<=rollWidth;
+    if(!fitsAsIs && !fitsRotate){
+      warnings.push(`${it.buyer} (${it.size}) tidak muat di lebar ${rollWidth}cm — lewati atau pilih lebar roll lain.`);
+      return;
+    }
+    fitted.push({ id:it.id, buyer:it.buyer, color:it.color, origW:it.w, origH:it.h, canRotate:allowRotate });
+  });
+  // Urutkan dari dimensi terbesar biar shelf-nya efisien (Next-Fit Decreasing)
+  fitted.sort((a,b)=> Math.max(b.origW,b.origH)-Math.max(a.origW,a.origH) || (b.origW*b.origH)-(a.origW*a.origH));
+
+  const shelves=[]; // {y,height,usedWidth,cells:[]}
+  fitted.forEach(it=>{
+    let shelf = shelves[shelves.length-1];
+    let { w, h } = nestChooseOrientation(it, rollWidth, shelf, gap);
+    if(!shelf || shelf.usedWidth + (shelf.cells.length?gap:0) + w > rollWidth){
+      shelf = { y: shelves.length ? shelves[shelves.length-1].y + shelves[shelves.length-1].height + gap : 0, height: 0, usedWidth:0, cells:[] };
+      shelves.push(shelf);
+      ({ w, h } = nestChooseOrientation(it, rollWidth, null, gap)); // pilih ulang di konteks shelf kosong
+      shelf.height = h;
+    }
+    const x = shelf.usedWidth + (shelf.cells.length?gap:0);
+    shelf.cells.push({ id:it.id, x, y:shelf.y, w, h, buyer:it.buyer, size:`${w}x${h}`, color:it.color });
+    shelf.usedWidth = x + w;
+    shelf.height = Math.max(shelf.height, h);
+  });
+
+  const totalLength = shelves.length ? shelves[shelves.length-1].y + shelves[shelves.length-1].height : 0;
+  const cells = shelves.flatMap(s=>s.cells);
+  return { cells, totalLength, warnings };
+}
+
+// Pecah hasil packing jadi beberapa "Frame" kalau ada batas panjang maksimum.
+// Dipecah per baris (shelf) supaya satu baris item gak kepotong di tengah.
+function nestSplitFrames(cells, maxLen){
+  const rowsMap = new Map();
+  cells.forEach(c=>{
+    if(!rowsMap.has(c.y)) rowsMap.set(c.y, { y:c.y, h:0, cells:[] });
+    const row = rowsMap.get(c.y);
+    row.cells.push(c);
+    row.h = Math.max(row.h, c.h);
+  });
+  const rows = [...rowsMap.values()].sort((a,b)=>a.y-b.y);
+  if(!rows.length) return [{ cells:[], offsetY:0, length:0 }];
+
+  if(!maxLen) return [{ cells, offsetY:0, length: rows[rows.length-1].y + rows[rows.length-1].h }];
+
+  const frames=[];
+  let curRows=[], curStartY=0, curLen=0;
+  rows.forEach(row=>{
+    const relTop = row.y - curStartY;
+    if(curRows.length && relTop + row.h > maxLen){
+      frames.push({ rows:curRows, offsetY:curStartY, length:curLen });
+      curStartY = row.y; curRows=[]; curLen=0;
+    }
+    curRows.push(row);
+    curLen = Math.max(curLen, (row.y - curStartY) + row.h);
+  });
+  if(curRows.length) frames.push({ rows:curRows, offsetY:curStartY, length:curLen });
+
+  return frames.map(f=>({ cells: f.rows.flatMap(r=>r.cells), offsetY:f.offsetY, length:f.length }));
+}
+
+/* ── Item manual (custom, di luar antrian order) ── */
+let nestManualItems = [];
+let nestManualSeq = 0;
+let savedLayouts = []; // dari Firestore 'print_layouts'
+
+function nestToggleManualCustomSize(val){
+  $('nestManualCustomWrap').style.display = (val==='custom') ? 'grid' : 'none';
+}
+
+function nestAddManualItem(){
+  const nameEl=$('nestManualName'), sizeSel=$('nestManualSize'), colorEl=$('nestManualColor'), qtyEl=$('nestManualQty');
+  const name = san(nameEl.value||'') || 'Item Manual';
+  let w,h,sizeLabel;
+  if(sizeSel.value==='custom'){
+    w=+$('nestManualW').value; h=+$('nestManualH').value;
+    if(!w||!h){ toast('Isi ukuran custom (lebar & tinggi) dulu.','error'); return; }
+    sizeLabel=`${w}x${h}`;
+  } else {
+    const [a,b]=sizeSel.value.split('x').map(Number);
+    w=a;h=b;sizeLabel=sizeSel.value;
+  }
+  const color = san(colorEl.value||'');
+  const qty = Math.max(1, +qtyEl.value||1);
+  for(let i=0;i<qty;i++){
+    nestManualSeq++;
+    nestManualItems.push({ id:`manual_${nestManualSeq}`, buyer:name, size:sizeLabel, w, h, color, channel:'manual' });
+  }
+  nameEl.value=''; colorEl.value=''; qtyEl.value=1;
+  nestRenderManualList();
+  toast(`${qty} item manual ditambahkan — klik Generate Layout buat lihat hasilnya.`);
+}
+
+function nestRemoveManualItem(id){
+  nestManualItems = nestManualItems.filter(it=>it.id!==id);
+  nestRenderManualList();
+}
+
+function nestRenderManualList(){
+  const box=$('nestManualList');
+  if(!box) return;
+  if(!nestManualItems.length){ box.innerHTML=`<div class="nest-empty" style="padding:14px 6px">Belum ada item manual.</div>`; return; }
+  box.innerHTML = nestManualItems.map(it=>`
+    <div class="nest-qitem" style="background:var(--surface)">
+      <span class="nest-swatch" style="background:${nestColorFor(it.size)}"></span>
+      <span class="nest-qitem-info">
+        <div class="nest-qitem-name">${esc(it.buyer)}</div>
+        <div class="nest-qitem-sub">${esc(it.size)} cm${it.color?' · '+esc(it.color):''}</div>
+      </span>
+      <button onclick="nestRemoveManualItem('${it.id}')" style="border:none;background:none;color:var(--red);cursor:pointer;font-size:14px;line-height:1;padding:2px" title="Hapus">✕</button>
+    </div>
+  `).join('');
+}
+
+let nestLastResult = null;
+
+function nestEvaluateWidth(items, w, gap, allowRotate, perCm2, wastePct){
+  const { cells, totalLength, warnings } = nestPackItems(items, w, gap, allowRotate);
+  const cost = w * totalLength * perCm2 * (1 + wastePct/100);
+  return { w, cells, totalLength, warnings, cost };
+}
+
+function nestGenerate(){
+  const rollWidthSel = $('nestRollWidth').value;
+  const gap = +$('nestGap').value || 0;
+  const maxLen = +$('nestMaxLen').value || 0;
+  const allowRotate = $('nestAllowRotate').checked;
+
+  const queue = nestGetQueueItems();
+  const items = queue.filter(it=>nestSelected.has(it.id)).concat(nestManualItems);
+
+  const body = $('nestResultBody');
+  if(!items.length){
+    body.innerHTML = `<div class="nest-empty">Belum ada item yang dipilih dari antrian, dan belum ada item manual.</div>`;
+    ['nestPrintBtn','nestDoneBtn','nestSaveBtn','nestClearBtn'].forEach(id=>$(id).style.display='none');
+    nestLastResult = null;
+    return;
+  }
+
+  // Harga bahan & overhead dari halaman Margin & Profit — dipakai buat estimasi biaya
+  // SEKALIGUS buat nentuin lebar roll paling hemat kalau mode "Otomatis" dipilih.
+  const perCm2 = (masterData.sheetPrice||87500) / 10000;
+  const wastePct = masterData.waste!=null ? masterData.waste : 10;
+
+  let rollWidth, packed, autoNote='';
+  if(rollWidthSel === 'auto'){
+    const candidates = [100,120,140].map(w=>nestEvaluateWidth(items, w, gap, allowRotate, perCm2, wastePct));
+    // Utamain lebar yang bisa nampung SEMUA item (gak ada yang "gak muat"), baru dari situ cari yang paling hemat bahan
+    const fitAll = candidates.filter(c=>c.warnings.length===0);
+    const pool = fitAll.length ? fitAll : candidates;
+    packed = pool.reduce((best,c)=> c.cost<best.cost ? c : best, pool[0]);
+    rollWidth = packed.w;
+    const others = [100,120,140].filter(w=>w!==rollWidth);
+    autoNote = `🪄 Otomatis pilih lebar <strong>${rollWidth}cm</strong> — dibanding ${others.map(w=>w+'cm').join(' & ')}, ini yang butuh bahan paling sedikit buat item-item ini.`;
+  } else {
+    rollWidth = +rollWidthSel || 120;
+    packed = nestEvaluateWidth(items, rollWidth, gap, allowRotate, perCm2, wastePct);
+  }
+
+  const { cells, totalLength, warnings, cost: estCost } = packed;
+  const frames = nestSplitFrames(cells, maxLen);
+  const scale = nestComputeScale(rollWidth); // px per cm, otomatis nyesuain lebar kontainer
+
+  // Order asli (bukan item manual) yang ikut di-layout, buat tombol "Sudah Dicetak"
+  const orderIds = [...new Set(items.filter(it=>it.orderId).map(it=>it.orderId))];
+
+  nestLastResult = { rollWidth, gap, scale, frames, totalLength, itemCount:items.length, estCost, orderIds, warnings, autoNote };
+  nestRenderFromResult();
+}
+
+/* Render ulang canvas dari nestLastResult (dipakai pas Generate baru & pas buka layout tersimpan) */
+function nestRenderFromResult(extraNoteHtml){
+  if(!nestLastResult) return;
+  const { rollWidth, scale, frames, totalLength, estCost, orderIds } = nestLastResult;
+  const warnings = nestLastResult.warnings || [];
+  const autoNote = nestLastResult.autoNote || '';
+
+  const perCm2 = (masterData.sheetPrice||87500) / 10000;
+  const wastePct = masterData.waste!=null ? masterData.waste : 10;
+
+  const allCells = frames.flatMap(f=>f.cells);
+  const sizeCounts = {};
+  allCells.forEach(c=>{ sizeCounts[c.size] = (sizeCounts[c.size]||0)+1; });
+  const colorCounts = {};
+  allCells.forEach(c=>{ const cl=c.color||'—'; colorCounts[cl] = (colorCounts[cl]||0)+1; });
+
+  const legendHtml = Object.keys(sizeCounts).sort().map(sz=>
+    `<span class="nest-legend-item"><span class="nest-swatch" style="background:${nestColorFor(sz)}"></span>${esc(sz)} (${sizeCounts[sz]}x)</span>`
+  ).join('');
+  const outlineLegendHtml = Object.keys(colorCounts).sort().map(cl=>
+    `<span class="nest-legend-item"><span class="nest-swatch" style="background:#fff;border:2.5px solid ${nestOutlineFor(cl==='—'?'':cl,'')}"></span>${esc(cl)} (${colorCounts[cl]}x)</span>`
+  ).join('');
+
+  const warnHtml = warnings.length ? `<div class="nest-warn">⚠️ ${warnings.map(esc).join('<br>')}</div>` : '';
+
+  const framesHtml = frames.map((f,i)=>{
+    const hPx = Math.max(f.length,1) * scale;
+    const wPx = rollWidth * scale;
+    const cellsHtml = f.cells.map(c=>{
+      const rx=c.x*scale, ry=(c.y-f.offsetY)*scale, rw=c.w*scale, rh=c.h*scale;
+      const col = nestColorFor(c.size);
+      const outline = nestOutlineFor(c.color, c.size);
+      const vertical = rw < 55 && rh > rw;
+      const labelBuyer = c.buyer.length>16 ? c.buyer.slice(0,15)+'…' : c.buyer;
+      return `<div class="nest-item" data-frame="${i}" data-id="${esc(c.id)}"
+        style="left:${rx}px;top:${ry}px;width:${rw}px;height:${rh}px;background:${col};opacity:.82;border:2.5px solid ${outline}"
+        onmousedown="nestStartDrag(event,${i},'${esc(c.id)}')">
+        <button class="nest-item-rotate" onmousedown="event.stopPropagation()" onclick="nestRotateItem(${i},'${esc(c.id)}')" title="Putar 90°">⟳</button>
+        <button class="nest-item-delete" onmousedown="event.stopPropagation()" onclick="nestDeleteItem(${i},'${esc(c.id)}')" title="Hapus item ini">✕</button>
+        <div class="nest-item-label" style="${vertical?'writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg)':''}">${esc(labelBuyer)}${c.color?' '+esc(c.color.toUpperCase()):''}</div>
+        <div class="nest-item-size">${esc(c.size)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="nest-frame-lbl">🖼️ Frame ${i+1} <span style="font-weight:400;color:var(--t2);font-size:11.5px" id="nestFrameLen-${i}">— ${rollWidth}cm × ${(f.length/100).toFixed(2)}m · ${f.cells.length} item</span></div>
+      <div id="nestCanvas-${i}" style="position:relative;width:${wPx}px;height:${hPx}px;background:#fff;border-radius:8px;margin-bottom:6px">${cellsHtml}</div>`;
+  }).join('');
+
+  const noteHtml = extraNoteHtml
+    ? `<div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:9px;padding:8px 12px;font-size:12px;margin-bottom:12px">${extraNoteHtml}</div>`
+    : (autoNote ? `<div style="background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;border-radius:9px;padding:8px 12px;font-size:12px;margin-bottom:12px">${autoNote}</div>` : '');
+
+  $('nestResultBody').innerHTML = `
+    ${noteHtml}
+    <div class="nest-stats">
+      <div class="nest-stat"><div class="nest-stat-val" id="nestItemCountVal">${nestLastResult.itemCount}</div><div class="nest-stat-lbl">Item Dilayout</div></div>
+      <div class="nest-stat"><div class="nest-stat-val" id="nestTotalLenVal">${(totalLength/100).toFixed(2)} m</div><div class="nest-stat-lbl">Total Panjang Bahan</div></div>
+      <div class="nest-stat"><div class="nest-stat-val">${rollWidth} cm</div><div class="nest-stat-lbl">Lebar Roll${autoNote?' (auto)':''}</div></div>
+      <div class="nest-stat"><div class="nest-stat-val">${frames.length}</div><div class="nest-stat-lbl">Jumlah Frame</div></div>
+      <div class="nest-stat" style="background:#EFF6FF"><div class="nest-stat-val" id="nestEstCostVal">${nestFmtRp(estCost)}</div><div class="nest-stat-lbl">Estimasi Biaya Bahan (HPP)</div></div>
+    </div>
+    <div style="font-size:10.5px;color:var(--t3);margin:-8px 0 12px">Dihitung dari luas roll kepakai (lebar × panjang) × harga bahan Rp ${perCm2.toFixed(2)}/cm² + overhead ${wastePct}% — angka ini ikut halaman Margin & Profit, ubah di sana kalau harga bahan berubah.</div>
+    <div class="nest-legend"><span style="font-size:11px;color:var(--t3);font-weight:600">Ukuran:</span>${legendHtml}</div>
+    <div class="nest-legend">${outlineLegendHtml ? `<span style="font-size:11px;color:var(--t3);font-weight:600">Outline = Warna Frame:</span>${outlineLegendHtml}` : ''}</div>
+    ${warnHtml}
+    <div style="font-size:11.5px;color:var(--t2);margin-bottom:8px">🖐️ Geser (drag) kotak di bawah buat atur ulang posisi manual.</div>
+    <div class="nest-canvas-wrap">${framesHtml}</div>
+  `;
+  ['nestPrintBtn','nestSaveBtn','nestClearBtn'].forEach(id=>$(id).style.display='inline-flex');
+  $('nestDoneBtn').style.display = orderIds.length ? 'inline-flex' : 'none';
+}
+
+/* ── Drag & drop manual buat reposisi item di canvas ── */
+let nestDrag = null;
+
+function nestStartDrag(e, frameIdx, cellId){
+  e.preventDefault();
+  const cellEl = document.querySelector(`.nest-item[data-frame="${frameIdx}"][data-id="${CSS.escape(cellId)}"]`);
+  if(!cellEl) return;
+  nestDrag = {
+    frameIdx, cellId, cellEl,
+    canvasEl: cellEl.parentElement,
+    startMouseX: e.clientX, startMouseY: e.clientY,
+    startLeft: parseFloat(cellEl.style.left)||0, startTop: parseFloat(cellEl.style.top)||0,
+  };
+  cellEl.classList.add('dragging');
+  document.addEventListener('mousemove', nestOnDrag);
+  document.addEventListener('mouseup', nestEndDrag);
+}
+
+function nestOnDrag(e){
+  if(!nestDrag) return;
+  const dx = e.clientX - nestDrag.startMouseX;
+  const dy = e.clientY - nestDrag.startMouseY;
+  const cellW = nestDrag.cellEl.offsetWidth;
+  const cellH = nestDrag.cellEl.offsetHeight;
+  const canvasW = nestDrag.canvasEl.clientWidth;
+  let newLeft = Math.max(0, Math.min(nestDrag.startLeft+dx, canvasW-cellW));
+  let newTop  = Math.max(0, nestDrag.startTop+dy);
+
+  // ── Snap ke tepi item lain / tepi kanvas biar rapat & rapi ──
+  const SNAP = 7; // px toleransi nempel
+  let snappedX=false, snappedY=false;
+  const xTargets = [0, canvasW-cellW];
+  const yTargets = [0];
+  nestDrag.canvasEl.querySelectorAll('.nest-item').forEach(el=>{
+    if(el===nestDrag.cellEl) return;
+    const l = parseFloat(el.style.left)||0, t = parseFloat(el.style.top)||0;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    xTargets.push(l, l-cellW, l+w, l+w-cellW);
+    yTargets.push(t, t-cellH, t+h, t+h-cellH);
+  });
+  for(const xt of xTargets){ if(Math.abs(newLeft-xt)<SNAP){ newLeft=xt; snappedX=true; break; } }
+  for(const yt of yTargets){ if(Math.abs(newTop-yt)<SNAP){ newTop=yt; snappedY=true; break; } }
+  newLeft = Math.max(0, Math.min(newLeft, canvasW-cellW));
+  newTop  = Math.max(0, newTop);
+
+  nestDrag.cellEl.style.left = newLeft+'px';
+  nestDrag.cellEl.style.top  = newTop+'px';
+  nestDrag.cellEl.classList.toggle('snapped', snappedX||snappedY);
+}
+
+function nestEndDrag(){
+  if(!nestDrag) return;
+  const { frameIdx, cellId, cellEl } = nestDrag;
+  document.removeEventListener('mousemove', nestOnDrag);
+  document.removeEventListener('mouseup', nestEndDrag);
+  cellEl.classList.remove('dragging','snapped');
+
+  const scale = nestLastResult.scale;
+  const xCm = parseFloat(cellEl.style.left)/scale;
+  const yCm = parseFloat(cellEl.style.top)/scale;
+  const frame = nestLastResult.frames[frameIdx];
+  const cell = frame.cells.find(c=>c.id===cellId);
+  if(cell){ cell.x = xCm; cell.y = yCm; }
+
+  nestRecalcFrame(frameIdx);
+  nestDrag = null;
+}
+
+function nestRotateItem(frameIdx, cellId){
+  if(!nestLastResult) return;
+  const frame = nestLastResult.frames[frameIdx];
+  const cell = frame.cells.find(c=>c.id===cellId);
+  const cellEl = document.querySelector(`.nest-item[data-frame="${frameIdx}"][data-id="${CSS.escape(cellId)}"]`);
+  if(!cell || !cellEl) return;
+  const scale = nestLastResult.scale;
+  const canvasEl = $('nestCanvas-'+frameIdx);
+  const canvasW = canvasEl ? canvasEl.clientWidth : nestLastResult.rollWidth*scale;
+
+  [cell.w, cell.h] = [cell.h, cell.w];
+  cell.size = `${cell.w}x${cell.h}`;
+  const newW = cell.w*scale, newH = cell.h*scale;
+  let left = parseFloat(cellEl.style.left)||0;
+  if(left + newW > canvasW) left = Math.max(0, canvasW - newW);
+  cell.x = left/scale;
+
+  cellEl.style.left   = left+'px';
+  cellEl.style.width  = newW+'px';
+  cellEl.style.height = newH+'px';
+
+  const sizeEl = cellEl.querySelector('.nest-item-size');
+  if(sizeEl) sizeEl.textContent = cell.size;
+
+  const labelEl = cellEl.querySelector('.nest-item-label');
+  if(labelEl){
+    const vertical = newW < 55 && newH > newW;
+    labelEl.style.cssText = vertical ? 'writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg)' : '';
+  }
+
+  nestRecalcFrame(frameIdx);
+}
+
+function nestRecalcFrame(frameIdx){
+  if(!nestLastResult) return;
+  const frame = nestLastResult.frames[frameIdx];
+  const scale = nestLastResult.scale;
+  const newLen = frame.cells.reduce((m,c)=>Math.max(m, c.y+c.h), 0);
+  frame.length = newLen;
+
+  const canvasEl = $('nestCanvas-'+frameIdx);
+  if(canvasEl) canvasEl.style.height = Math.max(newLen*scale, 40)+'px';
+  const lblEl = $('nestFrameLen-'+frameIdx);
+  if(lblEl) lblEl.textContent = `— ${nestLastResult.rollWidth}cm × ${(newLen/100).toFixed(2)}m · ${frame.cells.length} item`;
+
+  nestLastResult.totalLength = nestLastResult.frames.reduce((s,f)=>s+f.length,0);
+  const totalEl = $('nestTotalLenVal');
+  if(totalEl) totalEl.textContent = `${(nestLastResult.totalLength/100).toFixed(2)} m`;
+
+  const perCm2 = (masterData.sheetPrice||87500) / 10000;
+  const wastePct = masterData.waste!=null ? masterData.waste : 10;
+  nestLastResult.estCost = nestLastResult.rollWidth * nestLastResult.totalLength * perCm2 * (1 + wastePct/100);
+  const costEl = $('nestEstCostVal');
+  if(costEl) costEl.textContent = nestFmtRp(nestLastResult.estCost);
+}
+
+function nestDeleteItem(frameIdx, cellId){
+  if(!nestLastResult) return;
+  const frame = nestLastResult.frames[frameIdx];
+  const before = frame.cells.length;
+  frame.cells = frame.cells.filter(c=>c.id!==cellId);
+  if(frame.cells.length===before) return; // gak ketemu, gak ngapa-ngapain
+
+  const cellEl = document.querySelector(`.nest-item[data-frame="${frameIdx}"][data-id="${CSS.escape(cellId)}"]`);
+  if(cellEl) cellEl.remove();
+
+  nestLastResult.itemCount = Math.max(0, nestLastResult.itemCount-1);
+  const cntEl = $('nestItemCountVal');
+  if(cntEl) cntEl.textContent = nestLastResult.itemCount;
+
+  nestRecalcFrame(frameIdx);
+}
+
+/* ── Canvas responsif: nyesuain scale (px/cm) ke lebar kontainer yang tersedia ── */
+function nestComputeScale(rollWidth){
+  const body = $('nestResultBody');
+  const availPx = Math.max(200, (body ? body.clientWidth : 600) - 36); // sisain padding wrap
+  const maxScale = rollWidth > 130 ? 3.2 : 3.8;
+  return Math.max(0.9, Math.min(maxScale, availPx / rollWidth));
+}
+
+function nestApplyScale(newScale){
+  if(!nestLastResult) return;
+  nestLastResult.scale = newScale;
+  nestLastResult.frames.forEach((f,i)=>{
+    const canvasEl = $('nestCanvas-'+i);
+    if(canvasEl){
+      canvasEl.style.width  = (nestLastResult.rollWidth*newScale)+'px';
+      canvasEl.style.height = Math.max(f.length*newScale, 40)+'px';
+    }
+    f.cells.forEach(c=>{
+      const el = document.querySelector(`.nest-item[data-frame="${i}"][data-id="${CSS.escape(c.id)}"]`);
+      if(!el) return;
+      el.style.left   = (c.x*newScale)+'px';
+      el.style.top    = ((c.y-f.offsetY)*newScale)+'px';
+      el.style.width  = (c.w*newScale)+'px';
+      el.style.height = (c.h*newScale)+'px';
+    });
+  });
+}
+
+function nestHandleResize(){
+  if(!nestLastResult) return;
+  const newScale = nestComputeScale(nestLastResult.rollWidth);
+  if(Math.abs(newScale - nestLastResult.scale) > 0.03) nestApplyScale(newScale);
+}
+
+let nestRO = null;
+function nestSetupResizeObserver(){
+  if(nestRO || typeof ResizeObserver==='undefined') return;
+  const body = $('nestResultBody');
+  if(!body) return;
+  nestRO = new ResizeObserver(()=> nestHandleResize());
+  nestRO.observe(body);
+}
+
+/* ── Hapus / Simpan hasil layout ── */
+function nestClearLayout(){
+  if(!nestLastResult) return;
+  if(!confirm('Hapus hasil layout yang lagi ditampilkan? (Ini gak menghapus order-nya, cuma bersihin canvas.)')) return;
+  nestLastResult = null;
+  $('nestResultBody').innerHTML = `<div class="nest-empty">Pilih item di kiri (atau tambah manual), atur lebar roll, lalu klik <strong>Generate Layout</strong>. Setelah muncul, item bisa digeser (drag) langsung buat atur ulang posisi.</div>`;
+  ['nestPrintBtn','nestDoneBtn','nestSaveBtn','nestClearBtn'].forEach(id=>$(id).style.display='none');
+}
+
+async function nestSaveLayout(){
+  if(!nestLastResult) return;
+  const suggested = `Layout ${new Date().toLocaleDateString('id-ID')} — ${nestLastResult.rollWidth}cm`;
+  const name = prompt('Nama layout ini:', suggested);
+  if(!name) return;
+
+  const btn = $('nestSaveBtn');
+  btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+  try{
+    const id = 'layout_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+    await fsSet('print_layouts', {
+      id, name,
+      rollWidth: nestLastResult.rollWidth,
+      gap: nestLastResult.gap,
+      frames: nestLastResult.frames.map(f=>({ offsetY:f.offsetY, length:f.length, cells:f.cells })),
+      totalLength: nestLastResult.totalLength,
+      estCost: nestLastResult.estCost,
+      itemCount: nestLastResult.itemCount,
+      orderIds: nestLastResult.orderIds,
+      createdAt: new Date().toISOString(),
+    });
+    toast(`Layout "${name}" disimpan.`);
+  }catch(e){
+    toast('Gagal simpan layout: '+e.message,'error');
+  }finally{
+    btn.disabled = false; btn.textContent = '💾 Simpan';
+  }
+}
+
+function nestRenderSavedList(){
+  const sel = $('nestSavedSelect');
+  if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">— pilih layout tersimpan —</option>` +
+    savedLayouts.map(l=>`<option value="${esc(l.id)}">${esc(l.name)} (${l.rollWidth}cm, ${(l.totalLength/100).toFixed(2)}m)</option>`).join('');
+  if(savedLayouts.some(l=>l.id===cur)) sel.value = cur;
+}
+
+function nestOpenSaved(){
+  const id = $('nestSavedSelect').value;
+  if(!id){ toast('Pilih dulu layout yang mau dibuka.','error'); return; }
+  const l = savedLayouts.find(x=>x.id===id);
+  if(!l){ toast('Layout gak ketemu (mungkin udah dihapus).','error'); return; }
+
+  const scale = nestComputeScale(l.rollWidth);
+  nestLastResult = {
+    rollWidth: l.rollWidth, gap: l.gap, scale,
+    frames: l.frames.map(f=>({ offsetY:f.offsetY, length:f.length, cells: f.cells.map(c=>({...c})) })),
+    totalLength: l.totalLength, itemCount: l.itemCount, estCost: l.estCost, orderIds: l.orderIds||[],
+  };
+  nestRenderFromResult(`📂 Dibuka dari layout tersimpan: <strong>${esc(l.name)}</strong>.`);
+  toast(`Layout "${l.name}" dibuka — item masih bisa digeser/diedit, tapi klik Simpan lagi kalau mau update.`);
+}
+
+function nestDeleteSaved(){
+  const id = $('nestSavedSelect').value;
+  if(!id){ toast('Pilih dulu layout yang mau dihapus.','error'); return; }
+  const l = savedLayouts.find(x=>x.id===id);
+  if(!l) return;
+  if(!confirm(`Hapus layout tersimpan "${l.name}"? Ini gak bisa dibalikin.`)) return;
+  fsDel('print_layouts', id).then(()=>{
+    toast(`Layout "${l.name}" dihapus.`);
+  }).catch(e=>toast('Gagal hapus: '+e.message,'error'));
+}
+
+async function nestMarkDone(){
+  if(!nestLastResult || !nestLastResult.orderIds.length) return;
+  const n = nestLastResult.orderIds.length;
+  const ok = confirm(`Tandai ${n} order sebagai sudah dicetak & lanjut ke tahap "Siap Framing"?\n\nOrder yang statusnya masih "Antri Cetak" / "Sedang Dicetak" bakal pindah kolom di Kanban Packing.`);
+  if(!ok) return;
+
+  const btn = $('nestDoneBtn');
+  btn.disabled = true; btn.textContent = '⏳ Memproses...';
+  try{
+    for(const orderId of nestLastResult.orderIds){
+      await moveKanban(orderId, 'framing');
+    }
+    toast(`${n} order ditandai sudah dicetak, lanjut ke Siap Framing.`);
+    nestRenderQueue(); // antrian di kiri otomatis berkurang karena order-nya udah pindah tahap
+  }catch(e){
+    toast('Gagal update status order: '+e.message,'error');
+  }finally{
+    btn.disabled = false; btn.textContent = '✅ Sudah Dicetak → Framing';
+  }
+}
+
+function nestPrint(){
+  if(!nestLastResult){ toast('Generate layout dulu sebelum print.','error'); return; }
+  const wrap = document.querySelector('#nestResultBody .nest-canvas-wrap');
+  if(!wrap) return;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Layout Cetak — ${nestLastResult.rollWidth}cm</title>
+    <style>body{font-family:sans-serif;margin:20px}h2{font-size:16px;margin-bottom:10px}
+    .nest-item{position:absolute;border-radius:4px;display:flex;align-items:center;justify-content:center}
+    .nest-item-label{font-size:11px;font-weight:600;color:#111827;text-align:center;padding:0 4px;line-height:1.25}
+    .nest-item-size{position:absolute;left:5px;bottom:3px;font-size:9.5px;color:#374151;opacity:.75}
+    .nest-frame-lbl{font-size:12.5px;font-weight:700;margin:14px 0 6px}
+    </style></head>
+    <body><h2>Layout Cetak — Roll ${nestLastResult.rollWidth}cm — Total ${(nestLastResult.totalLength/100).toFixed(2)}m</h2>
+    ${wrap.innerHTML}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(), 300);
+}
+
+
 function renderKanban(){
   const board = $('kanbanBoard');
   if(!board) return;
@@ -8379,7 +9374,7 @@ async function importShopeeExcel(input){
         const color=[...OK_FCOLORS].find(c=>new RegExp('(^|[,\\s])'+c+'([,\\s]|$)','i').test(variasi))
           ||(/MDF/i.test(produk)?'Hitam':null); // SKU "Poster Frame & MDF" gak ada opsi warna di variasinya, default Hitam
 
-        if(!OK_SIZES.has(size)||!color){
+        if(!CUSTOM_SIZE_PATTERN.test(size||'')||!color){
           ambiguousNotes.push(`Order ${orderNo}: "${produk.slice(0,45)}" (variasi: "${variasi}") — ukuran/warna gak jelas.`);
           return;
         }
@@ -8431,16 +9426,19 @@ async function processBulkOrders(){
 
   const btn=$('bulkProcessBtn');
   const orig=btn.textContent;btn.textContent='⏳ Memproses...';btn.disabled=true;
+  const progressEl=$('bulkProgress');progressEl.style.display='block';
 
   let successCount=0;const results=[];
   for(let bi=0;bi<blocks.length;bi++){
+    progressEl.textContent=`⏳ Memproses order ${bi+1} dari ${blocks.length}...`;
+    $('bulkResultsBox').innerHTML=results.map(r=>`<div style="padding:5px 0;font-size:12.5px;border-bottom:1px solid var(--border)">${esc(r)}</div>`).join('');
     const lines=blocks[bi].split('\n').map(l=>l.trim()).filter(Boolean);
     const header=parseTemplateHeader(lines[0]);
     if(!header){results.push(`❌ Order #${bi+1}: baris pertama (header) gak valid — "${lines[0].slice(0,50)}"`);continue;}
 
-    // Cegah duplikat: kalau No. Pesanan ini udah ada di data (misal sudah diinput manual sebelumnya), lewati.
-    if(header.orderNo&&orders.some(o=>o.orderNo&&o.orderNo.trim()===header.orderNo.trim())){
-      results.push(`⏭️ Order #${bi+1} (${header.buyer}, No. Pesanan ${header.orderNo}): sudah ada di data, dilewati biar gak dobel.`);
+    // Cegah duplikat: cek No. Pesanan (toleran format) & fallback nama+tanggal+total.
+    if(isDuplicateOrder(header)){
+      results.push(`⏭️ Order #${bi+1} (${header.buyer}${header.orderNo?', No. Pesanan '+header.orderNo:''}): kemungkinan sudah ada di data, dilewati biar gak dobel.`);
       continue;
     }
 
@@ -8455,15 +9453,27 @@ async function processBulkOrders(){
     }
     if(itemErr){results.push(`❌ Order #${bi+1} (${header.buyer}): ${itemErr}`);continue;}
 
-    // Cek stok teragregasi utk semua item di order ini — kalau kurang, seluruh order ini di-skip (gak ada yg simpan setengah-setengah)
-    const frameNeeds=aggregateFrameNeeds(expandedItems);
-    let stockErr=null;
+    // Cek stok teragregasi — kalau kurang, AUTO-BELI kekurangannya dulu (tercatat sbg transaksi Restock),
+    // baru lanjut simpan order. Ini masuk akal utk order historis yg emang udah kejadian di dunia nyata.
+    const stockTrackedItems=expandedItems.filter(it=>!it.isCustomSize);
+    const frameNeeds=aggregateFrameNeeds(stockTrackedItems);
+    const restockLog=[];let restockErr=null;
     for(const[key,needQty] of frameNeeds){
       const[fj,fc,fs]=key.split('␟');
-      const frame=findFrame(fj,fc,fs);
-      if(!frame||frame.stock<needQty){stockErr=`Stok Frame ${fc} ${fs} kurang (tersedia ${frame?frame.stock:0}, butuh ${needQty})`;break;}
+      let frame=findFrame(fj,fc,fs);
+      const have=frame?frame.stock:0;
+      if(have<needQty){
+        const shortfall=needQty-have;
+        const unitPrice=getRestockFramePrice(fs,fj)||0;
+        if(unitPrice<=0){restockErr=`Gak nemu harga acuan buat auto-beli Frame ${fc} ${fs} — restock manual dulu, lalu proses ulang blok ini.`;break;}
+        try{
+          await waitForRateSlot(2);
+          await restockFrameQty(fj,fc,fs,shortfall,unitPrice,'auto via Bulk Import');
+          restockLog.push(`🛒 Auto-beli Frame ${fc} ${fs} +${shortfall} pcs @${rp(unitPrice)}`);
+        }catch(err){restockErr=`Gagal auto-beli Frame ${fc} ${fs} — ${err.message}`;break;}
+      }
     }
-    if(stockErr){results.push(`⚠️ Order #${bi+1} (${header.buyer}): ${stockErr} — restock dulu, lalu proses ulang blok ini.`);continue;}
+    if(restockErr){results.push(`❌ Order #${bi+1} (${header.buyer}): ${restockErr}`);continue;}
     const posterNeeds=aggregatePosterNeeds(expandedItems);
     let posterErr=null;
     for(const[pid] of posterNeeds){
@@ -8474,24 +9484,35 @@ async function processBulkOrders(){
     try{
       const id=`order_${Date.now()}_${bi}`;
       const orderDoc={id,channel:header.channel,buyer:header.buyer,orderNo:header.orderNo,note:header.note,total:header.total,finalTotal:null,items:expandedItems,status:'proses',createdAt:header.dateISO+'T'+new Date().toTimeString().slice(0,8)+'.000Z'};
+      await waitForRateSlot();
       await fsSet('orders',orderDoc);
-      for(const it of expandedItems){
-        const frame=inv.frames.find(f=>f.jenis===it.frameJenis&&f.color===it.frameColor&&f.size===it.frameSize)
-          ||inv.frames.find(f=>f.color===it.frameColor&&f.size===it.frameSize);
-        if(frame){frame.stock=Math.max(0,frame.stock-1);await fsSet('inventory_frames',frame);}
-        if(!it.isCustomPoster&&it.posterId){
-          const poster=inv.posters.find(p=>p.id===it.posterId);
-          if(poster){poster.stock=Math.max(0,poster.stock-1);await fsSet('inventory_posters',poster);}
+      // Kurangi stok teragregasi per frame/poster unik (bukan per-unit item) — jauh lebih hemat operasi tulis
+      for(const[key,qty] of frameNeeds){
+        const[fj,fc,fs]=key.split('␟');
+        const frame=inv.frames.find(f=>f.jenis===fj&&f.color===fc&&f.size===fs)||inv.frames.find(f=>f.color===fc&&f.size===fs);
+        if(frame){
+          frame.stock=Math.max(0,frame.stock-qty);
+          await waitForRateSlot();
+          await fsSet('inventory_frames',frame);
+        }
+      }
+      for(const[pid,qty] of posterNeeds){
+        const poster=inv.posters.find(p=>p.id===pid);
+        if(poster){
+          poster.stock=Math.max(0,poster.stock-qty);
+          await waitForRateSlot();
+          await fsSet('inventory_posters',poster);
         }
       }
       successCount++;
-      results.push(`✅ Order #${bi+1} (${header.buyer}) tersimpan — ${expandedItems.length} item.`);
+      results.push(`✅ Order #${bi+1} (${header.buyer}) tersimpan — ${expandedItems.length} item.${restockLog.length?' '+restockLog.join(', '):''}`);
     }catch(err){
       results.push(`❌ Order #${bi+1} (${header.buyer}): gagal simpan — ${err.message}`);
     }
   }
 
   $('bulkResultsBox').innerHTML=results.map(r=>`<div style="padding:5px 0;font-size:12.5px;border-bottom:1px solid var(--border)">${esc(r)}</div>`).join('');
+  progressEl.style.display='none';
   toast(`Selesai: ${successCount}/${blocks.length} order berhasil disimpan.`);
   btn.textContent=orig;btn.disabled=false;
 }
