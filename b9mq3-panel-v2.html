@@ -2123,6 +2123,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <option value="instagram">📸 Instagram/WA</option>
         </select>
         <span style="font-size:12px;color:var(--t3);margin-left:2px" id="kanbanCount"></span>
+        <button class="pbtn" style="background:var(--red-lt);color:var(--red);border:1px solid #fac9c9;font-size:12.5px;padding:8px 14px;margin-left:auto" onclick="openKanbanCleanupModal()">🧹 Bersihkan Data Lama</button>
       </div>
 
       <div class="kanban-board" id="kanbanBoard"></div>
@@ -8282,6 +8283,178 @@ function nestPrint(){
 }
 
 
+/* ── BERSIHKAN DATA LAMA (dedup + bulk selesaikan) ─────────────── */
+window._kcleanSingles   = [];
+window._kcleanDupGroups = [];
+
+function kanbanDupKey(o){
+  const items = (o.items||[]).map(it =>
+    `${(it.posterName||'').trim().toLowerCase()}_${(it.posterSize||it.frameSize||'').trim().toLowerCase()}_${it.qty||1}`
+  ).sort().join(',');
+  return `${(o.buyer||'').trim().toLowerCase()}|${(o.createdAt||'').slice(0,10)}|${items}`;
+}
+
+function kanbanCleanupGetCandidates(){
+  const beforeVal = $('kcleanBeforeDate')?.value;
+  const cutoff = beforeVal ? new Date(beforeVal+'T23:59:59') : null;
+  return orders.filter(o=>{
+    if(o.status==='batal') return false;
+    if(getKanbanStatus(o)==='selesai') return false;
+    if(cutoff){
+      const d = o.createdAt ? new Date(o.createdAt) : null;
+      if(!d || isNaN(d) || d > cutoff) return false;
+    }
+    return true;
+  });
+}
+
+function kanbanCleanupGroups(){
+  const candidates = kanbanCleanupGetCandidates();
+  const map = new Map();
+  candidates.forEach(o=>{
+    const k = kanbanDupKey(o);
+    if(!map.has(k)) map.set(k, []);
+    map.get(k).push(o);
+  });
+  const dupGroups = [], singles = [];
+  map.forEach(list=>{
+    if(list.length > 1){
+      // Urutan: yang punya resi & harga final duluan (paling lengkap datanya) → jadi "Simpan"
+      list.sort((a,b)=>{
+        const score = x => (x.resi?2:0) + (x.finalTotal!=null?1:0);
+        const sa=score(a), sb=score(b);
+        if(sa!==sb) return sb-sa;
+        return new Date(b.createdAt||0) - new Date(a.createdAt||0);
+      });
+      dupGroups.push(list);
+    } else {
+      singles.push(list[0]);
+    }
+  });
+  return {dupGroups, singles};
+}
+
+function openKanbanCleanupModal(){
+  const inp = $('kcleanBeforeDate');
+  if(inp && !inp.value){
+    const now = new Date();
+    inp.value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+  }
+  renderKanbanCleanup();
+  $('kanbanCleanupModal').classList.add('active');
+}
+
+function closeKanbanCleanupModal(){
+  $('kanbanCleanupModal').classList.remove('active');
+}
+
+function renderKanbanCleanup(){
+  const {dupGroups, singles} = kanbanCleanupGroups();
+  window._kcleanDupGroups = dupGroups;
+  window._kcleanSingles   = singles;
+
+  const dupToDelete = dupGroups.reduce((s,g)=>s+(g.length-1),0);
+  $('kcleanSummary').innerHTML = dupGroups.length || singles.length
+    ? `Ditemukan <strong>${dupGroups.length}</strong> grup duplikat (akan hapus <strong>${dupToDelete}</strong>, sisakan ${dupGroups.length}) + <strong>${singles.length}</strong> order non-duplikat. Total yang bakal ditandai <strong>Selesai</strong>: <strong>${dupGroups.length + singles.length}</strong> order.`
+    : `Gak ada order aktif di rentang tanggal ini.`;
+
+  $('kcleanDupList').innerHTML = dupGroups.length ? dupGroups.map((g,gi)=>`
+    <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Grup ${gi+1} — ${esc(g[0].buyer||'—')} · ${(g[0].createdAt||'').slice(0,10)}</div>
+      ${g.map((o,oi)=>`
+        <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12.5px;cursor:pointer">
+          <input type="checkbox" class="kclean-dup-chk" data-oid="${esc(o.id)}" ${oi===0?'':'checked'}>
+          <span>${oi===0?'✅ <strong>Simpan</strong>':'🗑️ Hapus'} — ${esc(o.orderNo||o.id)}${o.resi?' · resi '+esc(o.resi):''}${o.finalTotal!=null?' · '+rp(o.finalTotal):(o.total?' · est. '+rp(o.total):'')}</span>
+        </label>
+      `).join('')}
+    </div>
+  `).join('') : `<div style="font-size:12.5px;color:var(--t3)">Gak ada duplikat terdeteksi.</div>`;
+
+  $('kcleanSingleList').innerHTML = singles.length ? `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+      <label style="font-size:11.5px;color:var(--accent);cursor:pointer">
+        <input type="checkbox" checked onclick="document.querySelectorAll('.kclean-single-chk').forEach(c=>c.checked=this.checked)"> Pilih semua
+      </label>
+    </div>
+    ${singles.map(o=>`
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12.5px;cursor:pointer">
+        <input type="checkbox" class="kclean-single-chk" data-oid="${esc(o.id)}" checked>
+        <span>${esc(o.buyer||'—')} · ${(o.createdAt||'').slice(0,10)}${o.orderNo?' · '+esc(o.orderNo):''}${o.finalTotal!=null?' · '+rp(o.finalTotal):(o.total?' · est. '+rp(o.total):'')}</span>
+      </label>
+    `).join('')}
+  ` : `<div style="font-size:12.5px;color:var(--t3)">Gak ada order non-duplikat dalam rentang ini.</div>`;
+}
+
+async function bulkCloseKanbanOrder(orderId, skipKeuangan){
+  const idx = orders.findIndex(o=>o.id===orderId);
+  if(idx<0) return;
+  orders[idx].kanbanStatus = 'selesai';
+  orders[idx].status = 'selesai';
+  const order = orders[idx];
+  await fsSet('orders', {
+    ...order,
+    kanbanStatus: 'selesai',
+    status: 'selesai',
+    updatedAt: new Date().toISOString()
+  });
+  if(!skipKeuangan){
+    const sudahAda = keuangan.some(k => k.sourceOrderId === orderId && k.type === 'income');
+    if(!sudahAda){
+      const amount = order.finalTotal ?? order.total ?? 0;
+      const itemDesc = (order.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+      const keuEntry = {
+        id: `order_income_${orderId}`,
+        type: 'income', cat: 'penjualan', amount,
+        date: (order.createdAt||'').slice(0,10) || new Date().toISOString().split('T')[0],
+        desc: `Penjualan${order.buyer?` — ${order.buyer}`:''}${order.orderNo?` (${order.orderNo})`:''} | ${itemDesc}`,
+        sourceOrderId: orderId, channel: order.channel || '',
+        createdAt: new Date().toISOString()
+      };
+      await fsSet('keuangan', keuEntry);
+    }
+  }
+}
+
+async function kanbanCleanupProcess(){
+  const deleteIds = Array.from(document.querySelectorAll('.kclean-dup-chk:checked')).map(c=>c.dataset.oid);
+  const singleCheckedIds = new Set(Array.from(document.querySelectorAll('.kclean-single-chk:checked')).map(c=>c.dataset.oid));
+  const skipKeuangan = $('kcleanSkipKeuangan')?.checked;
+
+  const dupGroups = window._kcleanDupGroups || [];
+  const singles   = window._kcleanSingles || [];
+  const deleteSet = new Set(deleteIds);
+  const keepFromDup = dupGroups.flatMap(g => g.filter(o => !deleteSet.has(o.id)));
+  const singlesToClose = singles.filter(o => singleCheckedIds.has(o.id));
+  const toSelesai = [...keepFromDup, ...singlesToClose];
+
+  if(!deleteIds.length && !toSelesai.length){ toast('Gak ada yang dipilih untuk diproses.','error'); return; }
+
+  const ok = confirm(
+    `Ini bakal:\n• Hapus ${deleteIds.length} order duplikat (permanen)\n• Tandai ${toSelesai.length} order sebagai Selesai${skipKeuangan?' (TANPA catat otomatis ke Keuangan)':' (DENGAN catat otomatis ke Keuangan)'}\n\nLanjut?`
+  );
+  if(!ok) return;
+
+  const btn = $('kcleanProcessBtn');
+  btn.disabled = true; btn.textContent = '⏳ Memproses...';
+  try{
+    for(const id of deleteIds){
+      await fsDel('orders', id);
+      const idx = orders.findIndex(o=>o.id===id);
+      if(idx>=0) orders.splice(idx,1);
+    }
+    for(const o of toSelesai){
+      await bulkCloseKanbanOrder(o.id, skipKeuangan);
+    }
+    toast(`✅ Selesai! ${deleteIds.length} duplikat dihapus, ${toSelesai.length} order ditandai Selesai.`);
+    closeKanbanCleanupModal();
+    renderKanban();
+  }catch(e){
+    toast('Gagal memproses: '+e.message, 'error');
+  }finally{
+    btn.disabled = false; btn.textContent = '✅ Proses Sekarang';
+  }
+}
+
 function renderKanban(){
   const board = $('kanbanBoard');
   if(!board) return;
@@ -9600,6 +9773,47 @@ function onOrderFrameJenisChange(){
     <div style="display:flex;gap:8px;margin-top:4px">
       <button class="pbtn" style="background:var(--surface);color:var(--t1);border:1.5px solid var(--border);flex:1" onclick="closeResiModal()">Batal</button>
       <button class="pbtn" style="flex:2" onclick="confirmResiAndMove()">✅ Konfirmasi &amp; Pindah ke Dikirim</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: Bersihkan Data Lama (Kanban)
+══════════════════════════════════════════ -->
+<div class="moverlay" id="kanbanCleanupModal">
+  <div class="mbox" style="max-width:640px;width:95vw">
+    <div class="mhd">
+      <h3>🧹 Bersihkan Data Lama — Kanban Packing</h3>
+      <button class="mclose" onclick="closeKanbanCleanupModal()" aria-label="Tutup modal">×</button>
+    </div>
+    <div style="font-size:12.5px;color:var(--t2);margin-bottom:14px">
+      Cari order lama yang duplikat, lalu tandai semua sisanya sebagai <strong>Selesai</strong> sekaligus.
+    </div>
+
+    <div class="fg" style="display:flex;gap:8px;align-items:flex-end;margin-bottom:14px">
+      <div style="flex:1">
+        <label>Tampilkan order sebelum tanggal</label>
+        <input type="date" id="kcleanBeforeDate" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px">
+      </div>
+      <button class="pbtn" style="background:var(--gray-lt);color:var(--t1);border:1.5px solid var(--border);padding:8px 14px;font-size:12.5px" onclick="renderKanbanCleanup()">🔄 Terapkan</button>
+    </div>
+
+    <div id="kcleanSummary" style="background:var(--accent-lt);color:var(--accent-dk);border-radius:8px;padding:10px 12px;font-size:12.5px;margin-bottom:14px"></div>
+
+    <div style="font-size:11.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px">Duplikat terdeteksi</div>
+    <div id="kcleanDupList" style="max-height:220px;overflow-y:auto;margin-bottom:16px"></div>
+
+    <div style="font-size:11.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px">Order non-duplikat (akan ditandai Selesai)</div>
+    <div id="kcleanSingleList" style="max-height:180px;overflow-y:auto;margin-bottom:16px"></div>
+
+    <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2);margin-bottom:16px;cursor:pointer">
+      <input type="checkbox" id="kcleanSkipKeuangan" checked>
+      Jangan catat otomatis ke Keuangan (data lama sudah tercatat manual)
+    </label>
+
+    <div style="display:flex;gap:8px">
+      <button class="pbtn" style="background:var(--surface);color:var(--t1);border:1.5px solid var(--border);flex:1" onclick="closeKanbanCleanupModal()">Batal</button>
+      <button class="pbtn" id="kcleanProcessBtn" style="flex:2" onclick="kanbanCleanupProcess()">✅ Proses Sekarang</button>
     </div>
   </div>
 </div>
