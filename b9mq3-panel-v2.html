@@ -2127,6 +2127,9 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
           <option value="tiktok">🎵 TikTok</option>
           <option value="instagram">📸 Instagram/WA</option>
         </select>
+        <select id="kanbanMonth" onchange="renderKanban()" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surface);outline:none;transition:border-color .2s">
+          <option value="">Semua Bulan</option>
+        </select>
         <span style="font-size:12px;color:var(--t3);margin-left:2px" id="kanbanCount"></span>
       </div>
 
@@ -8288,12 +8291,40 @@ function nestPrint(){
 
 
 /* ── BULK ACTIONS PER KOLOM ─────────────────────────────────────── */
+function kanbanOrderMonthKey(o){
+  if(!o.createdAt) return null;
+  const d = new Date(o.createdAt);
+  if(isNaN(d)) return null;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function ensureKanbanMonthFilter(){
+  const sel = $('kanbanMonth');
+  if(!sel) return;
+  const monthSet = new Set();
+  orders.forEach(o=>{ const k = kanbanOrderMonthKey(o); if(k) monthSet.add(k); });
+  const opts = Array.from(monthSet).sort().reverse(); // terbaru dulu
+  const optsKey = opts.join(',');
+  if(sel.dataset.opts === optsKey) return; // belum ada bulan baru, jangan rebuild (biar pilihan user gak kereset)
+
+  const monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const prevVal = sel.value;
+  sel.innerHTML = `<option value="">Semua Bulan</option>` + opts.map(k=>{
+    const [y,m] = k.split('-').map(Number);
+    return `<option value="${k}">${monthNames[m-1]} ${y}</option>`;
+  }).join('');
+  sel.dataset.opts = optsKey;
+  if(opts.includes(prevVal) || prevVal==='') sel.value = prevVal;
+}
+
 function kanbanColumnOrders(colId){
   const q  = ($('kanbanSearch')?.value||'').toLowerCase();
   const ch = $('kanbanChannel')?.value||'';
+  const mo = $('kanbanMonth')?.value||'';
   return orders.filter(o=>{
     if(o.status === 'batal') return false;
     if(getKanbanStatus(o) !== colId) return false;
+    if(mo && kanbanOrderMonthKey(o) !== mo) return false;
     if(ch && o.channel !== ch) return false;
     if(q && !(o.buyer||'').toLowerCase().includes(q) && !(o.resi||'').toLowerCase().includes(q)) return false;
     return true;
@@ -8373,11 +8404,14 @@ async function bulkDeleteColumn(colId){
 function renderKanban(){
   const board = $('kanbanBoard');
   if(!board) return;
-  const q = ($('kanbanSearch')?.value||'').toLowerCase();
+  ensureKanbanMonthFilter();
+  const q  = ($('kanbanSearch')?.value||'').toLowerCase();
   const ch = $('kanbanChannel')?.value||'';
+  const mo = $('kanbanMonth')?.value||'';
 
   let filtered = orders.filter(o => {
     if(o.status === 'batal') return false;
+    if(mo && kanbanOrderMonthKey(o) !== mo) return false;
     if(ch && o.channel !== ch) return false;
     if(q && !(o.buyer||'').toLowerCase().includes(q) && !(o.resi||'').toLowerCase().includes(q)) return false;
     return true;
