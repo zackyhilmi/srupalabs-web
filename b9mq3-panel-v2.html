@@ -57,7 +57,7 @@ window.DRIVE_API_KEY   = "AIzaSyBZqjo8vXLygWzOxgqQADDvdfkqkDHKxLE";
               const btn = document.querySelector(`.nitem[onclick*="goPage('${lastPage}'"]`) || document.querySelector(`.nitem[data-label="${(pageTitles[lastPage]||lastPage)}"]`);
               goPage(lastPage, btn);
               if (lastPage === 'inventory') {
-                goTab(localStorage.getItem('lastInvTab') || 'posters');
+                goTab(localStorage.getItem('lastInvTab') || 'frames');
               }
               if (lastPage === 'margin') {
                 goMarginTab(localStorage.getItem('lastMarginTab') || 'analisis');
@@ -1320,6 +1320,43 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .chd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface)}
 .ctitle{font-size:13px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px}
 .ctitle::before{content:'';width:3px;height:14px;background:linear-gradient(180deg,var(--accent),#60a5fa);border-radius:3px;flex-shrink:0}
+
+/* ─── INVENTARIS FRAME ─── */
+.fview-toggle{display:flex;gap:2px;background:var(--gray-md);padding:3px;border-radius:9px}
+.fview-toggle button{border:none;background:none;padding:5px 11px;border-radius:7px;font:600 12px var(--font);color:var(--t2);cursor:pointer}
+.fview-toggle button.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow-sm)}
+.fstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.fstat{background:var(--gray-lt);border-radius:10px;padding:9px 12px}
+.fstat b{display:block;font-size:18px;letter-spacing:-.02em;line-height:1.2}
+.fstat span{font-size:11px;color:var(--t2)}
+.fstat.warn b{color:var(--amber)}.fstat.bad b{color:var(--red)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.fchip{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);font:600 12px var(--font);color:var(--t2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:30px}
+.fchip:hover{border-color:var(--t3)}
+.fchip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fsep{width:1px;height:18px;background:var(--border);margin:0 2px}
+.flegend{font-size:11px;color:var(--t3);margin-bottom:12px}
+.fgroup{margin-bottom:18px}
+.fgroup-hd{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:baseline;gap:8px}
+.fgroup-hd span{font-size:11.5px;font-weight:500;color:var(--t3)}
+.fscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fmatrix{min-width:0;width:100%;border-collapse:separate;border-spacing:4px}
+.fmatrix th,.fmatrix td{padding:0;border:none;background:none;vertical-align:middle;text-align:center}
+.fmatrix tr:hover{background:none}
+.fmatrix thead th,.fmatrix tr:first-child th{font-size:11.5px;font-weight:600;color:var(--t3);padding-bottom:2px;white-space:nowrap}
+.fmatrix th.frow{text-align:left;font-size:12.5px;font-weight:600;color:var(--t1);white-space:nowrap;padding-right:8px}
+.fmatrix .ftot{font-size:12.5px;font-weight:700;color:var(--t2);padding-left:6px}
+.fcell{width:100%;min-width:48px;height:38px;border:1.5px solid transparent;border-radius:9px;font:700 14px var(--font);cursor:pointer;transition:transform .12s,box-shadow .12s,opacity .15s;display:block}
+.fcell:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.fcell.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.fcell.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.fcell.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.fcell.out{background:var(--gray-lt);color:var(--red);border-color:var(--border)}
+.fcell.dim{opacity:.22}
+.fcell.empty{background:none;border:1.5px dashed var(--border);color:var(--t3);font-weight:500}
+.fcell.na{color:var(--t3);text-align:center;line-height:38px;cursor:default;font-weight:400}
+.fcell.na:hover{transform:none;box-shadow:none}
+@media(max-width:600px){.fstats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -1770,12 +1807,12 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
     <!-- ═══ INVENTORY ═══ -->
     <div class="page" id="page-inventory">
       <div class="itabs">
-        <button class="itab active" id="itabP" onclick="goTab('posters')">🖼️ Poster</button>
-        <button class="itab" id="itabF" onclick="goTab('frames')">🪟 Frame</button>
+        <button class="itab active" id="itabF" onclick="goTab('frames')">🪟 Frame</button>
+        <button class="itab" id="itabP" onclick="goTab('posters')">🖼️ Poster</button>
       </div>
 
       <!-- POSTER -->
-      <div id="tsec-posters">
+      <div id="tsec-posters" style="display:none">
         <div class="igrid">
           <div class="card">
             <div class="chd"><div class="ctitle">Tambah Poster</div></div>
@@ -1811,23 +1848,24 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       </div>
 
       <!-- FRAME -->
-      <div id="tsec-frames" style="display:none">
-        <div class="igrid">
-          <div class="card">
-            <div class="chd"><div class="ctitle">Tambah Frame</div></div>
-            <div class="cbody" style="padding:10px 14px">
-              <button class="pbtn" style="width:auto;padding:7px 18px;font-size:13px" onclick="openFrameModal()">➕ Tambah Frame</button>
+      <div id="tsec-frames">
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">Stok Frame</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div class="fview-toggle">
+                <button id="fvMatrix" class="active" onclick="setFrameView('matrix')">▦ Matriks</button>
+                <button id="fvList" onclick="setFrameView('list')">☰ Daftar</button>
+              </div>
+              <button class="pbtn" style="width:auto;padding:7px 16px;font-size:13px;margin:0" onclick="openFrameModal()">➕ Tambah Frame</button>
             </div>
           </div>
-          <div class="card">
-            <div class="chd"><div class="ctitle">Daftar Frame</div></div>
-            <div class="cbody" style="padding:12px 14px 0">
-              <div class="srchwrap"><input type="text" id="fSearch" placeholder="Cari frame..." maxlength="100"><span class="srchico">🔍</span></div>
-            </div>
-            <div class="twrap"><table>
-              <thead><tr><th>Jenis</th><th>Warna</th><th>Ukuran</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead>
-              <tbody id="tbFrame"><tr class="erow"><td colspan="6">Memuat data...</td></tr></tbody>
-            </table></div>
+          <div class="cbody" style="padding:14px 16px 16px">
+            <div class="fstats" id="frameStats"></div>
+            <div class="srchwrap" style="margin-bottom:10px"><input type="text" id="fSearch" placeholder="Cari frame..." maxlength="100"><span class="srchico">🔍</span></div>
+            <div class="fchips" id="frameChips"></div>
+            <div class="flegend">Angka = sisa stok · 🟢 &gt;5 · 🟡 3–5 · 🔴 &lt;3 · ⚠️ Perlu restock = stok ≤5 · klik angka untuk ubah stok</div>
+            <div id="frameBody"></div>
           </div>
         </div>
       </div>
@@ -2731,6 +2769,7 @@ async function cmsDel(id){
         <option value="40x60">40 × 60 cm</option>
         <option value="50x70">50 × 70 cm</option>
         <option value="60x80">60 × 80 cm</option>
+        <option value="60x90">60 × 90 cm</option>
       </select>
       <div class="ferr" id="iPosterSizeE"></div>
       <small id="iPosterSizeNote" style="display:block;margin-top:3px;font-size:11.5px;color:var(--t2)"></small>
@@ -2998,6 +3037,7 @@ async function cmsDel(id){
             <option value="30x40">30×40 cm</option>
             <option value="40x60">40×60 cm</option><option value="50x70">50×70 cm</option>
             <option value="60x80">60×80 cm</option>
+            <option value="60x90">60×90 cm</option>
           </select>
           <div class="ferr" id="pSizeE"></div>
         </div>
@@ -3367,9 +3407,9 @@ const OK_SIZES=new Set(['20x30','30x40','40x60','50x70','60x80','20x40','60x90']
 const CUSTOM_SIZE_PATTERN=/^\d{1,3}x\d{1,3}$/; // ukuran bebas sesuai request customer — diterima tapi gak motong stok frame
 const OK_FCOLORS=new Set(['Hitam','Putih','Kayu','Chrome']);
 const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
-const FRAME_COLORS_MINIMALIS = ['Hitam','Putih']; // Minimalis: tidak ada Kayu & Chrome
+const FRAME_COLORS_MINIMALIS = ['Hitam','Putih','Kayu']; // Minimalis: tidak ada Chrome
 const FRAME_SIZES_BLOCK      = ['20x30','30x40','40x60','50x70','60x80','60x90'];
-const FRAME_SIZES_MINIMALIS  = ['30x40','40x60','50x70','60x80']; // Minimalis: tidak ada 20x30
+const FRAME_SIZES_MINIMALIS  = ['20x30','30x40','40x60','50x70','60x80','60x90'];
 
 function getFrameColors(jenis){ return jenis==='Minimalis'?FRAME_COLORS_MINIMALIS:FRAME_COLORS_BLOCK; }
 function getFrameSizes(jenis){ return jenis==='Minimalis'?FRAME_SIZES_MINIMALIS:FRAME_SIZES_BLOCK; }
@@ -3414,6 +3454,8 @@ const rp=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minim
 const fmtDate=iso=>{ if(!iso)return'—'; const [y,m,d]=iso.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'}); };
 const thisMonth=()=>new Date().toISOString().slice(0,7);
 
+// Ambang stok FRAME: 0 = habis, 1-2 = menipis (merah), 3-5 = waspada (kuning), >5 = aman (hijau)
+function frameBadge(n){if(n<=0)return{c:'out',l:'Habis'};if(n<3)return{c:'low',l:'Menipis'};if(n<=5)return{c:'medium',l:'Waspada'};return{c:'high',l:'Aman'};}
 function stockBadge(n){if(n===0)return{c:'out',l:'Habis'};if(n<=5)return{c:'low',l:'Menipis'};if(n<=20)return{c:'medium',l:'Cukup'};return{c:'high',l:'Banyak'};}
 function chBadge(ch){const m={shopee:'shopee 🛍️',tiktok:'tiktok 🎵',instagram:'instagram 📸'};return`<span class="badge ${esc(ch)}">${m[ch]||esc(ch)}</span>`;}
 function stBadge(st){const m={proses:'⏳ Proses',selesai:'✅ Selesai',batal:'❌ Batal'};const c={proses:'proses',selesai:'selesai',batal:'batal'};return`<span class="badge ${c[st]||''}">${m[st]||esc(st)}</span>`;}
@@ -4750,7 +4792,7 @@ function renderLow(){
         return`<tr>
           <td><span class="cdot ${esc((f.color||'').toLowerCase())}"></span><strong>${esc(f.color||'—')}</strong></td>
           <td>${jenis}${esc(f.size||'—')}</td>
-          <td><strong style="color:var(--${stk===0?'red':stk<=2?'amber':'green'})">${stk}</strong></td>
+          <td><strong style="color:var(--${stk<=2?'red':stk<=5?'amber':'green'})">${stk}</strong></td>
         </tr>`;
       }).join('');
     }
@@ -6443,34 +6485,81 @@ function editPosterGroup(name){
 }
 function closeSizePick(){ $('sizePickModal').classList.remove('active'); }
 
+let frameFilter={jenis:'',warna:'',low:false};
+let frameView=(()=>{try{return localStorage.getItem('frameView')||'matrix';}catch(e){return 'matrix';}})();
+const FRAME_COLOR_LIST=['Hitam','Putih','Kayu','Chrome'];
+const fJenis=f=>f.jenis||'Block';
+const fArea=sz=>{const m=/^(\d+)x(\d+)$/.exec(sz||'');return m?m[1]*m[2]:0;};
+function setFrameView(v){frameView=v;try{localStorage.setItem('frameView',v);}catch(e){}renderFrames($('fSearch').value);}
+function setFrameFilter(k,v){if(k==='low')frameFilter.low=!frameFilter.low;else frameFilter[k]=(frameFilter[k]===v?'':v);renderFrames($('fSearch').value);}
+function frameChip(k,v,label,pre=''){const on=k==='low'?frameFilter.low:frameFilter[k]===v;return `<button class="fchip${on?' active':''}" onclick="setFrameFilter('${k}','${v}')">${pre}${label}</button>`;}
+function addFrameVariant(j,c,sz){openFrameModal();$('fJenis').value=j;onFrameJenisChange();$('fColor').value=c;$('fSize').value=sz;setTimeout(()=>$('fStock')?.focus(),80);}
+
 function renderFrames(q=''){
-  const tb=$('tbFrame'),ql=q.toLowerCase();
-  const list=inv.frames.filter(f=>(f.color.toLowerCase().includes(ql)||f.size.includes(ql)||(f.jenis||'').toLowerCase().includes(ql)));
-  if(!list.length){tb.innerHTML='<tr class="erow"><td colspan="6">Tidak ada data frame</td></tr>';return;}
-  tb.innerHTML=list.map(f=>{
-    const b=stockBadge(f.stock);
-    const jenisBadge=f.jenis==='Minimalis'
+  const body=$('frameBody');if(!body)return;
+  const ql=(q||'').toLowerCase().trim();
+  $('fvMatrix')?.classList.toggle('active',frameView==='matrix');
+  $('fvList')?.classList.toggle('active',frameView==='list');
+  const all=inv.frames;
+  $('frameStats').innerHTML=[
+    ['Total stok',all.reduce((n,f)=>n+(f.stock||0),0)+' pcs',''],
+    ['Waspada (3–5)',all.filter(f=>f.stock>=3&&f.stock<=5).length,'warn'],
+    ['Menipis (1–2)',all.filter(f=>f.stock>0&&f.stock<3).length,'bad'],
+    ['Habis',all.filter(f=>f.stock<=0).length,'bad']
+  ].map(([l,v,c])=>`<div class="fstat ${c}"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('frameChips').innerHTML=frameChip('jenis','','Semua jenis')+frameChip('jenis','Block','Block')+frameChip('jenis','Minimalis','Minimalis')
+    +'<span class="fsep"></span>'+frameChip('warna','','Semua warna')
+    +FRAME_COLOR_LIST.map(c=>frameChip('warna',c,c,`<span class="cdot ${c.toLowerCase()}" style="margin:0"></span>`)).join('')
+    +'<span class="fsep"></span>'+frameChip('low','','⚠️ Perlu restock');
+
+  const list=all.filter(f=>(!ql||f.color.toLowerCase().includes(ql)||f.size.includes(ql)||fJenis(f).toLowerCase().includes(ql))
+    &&(!frameFilter.jenis||fJenis(f)===frameFilter.jenis)&&(!frameFilter.warna||f.color===frameFilter.warna));
+  if(!list.length){body.innerHTML='<div class="nest-empty">Tidak ada frame yang cocok dengan filter.</div>';return;}
+
+  if(frameView==='matrix'){
+    body.innerHTML=['Block','Minimalis'].filter(j=>list.some(f=>fJenis(f)===j)).map(j=>{
+      const items=list.filter(f=>fJenis(f)===j);
+      const sizes=[...new Set([...getFrameSizes(j),...items.map(f=>f.size)])].sort((a,b)=>fArea(a)-fArea(b));
+      const colors=[...new Set([...getFrameColors(j),...items.map(f=>f.color)])].filter(c=>!frameFilter.warna||c===frameFilter.warna);
+      const head=`<tr><th></th>${sizes.map(sz=>`<th>${esc(sz.replace('x','×'))}</th>`).join('')}<th>Total</th></tr>`;
+      const rows=colors.map(c=>{
+        let tot=0;
+        const cells=sizes.map(sz=>{
+          const f=items.find(x=>x.color===c&&x.size===sz);
+          if(!f){
+            return getFrameSizes(j).includes(sz)&&getFrameColors(j).includes(c)
+              ?`<td><button class="fcell empty" title="Tambah varian ini" onclick="addFrameVariant('${j}','${esc(c)}','${esc(sz)}')">＋</button></td>`
+              :'<td><span class="fcell na">·</span></td>';
+          }
+          tot+=f.stock;
+          const b=frameBadge(f.stock);
+          const dim=frameFilter.low&&f.stock>5?' dim':'';
+          return `<td><button class="fcell ${b.c}${dim}" title="${esc(c)} ${esc(sz)} — ${b.l}" onclick="openEdit('frames','${esc(f.id)}')">${f.stock}</button></td>`;
+        }).join('');
+        return `<tr><th class="frow"><span class="cdot ${esc(c.toLowerCase())}"></span>${esc(c)}</th>${cells}<td class="ftot">${tot}</td></tr>`;
+      }).join('');
+      return `<div class="fgroup"><div class="fgroup-hd">Frame ${j}<span>${items.reduce((n,f)=>n+f.stock,0)} pcs</span></div><div class="fscroll"><table class="fmatrix">${head}${rows}</table></div></div>`;
+    }).join('');
+    return;
+  }
+
+  const rows=list.filter(f=>!frameFilter.low||f.stock<=5)
+    .sort((a,b)=>fJenis(a).localeCompare(fJenis(b))||a.color.localeCompare(b.color)||fArea(a.size)-fArea(b.size));
+  if(!rows.length){body.innerHTML='<div class="nest-empty">Tidak ada frame yang perlu restock 🎉</div>';return;}
+  body.innerHTML=`<div class="twrap"><table><thead><tr><th>Frame</th><th>Ukuran</th><th class="col-num">Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody>${rows.map(f=>{
+    const b=frameBadge(f.stock);
+    const jb=fJenis(f)==='Minimalis'
       ?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--purple-lt);color:var(--purple)">Minimalis</span>`
       :`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--accent-lt);color:var(--accent)">Block</span>`;
-    return`<tr>
-      <td style="vertical-align:middle">${jenisBadge}</td>
-      <td style="vertical-align:middle">
-        <div style="display:flex;align-items:center;gap:7px">
-          <span class="cdot ${esc(f.color.toLowerCase())}"></span>
-          <strong style="font-size:13px">${esc(f.color)}</strong>
-        </div>
-      </td>
+    return `<tr>
+      <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><span class="cdot ${esc(f.color.toLowerCase())}" style="margin:0"></span><strong style="font-size:13px">${esc(f.color)}</strong>${jb}</div></td>
       <td style="vertical-align:middle;font-size:13px;color:var(--t2)">${esc(f.size)} cm</td>
-      <td style="vertical-align:middle"><span style="font-size:15px;font-weight:700">${f.stock}</span></td>
+      <td class="col-num" style="vertical-align:middle"><strong style="font-size:15px">${f.stock}</strong></td>
       <td style="vertical-align:middle"><span class="badge ${b.c}">${b.l}</span></td>
-      <td class="col-action" style="vertical-align:middle">
-        <div style="display:flex;gap:4px">
-          <button class="bsm bedit" onclick="openEdit('frames','${esc(f.id)}')">✏️ Edit</button>
-          <button class="bsm bdel" onclick="delItem('frames','${esc(f.id)}')">🗑️</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+      <td class="col-action" style="vertical-align:middle"><div style="display:flex;gap:4px">
+        <button class="bsm bedit" onclick="openEdit('frames','${esc(f.id)}')">✏️ Edit</button>
+        <button class="bsm bdel" onclick="delItem('frames','${esc(f.id)}')">🗑️</button>
+      </div></td></tr>`;}).join('')}</tbody></table></div>`;
 }
 
 $('fPoster').addEventListener('submit',async function(e){
@@ -9018,10 +9107,12 @@ const KAL_FRAMES = [
   { model: 'Frame Blok',      ukuran: '60×90', w: 60, h: 90, hppFrame: 45000, status: 'baru', defaultJual: 210000 },
 
   // 2. Frame Minimalis (4 size options)
+  { model: 'Frame Minimalis', ukuran: '20×30', w: 20, h: 30, hppFrame: 13000, status: 'baru' }, // HPP estimasi — cek di Data Master
   { model: 'Frame Minimalis', ukuran: '30×40', w: 30, h: 40, hppFrame: 17000, status: 'aktif' },
   { model: 'Frame Minimalis', ukuran: '40×60', w: 40, h: 60, hppFrame: 32500, status: 'aktif' },
   { model: 'Frame Minimalis', ukuran: '50×70', w: 50, h: 70, hppFrame: 35000, status: 'aktif' },
   { model: 'Frame Minimalis', ukuran: '60×80', w: 60, h: 80, hppFrame: 45000, status: 'aktif' },
+  { model: 'Frame Minimalis', ukuran: '60×90', w: 60, h: 90, hppFrame: 50000, status: 'baru' }, // HPP estimasi — cek di Data Master
 ];
 
 const KAL_PROD_PACK = {
@@ -9045,10 +9136,13 @@ const KAL_FRAME_ONLY = [
   { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '40×60' },
   { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '50×70' },
   { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '60×80' },
+  { model: 'FrameOnly-Blok',      label: 'Frame Only - Blok',      baseModel: 'Frame Blok',      ukuran: '60×90' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '20×30' },
   { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '30×40' },
   { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '40×60' },
   { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '50×70' },
   { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '60×80' },
+  { model: 'FrameOnly-Minimalis', label: 'Frame Only - Minimalis', baseModel: 'Frame Minimalis', ukuran: '60×90' },
 ];
 
 // Fallback HPP frame (kalau masterData.frame belum punya override) — diambil dari KAL_FRAMES
