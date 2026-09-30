@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Srupa Labs · Crew</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F2F5;--surface:#fff;--border:#E8EBF0;
+  --t1:#0F1729;--t2:#5C6880;--t3:#9CA3AF;
+  --accent:#1A73E8;--accent-lt:#EBF3FD;--accent-dk:#1558C0;
+  --green:#16A34A;--green-lt:#DCFCE7;
+  --amber:#D97706;--amber-lt:#FEF3C7;
+  --red:#DC2626;--red-lt:#FEE2E2;
+  --purple:#7C3AED;--purple-lt:#EDE9FE;
+  --gray-lt:#F4F5F8;--gray-md:#E9ECF2;
+  --nav:240px;--nav-mini:60px;--hdr:60px;--r:14px;
+  --shadow-sm:0 1px 3px rgba(15,23,41,.07),0 1px 2px rgba(15,23,41,.04);
+  --shadow-md:0 4px 12px rgba(15,23,41,.08),0 2px 6px rgba(15,23,41,.05);
+  --shadow-lg:0 12px 32px rgba(15,23,41,.12),0 4px 12px rgba(15,23,41,.06);
+  --font:'DM Sans',sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.page{padding:24px 28px;display:none}
+.page.active{display:block}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;margin-bottom:16px;
+  box-shadow:var(--shadow-sm);
+}
+.card:last-child{margin-bottom:0}
+.chd{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--surface);
+}
+.ctitle{
+  font-size:13.5px;font-weight:700;
+  display:flex;align-items:center;gap:9px;
+  color:var(--t1);
+}
+.ctitle::before{
+  content:'';width:3px;height:15px;
+  background:linear-gradient(180deg,var(--accent),#60a5fa);
+  border-radius:3px;flex-shrink:0;
+}
+.cbody{padding:16px 18px}
+.igrid{display:flex;flex-direction:column;gap:16px}
+.igrid .card:first-child{position:relative;top:auto}
+.itabs{
+  display:flex;gap:3px;
+  background:var(--gray-md);
+  padding:4px;border-radius:11px;width:fit-content;margin-bottom:18px;
+}
+.itab{
+  padding:7px 18px;border:none;border-radius:8px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);
+  color:var(--t2);background:none;transition:background .18s,color .18s;white-space:nowrap;
+}
+.itab.active{
+  background:var(--surface);color:var(--accent);
+  box-shadow:0 2px 8px rgba(26,115,232,.12);
+}
+.itab:not(.active):hover{background:rgba(255,255,255,.6);color:var(--t1)}
+.pbtn{
+  width:100%;padding:9px 16px;
+  background:var(--accent);color:#fff;border:none;
+  border-radius:9px;font-size:13.5px;font-weight:600;
+  cursor:pointer;font-family:var(--font);
+  transition:background .18s,box-shadow .18s,transform .1s;
+  margin-top:3px;min-height:38px;touch-action:manipulation;
+  box-shadow:0 1px 3px rgba(26,115,232,.25);
+}
+.pbtn:hover:not(:disabled){background:var(--accent-dk);box-shadow:0 4px 12px rgba(26,115,232,.3)}
+.pbtn:active:not(:disabled){transform:scale(.98)}
+.pbtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.pbtn.green{background:var(--green);box-shadow:0 1px 3px rgba(22,163,74,.25)}
+.pbtn.green:hover:not(:disabled){background:#15803d;box-shadow:0 4px 12px rgba(22,163,74,.3)}
+.pbtn.outline{
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--t1);box-shadow:none;
+}
+.pbtn.outline:hover:not(:disabled){background:var(--gray-lt);border-color:var(--t3)}
+.srchwrap{position:relative;margin-bottom:14px}
+.srchwrap input{
+  width:100%;padding:9px 36px 9px 13px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-size:13.5px;font-family:var(--font);outline:none;
+  background:var(--surface);
+  transition:border-color .2s,box-shadow .2s;
+  box-shadow:var(--shadow-sm);
+}
+.srchwrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.srchico{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;font-size:15px}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;border:1px solid var(--border);background:var(--surface)}
+.twrap table{border:none}
+table{width:100%;border-collapse:collapse;min-width:520px}
+thead tr{background:var(--surface);position:sticky;top:0;z-index:2}
+th{
+  padding:11px 14px;text-align:left;
+  font-size:12px;font-weight:500;color:var(--t3);
+  text-transform:none;letter-spacing:0;white-space:nowrap;
+  border-bottom:1px solid var(--border);
+}
+td{padding:14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t1);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s ease}
+tbody tr:hover{background:var(--gray-lt)}
+.erow td{
+  text-align:center;padding:44px 20px;
+  color:var(--t3);font-size:13px;min-width:auto;vertical-align:middle;
+}
+.col-action{width:1%;white-space:nowrap}
+.col-num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.01em;border:1px solid transparent;line-height:1.5}
+.badge.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.badge.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.badge.out{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
+.badge.shopee{background:#fff1e8;color:#d4530a;border-color:#fdd9bf}
+.badge.tiktok{background:#f1f1f3;color:#111;border-color:#dcdce0}
+.badge.instagram{background:#fce8f3;color:#a8246b;border-color:#f6c8e2}
+.badge.income{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.expense{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.badge.proses{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.badge.selesai{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.badge.batal{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
+.bsm{padding:5px 11px;border:1px solid transparent;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+.cdot{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0}
+.cdot.hitam{background:#111}
+.cdot.putih{background:#f5f5f5}
+.cdot.kayu{background:linear-gradient(135deg,#8b6f47,#c19a6b)}
+.cdot.chrome{background:linear-gradient(135deg,#bbb,#eee,#aaa)}
+.toast{position:fixed;bottom:20px;right:20px;padding:11px 15px;border-radius:10px;font-size:13.5px;font-weight:600;color:#fff;z-index:9999;transform:translateY(60px);opacity:0;transition:transform .3s ease,opacity .3s ease;pointer-events:none;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.kanban-board{display:flex;gap:12px;overflow-x:auto;padding-bottom:20px;align-items:flex-start;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.kanban-col{
+  flex:0 0 260px;border-radius:14px;padding:0;min-height:240px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  scroll-snap-align:start;
+}
+.kanban-col-hd{
+  padding:10px 14px 9px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.kanban-col-hd-left{display:flex;align-items:center;gap:8px;min-width:0}
+.kanban-col-hd-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.kanban-col-hd-text{min-width:0}
+.kanban-col-hd-label{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
+.kanban-col-hd-sub{font-size:10px;font-weight:500;opacity:.7;margin-top:1px}
+.kanban-col-hd .kcnt{
+  min-width:24px;height:24px;padding:0 7px;
+  border-radius:20px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kanban-cards{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px;min-height:80px;overflow-y:auto;max-height:calc(100vh - 220px)}
+.kanban-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:11px;padding:11px 13px;
+  cursor:grab;transition:box-shadow .18s,border-color .18s,transform .18s;user-select:none;
+  position:relative;
+}
+.kanban-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;border-radius:3px 0 0 3px;
+}
+
+.kanban-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1);transform:translateY(-2px);border-color:transparent}
+.kanban-card:active{cursor:grabbing}
+.kanban-card.dragging{opacity:.35;transform:scale(.96)}
+.kanban-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:6px}
+.kanban-card-buyer{font-size:13px;font-weight:700;color:var(--t1);line-height:1.3;flex:1;min-width:0}
+.kanban-card-total{font-size:12.5px;font-weight:700;color:var(--accent);flex-shrink:0;white-space:nowrap}
+.kanban-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.kanban-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.kanban-card-items{font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.kanban-card-resi{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--t3);background:var(--gray-lt);border-radius:6px;padding:3px 7px;margin-bottom:7px;width:fit-content}
+.kanban-card-actions{display:flex;gap:5px;border-top:1px solid var(--border);padding-top:8px;margin-top:2px}
+.kanban-card-btn{
+  flex:1;padding:6px 4px;border:none;border-radius:7px;
+  cursor:pointer;font-size:11px;font-weight:600;
+  font-family:var(--font);transition:background .15s,color .15s;
+  display:flex;align-items:center;justify-content:center;gap:3px;
+}
+.kanban-card-btn.detail{background:var(--gray-lt);color:var(--t2)}
+.kanban-card-btn.detail:hover{background:var(--border);color:var(--t1)}
+.kanban-card-btn.move-next{background:var(--accent-lt);color:var(--accent)}
+.kanban-card-btn.move-next:hover{background:var(--accent);color:#fff}
+.kanban-card-btn.move-next.is-done{background:var(--green-lt);color:var(--green)}
+.kanban-card-btn.move-next.is-done:hover{background:var(--green);color:#fff}
+.kanban-col-bulk{display:flex;gap:5px;padding:0 10px 9px}
+.kanban-bulk-btn{flex:1;font-size:10.5px;font-weight:700;padding:6px 5px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--t2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font);transition:background .15s}
+.kanban-bulk-btn:hover{background:var(--gray-lt)}
+.kanban-bulk-btn.danger{color:var(--red);border-color:#fac9c9}
+.kanban-bulk-btn.danger:hover{background:var(--red-lt)}
+.kanban-empty{
+  text-align:center;padding:28px 12px;color:var(--t3);font-size:12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.kanban-empty-ico{font-size:22px;opacity:.4}
+.kanban-final-wrap{margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
+.kanban-final-row{display:flex;gap:5px;align-items:center}
+.kanban-final-row input{
+  flex:1;font-size:12px;padding:5px 8px;
+  border:1.5px solid var(--border);border-radius:7px;
+  background:var(--surface);color:var(--t1);min-width:0;
+  font-family:var(--font);outline:none;transition:border-color .2s;
+}
+.kanban-final-row input:focus{border-color:var(--accent)}
+.kanban-final-row button{
+  font-size:11px;padding:5px 10px;background:var(--green);
+  color:#fff;border:none;border-radius:7px;font-weight:600;
+  cursor:pointer;white-space:nowrap;font-family:var(--font);
+  transition:background .15s;
+}
+.kanban-final-row button:hover{background:#15803d}
+.kanban-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.kanban-search{
+  padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;
+  font-size:13px;font-family:var(--font);background:var(--surface);width:220px;
+  outline:none;transition:border-color .2s;
+}
+.kanban-search:focus{border-color:var(--accent)}
+.kcol-baru{background:#f0f4ff}
+.kcol-baru .kanban-col-hd{background:#e8eeff}
+.kcol-baru .kanban-col-hd-label{color:#1d4ed8}
+.kcol-baru .kanban-col-hd-icon{background:#dbeafe;color:#1d4ed8}
+.kcol-baru .kcnt{background:#1d4ed8;color:#fff}
+.kcol-baru .kanban-card::before{background:#1d4ed8}
+.kcol-cetak_menunggu{background:#faf5ff}
+.kcol-cetak_menunggu .kanban-col-hd{background:#f3e8ff}
+.kcol-cetak_menunggu .kanban-col-hd-label{color:#7c3aed}
+.kcol-cetak_menunggu .kanban-col-hd-icon{background:#ede9fe;color:#7c3aed}
+.kcol-cetak_menunggu .kcnt{background:#7c3aed;color:#fff}
+.kcol-cetak_menunggu .kanban-card::before{background:#7c3aed}
+.kcol-cetak_proses{background:#fdf4ff}
+.kcol-cetak_proses .kanban-col-hd{background:#fae8ff}
+.kcol-cetak_proses .kanban-col-hd-label{color:#9333ea}
+.kcol-cetak_proses .kanban-col-hd-icon{background:#f3e8ff;color:#9333ea}
+.kcol-cetak_proses .kcnt{background:#9333ea;color:#fff}
+.kcol-cetak_proses .kanban-card::before{background:#9333ea}
+.kcol-framing{background:#fffbeb}
+.kcol-framing .kanban-col-hd{background:#fef3c7}
+.kcol-framing .kanban-col-hd-label{color:#b45309}
+.kcol-framing .kanban-col-hd-icon{background:#fde68a;color:#b45309}
+.kcol-framing .kcnt{background:#b45309;color:#fff}
+.kcol-framing .kanban-card::before{background:#b45309}
+.kcol-packing{background:#eff6ff}
+.kcol-packing .kanban-col-hd{background:#dbeafe}
+.kcol-packing .kanban-col-hd-label{color:#0369a1}
+.kcol-packing .kanban-col-hd-icon{background:#bfdbfe;color:#0369a1}
+.kcol-packing .kcnt{background:#0369a1;color:#fff}
+.kcol-packing .kanban-card::before{background:#0369a1}
+.kcol-ready{background:#f0fdf4}
+.kcol-ready .kanban-col-hd{background:#dcfce7}
+.kcol-ready .kanban-col-hd-label{color:#047857}
+.kcol-ready .kanban-col-hd-icon{background:#bbf7d0;color:#047857}
+.kcol-ready .kcnt{background:#047857;color:#fff}
+.kcol-ready .kanban-card::before{background:#047857}
+.kcol-dikirim{background:#ecfeff}
+.kcol-dikirim .kanban-col-hd{background:#cffafe}
+.kcol-dikirim .kanban-col-hd-label{color:#0891b2}
+.kcol-dikirim .kanban-col-hd-icon{background:#a5f3fc;color:#0891b2}
+.kcol-dikirim .kcnt{background:#0891b2;color:#fff}
+.kcol-dikirim .kanban-card::before{background:#0891b2}
+.kcol-selesai{background:#f0fdf4}
+.kcol-selesai .kanban-col-hd{background:#bbf7d0}
+.kcol-selesai .kanban-col-hd-label{color:#16a34a}
+.kcol-selesai .kanban-col-hd-icon{background:#86efac;color:#16a34a}
+.kcol-selesai .kcnt{background:#16a34a;color:#fff}
+.kcol-selesai .kanban-card::before{background:#16a34a}
+.page-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.page-section-header h2{
+  font-size:18px;font-weight:700;color:var(--t1);letter-spacing:-.02em;
+}
+.page-section-header p{font-size:13px;color:var(--t2);margin-top:2px;font-weight:400}
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:12px 18px;
+  border-radius:12px;font-size:13.5px;font-weight:600;color:#fff;
+  z-index:9999;transform:translateY(60px);opacity:0;
+  transition:box-shadow .3s cubic-bezier(.22,1,.36,1),transform .3s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;max-width:300px;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.nest-empty{padding:28px 10px;text-align:center;color:var(--t3);font-size:12.5px}
+@media(max-width:768px){.kanban-col{flex:0 0 180px}}
+@media(max-width:768px){:root{--nav:240px;--hdr:56px}
+.page{padding:12px}
+table{min-width:420px}
+.igrid{grid-template-columns:1fr}
+.igrid .card:first-child{position:relative;top:auto}
+.chd{flex-wrap:wrap;gap:8px}
+.toast{bottom:72px;right:12px;left:12px;max-width:100%;text-align:center}
+.itabs{overflow-x:auto;width:100%;padding-bottom:2px}}
+@media(max-width:400px){.page{padding:10px}
+.chd{padding:10px 12px}
+.cbody{padding:12px}}
+.size-tag{
+  display:inline-flex;
+  align-items:center;
+  padding:3px 9px;
+  margin:2px 4px 2px 0;
+  border-radius:20px;
+  font-size:11.5px;
+  font-weight:600;
+  white-space:nowrap;
+  border:1px solid transparent;
+}
+.size-tag.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.size-tag.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.size-tag.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.size-tag.out{background:var(--gray-lt);color:var(--t3);border-color:var(--border)}
+.chd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface)}
+.ctitle{font-size:13px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px}
+.ctitle::before{content:'';width:3px;height:14px;background:linear-gradient(180deg,var(--accent),#60a5fa);border-radius:3px;flex-shrink:0}
+.fview-toggle{display:flex;gap:2px;background:var(--gray-md);padding:3px;border-radius:9px}
+.fview-toggle button{border:none;background:none;padding:5px 11px;border-radius:7px;font:600 12px var(--font);color:var(--t2);cursor:pointer}
+.fview-toggle button.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow-sm)}
+.fstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.fstat{background:var(--gray-lt);border-radius:10px;padding:9px 12px}
+.fstat b{display:block;font-size:18px;letter-spacing:-.02em;line-height:1.2}
+.fstat span{font-size:11px;color:var(--t2)}
+.fstat.warn b{color:var(--amber)}
+.fstat.bad b{color:var(--red)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.fchip{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);font:600 12px var(--font);color:var(--t2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:30px}
+.fchip:hover{border-color:var(--t3)}
+.fchip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fsep{width:1px;height:18px;background:var(--border);margin:0 2px}
+.flegend{font-size:11px;color:var(--t3);margin-bottom:12px}
+.fgroup{margin-bottom:18px}
+.fgroup-hd{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:baseline;gap:8px}
+.fgroup-hd span{font-size:11.5px;font-weight:500;color:var(--t3)}
+.fscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fmatrix{min-width:0;width:100%;border-collapse:separate;border-spacing:4px}
+.fmatrix th,.fmatrix td{padding:0;border:none;background:none;vertical-align:middle;text-align:center}
+.fmatrix tr:hover{background:none}
+.fmatrix thead th,.fmatrix tr:first-child th{font-size:11.5px;font-weight:600;color:var(--t3);padding-bottom:2px;white-space:nowrap}
+.fmatrix th.frow{text-align:left;font-size:12.5px;font-weight:600;color:var(--t1);white-space:nowrap;padding-right:8px}
+.fmatrix .ftot{font-size:12.5px;font-weight:700;color:var(--t2);padding-left:6px}
+.fcell{width:100%;min-width:48px;height:38px;border:1.5px solid transparent;border-radius:9px;font:700 14px var(--font);cursor:pointer;transition:transform .12s,box-shadow .12s,opacity .15s;display:block}
+.fcell:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.fcell.high{background:var(--green-lt);color:var(--green);border-color:#bbf0d2}
+.fcell.medium{background:var(--amber-lt);color:var(--amber);border-color:#fce3ad}
+.fcell.low{background:var(--red-lt);color:var(--red);border-color:#fac9c9}
+.fcell.out{background:var(--gray-lt);color:var(--red);border-color:var(--border)}
+.fcell.dim{opacity:.22}
+.fcell.empty{background:none;border:1.5px dashed var(--border);color:var(--t3);font-weight:500}
+.fcell.na{color:var(--t3);text-align:center;line-height:38px;cursor:default;font-weight:400}
+.fcell.na:hover{transform:none;box-shadow:none}
+@media(max-width:600px){.fstats{grid-template-columns:repeat(2,1fr)}}
+.crew-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.crew-bar b{font-size:15px;font-weight:700}.crew-bar span{font-size:12px;color:var(--t2);flex:1}
+.crew-out{border:0;background:none;color:var(--t2);font-size:13px;cursor:pointer;font-family:var(--font)}
+#loginGate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#e8edf5,#d0daea)}
+#loginGate .lcard{background:var(--surface);border-radius:20px;padding:36px 30px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+#loginGate h2{font-size:20px;font-weight:700;margin-bottom:4px}
+#loginGate p{font-size:13px;color:var(--t2);margin-bottom:22px}
+#loginGate input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:15px;font-family:var(--font);outline:none;margin-bottom:12px}
+#loginGate button{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font)}
+#loginGate button:disabled{opacity:.6;cursor:not-allowed}
+#loginErr{margin-top:10px;padding:9px 12px;background:var(--red-lt);color:var(--red);border-radius:8px;font-size:13px;display:none}
+#appWrap{display:none}
+#dbg{font-size:12px;color:var(--t3);padding:6px 16px 0}
+@media(max-width:760px){.page{padding:14px 12px}}
+</style>
+</head>
+<body>
+
+<div id="loginGate">
+  <div class="lcard">
+    <h2>Srupa Labs</h2>
+    <p>Halaman kerja crew — masukkan password.</p>
+    <form id="loginForm">
+      <input type="email" id="loginEm" placeholder="Email" autocomplete="username" required>
+      <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit">Masuk</button>
+    </form>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<div id="appWrap">
+<div class="crew-bar"><b>Srupa Labs</b><span>Crew</span><button class="crew-out" id="logoutBtn">Keluar</button></div>
+<div id="dbg"></div>
+<div class="page active" style="padding-bottom:0">
+  <div class="itabs">
+    <button class="itab active" data-t="kanban">📦 Kanban</button>
+    <button class="itab" data-t="frames">🪟 Frame</button>
+    <button class="itab" data-t="posters">🖼️ Poster</button>
+  </div>
+</div>
+<div class="page active" id="sec-kanban">
+      <div class="kanban-filter">
+        <input class="kanban-search" id="kanbanSearch" placeholder="🔍 Cari nama / no. resi..." oninput="renderKanban()">
+        <select id="kanbanChannel" onchange="renderKanban()" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surface);outline:none;transition:border-color .2s">
+          <option value="">Semua Channel</option>
+          <option value="shopee">🛍️ Shopee</option>
+          <option value="tiktok">🎵 TikTok</option>
+          <option value="instagram">📸 Instagram/WA</option>
+        </select>
+        <select id="kanbanMonth" onchange="renderKanban()" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surface);outline:none;transition:border-color .2s">
+          <option value="">Semua Bulan</option>
+        </select>
+        <span style="font-size:12px;color:var(--t3);margin-left:2px" id="kanbanCount"></span>
+      </div>
+
+      <div class="kanban-board" id="kanbanBoard"></div>
+
+    </div>
+</div>
+<div class="page" id="sec-frames">
+<div class="card">
+  <div class="chd">
+    <div class="ctitle">Stok Frame</div>
+    <div class="fview-toggle">
+      <button id="fvMatrix" class="active" onclick="setFrameView('matrix')">▦ Matriks</button>
+      <button id="fvList" onclick="setFrameView('list')">☰ Daftar</button>
+    </div>
+  </div>
+  <div class="cbody" style="padding:14px 16px 16px">
+    <div class="fstats" id="frameStats"></div>
+    <div class="srchwrap" style="margin-bottom:10px"><input type="text" id="fSearch" placeholder="Cari frame..." maxlength="100"><span class="srchico">🔍</span></div>
+    <div class="fchips" id="frameChips"></div>
+    <div class="flegend">Angka = sisa stok · 🟢 &gt;5 · 🟡 3–5 · 🔴 &lt;3 · ⚠️ Perlu restock = stok ≤5</div>
+    <div id="frameBody"></div>
+  </div>
+</div>
+</div>
+<div class="page" id="sec-posters">
+  <div class="card">
+    <div class="chd"><div class="ctitle">Daftar Poster</div></div>
+    <div class="cbody" style="padding:12px 14px 0">
+      <div class="srchwrap"><input type="text" id="pSearch" placeholder="Cari nama poster..." maxlength="100" oninput="renderPosterTable()"><span class="srchico">🔍</span></div>
+    </div>
+    <div class="twrap"><table>
+      <thead><tr><th>Nama Poster</th><th>Ukuran &amp; Stok</th><th>Total Stok</th></tr></thead>
+      <tbody id="tbPoster"></tbody>
+    </table></div>
+  </div>
+</div>
+</div><!-- /appWrap -->
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+let orders=[],inv={posters:[],frames:[]};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const san=s=>String(s).replace(/[<>"'`]/g,'').trim().slice(0,200);
+const rp=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
+const FRAME_COLORS_BLOCK     = ['Hitam','Putih','Kayu','Chrome'];
+const FRAME_COLORS_MINIMALIS = ['Hitam','Putih','Kayu']; // Minimalis: tidak ada Chrome
+const FRAME_SIZES_BLOCK      = ['20x30','30x40','40x60','50x70','60x80','60x90'];
+const FRAME_SIZES_MINIMALIS  = ['20x30','30x40','40x60','50x70','60x80','60x90'];
+
+function getFrameColors(jenis){ return jenis==='Minimalis'?FRAME_COLORS_MINIMALIS:FRAME_COLORS_BLOCK; }
+function getFrameSizes(jenis){ return jenis==='Minimalis'?FRAME_SIZES_MINIMALIS:FRAME_SIZES_BLOCK; }
+function frameBadge(n){if(n<=0)return{c:'out',l:'Habis'};if(n<3)return{c:'low',l:'Menipis'};if(n<=5)return{c:'medium',l:'Waspada'};return{c:'high',l:'Aman'};}
+function stockBadge(n){if(n===0)return{c:'out',l:'Habis'};if(n<=5)return{c:'low',l:'Menipis'};if(n<=20)return{c:'medium',l:'Cukup'};return{c:'high',l:'Banyak'};}
+function closeSizePick(){ $('sizePickModal').classList.remove('active'); }
+
+let frameFilter={jenis:'',warna:'',low:false};
+let frameView=(()=>{try{return localStorage.getItem('frameView')||'matrix';}catch(e){return 'matrix';}})();
+const FRAME_COLOR_LIST=['Hitam','Putih','Kayu','Chrome'];
+const fJenis=f=>f.jenis||'Block';
+const fArea=sz=>{const m=/^(\d+)x(\d+)$/.exec(sz||'');return m?m[1]*m[2]:0;};
+function setFrameView(v){frameView=v;try{localStorage.setItem('frameView',v);}catch(e){}renderFrames($('fSearch').value);}
+function setFrameFilter(k,v){if(k==='low')frameFilter.low=!frameFilter.low;else frameFilter[k]=(frameFilter[k]===v?'':v);renderFrames($('fSearch').value);}
+function frameChip(k,v,label,pre=''){const on=k==='low'?frameFilter.low:frameFilter[k]===v;return `<button class="fchip${on?' active':''}" onclick="setFrameFilter('${k}','${v}')">${pre}${label}</button>`;}
+function addFrameVariant(j,c,sz){openFrameModal();$('fJenis').value=j;onFrameJenisChange();$('fColor').value=c;$('fSize').value=sz;setTimeout(()=>$('fStock')?.focus(),80);}
+
+const KANBAN_COLS = [
+  {id:'baru',           label:'Order Masuk',       short:'Masuk',       icon:'📥', sub:'Baru diterima'},
+  {id:'cetak_menunggu', label:'Antri Cetak',        short:'Antri Cetak', icon:'⏳', sub:'Menunggu giliran'},
+  {id:'cetak_proses',   label:'Sedang Dicetak',     short:'Dicetak',     icon:'🖨️', sub:'Proses cetak'},
+  {id:'framing',        label:'Siap Framing',       short:'Framing',     icon:'🪟', sub:'Siap dipasang frame'},
+  {id:'packing',        label:'Packing',            short:'Packing',     icon:'📦', sub:'Sedang dikemas'},
+  {id:'ready',          label:'Ready Kirim',        short:'Ready',       icon:'✅', sub:'Menunggu pickup'},
+  {id:'dikirim',        label:'Dikirim',            short:'Dikirim',     icon:'🚚', sub:'Dalam pengiriman'},
+  {id:'selesai',        label:'Selesai',            short:'Selesai',     icon:'🎉', sub:'Order tuntas'},
+];
+function getKanbanStatus(order){
+  // Map status lama ke kolom kanban
+  const s = order.kanbanStatus || order.status || 'baru';
+  if(s === 'proses') return 'baru';
+  if(s === 'selesai') return 'selesai';
+  if(s === 'batal') return null; // tidak ditampilkan
+  return s;
+}
+function kanbanOrderMonthKey(o){
+  if(!o.createdAt) return null;
+  const d = new Date(o.createdAt);
+  if(isNaN(d)) return null;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function ensureKanbanMonthFilter(){
+  const sel = $('kanbanMonth');
+  if(!sel) return;
+  const monthSet = new Set();
+  orders.forEach(o=>{ const k = kanbanOrderMonthKey(o); if(k) monthSet.add(k); });
+  const opts = Array.from(monthSet).sort().reverse(); // terbaru dulu
+  const optsKey = opts.join(',');
+  if(sel.dataset.opts === optsKey) return; // belum ada bulan baru, jangan rebuild (biar pilihan user gak kereset)
+
+  const monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const prevVal = sel.value;
+  sel.innerHTML = `<option value="">Semua Bulan</option>` + opts.map(k=>{
+    const [y,m] = k.split('-').map(Number);
+    return `<option value="${k}">${monthNames[m-1]} ${y}</option>`;
+  }).join('');
+  sel.dataset.opts = optsKey;
+  if(opts.includes(prevVal) || prevVal==='') sel.value = prevVal;
+}
+function renderKanban(){
+  const board = $('kanbanBoard');
+  if(!board) return;
+  ensureKanbanMonthFilter();
+  const q  = ($('kanbanSearch')?.value||'').toLowerCase();
+  const ch = $('kanbanChannel')?.value||'';
+  const mo = $('kanbanMonth')?.value||'';
+
+  let filtered = orders.filter(o => {
+    if(o.status === 'batal') return false;
+    if(mo && kanbanOrderMonthKey(o) !== mo) return false;
+    if(ch && o.channel !== ch) return false;
+    if(q && !(o.buyer||'').toLowerCase().includes(q) && !(o.resi||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  $('kanbanCount') && ($('kanbanCount').textContent = `${filtered.length} order aktif`);
+
+  board.innerHTML = KANBAN_COLS.map(col => {
+    const cards = filtered.filter(o => getKanbanStatus(o) === col.id);
+    const colIdx = KANBAN_COLS.findIndex(c => c.id === col.id);
+    const nextCol = KANBAN_COLS[colIdx + 1];
+
+    return `<div class="kanban-col kcol-${col.id}" id="kcol-${col.id}">
+      <div class="kanban-col-hd">
+        <div class="kanban-col-hd-left">
+          <div class="kanban-col-hd-icon">${col.icon}</div>
+          <div class="kanban-col-hd-text">
+            <div class="kanban-col-hd-label">${col.label}</div>
+            <div class="kanban-col-hd-sub">${col.sub}</div>
+          </div>
+        </div>
+        <span class="kcnt">${cards.length}</span>
+      </div>
+      
+      <div class="kanban-cards" id="kcards-${col.id}">
+        ${cards.length ? cards.map(o => kanbanCard(o, col, nextCol)).join('') :
+          `<div class="kanban-empty">
+            <div class="kanban-empty-ico">${col.icon}</div>
+            <div>Belum ada order</div>
+          </div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+function kanbanCard(o, col, nextCol){
+  const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : '';
+  const items = (o.items||[]);
+  const itemsSummary = items.map(i=>`${i.posterName||''} ${i.posterSize||''}`).join(', ');
+  const itemCount = items.reduce((s,i)=>s+(i.qty||1),0);
+
+  // Channel tag
+  const chColor = {shopee:'background:#fff1eb;color:#d4380d', tiktok:'background:#f0e6ff;color:#531dab', instagram:'background:#fce7f3;color:#9d174d'};
+  const chLabel = {shopee:'🛍️ Shopee', tiktok:'🎵 TikTok', instagram:'📸 IG/WA'};
+  const chStyle = chColor[o.channel] || 'background:var(--gray-lt);color:var(--t2)';
+  const chLbl   = chLabel[o.channel] || (o.channel||'Lainnya');
+
+  // Harga final or estimasi
+  const displayTotal = o.finalTotal != null ? o.finalTotal : (o.total || 0);
+  const isFinalSet   = o.finalTotal != null;
+
+  // Final price input (hanya di kolom sebelum selesai)
+  const isPreSelesai = false;
+  const finalPriceHtml = isPreSelesai ? `
+    <div class="kanban-final-wrap" onclick="event.stopPropagation()">
+      <div style="font-size:10px;font-weight:600;color:var(--t3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">
+        ${isFinalSet ? '✅ Harga final' : '⚠️ Set harga final sebelum kirim'}
+      </div>
+      <div class="kanban-final-row">
+        <input type="number" id="kfin_${esc(o.id)}"
+          placeholder="Nominal harga final..."
+          value="${isFinalSet ? o.finalTotal : ''}">
+        <button onclick="saveKanbanFinalPrice('${esc(o.id)}')">Simpan</button>
+      </div>
+    </div>` : '';
+
+  // Next button
+  const isLast = !nextCol;
+  const nextBtnClass = isLast ? '' : (nextCol.id==='selesai' ? 'move-next is-done' : 'move-next');
+  const nextBtnLabel = isLast ? '' : (nextCol.id==='dikirim' ? '🚚 Kirim' : nextCol.id==='selesai' ? '🎉 Selesai' : `→ ${nextCol.short}`);
+
+  return `<div class="kanban-card">
+
+    <div class="kanban-card-top">
+      <div class="kanban-card-buyer">${esc(o.buyer||'—')}</div>
+      <div class="kanban-card-total">${rp(displayTotal)}</div>
+    </div>
+
+    <div class="kanban-card-tags">
+      <span class="kanban-tag" style="${chStyle}">${chLbl}</span>
+      ${date ? `<span class="kanban-tag" style="background:var(--gray-lt);color:var(--t3)">${date}</span>` : ''}
+      ${itemCount>0 ? `<span class="kanban-tag" style="background:var(--gray-lt);color:var(--t2)">${itemCount} item</span>` : ''}
+      ${!isFinalSet ? `<span class="kanban-tag" style="background:#fef3c7;color:#b45309">Est.</span>` : ''}
+    </div>
+
+    ${itemsSummary ? `<div class="kanban-card-items">${esc(itemsSummary.slice(0,50))}${itemsSummary.length>50?'…':''}</div>` : ''}
+    ${o.resi ? `<div class="kanban-card-resi">📦 ${esc(o.resi)}</div>` : ''}
+    ${o.orderNo ? `<div style="font-size:10px;color:var(--t3);margin-bottom:6px"># ${esc(o.orderNo)}</div>` : ''}
+
+    ${finalPriceHtml}
+
+    <div class="kanban-card-actions" onclick="event.stopPropagation()">
+      
+      ${nextCol && !['dikirim','selesai'].includes(nextCol.id) ? `<button class="kanban-card-btn ${nextBtnClass}" onclick="moveKanban('${esc(o.id)}','${nextCol.id}')">${nextBtnLabel}</button>` : ''}
+    </div>
+  </div>`;
+}
+function renderPosterTable(){
+  const q = $('pSearch').value.toLowerCase();
+  renderPosters(q);
+}
+function renderPosters(q=''){
+  const tb=$('tbPoster'),ql=q.toLowerCase();
+  const grouped = {};
+  inv.posters.forEach(p => {
+    if(p.name.toLowerCase().includes(ql)){
+      if(!grouped[p.name]) grouped[p.name] = [];
+      grouped[p.name].push(p);
+    }
+  });
+  const groupNames = Object.keys(grouped);
+  if(!groupNames.length){
+    tb.innerHTML=`<tr class="erow"><td colspan="3"><div style="padding:24px 0;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <span style="font-size:26px">${ql?'🔍':'🖼️'}</span>
+      <strong style="color:var(--t2)">${ql?`Tidak ada poster "${q}"`:inv.posters.length?'Semua poster tersembunyi filter':'Belum ada poster di stok'}</strong>
+      <span style="font-size:12px;color:var(--t3)">${ql?'Coba kata kunci lain':'Tambahkan poster pertama ke inventaris'}</span>
+      ${!ql?`<button class="pbtn" style="width:auto;padding:5px 14px;font-size:12px;margin-top:4px" onclick="openPosterModal()">➕ Tambah Poster</button>`:''}
+    </div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = groupNames.map(name => {
+    const posters = grouped[name];
+    const totalStock = posters.reduce((sum, p) => sum + p.stock, 0);
+    const posterIds = posters.map(p => p.id).join(',');
+    
+    const sizeDisplay = posters.map(p => {
+      const b = stockBadge(p.stock);
+      return `<span class="size-tag ${b.c}" style="margin-right:4px">${p.size} <strong>(${p.stock})</strong></span>`;
+    }).join('');
+    const stockB = stockBadge(totalStock);
+    return `<tr>
+      <td style="vertical-align:middle"><strong style="font-size:13px">${esc(name)}</strong></td>
+      <td style="vertical-align:middle;max-width:280px"><div style="display:flex;flex-wrap:wrap;gap:0">${sizeDisplay}</div></td>
+      <td style="vertical-align:middle"><span class="badge ${stockB.c}" style="font-size:12px;font-weight:700">${totalStock}</span></td>
+    </tr>`;
+  }).join('');
+}
+function renderFrames(q=''){
+  const body=$('frameBody');if(!body)return;
+  const ql=(q||'').toLowerCase().trim();
+  $('fvMatrix')?.classList.toggle('active',frameView==='matrix');
+  $('fvList')?.classList.toggle('active',frameView==='list');
+  const all=inv.frames;
+  $('frameStats').innerHTML=[
+    ['Total stok',all.reduce((n,f)=>n+(f.stock||0),0)+' pcs',''],
+    ['Waspada (3–5)',all.filter(f=>f.stock>=3&&f.stock<=5).length,'warn'],
+    ['Menipis (1–2)',all.filter(f=>f.stock>0&&f.stock<3).length,'bad'],
+    ['Habis',all.filter(f=>f.stock<=0).length,'bad']
+  ].map(([l,v,c])=>`<div class="fstat ${c}"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('frameChips').innerHTML=frameChip('jenis','','Semua jenis')+frameChip('jenis','Block','Block')+frameChip('jenis','Minimalis','Minimalis')
+    +'<span class="fsep"></span>'+frameChip('warna','','Semua warna')
+    +FRAME_COLOR_LIST.map(c=>frameChip('warna',c,c,`<span class="cdot ${c.toLowerCase()}" style="margin:0"></span>`)).join('')
+    +'<span class="fsep"></span>'+frameChip('low','','⚠️ Perlu restock');
+
+  const list=all.filter(f=>(!ql||f.color.toLowerCase().includes(ql)||f.size.includes(ql)||fJenis(f).toLowerCase().includes(ql))
+    &&(!frameFilter.jenis||fJenis(f)===frameFilter.jenis)&&(!frameFilter.warna||f.color===frameFilter.warna));
+  if(!list.length){body.innerHTML='<div class="nest-empty">Tidak ada frame yang cocok dengan filter.</div>';return;}
+
+  if(frameView==='matrix'){
+    body.innerHTML=['Block','Minimalis'].filter(j=>list.some(f=>fJenis(f)===j)).map(j=>{
+      const items=list.filter(f=>fJenis(f)===j);
+      const sizes=[...new Set([...getFrameSizes(j),...items.map(f=>f.size)])].sort((a,b)=>fArea(a)-fArea(b));
+      const colors=[...new Set([...getFrameColors(j),...items.map(f=>f.color)])].filter(c=>!frameFilter.warna||c===frameFilter.warna);
+      const head=`<tr><th></th>${sizes.map(sz=>`<th>${esc(sz.replace('x','×'))}</th>`).join('')}<th>Total</th></tr>`;
+      const rows=colors.map(c=>{
+        let tot=0;
+        const cells=sizes.map(sz=>{
+          const f=items.find(x=>x.color===c&&x.size===sz);
+          if(!f){
+            return getFrameSizes(j).includes(sz)&&getFrameColors(j).includes(c)
+              ?'<td><span class="fcell na">·</span></td>'
+              :'<td><span class="fcell na">·</span></td>';
+          }
+          tot+=f.stock;
+          const b=frameBadge(f.stock);
+          const dim=frameFilter.low&&f.stock>5?' dim':'';
+          return `<td><button class="fcell ${b.c}${dim}" title="${esc(c)} ${esc(sz)} — ${b.l}">${f.stock}</button></td>`;
+        }).join('');
+        return `<tr><th class="frow"><span class="cdot ${esc(c.toLowerCase())}"></span>${esc(c)}</th>${cells}<td class="ftot">${tot}</td></tr>`;
+      }).join('');
+      return `<div class="fgroup"><div class="fgroup-hd">Frame ${j}<span>${items.reduce((n,f)=>n+f.stock,0)} pcs</span></div><div class="fscroll"><table class="fmatrix">${head}${rows}</table></div></div>`;
+    }).join('');
+    return;
+  }
+
+  const rows=list.filter(f=>!frameFilter.low||f.stock<=5)
+    .sort((a,b)=>fJenis(a).localeCompare(fJenis(b))||a.color.localeCompare(b.color)||fArea(a.size)-fArea(b.size));
+  if(!rows.length){body.innerHTML='<div class="nest-empty">Tidak ada frame yang perlu restock 🎉</div>';return;}
+  body.innerHTML=`<div class="twrap"><table><thead><tr><th>Frame</th><th>Ukuran</th><th class="col-num">Stok</th><th>Status</th></tr></thead><tbody>${rows.map(f=>{
+    const b=frameBadge(f.stock);
+    const jb=fJenis(f)==='Minimalis'
+      ?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--purple-lt);color:var(--purple)">Minimalis</span>`
+      :`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--accent-lt);color:var(--accent)">Block</span>`;
+    return `<tr>
+      <td style="vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><span class="cdot ${esc(f.color.toLowerCase())}" style="margin:0"></span><strong style="font-size:13px">${esc(f.color)}</strong>${jb}</div></td>
+      <td style="vertical-align:middle;font-size:13px;color:var(--t2)">${esc(f.size)} cm</td>
+      <td class="col-num" style="vertical-align:middle"><strong style="font-size:15px">${f.stock}</strong></td>
+      <td style="vertical-align:middle"><span class="badge ${b.c}">${b.l}</span></td></tr>`;}).join('')}</tbody></table></div>`;
+}
+const dbg=t=>{const e=document.getElementById('dbg');if(e)e.textContent=t};
+const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+document.getElementById('fSearch').addEventListener('input',debounce(e=>renderFrames(e.target.value),280));
+document.querySelectorAll('.itab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.itab').forEach(x=>x.classList.toggle('active',x===b));
+  ['kanban','frames','posters'].forEach(t=>document.getElementById('sec-'+t).classList.toggle('active',t===b.dataset.t));
+});
+firebase.initializeApp({apiKey:"AIzaSyDFyG2hcNmiufzsqFLqrkOxpZX1m8QAAwQ",authDomain:"srupa-inventory.firebaseapp.com",projectId:"srupa-inventory",storageBucket:"srupa-inventory.firebasestorage.app",messagingSenderId:"274644925840",appId:"1:274644925840:web:e5f13a56077ee030db0715"});
+const auth=firebase.auth(),fdb=firebase.firestore();
+async function moveKanban(id,to){
+  const i=orders.findIndex(o=>o.id===id);
+  if(i>=0){orders[i].kanbanStatus=to;renderKanban()}
+  try{await fdb.collection('orders').doc(id).update({kanbanStatus:to,updatedAt:new Date().toISOString()});toast('✅ Dipindah')}
+  catch(e){toast('Gagal update: '+e.code,'error')}
+}
+function listen(){
+  fdb.collection('orders').onSnapshot(s=>{orders=s.docs.map(d=>({id:d.id,...d.data()}));renderKanban();dbg('')},e=>dbg('Order gagal dibaca: '+e.code));
+  fdb.collection('inventory_posters').onSnapshot(s=>{inv.posters=s.docs.map(d=>d.data());renderPosterTable()},e=>dbg('Stok poster gagal dibaca: '+e.code));
+  fdb.collection('inventory_frames').onSnapshot(s=>{inv.frames=s.docs.map(d=>d.data());renderFrames(document.getElementById('fSearch').value)},e=>dbg('Stok frame gagal dibaca: '+e.code));
+}
+
+const loginGate=document.getElementById('loginGate'),appWrap=document.getElementById('appWrap'),loginErr=document.getElementById('loginErr');
+let started=false;
+auth.onAuthStateChanged(u=>{
+  loginGate.style.display=u?'none':'flex';
+  appWrap.style.display=u?'block':'none';
+  if(u&&!started){started=true;listen()}
+});
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  loginErr.style.display='none';
+  const btn=e.target.querySelector('button');
+  btn.disabled=true;btn.textContent='Memeriksa...';
+  try{
+    await auth.signInWithEmailAndPassword(document.getElementById('loginEm').value,document.getElementById('loginPw').value);
+  }catch(err){
+    loginErr.textContent='Password salah, coba lagi.';
+    loginErr.style.display='block';
+  }
+  btn.disabled=false;btn.textContent='Masuk';
+});
+document.getElementById('logoutBtn').addEventListener('click',()=>auth.signOut());
+</script>
+</body>
+</html>
