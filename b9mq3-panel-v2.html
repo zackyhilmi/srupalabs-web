@@ -2753,10 +2753,11 @@ async function cmsDel(id){
     <div class="mhd"><h3>➕ Tambah Item</h3><button class="mclose" onclick="closeItemModal()" aria-label="Tutup modal">×</button></div>
     <div class="sdiv">Poster</div>
     <div class="fg">
-      <label>Pilih Poster dari Stok</label>
+      <label>Pilih Poster / Tipe Order</label>
       <select id="iPosterSelect" onchange="onPosterChange()">
         <option value="">-- Pilih Poster --</option>
         <option value="custom">🎨 Custom (Tidak di Stok)</option>
+        <option value="frameonly">🖼️ Frame Only (Tanpa Poster)</option>
       </select>
       <div class="ferr" id="iPosterSelectE"></div>
     </div>
@@ -4989,8 +4990,13 @@ function renderItemList(){
 }
 
 // ── Kelompokkan item identik (poster+frame+catatan sama) supaya tampil ringkas dengan qty ──
+function itemDescText(it){
+  // Frame only: tidak perlu sebut poster, cukup spesifikasi frame
+  if(it.isFrameOnly)return `Frame Only ${it.frameJenis||''} ${it.frameColor} ${it.frameSize}`.replace(/\s+/g,' ');
+  return `${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`;
+}
 function orderItemKey(it){
-  return [it.posterName,it.posterSize,it.isCustomPoster?1:0,it.posterId||'',it.frameJenis||'',it.frameColor,it.frameSize,it.note||''].join('␟');
+  return [it.posterName,it.posterSize,it.isCustomPoster?1:0,it.isFrameOnly?1:0,it.posterId||'',it.frameJenis||'',it.frameColor,it.frameSize,it.note||''].join('␟');
 }
 function groupOrderItems(items){
   const map=new Map();
@@ -5014,7 +5020,7 @@ function adjustItemQty(groupIdx,delta){
       toast(`Stok Frame ${g.frameJenis||''} ${g.frameColor} ${g.frameSize} tidak cukup untuk ditambah. Buka "Tambah Item" untuk beli stok dulu.`,'error');
       return;
     }
-    pendingItems.push({posterName:g.posterName,posterId:g.posterId,isCustomPoster:g.isCustomPoster,posterSize:g.posterSize,frameJenis:g.frameJenis,frameColor:g.frameColor,frameSize:g.frameSize,note:g.note});
+    pendingItems.push({posterName:g.posterName,posterId:g.posterId,isCustomPoster:g.isCustomPoster,isFrameOnly:!!g.isFrameOnly,posterSize:g.posterSize,frameJenis:g.frameJenis,frameColor:g.frameColor,frameSize:g.frameSize,note:g.note});
   }else{
     const idx=pendingItems.findIndex(it=>orderItemKey(it)===orderItemKey(g));
     if(idx>-1)pendingItems.splice(idx,1);
@@ -5039,7 +5045,7 @@ function openItemModal(){
   
   // Populate poster dropdown from inventory — dedup by nama, ukuran dipilih terpisah di field berikutnya
   const sel=$('iPosterSelect');
-  sel.innerHTML='<option value="">-- Pilih Poster --</option><option value="custom">🎨 Custom (Tidak di Stok)</option>';
+  sel.innerHTML='<option value="">-- Pilih Poster --</option><option value="custom">🎨 Custom (Tidak di Stok)</option><option value="frameonly">🖼️ Frame Only (Tanpa Poster)</option>';
   const seenNames=new Map(); // name -> total stock across all size variants
   inv.posters.forEach(p=>{
     seenNames.set(p.name,(seenNames.get(p.name)||0)+(p.stock||0));
@@ -5061,7 +5067,10 @@ function onPosterChange(){
   const val=$('iPosterSelect').value;
   const sizeSelect=$('iPosterSize');
   
-  if(val==='custom'){
+  if(val==='frameonly'){
+    // Frame only: ukuran tetap dipilih manual, tidak ada poster yang dipotong stoknya
+    syncFrameSize();
+  }else if(val==='custom'){
     sizeSelect.value='';
     $('iFrameSize').value='';
   }else if(val){
@@ -5079,6 +5088,11 @@ function updatePosterSizeStockNote(){
   if(!noteEl)return;
   const posterName=$('iPosterSelect').value;
   const posterSize=$('iPosterSize').value;
+  if(posterName==='frameonly'){
+    noteEl.textContent='ℹ️ Frame only — tanpa poster, hanya stok frame yang dipotong.';
+    noteEl.style.color='var(--t2)';
+    return;
+  }
   if(!posterName||posterName==='custom'||!posterSize){noteEl.textContent='';return;}
   const match=inv.posters.find(p=>p.name===posterName&&p.size===posterSize);
   if(!match){
@@ -5229,14 +5243,16 @@ function parseTemplateItemLine(line){
   const isCustomSize=!OK_SIZES.has(size); // ukuran di luar daftar standar → dicatat tapi gak potong stok frame
 
   const isCustom=/^custom$/i.test(posterRaw);
+  const isFrameOnly=/^frame[\s\-]?only$/i.test(posterRaw);
   let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
-  if(!isCustom){
+  if(isFrameOnly){posterName='🖼️ Frame Only';isCustomPoster=false;}
+  else if(!isCustom){
     const match=inv.posters.find(p2=>p2.name.toLowerCase()===posterRaw.toLowerCase());
     if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
     else posterName=posterRaw; // gak ketemu di stok poster → tetap dicatat sbg custom
   }
   const frame=isCustomSize?null:findFrame('',matchedColor,size);
-  const base={posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame?frame.jenis||'':'',frameColor:matchedColor,frameSize:size,isCustomSize,note:isCustomSize?'Ukuran custom (gak potong stok frame)':''};
+  const base={posterName,posterId,isCustomPoster,isFrameOnly,posterSize:size,frameJenis:frame?frame.jenis||'':'',frameColor:matchedColor,frameSize:size,isCustomSize,note:isCustomSize?'Ukuran custom (gak potong stok frame)':''};
   return{base,qty,frame,isCustomSize,productName:posterRaw,size,color:matchedColor};
 }
 
@@ -5288,7 +5304,7 @@ function parseQuickTemplate(raw){
     }
     const stock=frame?frame.stock:0;
     if(stock<qty){
-      resiSkippedItems.push({posterName:base.posterName,posterId:base.posterId,isCustomPoster:base.isCustomPoster,productName,size,color,jenis:base.frameJenis,qtyNeeded:qty-stock,qtyTotal:qty});
+      resiSkippedItems.push({posterName:base.posterName,posterId:base.posterId,isCustomPoster:base.isCustomPoster,isFrameOnly:base.isFrameOnly,productName,size,color,jenis:base.frameJenis,qtyNeeded:qty-stock,qtyTotal:qty});
     }else{
       for(let i=0;i<qty;i++)pendingItems.push({...base});
       itemsAdded+=qty;
@@ -5384,8 +5400,10 @@ function parseResiPaste(){
     const matchedColor=[...OK_FCOLORS].find(c=>c.toLowerCase()===colorRaw.trim().toLowerCase());
     const color=matchedColor||colorRaw.trim();
     const isCustom=/custom/i.test(productName);
+    const isFrameOnly=/frame[\s\-]?only/i.test(productName);
     let posterName='🎨 Custom',posterId=null,isCustomPoster=true;
-    if(!isCustom){
+    if(isFrameOnly){posterName='🖼️ Frame Only';isCustomPoster=false;}
+    else if(!isCustom){
       const match=inv.posters.find(p=>p.name.toLowerCase()===productName.toLowerCase());
       if(match){posterName=match.name;posterId=match.id;isCustomPoster=false;}
       else{posterName=productName;} // tak ketemu di stok poster → tetap dicatat sbg custom
@@ -5394,11 +5412,11 @@ function parseResiPaste(){
     const stock=frame?frame.stock:0;
     if(stock<qty){
       // dikenali dengan jelas, cuma stok frame-nya belum cukup → tawarkan beli+tambah langsung
-      resiSkippedItems.push({posterName,posterId,isCustomPoster,productName,size,color,jenis:frame?frame.jenis||'':'',qtyNeeded:qty-stock,qtyTotal:qty});
+      resiSkippedItems.push({posterName,posterId,isCustomPoster,isFrameOnly,productName,size,color,jenis:frame?frame.jenis||'':'',qtyNeeded:qty-stock,qtyTotal:qty});
       continue;
     }
     for(let i=0;i<qty;i++){
-      pendingItems.push({posterName,posterId,isCustomPoster,posterSize:size,frameJenis:frame.jenis||'',frameColor:color,frameSize:size,note:''});
+      pendingItems.push({posterName,posterId,isCustomPoster,isFrameOnly,posterSize:size,frameJenis:frame.jenis||'',frameColor:color,frameSize:size,note:''});
     }
     itemsAdded+=qty;
   }
@@ -5458,7 +5476,7 @@ async function resiQuickBuyAndAdd(idx,btn){
       return;
     }
     for(let i=0;i<it.qtyTotal;i++){
-      pendingItems.push({posterName:it.posterName,posterId:it.posterId,isCustomPoster:it.isCustomPoster,posterSize:it.size,frameJenis:frame.jenis||'',frameColor:it.color,frameSize:it.size,note:''});
+      pendingItems.push({posterName:it.posterName,posterId:it.posterId,isCustomPoster:it.isCustomPoster,isFrameOnly:!!it.isFrameOnly,posterSize:it.size,frameJenis:frame.jenis||'',frameColor:it.color,frameSize:it.size,note:''});
     }
     resiSkippedItems.splice(idx,1);
     renderItemList();
@@ -5484,9 +5502,14 @@ function addItemToOrder(){
   let posterName='';
   let posterId=null;
   let isCustomPoster=false;
+  let isFrameOnly=false;
   
   // Validasi poster
-  if(!posterSelect){ferr('iPosterSelectE','Pilih poster.');ok=false;}
+  if(!posterSelect){ferr('iPosterSelectE','Pilih poster atau Frame Only.');ok=false;}
+  else if(posterSelect==='frameonly'){
+    isFrameOnly=true;
+    posterName='🖼️ Frame Only'; // tanpa poster → stok poster tidak dipotong (posterId null)
+  }
   else if(posterSelect==='custom'){
     isCustomPoster=true;
     posterName='🎨 Custom'; // detail desain custom cukup ditulis di Catatan Item
@@ -5517,6 +5540,7 @@ function addItemToOrder(){
       posterName,
       posterId,
       isCustomPoster,
+      isFrameOnly,
       posterSize,
       frameJenis,
       frameColor,
@@ -5764,7 +5788,7 @@ async function saveFinalPrice(id){
     const dupKey = `order_income_${id}`;
     const sudahAda = keuangan.some(k => k.sourceOrderId === id && k.type === 'income');
     if(!sudahAda){
-      const itemDesc = (o.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+      const itemDesc = (o.items||[]).map(it=>`${itemDescText(it)}`).join(', ');
       const keuEntry = {
         id: dupKey,
         type: 'income',
@@ -6256,7 +6280,7 @@ async function syncOrdersToKeuangan(){
     try{
       const amount = o.finalTotal ?? o.total ?? 0;
       const itemDesc = (o.items||[])
-        .map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`)
+        .map(it=>`${itemDescText(it)}`)
         .join(', ');
       // Gunakan tanggal order dibuat (bulan order asli), bukan tanggal diselesaikan
       const tgl = (o.createdAt || o.updatedAt || new Date().toISOString()).split('T')[0];
@@ -7746,6 +7770,7 @@ function nestGetQueueItems(){
     if(!statuses.includes(st)) return;
     if(q && !(o.buyer||'').toLowerCase().includes(q)) return;
     (o.items||[]).forEach((it,idx)=>{
+      if(it.isFrameOnly) return; // frame only = gak ada poster yang dicetak
       const sizeStr = (it.posterSize || it.frameSize || '').trim();
       const m = /^(\d+)\s*[x×]\s*(\d+)$/i.exec(sizeStr);
       if(!m) return; // ukuran custom non-numerik dilewati, gak bisa dihitung luasnya
@@ -8450,7 +8475,7 @@ async function bulkMoveColumn(colId){
           if(!sudahAda){
             const ord = orders[idx];
             const amount = ord.finalTotal ?? ord.total ?? 0;
-            const itemDesc = (ord.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+            const itemDesc = (ord.items||[]).map(it=>`${itemDescText(it)}`).join(', ');
             await fsSet('keuangan', {
               id:`order_income_${o.id}`, type:'income', cat:'penjualan', amount,
               date:(ord.createdAt||'').slice(0,10)||new Date().toISOString().split('T')[0],
@@ -8683,7 +8708,7 @@ async function moveKanban(orderId, newStatus, resiValue){
         const sudahAda = keuangan.some(k => k.sourceOrderId === orderId && k.type === 'income');
         if(!sudahAda){
           const amount = order.finalTotal ?? order.total ?? 0;
-          const itemDesc = (order.items||[]).map(it=>`${it.posterName} ${it.posterSize} Frame ${it.frameColor} ${it.frameSize}`).join(', ');
+          const itemDesc = (order.items||[]).map(it=>`${itemDescText(it)}`).join(', ');
           const keuEntry = {
             id: `order_income_${orderId}`,
             type: 'income',
@@ -8995,8 +9020,8 @@ function calcOrderHPP(order){
   (order.items||[]).forEach(item=>{
     const sz = (item.posterSize||item.frameSize||'').replace('×','x').replace(/\s*cm$/i,'').trim();
     const qty = item.qty || 1;
-    const cetak   = calcCetak(sz, masterData.sheetPrice, waste);
-    const prodpack = masterData.prodpack[sz] ?? 0;
+    const cetak   = item.isFrameOnly ? 0 : calcCetak(sz, masterData.sheetPrice, waste);
+    const prodpack = item.isFrameOnly ? KAL_FRAME_ONLY_PACKING : (masterData.prodpack[sz] ?? 0);
     // Frame: cari dari masterData.frame pakai model jika ada, fallback KAL_FRAMES
     let frameHpp = 0;
     const matchFrame = KAL_FRAMES.find(f => f.ukuran === sz.replace('x','×'));
@@ -9024,8 +9049,8 @@ function renderMarginTable(){
     const breakdown = (o.items||[]).map(item=>{
       const raw      = (item.posterSize||item.frameSize||'').replace('×','x').replace(/\s*cm$/i,'').trim();
       const qty      = item.qty||1;
-      const cetak    = calcCetak(raw, masterData.sheetPrice, _waste);
-      const pp       = masterData.prodpack[raw] ?? 0;
+      const cetak    = item.isFrameOnly ? 0 : calcCetak(raw, masterData.sheetPrice, _waste);
+      const pp       = item.isFrameOnly ? KAL_FRAME_ONLY_PACKING : (masterData.prodpack[raw] ?? 0);
       const matchFrame = KAL_FRAMES.find(f => f.ukuran === raw.replace('x','×'));
       const frameHpp = matchFrame ? matchFrame.hppFrame : 0;
       const itemHpp  = (cetak + frameHpp + pp) * qty;
