@@ -1357,6 +1357,61 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .fcell.na{color:var(--t3);text-align:center;line-height:38px;cursor:default;font-weight:400}
 .fcell.na:hover{transform:none;box-shadow:none}
 @media(max-width:600px){.fstats{grid-template-columns:repeat(2,1fr)}}
+
+/* ─── ABSENSI KARYAWAN ─── */
+.abs-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.abs-tab{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--font);background:var(--surface);color:var(--t2);white-space:nowrap;flex-shrink:0;transition:background .15s,color .15s,border-color .15s;touch-action:manipulation}
+.abs-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.abs-datebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.abs-datebar input[type=date],.abs-datebar input[type=month]{padding:7px 10px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surface);color:var(--t1);min-height:36px}
+.abs-nav{width:36px;height:36px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:16px;color:var(--t2);display:grid;place-items:center;touch-action:manipulation}
+.abs-nav:hover{border-color:var(--accent);color:var(--accent)}
+.abs-sbtn{padding:7px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;font-family:var(--font);color:var(--t2);min-height:36px;touch-action:manipulation}
+.abs-sbtn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.abs-sbtn:disabled{opacity:.45;cursor:default}
+.abs-daylbl{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--t1)}
+.abs-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:8px;margin-bottom:14px}
+.abs-chip{border-radius:12px;padding:10px 6px;text-align:center;background:var(--gray-lt)}
+.abs-chip b{display:block;font-size:20px;font-weight:700;line-height:1.2}
+.abs-chip span{font-size:11px;font-weight:600;color:var(--t2)}
+.abs-chip.hadir{background:var(--green-lt)}.abs-chip.hadir b{color:var(--green)}
+.abs-chip.izin{background:var(--amber-lt)}.abs-chip.izin b{color:var(--amber)}
+.abs-chip.sakit{background:var(--purple-lt)}.abs-chip.sakit b{color:var(--purple)}
+.abs-chip.alpha{background:var(--red-lt)}.abs-chip.alpha b{color:var(--red)}
+.abs-list{display:flex;flex-direction:column;gap:10px}
+.abs-row{border:1px solid var(--border);border-radius:14px;padding:12px;background:var(--surface)}
+.abs-row-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.abs-row-top.nm{margin-bottom:0}
+.abs-av{width:36px;height:36px;border-radius:50%;background:var(--accent-lt);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.abs-nm{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.abs-sb{font-size:11.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.abs-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--gray-md);color:var(--t2);white-space:nowrap;flex-shrink:0}
+.abs-pill.ok{background:var(--green-lt);color:var(--green)}
+.abs-pill.warn{background:var(--amber-lt);color:var(--amber)}
+.abs-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.abs-seg button{padding:8px 2px;border-radius:9px;border:1.5px solid var(--border);background:none;font-size:12px;font-weight:600;font-family:var(--font);color:var(--t2);cursor:pointer;min-height:40px;touch-action:manipulation;transition:background .12s,color .12s,border-color .12s}
+.abs-seg button.on.hadir{background:var(--green-lt);color:var(--green);border-color:var(--green)}
+.abs-seg button.on.izin{background:var(--amber-lt);color:var(--amber);border-color:var(--amber)}
+.abs-seg button.on.sakit{background:var(--purple-lt);color:var(--purple);border-color:var(--purple)}
+.abs-seg button.on.alpha{background:var(--red-lt);color:var(--red);border-color:var(--red)}
+.abs-extra{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.abs-extra .fg{margin-bottom:0}
+.abs-extra .full{grid-column:1/-1}
+.abs-empty{text-align:center;padding:28px 12px;color:var(--t2);font-size:13px}
+.abs-krow{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.abs-krow:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.abs-rk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.abs-rk-grid div{text-align:center;border-radius:9px;padding:6px 2px;font-size:11px;font-weight:600;color:var(--t2);background:var(--gray-lt)}
+.abs-rk-grid b{display:block;font-size:16px;color:var(--t1)}
+.abs-bar{height:6px;border-radius:6px;background:var(--gray-md);overflow:hidden;margin-top:10px}
+.abs-bar i{display:block;height:100%;background:var(--green);border-radius:6px}
+.abs-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.abs-days button{padding:9px 0;border-radius:9px;border:1.5px solid var(--border);background:none;font-size:11.5px;font-weight:600;font-family:var(--font);color:var(--t2);cursor:pointer;touch-action:manipulation}
+.abs-days button.on{background:var(--accent-lt);border-color:var(--accent);color:var(--accent)}
+.abs-off{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px dashed var(--border);border-radius:14px;background:var(--gray-lt)}
+.abs-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin:8px 0 0}
+.abs-note{font-size:11.5px;color:var(--t2);margin-top:8px}
+@media(max-width:480px){.abs-extra{grid-template-columns:1fr 1fr}.abs-seg button{font-size:11.5px}}
 </style>
 </head>
 <body>
@@ -1448,6 +1503,13 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
       <button class="nitem" data-label="Website CMS" onclick="goPage('cms',this)">
         <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
         <span class="nitem-label">Website CMS</span>
+      </button>
+    </div>
+    <div class="nsec">
+      <div class="nseclbl">SDM</div>
+      <button class="nitem" data-label="Absensi" onclick="goPage('absensi',this)">
+        <span class="nico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="nitem-label">Absensi</span>
       </button>
     </div>
     <div class="nsec">
@@ -2058,6 +2120,63 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
         </div>
       </div>
 
+    </div>
+
+    <!-- ═══ ABSENSI KARYAWAN ═══ -->
+    <div class="page" id="page-absensi">
+      <div class="abs-tabs">
+        <button class="abs-tab active" id="absTabHarian" onclick="absTab('harian')">📅 Absen Harian</button>
+        <button class="abs-tab" id="absTabRekap" onclick="absTab('rekap')">📊 Rekap Bulanan</button>
+        <button class="abs-tab" id="absTabKar" onclick="absTab('karyawan')">👥 Karyawan</button>
+      </div>
+
+      <!-- ABSEN HARIAN -->
+      <div id="absSecHarian">
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">📅 Absen Harian</div>
+            <button class="abs-sbtn" id="absMarkAllBtn" onclick="absMarkAll()">✅ Semua Hadir</button>
+          </div>
+          <div class="cbody">
+            <div class="abs-datebar" style="margin-bottom:12px">
+              <button class="abs-nav" onclick="absShiftDay(-1)" aria-label="Hari sebelumnya">&#8249;</button>
+              <input type="date" id="absDate" onchange="absPickDate(this.value)">
+              <button class="abs-nav" onclick="absShiftDay(1)" aria-label="Hari berikutnya">&#8250;</button>
+              <button class="abs-sbtn" onclick="absPickDate('')">Hari ini</button>
+            </div>
+            <div class="abs-daylbl" id="absDateLbl"></div>
+            <div class="abs-sum" id="absSum"></div>
+            <div class="abs-list" id="absList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REKAP -->
+      <div id="absSecRekap" style="display:none">
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">📊 Rekap Bulanan</div>
+            <div class="abs-datebar"><input type="month" id="absRekapMonth" onchange="absRenderRekap()"></div>
+          </div>
+          <div class="cbody">
+            <div class="abs-sum" id="absRekapSum"></div>
+            <div class="abs-list" id="absRekapList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KARYAWAN -->
+      <div id="absSecKar" style="display:none">
+        <div class="card">
+          <div class="chd">
+            <div class="ctitle">👥 Daftar Karyawan</div>
+            <button class="pbtn" style="width:auto;padding:6px 14px;font-size:12px;margin-top:0" onclick="absOpenKar()">＋ Tambah Karyawan</button>
+          </div>
+          <div class="cbody">
+            <div class="abs-list" id="absKarList"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ═══ SRUPA DRIVE ═══ -->
@@ -3264,6 +3383,57 @@ async function cmsDel(id){
   </div>
 </div>
 
+<div class="moverlay" id="absKarModal" onclick="if(event.target===this)absCloseKar()">
+  <div class="mbox">
+    <div class="mhd"><h3 id="absKarTitle">➕ Tambah Karyawan</h3><button class="mclose" onclick="absCloseKar()" aria-label="Tutup modal">×</button></div>
+    <div class="fg">
+      <label>Nama Karyawan</label>
+      <input type="text" id="absKNama" placeholder="Nama lengkap" maxlength="100">
+      <div class="ferr" id="absKNamaE"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Jabatan</label>
+        <input type="text" id="absKJabatan" placeholder="Contoh: Packing" maxlength="60">
+      </div>
+      <div class="fg">
+        <label>No. HP <small style="color:var(--t3);font-weight:400;text-transform:none">(opsional)</small></label>
+        <input type="tel" id="absKHp" placeholder="08xxxxxxxxxx" maxlength="20">
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Tanggal Masuk</label>
+        <input type="date" id="absKTgl">
+      </div>
+      <div class="fg">
+        <label>Status</label>
+        <select id="absKAktif">
+          <option value="1">✅ Aktif</option>
+          <option value="0">⏸️ Nonaktif</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Hari Kerja <small style="color:var(--t3);font-weight:400;text-transform:none">(hari dia masuk tiap minggu)</small></label>
+      <div class="abs-days" id="absKDays">
+        <button type="button" data-d="1" onclick="this.classList.toggle('on')">Sen</button>
+        <button type="button" data-d="2" onclick="this.classList.toggle('on')">Sel</button>
+        <button type="button" data-d="3" onclick="this.classList.toggle('on')">Rab</button>
+        <button type="button" data-d="4" onclick="this.classList.toggle('on')">Kam</button>
+        <button type="button" data-d="5" onclick="this.classList.toggle('on')">Jum</button>
+        <button type="button" data-d="6" onclick="this.classList.toggle('on')">Sab</button>
+        <button type="button" data-d="0" onclick="this.classList.toggle('on')">Min</button>
+      </div>
+      <div class="ferr" id="absKDaysE"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="pbtn green" style="flex:2" id="absKSaveBtn" onclick="absSaveKar()">💾 Simpan</button>
+      <button class="pbtn" id="absKDelBtn" style="flex:1;background:#fef2f2;color:var(--red);border:1.5px solid rgba(220,38,38,.25);display:none" onclick="absDelKar()">🗑️ Hapus</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -4459,6 +4629,13 @@ function startLazyListener(pageName){
     if(typeof window._startPlannerListener === 'function') window._startPlannerListener();
   }
 
+  if(pageName==='absensi' && !window._listenersStarted.has('karyawan')){
+    window._listenersStarted.add('karyawan');
+    const absErr=()=>toast('Data absensi gagal dimuat — cek Firestore rules untuk koleksi karyawan & absensi','error');
+    onSnapshot(collection(db,'karyawan'),s=>{absKaryawan=s.docs.map(d=>d.data());absRenderAll();},absErr);
+    onSnapshot(collection(db,'absensi'),s=>{absRecords=s.docs.map(d=>d.data());absRenderAll();},absErr);
+  }
+
   if(pageName==='nesting' && !window._listenersStarted.has('print_layouts')){
     window._listenersStarted.add('print_layouts');
     onSnapshot(collection(db,'print_layouts'),s=>{
@@ -4487,7 +4664,7 @@ $('lBtn').onclick=async()=>{
 function doLogout(){if(confirm('Keluar dari sistem?'))window._logout();}
 
 /* ── NAVIGATION ── */
-const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Website CMS',planner:'Content Planner',tasks:'Daily Task',drive:'File Manager',kanban:'Kanban Packing',margin:'Margin & Profit',nesting:'Layout Cetak'};
+const pageTitles={dashboard:'Dashboard',transaksi:'Transaksi',keuangan:'Keuangan',laporan:'Laporan',inventory:'Inventaris',cms:'Website CMS',planner:'Content Planner',tasks:'Daily Task',drive:'File Manager',kanban:'Kanban Packing',margin:'Margin & Profit',nesting:'Layout Cetak',absensi:'Absensi'};
 function goPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nitem').forEach(b=>b.classList.remove('active'));
@@ -4508,6 +4685,7 @@ function goPage(name,el){
   }
   if(name==='tasks'){startLazyListener('tasks');setTimeout(()=>{renderTaskCalendar();renderTaskList();rtInit();},100);}
   if(name==='cms'){startLazyListener('cms');}
+  if(name==='absensi'){startLazyListener('absensi');setTimeout(absInit,50);}
   if(name==='kanban'){setTimeout(()=>renderKanban(),50);}
   if(name==='nesting'){startLazyListener('nesting');setTimeout(()=>{nestRenderQueue();nestRenderManualList();nestRenderSavedList();nestSetupResizeObserver();},50);}
   if(name==='margin'){
@@ -10221,6 +10399,262 @@ async function rtConfirmImport(){
     btn.textContent = '✅ Import ke Daily Task';
   }
 }
+
+/* ══════════════════════════════════════════════
+   ABSENSI KARYAWAN — absen per hari, input oleh admin
+   Koleksi: karyawan (punya 'hari' = hari kerja), absensi (id = tanggal_karyawanId)
+   ══════════════════════════════════════════════ */
+let absKaryawan=[],absRecords=[],absDate='',absEditId=null,absInited=false,absCurTab='harian';
+const ABS_ST=[['hadir','Hadir','✅'],['izin','Izin','📝'],['sakit','Sakit','🤒'],['alpha','Alpha','❌']];
+const ABS_DN=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const absPad=n=>String(n).padStart(2,'0');
+const absFmt=d=>`${d.getFullYear()}-${absPad(d.getMonth()+1)}-${absPad(d.getDate())}`;
+const absToday=()=>absFmt(new Date());
+const absSorted=()=>absKaryawan.slice().sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id'));
+const absRid=(date,kid)=>date+'_'+kid;
+const absActive=()=>!!$('page-absensi')&&$('page-absensi').classList.contains('active');
+const absDays=k=>Array.isArray(k.hari)?k.hari:[1,2,3,4,5,6];
+const absDow=ds=>{const [y,m,d]=ds.split('-').map(Number);return new Date(y,m-1,d).getDay();};
+const absSched=(k,ds)=>absDays(k).includes(absDow(ds));
+function absDaysLbl(k){
+  const a=absDays(k);
+  if(a.length===7)return 'Setiap hari';
+  if(!a.length)return 'Tanpa jadwal';
+  return [1,2,3,4,5,6,0].filter(d=>a.includes(d)).map(d=>ABS_DN[d]).join(' ');
+}
+function absTyping(){const ae=document.activeElement;return !!(ae&&ae.tagName==='INPUT'&&ae.closest&&ae.closest('#absList'));}
+
+function absInit(){
+  if(!absDate)absDate=absToday();
+  if(!absInited){
+    absInited=true;
+    $('absRekapMonth').value=absDate.slice(0,7);
+    $('absList').addEventListener('focusout',()=>setTimeout(()=>{if(!absTyping())absRenderHarian();},250));
+    try{const t=localStorage.getItem('lastAbsTab');if(t&&t!==absCurTab){absTab(t);return;}}catch(e){}
+  }
+  absRenderAll();
+}
+
+function absTab(name){
+  absCurTab=name;
+  const map={harian:['absSecHarian','absTabHarian'],rekap:['absSecRekap','absTabRekap'],karyawan:['absSecKar','absTabKar']};
+  Object.keys(map).forEach(n=>{
+    $(map[n][0]).style.display=n===name?'block':'none';
+    $(map[n][1]).classList.toggle('active',n===name);
+  });
+  try{localStorage.setItem('lastAbsTab',name);}catch(e){}
+  absRenderAll();
+}
+
+function absRenderAll(){
+  if(!absActive())return;
+  if(absCurTab==='harian')absRenderHarian();
+  else if(absCurTab==='rekap')absRenderRekap();
+  else absRenderKar();
+}
+
+/* ── ABSEN HARIAN ── */
+function absPickDate(v){absDate=v||absToday();absRenderHarian();}
+function absShiftDay(n){
+  const [y,m,d]=absDate.split('-').map(Number);
+  absDate=absFmt(new Date(y,m-1,d+n));
+  absRenderHarian();
+}
+
+function absRowHtml(k,r){
+  const st=r.status||'';const id=esc(k.id);
+  return `<div class="abs-row">
+    <div class="abs-row-top">
+      <div class="abs-av">${esc((k.nama||'?').trim().charAt(0).toUpperCase())}</div>
+      <div style="flex:1;min-width:0"><div class="abs-nm">${esc(k.nama||'')}</div><div class="abs-sb">${esc(k.jabatan||'Karyawan')}</div></div>
+      ${st?'':'<span class="abs-pill warn">Belum diisi</span>'}
+    </div>
+    <div class="abs-seg">${ABS_ST.map(([v,l,ic])=>`<button type="button" class="${v}${st===v?' on':''}" onclick="absSet('${id}','${v}')">${ic} ${l}</button>`).join('')}</div>
+    ${st?`<div class="abs-extra"><div class="fg full"><label>Catatan</label><input type="text" id="absNote_${id}" maxlength="200" placeholder="Opsional" value="${esc(r.note||'')}" onchange="absCommit('${id}')"></div></div>`:''}
+  </div>`;
+}
+
+function absRenderHarian(){
+  if(absTyping())return;
+  $('absDate').value=absDate;
+  const [y,m,d]=absDate.split('-').map(Number);
+  $('absDateLbl').textContent=new Date(y,m-1,d).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const aktif=absSorted().filter(k=>k.aktif!==false);
+  const rec={};
+  absRecords.forEach(r=>{if(r.date===absDate)rec[r.karyawanId]=r;});
+  const jadwal=aktif.filter(k=>absSched(k,absDate)||rec[k.id]);
+  const libur=aktif.filter(k=>!absSched(k,absDate)&&!rec[k.id]);
+  const c={hadir:0,izin:0,sakit:0,alpha:0,belum:0};
+  jadwal.forEach(k=>{const r=rec[k.id];if(r&&c[r.status]!==undefined)c[r.status]++;else c.belum++;});
+  $('absSum').innerHTML=
+    ABS_ST.map(([v,l])=>`<div class="abs-chip ${v}"><b>${c[v]}</b><span>${l}</span></div>`).join('')+
+    `<div class="abs-chip"><b>${c.belum}</b><span>Belum diisi</span></div>`;
+  $('absMarkAllBtn').disabled=c.belum===0;
+
+  if(!aktif.length){
+    $('absList').innerHTML=`<div class="abs-empty">Belum ada karyawan aktif.<br><button class="abs-sbtn" style="margin-top:10px" onclick="absTab('karyawan');absOpenKar()">＋ Tambah Karyawan</button></div>`;
+    return;
+  }
+  let out='';
+  if(jadwal.length)out+=jadwal.map(k=>absRowHtml(k,rec[k.id]||{})).join('');
+  else out+='<div class="abs-empty">Tidak ada karyawan yang dijadwalkan masuk hari ini.</div>';
+  if(libur.length){
+    out+=`<div class="abs-sec">Libur / di luar jadwal (${libur.length})</div>`+libur.map(k=>`<div class="abs-off">
+      <div class="abs-av" style="background:var(--gray-md);color:var(--t2)">${esc((k.nama||'?').trim().charAt(0).toUpperCase())}</div>
+      <div style="flex:1;min-width:0"><div class="abs-nm">${esc(k.nama||'')}</div><div class="abs-sb">${esc(absDaysLbl(k))}</div></div>
+      <button class="abs-sbtn" onclick="absSet('${esc(k.id)}','hadir')">Masuk hari ini</button>
+    </div>`).join('');
+  }
+  $('absList').innerHTML=out;
+}
+
+async function absSet(kid,st){
+  const k=absKaryawan.find(x=>x.id===kid);if(!k)return;
+  const rid=absRid(absDate,kid);
+  const cur=absRecords.find(r=>r.id===rid);
+  try{
+    if(cur&&cur.status===st){await fsDel('absensi',rid);return;} // klik lagi = kosongkan
+    await fsSet('absensi',{
+      id:rid,date:absDate,karyawanId:kid,nama:k.nama||'',status:st,
+      note:(cur&&cur.note)||'',updatedAt:new Date().toISOString()
+    });
+  }catch(e){toast('Gagal menyimpan: '+e.message,'error');}
+}
+
+async function absCommit(kid){
+  const cur=absRecords.find(r=>r.id===absRid(absDate,kid));if(!cur)return;
+  const e=$('absNote_'+kid);
+  try{
+    await fsSet('absensi',{...cur,note:san(e?e.value:(cur.note||'')),updatedAt:new Date().toISOString()});
+  }catch(err){toast('Gagal menyimpan: '+err.message,'error');}
+}
+
+async function absMarkAll(){
+  const have=new Set(absRecords.filter(r=>r.date===absDate).map(r=>r.karyawanId));
+  const todo=absSorted().filter(k=>k.aktif!==false&&absSched(k,absDate)&&!have.has(k.id));
+  if(!todo.length)return;
+  if(!confirm(`Tandai ${todo.length} karyawan terjadwal yang belum diisi sebagai HADIR?`))return;
+  const btn=$('absMarkAllBtn');btn.disabled=true;
+  try{
+    for(const k of todo){
+      await waitForRateSlot(1);
+      await fsSet('absensi',{id:absRid(absDate,k.id),date:absDate,karyawanId:k.id,nama:k.nama||'',status:'hadir',note:'',updatedAt:new Date().toISOString()});
+    }
+    toast(`${todo.length} karyawan ditandai hadir ✅`);
+  }catch(e){toast('Gagal menyimpan: '+e.message,'error');}
+  finally{absRenderHarian();}
+}
+
+/* ── REKAP BULANAN ── */
+function absRenderRekap(){
+  const mon=$('absRekapMonth').value||absToday().slice(0,7);
+  const [y,m]=mon.split('-').map(Number);
+  const today=absToday();
+  const last=new Date(y,m,0).getDate();
+  const dates=[];
+  for(let d=1;d<=last;d++){const ds=`${mon}-${absPad(d)}`;if(ds<=today)dates.push(ds);}
+  const zero=()=>({hadir:0,izin:0,sakit:0,alpha:0,target:0,kosong:0,days:new Set()});
+  const map={};
+  absSorted().filter(k=>k.aktif!==false).forEach(k=>{map[k.id]={nama:k.nama,jabatan:k.jabatan||'Karyawan',off:false,k,...zero()};});
+  absRecords.forEach(r=>{
+    if(!(r.date||'').startsWith(mon))return;
+    if(!map[r.karyawanId]){
+      const k=absKaryawan.find(x=>x.id===r.karyawanId);
+      map[r.karyawanId]={nama:(k&&k.nama)||r.nama||'(terhapus)',jabatan:(k&&k.jabatan)||'',off:true,k:k||null,...zero()};
+    }
+    const o=map[r.karyawanId];
+    if(o[r.status]!==undefined)o[r.status]++;
+    o.days.add(r.date);
+  });
+  Object.values(map).forEach(o=>{
+    if(!o.k)return;
+    dates.forEach(ds=>{if(absSched(o.k,ds)){o.target++;if(!o.days.has(ds))o.kosong++;}});
+  });
+  const rows=Object.values(map).sort((a,b)=>(a.nama||'').localeCompare(b.nama||'','id'));
+  const tot={hadir:0,izin:0,sakit:0,alpha:0};
+  rows.forEach(o=>ABS_ST.forEach(([v])=>tot[v]+=o[v]));
+  $('absRekapSum').innerHTML=ABS_ST.map(([v,l])=>`<div class="abs-chip ${v}"><b>${tot[v]}</b><span>${l}</span></div>`).join('');
+  if(!rows.length){$('absRekapList').innerHTML='<div class="abs-empty">Belum ada data karyawan.</div>';return;}
+  $('absRekapList').innerHTML=rows.map(o=>{
+    const pct=o.target?Math.min(100,Math.round(o.hadir/o.target*100)):0;
+    return `<div class="abs-row">
+      <div class="abs-row-top nm">
+        <div class="abs-av">${esc((o.nama||'?').trim().charAt(0).toUpperCase())}</div>
+        <div style="flex:1;min-width:0"><div class="abs-nm">${esc(o.nama||'')}</div><div class="abs-sb">${esc(o.jabatan)}${o.k?' · '+esc(absDaysLbl(o.k)):''}${o.off?' · nonaktif':''}</div></div>
+        <span class="abs-pill ${o.target?(pct>=90?'ok':'warn'):''}">${o.target?pct+'%':'—'}</span>
+      </div>
+      <div class="abs-bar"><i style="width:${pct}%"></i></div>
+      <div class="abs-rk-grid">${ABS_ST.map(([v,l])=>`<div><b>${o[v]}</b>${l}</div>`).join('')}</div>
+      ${o.target?`<div class="abs-note">Hadir ${o.hadir} dari ${o.target} hari jadwal${o.kosong?` · ${o.kosong} hari belum diisi`:''}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+/* ── KARYAWAN ── */
+function absRenderKar(){
+  const list=absSorted();
+  if(!list.length){$('absKarList').innerHTML='<div class="abs-empty">Belum ada karyawan. Klik <b>＋ Tambah Karyawan</b> untuk mulai.</div>';return;}
+  $('absKarList').innerHTML=list.map(k=>`<div class="abs-row abs-krow" onclick="absOpenKar('${esc(k.id)}')">
+    <div class="abs-row-top nm">
+      <div class="abs-av">${esc((k.nama||'?').trim().charAt(0).toUpperCase())}</div>
+      <div style="flex:1;min-width:0"><div class="abs-nm">${esc(k.nama||'')}</div><div class="abs-sb">${esc(k.jabatan||'Karyawan')} · ${esc(absDaysLbl(k))}${k.hp?' · '+esc(k.hp):''}</div></div>
+      <span class="abs-pill ${k.aktif===false?'':'ok'}">${k.aktif===false?'Nonaktif':'Aktif'}</span>
+    </div>
+  </div>`).join('');
+}
+
+function absOpenKar(id){
+  const k=id?absKaryawan.find(x=>x.id===id):null;
+  absEditId=k?k.id:null;
+  $('absKarTitle').textContent=k?'✏️ Edit Karyawan':'➕ Tambah Karyawan';
+  $('absKNama').value=k?k.nama||'':'';
+  $('absKJabatan').value=k?k.jabatan||'':'';
+  $('absKHp').value=k?k.hp||'':'';
+  $('absKTgl').value=k?k.tglMasuk||'':absToday();
+  $('absKAktif').value=k&&k.aktif===false?'0':'1';
+  const hari=k?absDays(k):[1,2,3,4,5,6];
+  document.querySelectorAll('#absKDays button').forEach(b=>b.classList.toggle('on',hari.includes(+b.dataset.d)));
+  $('absKDelBtn').style.display=k?'block':'none';
+  clerr('absKNamaE','absKDaysE');
+  $('absKarModal').classList.add('active');
+  requestAnimationFrame(()=>trapFocus($('absKarModal')));
+}
+function absCloseKar(){$('absKarModal').classList.remove('active');releaseFocus($('absKarModal'));}
+
+async function absSaveKar(){
+  const nama=$('absKNama').value.trim();
+  const hari=[...document.querySelectorAll('#absKDays button.on')].map(b=>+b.dataset.d);
+  let ok=true;
+  if(!nama){ferr('absKNamaE','Nama karyawan wajib diisi');ok=false;} else clerr('absKNamaE');
+  if(!hari.length){ferr('absKDaysE','Pilih minimal 1 hari kerja');ok=false;} else clerr('absKDaysE');
+  if(!ok)return;
+  const old=absEditId?absKaryawan.find(x=>x.id===absEditId):null;
+  const id=absEditId||'kar_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  const item={
+    id,nama:san(nama),jabatan:san($('absKJabatan').value),hp:san($('absKHp').value),
+    tglMasuk:$('absKTgl').value||'',aktif:$('absKAktif').value==='1',hari,
+    createdAt:(old&&old.createdAt)||new Date().toISOString(),updatedAt:new Date().toISOString()
+  };
+  const btn=$('absKSaveBtn');btn.disabled=true;
+  try{
+    await fsSet('karyawan',item);
+    absCloseKar();
+    toast(absEditId?'Karyawan diperbarui ✅':'Karyawan ditambahkan ✅');
+  }catch(e){toast('Gagal menyimpan: '+e.message,'error');}
+  finally{btn.disabled=false;}
+}
+
+async function absDelKar(){
+  if(!absEditId)return;
+  const nama=$('absKNama').value||'karyawan ini';
+  if(!confirm(`Hapus "${nama}"?\n\nRiwayat absen lama tetap tersimpan. Kalau cuma berhenti kerja, lebih baik ubah status jadi Nonaktif.`))return;
+  try{
+    await fsDel('karyawan',absEditId);
+    absCloseKar();
+    toast('Karyawan dihapus 🗑️');
+  }catch(e){toast('Gagal menghapus: '+e.message,'error');}
+}
+
 </script>
 
 </body>
