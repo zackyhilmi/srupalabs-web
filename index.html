@@ -114,6 +114,10 @@ h1{font-size:clamp(4.4rem,25vw,7rem);line-height:.86;padding:18px 16px 14px}
 .hero-sub{display:grid;grid-template-columns:auto 1fr;border-block:3px solid var(--fg);margin-bottom:20px}
 .hero-sub .tag{background:var(--fg);color:var(--bg);padding:14px 16px;font-size:1.05rem;display:flex;align-items:center;white-space:nowrap}
 .hero-sub p{padding:12px 16px;text-align:right;font-weight:700;font-size:.95rem;line-height:1.3;display:flex;align-items:center;justify-content:flex-end}
+.row .ar{font-size:0;line-height:0;width:22px;height:22px;display:block;position:relative;overflow:hidden}
+.row .ar::before{content:"";position:absolute;inset:0;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='square'%3E%3Cpath d='M5 19L19 5M8 5h11v11'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='square'%3E%3Cpath d='M5 19L19 5M8 5h11v11'/%3E%3C/svg%3E") center/contain no-repeat}
+.buy .b{gap:8px}
+.arr{flex:none}
 </style>
 </head>
 <body>
@@ -134,16 +138,16 @@ h1{font-size:clamp(4.4rem,25vw,7rem);line-height:.86;padding:18px 16px 14px}
 <div class="lbl cond">Temukan kami di</div>
 <ol>
   
-  <li><a class="row" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="n">01</span><span><b>WhatsApp</b><small>Tanya-tanya &amp; custom order</small></span><span class="ar">↗</span></a></li>
-  <li><a class="row" href="http://shopee.co.id/srupalabs" target="_blank" rel="noopener"><span class="n">02</span><span><b>Shopee</b><small>Gratis ongkir &amp; cashback</small></span><span class="ar">↗</span></a></li>
-  <li><a class="row" href="https://www.tokopedia.com/srupalabs" target="_blank" rel="noopener"><span class="n">03</span><span><b>Tokopedia</b><small>Belanja aman &amp; promo tiap minggu</small></span><span class="ar">↗</span></a></li>
-  <li><a class="row" href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener"><span class="n">04</span><span><b>TikTok</b><small>Flash sale &amp; live shopping</small></span><span class="ar">↗</span></a></li>
-  <li><a class="row hot" href="https://srupalabs.store" target="_blank" rel="noopener"><span class="n">05</span><span><b>Website</b><small>50+ desain frame &amp; poster aesthetic</small></span><span class="ar">↗</span></a></li>
+  <li><a class="row" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="n">01</span><span><b>WhatsApp</b><small>Tanya-tanya &amp; custom order</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
+  <li><a class="row" href="http://shopee.co.id/srupalabs" target="_blank" rel="noopener"><span class="n">02</span><span><b>Shopee</b><small>Gratis ongkir &amp; cashback</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
+  <li><a class="row" href="https://www.tokopedia.com/srupalabs" target="_blank" rel="noopener"><span class="n">03</span><span><b>Tokopedia</b><small>Belanja aman &amp; promo tiap minggu</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
+  <li><a class="row" href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener"><span class="n">04</span><span><b>TikTok</b><small>Flash sale &amp; live shopping</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
+  <li><a class="row hot" href="https://srupalabs.store" target="_blank" rel="noopener"><span class="n">05</span><span><b>Website</b><small>50+ desain frame &amp; poster aesthetic</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
 </ol>
 
 <div class="lbl cond">Follow kami</div>
 <ol>
-  <li><a class="row" href="https://instagram.com/srupalabs" target="_blank" rel="noopener"><span class="n">01</span><span><b>Instagram</b><small>@srupalabs</small></span><span class="ar">↗</span></a></li>
+  <li><a class="row" href="https://instagram.com/srupalabs" target="_blank" rel="noopener"><span class="n">01</span><span><b>Instagram</b><small>@srupalabs</small></span><svg class="ar" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></a></li>
 </ol>
 
 <footer>
@@ -156,7 +160,7 @@ h1{font-size:clamp(4.4rem,25vw,7rem);line-height:.86;padding:18px 16px 14px}
   
 </footer>
 
-<a class="buy cond" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="a">Chat admin</span><span class="b">Sekarang →</span></a>
+<a class="buy cond" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="a">Chat admin</span><span class="b">Sekarang <svg class="arr" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 12h16M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></span></a>
 
 </div>
 <script>
