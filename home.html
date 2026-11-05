@@ -13,46 +13,46 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--fg:#000;--d:'Righteous','Arial Black',Impact,sans-serif;--s:'Plus Jakarta Sans',system-ui,sans-serif;--m:clamp(8px,2vw,24px);--p:clamp(14px,2.4vw,28px);--e:cubic-bezier(.16,1,.3,1);
+:root{--bg:#fff;--fg:#000;--d:'Righteous','Arial Black',Impact,sans-serif;--s:'Plus Jakarta Sans',system-ui,sans-serif;--m:clamp(8px,2vw,24px);--p:clamp(14px,2.4vw,28px);--e:cubic-bezier(.16,1,.3,1);--b:3px;--b2:2px;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--fg:#fff}}
 :root[data-theme="dark"]{--bg:#000;--fg:#fff}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased;scroll-padding-top:60px}
-body{background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--s);padding:var(--m)}
+body{background:var(--bg);color:var(--fg);font:400 17px/1.35 var(--s);padding:var(--m)}
 a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
 img{max-width:100%}
-:focus-visible{outline:2px solid var(--fg);outline-offset:-4px}
-.hd:focus-visible{outline-color:var(--bg)}
+:focus-visible{outline:var(--b) solid var(--fg);outline-offset:3px}
+.hd:focus-visible,.row:focus-visible{outline-color:var(--bg);outline-offset:-6px}
 .d{font-family:var(--d);font-weight:400;text-transform:uppercase}
 .up{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
 .arr{display:inline-flex;margin-left:.5em;transition:transform .3s var(--e)}
-.frame{border:1px solid var(--fg)}
+.frame{border:var(--b) solid var(--fg)}
 
 /* top bar */
-.top{display:flex;border-bottom:1px solid var(--fg);position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:50}
+.top{display:flex;border-bottom:var(--b) solid var(--fg);position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:50}
 .logo{flex:1;display:flex;align-items:center;padding:0 var(--p);font-size:clamp(1rem,2.6vw,1.3rem);letter-spacing:.02em;min-width:0;white-space:nowrap}
-.c{display:flex;align-items:center;height:48px;padding:0 clamp(9px,2vw,22px);border-left:1px solid var(--fg);font-size:clamp(.56rem,1.7vw,.7rem);letter-spacing:.06em;text-transform:uppercase}
+.c{display:flex;align-items:center;height:48px;padding:0 clamp(9px,2vw,22px);border-left:var(--b) solid var(--fg);font-size:clamp(.56rem,1.7vw,.7rem);letter-spacing:.06em;text-transform:uppercase}
 .c:hover,.c.hot{background:var(--fg);color:var(--bg)}
 
 /* hero */
-.hero{display:grid;grid-template-columns:1.1fr .9fr;border-bottom:1px solid var(--fg);min-height:min(78vh,640px)}
-.hero .l{display:flex;flex-direction:column;justify-content:space-between;gap:48px;padding:var(--p);border-right:1px solid var(--fg)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;border-bottom:var(--b) solid var(--fg);min-height:min(78vh,640px)}
+.hero .l{display:flex;flex-direction:column;justify-content:space-between;gap:48px;padding:var(--p);border-right:var(--b) solid var(--fg)}
 .meta{display:flex;justify-content:space-between;gap:16px}
-h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) both}
+h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.9;animation:fade .9s var(--e) both}
 @keyframes fade{from{opacity:0;transform:translateY(14px)}}
 .hero .r{position:relative;background:var(--fg)}
 .hero .r img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 /* accordion */
-.ix{border-bottom:1px solid var(--fg)}
+.ix{border-bottom:var(--b) solid var(--fg)}
 .ix:last-of-type{border-bottom:0}
 .hd{width:100%;display:grid;grid-template-columns:clamp(3rem,12vw,11rem) 1fr auto;align-items:center;padding:18px var(--p);background:var(--bg);color:var(--fg);border:0;font:inherit;text-align:left;cursor:pointer;transition:background .3s,color .3s}
 .lb{font-size:clamp(1.15rem,3vw,2rem);line-height:1;transition:transform .4s var(--e)}
 .hd:hover,.ix.open .hd{background:var(--fg);color:var(--bg)}
 .hd:hover .lb{transform:translateX(10px)}
-.pl{position:relative;width:16px;height:16px}
-.pl::before,.pl::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:currentColor;transition:transform .45s var(--e)}
+.pl{position:relative;width:18px;height:18px}
+.pl::before,.pl::after{content:"";position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1.5px;background:currentColor;transition:transform .45s var(--e)}
 .pl::after{transform:rotate(90deg)}
 .ix.open .pl::before{transform:rotate(45deg)}
 .ix.open .pl::after{transform:rotate(-45deg)}
@@ -67,11 +67,11 @@ h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) 
 .ix.open .wipe{clip-path:inset(0);transition:clip-path 1s var(--e) .2s}
 
 /* katalog */
-.tag{padding:12px var(--p);border-bottom:1px solid var(--fg)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:-1px}
-.pc{border-right:1px solid var(--fg);display:flex;flex-direction:column}
+.tag{padding:12px var(--p);border-bottom:var(--b) solid var(--fg)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:calc(var(--b2)*-1)}
+.pc{border-right:var(--b2) solid var(--fg);display:flex;flex-direction:column}
 .pc:last-child{border-right:0}
-.pc-img{position:relative;aspect-ratio:3/4;border-bottom:1px solid var(--fg);display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.pc-img{position:relative;aspect-ratio:3/4;border-bottom:var(--b2) solid var(--fg);display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 .pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--e)}
 .pc:hover .pc-img img{transform:scale(1.06)}
 .pc-img span{font-size:1.5rem;line-height:1}
@@ -80,9 +80,9 @@ h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) 
 .pc-b{padding:10px 12px;flex:1}
 .pc-b small{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;opacity:.6;font-weight:700}
 .pc-b h3{font-size:1rem;line-height:1.1;margin-top:2px}
-.pc-a{border-top:1px solid var(--fg);padding:10px 12px}
-.pc-a:hover,.more:hover,.row:hover,.cta:hover{background:var(--fg);color:var(--bg)}
-.more{display:flex;justify-content:space-between;align-items:center;padding:18px var(--p);border-top:1px solid var(--fg);font-size:clamp(1.1rem,2.6vw,1.6rem)}
+.pc-a{border-top:var(--b2) solid var(--fg);padding:10px 12px}
+.pc-a:hover,.more:hover,.cta:hover{background:var(--fg);color:var(--bg)}
+.more{display:flex;justify-content:space-between;align-items:center;padding:18px var(--p);border-top:var(--b) solid var(--fg);font-size:clamp(1.1rem,2.6vw,1.6rem)}
 .more:hover .arr,.cta:hover .arr{transform:translateX(8px)}
 
 /* dua kolom */
@@ -90,36 +90,38 @@ h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) 
 .two>div{padding:var(--p);display:flex;flex-direction:column;gap:14px;justify-content:center}
 .two>div p{max-width:32ch;opacity:.7}
 .two h3{font-size:clamp(1.6rem,4vw,3rem);line-height:1}
-.two figure{border-left:1px solid var(--fg);display:flex;min-height:260px}
+.two figure{border-left:var(--b) solid var(--fg);display:flex;min-height:260px}
 .two figure img{width:100%;height:100%;object-fit:cover}
-.cta{border-left:1px solid var(--fg);display:flex;align-items:center;justify-content:space-between;padding:var(--p);font-family:var(--d);text-transform:uppercase;font-size:clamp(1.1rem,2.6vw,1.8rem)}
+.cta{border-left:var(--b) solid var(--fg);display:flex;align-items:center;justify-content:space-between;padding:var(--p);font-family:var(--d);text-transform:uppercase;font-size:clamp(1.1rem,2.6vw,1.8rem)}
 
-/* kontak */
-.row{display:grid;grid-template-columns:clamp(3rem,12vw,11rem) 1fr auto;align-items:center;padding:16px var(--p);border-top:1px solid var(--fg)}
+/* kontak: baris nama besar (gaya sama dengan halaman links) */
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:clamp(14px,2.6vw,26px) var(--p);border-top:var(--b2) solid var(--fg);transition:background .15s,color .15s}
 .row:first-child{border-top:0}
-.row b{display:inline-block;font-weight:500;font-size:1.05rem;transition:transform .4s var(--e)}
-.row:hover b{transform:translateX(8px)}
-.row small{margin-left:10px;opacity:.55;font-size:.8rem}
-.row .arr{margin:0;font-size:1.2rem}
-.row:hover .arr{transform:translateX(6px)}
+.row .t{display:flex;flex-direction:column;gap:8px;min-width:0;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.row b{font-family:var(--d);font-weight:400;font-size:clamp(2rem,8.5vw,5.6rem);line-height:.95;letter-spacing:-.01em;overflow-wrap:anywhere}
+.row small{font-size:.85rem;font-weight:500;opacity:.65}
+.row .arr{margin:0;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.row .arr svg{width:clamp(1.4rem,4vw,2.6rem);height:clamp(1.4rem,4vw,2.6rem)}
+.row.hot{background:var(--fg);color:var(--bg)}
+@media (hover:hover){.row:hover{background:var(--fg);color:var(--bg)}.row.hot:hover{background:var(--bg);color:var(--fg)}.row:hover .t{transform:translateX(10px)}.row:hover .arr{transform:rotate(45deg) scale(1.25)}}
+.row:active{background:var(--fg);color:var(--bg)}
 
-.foot{display:flex;justify-content:space-between;gap:16px;padding:12px var(--p);border-top:1px solid var(--fg)}
+.foot{display:flex;justify-content:space-between;gap:16px;padding:12px var(--p);border-top:var(--b) solid var(--fg)}
 
 @media (max-width:760px){
   .hero{grid-template-columns:1fr}
-  .hero .l{border-right:0;border-bottom:1px solid var(--fg);gap:36px}
+  .hero .l{border-right:0;border-bottom:var(--b) solid var(--fg);gap:36px}
   .hero .r{aspect-ratio:4/3}
   .grid{grid-template-columns:1fr 1fr}
-  .pc{border-bottom:1px solid var(--fg)}
+  .pc{border-bottom:var(--b2) solid var(--fg)}
   .pc:nth-child(2n){border-right:0}
   .two{grid-template-columns:1fr}
-  .two figure{border-left:0;border-top:1px solid var(--fg)}
-  .cta{border-left:0;border-top:1px solid var(--fg);min-height:72px}
-  .row small{display:none}
+  .two figure{border-left:0;border-top:var(--b) solid var(--fg)}
+  .cta{border-left:0;border-top:var(--b) solid var(--fg);min-height:72px}
 }
 @media (prefers-reduced-motion:reduce){
   h1{animation:none}
-  .pn,.s,.wipe,.lb,.pl::before,.pl::after,.arr,.row b{transition:none!important}
+  .pn,.s,.wipe,.lb,.pl::before,.pl::after,.arr,.row,.row .t{transition:none!important}
   .s{opacity:1;transform:none}
   .wipe{clip-path:none}
 }
@@ -181,11 +183,11 @@ h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) 
   <div class="ix" id="kontak">
     <button class="hd" type="button" aria-expanded="false" aria-controls="p-kontak"><span class="up">04/</span><span class="d lb">Kontak</span><i class="pl" aria-hidden="true"></i></button>
     <div class="pn" id="p-kontak"><div class="in">
-      <a class="row s" style="--i:0" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="up">WA</span><span><b>WhatsApp</b></span><span class="arr"></span></a>
-      <a class="row s" style="--i:1" href="https://instagram.com/srupalabs" target="_blank" rel="noopener"><span class="up">IG</span><span><b>Instagram</b><small>@srupalabs</small></span><span class="arr"></span></a>
-      <a class="row s" style="--i:2" href="https://shopee.co.id/srupalabs" target="_blank" rel="noopener"><span class="up">SP</span><span><b>Shopee</b></span><span class="arr"></span></a>
-      <a class="row s" style="--i:3" href="https://www.tokopedia.com/srupalabs" target="_blank" rel="noopener"><span class="up">TP</span><span><b>Tokopedia</b></span><span class="arr"></span></a>
-      <a class="row s" style="--i:4" href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener"><span class="up">TT</span><span><b>TikTok</b><small>@srupa_labs</small></span><span class="arr"></span></a>
+      <a class="row hot s" style="--i:0" href="https://wa.me/6285830222232" target="_blank" rel="noopener"><span class="t"><b>WhatsApp</b><small>Tanya-tanya dulu</small></span><i class="arr"></i></a>
+      <a class="row s" style="--i:1" href="https://instagram.com/srupalabs" target="_blank" rel="noopener"><span class="t"><b>Instagram</b><small>Follow dulu, intip inspirasinya</small></span><i class="arr"></i></a>
+      <a class="row s" style="--i:2" href="https://www.tiktok.com/@srupa_labs" target="_blank" rel="noopener"><span class="t"><b>TikTok</b><small>Tonton tips dekornya</small></span><i class="arr"></i></a>
+      <a class="row s" style="--i:3" href="https://shopee.co.id/srupalabs" target="_blank" rel="noopener"><span class="t"><b>Shopee</b><small>Langsung checkout</small></span><i class="arr"></i></a>
+      <a class="row s" style="--i:4" href="https://www.tokopedia.com/srupalabs" target="_blank" rel="noopener"><span class="t"><b>Tokopedia</b><small>Checkout di sini juga bisa</small></span><i class="arr"></i></a>
     </div></div>
   </div>
 
@@ -199,8 +201,9 @@ h1{font-size:clamp(2.4rem,7vw,6rem);line-height:.94;animation:fade .9s var(--e) 
 const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
 
 /* panah: SVG inline (anti-emoji) */
-const AR='<svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><path d="M3 12h16M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"/></svg>';
-$$('.arr').forEach(e=>e.innerHTML=AR);
+const AR='<svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true"><path d="M3 12h16M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg>';
+const AU='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5M8 5h11v11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg>';
+$$('.arr').forEach(e=>e.innerHTML=e.closest('.row')?AU:AR);
 
 /* accordion: satu terbuka, klik lagi untuk menutup */
 const items=$$('.ix');
